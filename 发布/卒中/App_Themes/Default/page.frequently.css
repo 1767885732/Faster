@@ -1,0 +1,253 @@
+﻿/*  常用功能  */
+.used-box{
+    width:225px;
+    height:100%;
+    padding:10px;
+    text-align: center;
+    background:#2d8ed3;
+    filter:Alpha(opacity=50);
+    background-color: rgba(0,0,0,0.7);
+    z-index: 999;
+    position: fixed;
+    top:0;
+    right:0;
+    bottom:0;
+    cursor:move;
+    display:none;
+}
+.used-box:hover{
+    filter:Alpha(opacity=60);
+    background-color: rgba(0,0,0,0.8);
+}
+/*  系统消息  */
+.used-box .tab-message{
+    padding:5px 50px 10px;
+    height:22px;
+    display:block;
+}
+.used-box .tab-message a{
+    width:60px;
+    height:20px;
+    line-height: 20px;
+    color:#fff;
+    float:left;
+    border:1px solid #fff;
+    margin:0;
+    background:none;
+}
+.used-box .tab-message .selected, .used-box .tab-message a:hover{
+    color:#000;
+    filter:Alpha(opacity=100);
+    background-color: rgba(255,255,255,1);
+}
+.used-box .message-con{
+    width:100%;
+    margin-bottom:10px;
+    display:block;
+    text-align: left;
+    overflow: hidden;
+}
+.used-box .message-con .over{
+    width: 245px;
+    height:100%;
+    overflow: auto;
+}
+.used-box .message-con .over::-webkit-scrollbar{
+    width:0;
+}
+.used-box .message-con h4{
+    font-size:14px;
+    color:#fff;
+    line-height:30px;
+}
+.used-box .message-con dl{
+    width: 215px;
+    padding:10px 5px;
+    border-radius: 4px;
+    filter:Alpha(opacity=0.05);
+    background-color: rgba(255,255,255,0.05);
+    margin-bottom: 6px;
+}
+.used-box .message-con dl:hover{
+    background:#007ebc;
+}
+.used-box .message-con dl dt{
+    font-size: 13px;
+    color: #dbdbdb;
+    line-height: 18px;
+    padding-bottom: 10px;
+    overflow: auto;
+}
+.used-box .message-con dl .vital{
+    color:#f4b400;
+    border-bottom: none;
+    background: none;
+}
+.used-box .message-con dl dt span{
+    float:right;
+    padding:0;
+    color:#dbdbdb;
+}
+.used-box .message-con dl dd{
+    color:#a9a9a9;
+    line-height: 20px;
+    text-indent: 2em;
+}
+.used-box .message-con dl dd span{
+    color:#fff;
+    padding:0 3px;
+}
+.used-box .message-con dl dd strong{
+    font-size: 14px;
+    padding:0 3px;
+    color: #ddf3fd;
+}
+/*  系统提示消息高度  */
+.with-opt-one{
+    height:calc(100% - 120px);
+    height:-webkit-calc(100% - 120px);
+    height:-moz-calc(100% - 120px);
+}
+.with-opt-two{
+    height:calc(100% - 180px);
+    height:-webkit-calc(100% - 180px);
+    height:-moz-calc(100% - 180px);
+}
+.with-opt-three{
+    height:calc(100% - 240px);
+    height:-webkit-calc(100% - 240px);
+    height:-moz-calc(100% - 240px);
+}
+.with-opt-four{
+    height:calc(100% - 300px);
+    height:-webkit-calc(100% - 300px);
+    height:-moz-calc(100% - 300px);
+}
+/*  病历常用调阅按钮  */
+.used-box ul{
+    height:auto;
+    padding:0 10px;
+    display:block;
+    position: absolute;
+    right:0;
+    bottom:20px;
+    filter:Alpha(opacity=30);
+    background-color: rgba(255,255,255,0.3);
+}
+.used-box ul li{
+    height:60px;
+    float:left;
+}
+.used-box ul li a{
+    width:75px;
+    height:40px;
+    padding:10px 0;
+    float:left;
+    color:#fff;
+    font-size:12px;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+    line-height: 20px;
+}
+.used-box ul li a s{
+    width:20px;
+    height:20px;
+    display:block;
+    margin:0 auto;
+    background-position:0 0;
+    background-repeat: no-repeat;
+}
+.used-box ul li a:hover{
+    color:#f4c337;
+}
+.used-box ul li a:hover s{
+    background-position:-20px 0;
+}
+.used-box ul li a .check-info{
+    background-image: url('img/record/check-info.png');
+}
+.used-box ul li a .inspect-info{
+    background-image: url('img/record/inspect-info.png');
+}
+.used-box ul li a .pre-ecg{
+    background-image: url('img/record/pre-ecg.png');
+}
+.used-box ul li a .medical-record{
+    background-image: url('img/record/medical-record.png');
+}
+.used-box ul li a .save{
+    background-image: url('img/record/save.png');
+}
+.used-box ul li a .hide{
+    background-image: url('img/record/hide.png');
+}
+.used-box ul li a .medical-image{
+    background-image: url('img/record/medical-image.png');
+}
+.used-box ul li a .cvac-score{
+    background-image: url('img/record/cvac-score.png');
+}
+.used-box ul li a .highrisk{
+    background-image: url('img/record/highrisk.png');
+}
+.used-box ul li a .phr{
+    background-image: url('img/record/phr.png');
+}
+/*  只有一个按钮的情况  */
+.used-box ul .only-one a{
+    width:225px;
+    text-align: center;
+    float:none;
+    display:block;
+}
+/*  两个按钮的情况  */
+.used-box ul .two a{
+    width:112px;
+    text-align: center;
+    float:none;
+    display:block;
+}
+/*  展开按钮  */
+.show-btn{
+    width:40px;
+    height:40px;
+    padding:0;
+    top:50%;
+    display: inline;
+    border-radius: 4px;
+    box-shadow: 3px 3px 3px #ccc;
+}
+.show-btn .change-btn a{
+    width:40px;
+    height:20px;
+    padding:10px 0;
+    display:block;
+    cursor: pointer;
+}
+.show-btn .change-btn .show{
+    width:20px;
+    height:20px;
+    padding:0;
+    margin-left:10px;
+    display:block;
+    background-position:0 0;
+    background-repeat: no-repeat;
+    background-image: url('img/record/show.png');
+}
+.show-btn .change-btn:hover .show{
+    background-position:-20px 0;
+}
+.show-btn .change-btn .message{
+    background-image: url('img/record/message.png');
+}
+.show-btn .change-btn a .menu-message{
+    min-width:14px;
+    min-height:14px;
+    line-height: 14px;
+    padding:2px;
+    color:#fff;
+    border-radius: 10px;
+    background:#ed4e2a;
+    position: absolute;
+    top:0;
+    right:0;
+}

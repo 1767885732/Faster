@@ -1,0 +1,523 @@
+﻿@using DoCare.ToolKit
+@using DoCare.Framework.Extension
+@{
+    ViewBag.Title = "卒中评分";
+    Layout = null;
+}
+
+<script src=@Url.GetCssJsUrl("~/Scripts/hover.js")></script>
+<script src="~/Scripts/JSLINQ.js"></script>
+<script src="~/Scripts/echarts/echarts.min.js"></script>
+<script src="~/Scripts/echarts/macarons.js"></script>
+<script>
+    var patient =  @Html.Raw((JsonKit.Serialize(ViewBag.Patient)));
+    var templateList =  @Html.Raw((JsonKit.Serialize(ViewBag.TemplateList)));
+    var app = angular.module('ScoreApp', []);
+
+    // 日期控件指令
+    app.directive('wdatePicker', function () {
+        return {
+            restrict: "A",
+            link: function (scope, element, attr) {
+                element.bind('click', function () {
+                    window.WdatePicker({
+                        onpicked: function () { element.change() },
+                        oncleared: function () { element.change() },
+                        dateFmt: 'yyyy-MM-dd HH:mm'
+                    })
+                });
+            }
+        }
+    });
+
+    // controller
+    app.controller('ScoreController', function ($scope, $filter, $http) {
+        // 患者信息
+        $scope.patient = patient;
+        // 默认评分次数选项卡，默认选择第一次
+        $scope.defaultIndex = 0;
+        // 评分配置
+        $scope.templateList = templateList;
+        // 评分分页
+        $scope.pageIndex = 1; // 页次
+        $scope.pageSize = 8;  // 每页数量
+        $scope.pageCount = 1; // 总页数
+        if($scope.templateList==null ||$scope.templateList.length==0)
+        {
+            return ;
+        }
+
+        var RootList = JSLINQ($scope.templateList).Distinct(function(item){ return item.Root; }).items;
+        var typeMenu = new Array();
+        for (var i = 0; i < RootList.length; i++) {
+            typeMenu.push({Root:RootList[i],menuList:JSLINQ($scope.templateList).Where(function(item){return item.Root==RootList[i]}).Select(function(item){ return item; }).items})
+        }
+        $scope.typeMenu = typeMenu;
+
+        // 选择小类（评分模板）
+        $scope.getTemplate = function (template)
+        {
+            // 第一个评分模板基本信息
+            $scope.template = template;
+            console.log($scope.template);
+            // 评分类型 默认为第一个评分类型
+            $scope.recordType = $scope.template.ScoreType;
+        }
+
+        // 默认选择第一个小类
+        $scope.getTemplate($scope.templateList[0]);
+
+        // 获取患者评分列表（根据类型）
+        $scope.getScoreList = function(num){
+            $scope.defaultIndex = 0;
+            $scope.pageIndex = 1;
+            $http({
+                method: 'GET',
+                url: '/Score/GetScoreList?registId=' + patient.Id + '&recordType=' + $scope.recordType +'&takeFirst=false'
+            }).then(function successCallback(response) {
+                if(response.data.IsSuccess){
+                    $scope.scoreList= response.data.Data;
+                    if($scope.scoreList != null && $scope.scoreList.length > 0)
+                    {
+                        $scope.calcNum($scope.scoreList.length);
+                        $scope.defaultIndex = $scope.scoreList.length - 1;
+                        $scope.pageCount = Math.ceil($scope.scoreList.length/$scope.pageSize);
+                        $scope.pageIndex = $scope.pageCount;
+                        // 默认会加载第一次数据
+                        recordId = $scope.scoreList[$scope.defaultIndex].ScoreRecordId;
+
+                        if(num)
+                        {
+                            $scope.changeTab(num,recordId);
+                        }
+                        $scope.drawChart();
+                    }
+                    else{
+                        $scope.record = {};
+                    }
+                }
+                else
+                {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+        // 获取某一次评分记录
+        $scope.getRecord = function(recordId)
+        {
+            $scope.record = {};
+            $http({
+                method: 'GET',
+                url: '/Score/GetRecord?registerID=' + patient.Id + '&scoreRecordID=' + recordId
+            }).then(function successCallback(response) {
+                if(response.data.IsSuccess){
+                    $scope.record = response.data.Data;
+                    if($scope.record!=null && $scope.record.ScoringTime!=null &&$scope.record.ScoringTime!='')
+                    {
+                        // 对时间格式：/Date(1448864369815)/ 的格式化
+                        $scope.record.ScoringTime = $filter("date")($scope.record.ScoringTime.replace(/\/Date\((\d+)\)\//, "$1"), "yyyy-MM-dd HH:mm");
+                    }
+                }
+                else
+                {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+
+        // 第几次tab选择样式
+        $scope.getClass = function(index)
+        {
+            if(index == $scope.defaultIndex)
+            {
+                return "hover";
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        // 第几次tab选择变化
+        $scope.changeTab = function(index,recordId)
+        {
+            //if($scope.defaultIndex != index)
+            //{
+            //    if(recordId == null)
+            //    {
+            //        recordId = $scope.scoreList[index].ScoreRecordId;
+            //    }
+            //    $scope.getRecord(recordId);
+            //    $scope.defaultIndex = index;
+            //}
+            $.post('/Score/ScoreDetail', { registId:  $scope.patient.Id ,recordId: recordId}, function (str) {
+                layer.open({
+                    type: 1,
+                    title: '评分明细',
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1000px', '460px'],
+                    content: str,
+                    zIndex: 198910140,
+                    end: function () {
+                        $scope.setTab($scope.template);
+                    }
+                });
+            });
+            $scope.hideAddBtn = false;
+        }
+
+        $scope.reload = function()
+        {
+
+        }
+        $scope.hideAddBtn = false;
+        // 创建评分
+        $scope.addData = function(){
+            $scope.hideAddBtn = true;
+            $http({
+                method: 'POST',
+                url: '/Score/CreateScore',
+                data: {recordType:$scope.recordType,registId:patient.Id}
+            }).then(function successCallback(response) {
+                if(response.data.IsSuccess){
+                    $scope.getScoreList($scope.scoreList.length);
+                }
+                else
+                {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+        // 保存评分
+        $scope.saveSingleData = function(itemKeyValue,totalScore)
+        {
+            $http({
+                method: 'POST',
+                url: '/Score/SaveSingleScore',
+                data: {recordId:$scope.record.ID,itemValue:itemKeyValue,totalScore:totalScore}
+            }).then(function successCallback(response) {
+                if(response.data.IsSuccess){
+                }
+                else
+                {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+        // 保存评分
+        $scope.saveMultiData = function(itemKeyValue,totalScore)
+        {
+            $http({
+                method: 'POST',
+                url: '/Score/SaveMultiScore',
+                data: {recordId:$scope.record.ID,itemValue:itemKeyValue,totalScore:totalScore}
+            }).then(function successCallback(response) {
+                if(response.data.IsSuccess){
+                }
+                else
+                {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+        // 保存记录（评分时间、评分医生）
+        $scope.saveRecord = function()
+        {
+            if($scope.record == null)
+            {
+                return;
+            }
+            $http({
+                method: 'POST',
+                url: '/Score/SaveRecord',
+                data: {
+                    recordType:$scope.recordType
+                    ,recordId:$scope.record.ID
+                    ,scoringTime:$scope.record.ScoringTime
+                    ,doctor:$scope.record.Doctor
+                }
+            }).then(function successCallback(response) {
+                if(response.data.IsSuccess){
+                }
+                else
+                {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+        // 删除评分
+        $scope.delData = function(id,index)
+        {
+            var num = $scope.scoreList.length;
+            var msg = "确定删除第"+(index+1)+"次评分？";
+            if($scope.scoreList!=null && $scope.scoreList.length==1)
+            {
+                msg = "清空首次评分数据？";
+            }
+            layer.confirm(msg, { icon: 7 },function(index){
+                $http({
+                    method: 'POST',
+                    url: '/Score/RemoveScore',
+                    data:{id:id}
+                }).then(function successCallback(response) {
+                    if(response.data.IsSuccess){
+                        //layer.alert("删除成功", { icon: 1 });
+                        layer.close(index);
+                        if(num == 1)
+                        {
+                            $scope.getScoreList(1);
+                        }
+                        else
+                        {
+                            $scope.getScoreList();
+                        }
+                    }
+                    else
+                    {
+                        layer.alert(response.data.Message, { icon: 2 });
+                    }
+                }, function errorCallback(response) {
+                    // 请求失败执行代码
+                    layer.alert("请求失败！", { icon: 2 });
+                });
+            });
+        }
+        // 计算分值
+        $scope.calcNum = function(num)
+        {
+            for (var i = 0; i < $scope.typeMenu.length; i++) {
+                var menu = $scope.typeMenu[i];
+                for (var j = 0; j < menu.menuList.length; j++) {
+                    var data = menu.menuList[j];
+                    if(data.ScoreType == $scope.recordType)
+                    {
+                        data.Num = num;
+                    }
+                }
+            }
+        }
+        // 获取所以评分key-value值
+        $scope.getItemKeyValue = function()
+        {
+            $scope.itemKeyValueList = new Array();
+            for (var i = 0; i < $scope.record.ItemCategories[0].Items.length; i++) {
+                var item = $scope.record.ItemCategories[0].Items[i];
+                $scope.itemKeyValueList.push({Key:item.ID,Value:item.Value});
+            }
+        }
+        // 是否选中
+        $scope.isSelected = function(key,value,checkedValue){
+            return $.inArray( value, checkedValue==null?null:checkedValue.split(";")) >= 0;
+        }
+        // 首次加载评分
+        $scope.getScoreList();
+
+        // 评分模板tab选择
+        $scope.setTab = function(template,num)
+        {
+            $scope.ShowScoreValue = 1;
+            $scope.getTemplate(template);
+            $scope.getScoreList(num);
+        };
+        // 评分模板tab样式
+        $scope.getTabClass = function(template)
+        {
+            if(template.ScoreType == $scope.template.ScoreType)
+            {
+                return "selected";
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        // 画图表
+        $scope.drawChart = function()
+        {
+            var xAxisData = new Array();  //['溶栓前','15m','30m','45m','1h','6h','12h','18h','24h','3d','7d'];
+            var seriesData =  new Array();//[3,7,6,5];
+            if($scope.scoreList!=null){
+                for (var i = 0; i < $scope.scoreList.length; i++) {
+                    var score = $scope.scoreList[i];
+                    xAxisData.push(moment(score.ScoringTime).format("YYYY-MM-DD hh:mm"));
+                    seriesData.push(score.ScoreValue);
+                }
+            }
+            $scope.drawChart1(xAxisData,seriesData);
+        }
+
+        $scope.drawChart1 = function(xAxisData,seriesData)
+        {
+            debugger;
+            if($('#chart-panel').length==1){
+                var myChart = echarts.init(document.getElementById('chart-panel'));
+                option = {
+                    title : {
+                        x: '0px',
+                        text: '评分（单位：分）',
+                        textStyle:{
+                            fontSize: '14px'
+                        }
+                    },
+                    tooltip : {
+                        trigger: 'axis'
+                    },
+                    grid: {
+                        top: '50px',
+                        left: '50px',
+                        bottom: '20px'
+                    },
+                    calculable : true,
+                    xAxis : [
+                        {
+                            type : 'category',
+                            boundaryGap : false,
+                            data : xAxisData,
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value',
+                            axisLabel : {
+                                formatter: '{value}'
+                            }
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'评分',
+                            type:'line',
+                            data:seriesData,
+                            markPoint : {
+                                data : [
+                                    {type : 'max', name: '最大值'}
+                                ]
+                            },
+                            markLine : {
+                                data : [
+                                    {type : 'average', name: '平均值'}
+                                ]
+                            }
+                        }
+                    ]
+                };
+                myChart.setOption(option);
+                window.onresize = myChart.resize;
+            }
+        }
+    });
+
+    // 自定义过滤器
+    app.filter('NoShowNull', function() { //可以注入依赖
+        return function(text) {
+            return text=="null"?"":text;
+        }
+    });
+
+    angular.bootstrap($("#divScore")[0], ['ScoreApp']);
+</script>
+<script>
+    // 字符中添加值 demo:"1;2;3" 添加"4"
+    function addValue(total,value)
+    {
+        // 判断原有数据是否为null，如果为null直接赋值
+        if(total)
+        {
+            // 转换成数组
+            var totalArr = total.split(";");
+            // 没有直接添加，有则忽略
+            if($.inArray(value, totalArr)==-1)
+            {
+                // 添加
+                totalArr.push(value);
+                // 重新转换成字符串
+                total = totalArr.join(";");
+            }
+        }
+        else
+        {
+            total = value;
+        }
+        return total;
+    }
+
+    // 字符中去除值  demo:"1;2;3" 删除"2"
+    function delValue(total,value)
+    {
+        // 转换成数组
+        var totalArr = total.split(";");
+        // 查找位置
+        var index = $.inArray(value, totalArr);
+        // 存在直接去除
+        if(index>-1)
+        {
+            // 删除
+            totalArr.splice(index,1);
+            // 重新转换成字符串
+            total = totalArr.join(";");
+        }
+        return total;
+    }
+</script>
+<div class="popup" id="divScore" ng-app="ScoreApp" ng-controller="ScoreController">
+    <ul class="type-menu left">
+        <li ng-repeat="x in typeMenu">
+            <dl>
+                <dt>{{x.Root}}</dt>
+                <dd ng-repeat="m in x.menuList" ng-click="setTab(m)" ng-class="getTabClass(m)">{{m.Name}}</dd>
+            </dl>
+        </li>
+    </ul>
+    <div class="monitor">
+        <div class="score-chart-box">
+            <div id="chart-panel" class="chart"></div>
+            <br />
+            <div>
+                <table class="basic-table" style="width:800px;border:0px;">
+                    <tr>
+                        <td colspan="3" style="text-align:right;">
+                            @*<button class="btn-warning" ng-click="addData()">新增</button>*@
+                            <img ng-hide="hideAddBtn" src="~/App_Themes/Default/img/score/plus.png" ng-click="addData()" style="width:20px;cursor:pointer;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width:600px;">评分时间</td>
+                        <td style="width:60px">分值</td>
+                        <td style="width:60px">操作</td>
+                    </tr>
+                    <tr ng-repeat="x in scoreList">
+                        <td ng-dblclick="changeTab($index,x.ScoreRecordId)">{{x.ScoringTime | date:'yyyy-MM-dd HH:mm'}}</td>
+                        <td ng-dblclick="changeTab($index,x.ScoreRecordId)">{{x.ScoreValue}}</td>
+                        <td>
+                            @*<button class="btn-warning" ng-click="changeTab($index,x.ScoreRecordId)">编辑</button>
+                            <button class="btn-warning" ng-click="delData(x.Id,$index)">删除</button>*@
+                            <img src="~/App_Themes/Default/img/score/edit.png" ng-click="changeTab($index,x.ScoreRecordId)" style="width:20px;cursor:pointer;"/>
+                            &nbsp;&nbsp;
+                            <img src="~/App_Themes/Default/img/score/del.png" ng-click="delData(x.Id,$index)" style="width:20px;cursor:pointer;" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

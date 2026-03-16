@@ -1,0 +1,45 @@
+﻿@using DoCare.Framework.Extension;
+<link href= @Url.GetCssJsUrl("~/App_Themes/Default/page.records.css") rel="stylesheet" />
+<script src="~/Scripts/validate/validateExtend.js"></script>
+<script src="~/Scripts/validate/validator.js"></script>
+
+<script type="text/javascript">
+    function changeMenu(event) {
+        $(event).siblings().removeClass("active");
+        $(event).addClass("active");
+
+        $.post($(event).attr("url"), {}, function (viewHtml) {
+            $('#container').html();
+            $('#container').html(viewHtml);
+        });
+    }
+
+    $(function () {
+        //var mainId = $('.nav_menu').find("li[class='selected']").filter(":contains('数据核查')").attr('data-menuId');
+         var mainId = $('.nav_menu').find("li[class='selected']").filter(":contains('数据检查')").attr('data-menuId');
+
+        // 获取功能菜单
+        $.get('/Base/GetFuncMenu', { mainId: mainId }, function (data) {
+            var html = "";
+            for (var i in data) {
+                html += "<a url='" + data[i].Action + "' href='javascript:void(0)' onclick='changeMenu(this)'><i class='" + data[i].Icon + "'></i>" + data[i].Name + "</a>";
+            }
+            $('#nav-list').html(html);
+
+            $("#nav-list").find("a").first().click();
+        });
+    });
+
+    var tempData = { isEdit: false };
+</script>
+
+<div class="layout-sidebar-menu left">
+    <div class="menu-block">
+        <span id="nav-list">
+
+        </span>
+    </div>
+</div>
+<div id="container" class="layout-container layout-container-box left">
+
+</div>

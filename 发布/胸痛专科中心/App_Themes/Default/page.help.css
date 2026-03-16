@@ -1,0 +1,19 @@
+﻿.popup{
+    padding: 40px 20px 10px;
+}
+.popup .logo{
+    display: block;
+    margin: 0 auto 40px;
+}
+.popup .sys-tit{
+    margin-bottom: 10px;
+    line-height: 20px;
+}
+.popup .build{
+   margin-bottom: 5px;
+   line-height: 18px;
+}
+.popup .copy{
+   color: #999;
+   line-height: 18px;
+}

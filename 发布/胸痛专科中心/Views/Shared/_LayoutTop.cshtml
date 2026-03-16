@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = Resources.AppName;
+    ViewBag.CopyRight = Resources.CopyRight;
+    ViewBag.Version = Resources.AppVersion;
+}
+<script>
+    ///* 二级导航收起展开方式 */
+    //$(function () {
+    //    //页面中的DOM已经装载完成时，执行的代码
+    //    function domHover(domObj) {
+    //        domObj.hover(function () {
+    //            $(this).children("div").stop(true, true).slideDown("fast");
+    //        }, function () {
+    //            $(this).children("div").stop(true, true).slideUp("fast");
+    //        });
+    //    }
+    //    domHover($(".module-user"));
+
+    //    //注销登录
+    //    $("#logOut").click(function () {
+    //        window.location.href = "/Account/Logout/";
+    //    });
+
+    //    //菜单点击
+    //    $("ul.nav_menu li:not(.module-user)").click(function () {
+    //        var url = $(this).attr("url");
+    //        if (typeof url == 'undefined' || url == "") {
+
+    //        } else if (url.indexOf("http://") == 0) {
+
+    //            window.open(url);
+    //        } else {
+    //            window.location.href = url;
+    //        }
+    //    });
+
+    //    //修改密码
+    //    $("#modifyPassword").click(function () {
+    //        $.post('/Account/ModifyPasswordView', {}, function (str) {
+    //            layer.open({
+    //                type: 1,
+    //                title: '修改密码',
+    //                maxmin: false,
+    //                shadeClose: false, //点击遮罩关闭层
+    //                area: ['400px', '300px'],
+    //                content: str,
+    //            });
+    //        });
+
+    //    });
+
+    //    //帮助
+    //    $("#acrHelp").click(function (e) {
+    //        layer.open({
+    //            type: 2,
+    //            title: false,
+    //            btn: false,
+    //            maxmin: false,
+    //            shadeClose: false, //点击遮罩关闭层
+    //            area: ['340px', '270px'],
+    //            content: '../Account/Help'
+    //        });
+    //    });
+    //});
+    
+</script>
+<h1>@ViewBag.Title<em>@ViewBag.Version</em></h1>
+<div class="nav">
+    <ul class="nav_menu">        
+        <li class="module-user">
+            <s class="menu-icon-user"></s>            
+            <a title="@Model.CurrentUser.LoginName"><nobr>@Model.CurrentUser.Name</nobr></a>
+            <div>
+                @*<a id="sysMessage">系统消息</a>*@
+                <a id="modifyPassword">修改密码</a>
+                @*<a id="acrHelp" class="help">帮助</a>*@
+                <a id="logOut">退出</a>
+            </div>
+        </li>
+    </ul>
+</div>

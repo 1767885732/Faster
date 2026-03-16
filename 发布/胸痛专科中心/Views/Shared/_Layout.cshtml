@@ -1,0 +1,104 @@
+﻿@using DoCare.Framework.Extension;
+@using DoCare.CPC;
+@using DoCare.CPC.Util;
+
+@{
+    ViewBag.Title = Resources.AppName;
+    ViewBag.Version = Resources.AppVersion;
+    ViewBag.CopyRight = Resources.CopyRight;
+    var url = "/" + ViewContext.RouteData.Values["controller"] + "/" + ViewContext.RouteData.Values["action"];
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @*<link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />*@
+    <meta name="viewport" content="width=device-width" />
+    <link href=@Url.Random("~/App_Themes/Default/global.css") rel="stylesheet" />
+    <link href=@Url.Random("~/App_Themes/Default/frame.css") rel="stylesheet" />
+    <link href=@Url.Random("~/App_Themes/Default/control.css") rel="stylesheet" />
+    <link href="~/App_Themes/Default/fonts/iconfont.css" rel="stylesheet" />
+    <script src="~/Scripts/docare/main.js"></script>
+    <script src="~/Scripts/docare/moment.js"></script>
+    <script src="~/Scripts/docare/toolkits.js"></script>
+    <script src="~/Scripts/extension/vue.js"></script>
+    <link href="~/Scripts/extension/el/index.css" rel="stylesheet" />
+    <script src="~/Scripts/extension/el/index.js"></script>
+    <script src="~/Scripts/extension/axios.min.js"></script>
+    <script src="~/Scripts/extension/polyfill.min.js"></script>
+    <script src="~/Scripts/extension/qs.js"></script>
+
+
+    
+
+    @*<link href="~/App_Themes/New/bootstrap.min.css" rel="stylesheet" />*@
+    <link href="~/App_Themes/New/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/App_Themes/New/ionicons.min.css" rel="stylesheet" />
+    @*<link href="~/App_Themes/New/AdminLTE.css" rel="stylesheet" />*@
+    @*<link href="~/App_Themes/New/_all-skins.min.css" rel="stylesheet" />
+    <script src="~/App_Themes/New/jquery.min.js"></script>
+    <script src="~/App_Themes/New/bootstrap.min.js"></script>
+    <script src="~/App_Themes/New/fastclick.js"></script>*@
+    @*<script src="~/App_Themes/New/adminlte.min.js"></script>*@
+    @*<script src="~/App_Themes/New/demo.js"></script>*@
+
+
+    @RenderSection("Head", false)
+</head>
+<body>
+    <div style="width:100%" id="main-layout">
+        <div class="header">
+            <h1>@ViewBag.Title<em>@ViewBag.Version</em></h1>
+            <div class="navigator">
+                <ul id="main_menu">
+                    <li onclick="onMenuClick(this, '/DataManage/Index')" id="mnu_datamanage">
+            <s class="fa  fa-flickr"></s>
+            <a href="javascript:void(0)">数据管理</a>
+        </li>
+
+                    @*<li onclick="onMenuClick(this, '/DataStatistics/Index')" id="mnu_datastatistics">
+            <s class="specialty docare_statistical_analysis"></s>
+            <a href="javascript:void(0)">数据统计</a>
+        </li>*@
+                    <li onclick="onMenuClick(this, '/DataStatistics/Index')" id="mnu_datastatistics">
+            <s class="fa fa-bar-chart"></s>
+            <a href="javascript:void(0)">数据统计</a>
+        </li>
+        @if (MenuUtil.HasPermission("CPC_MNU_SS"))
+        {
+            <li onclick="onMenuClick(this, '/SystemSetting/Index')" id="mnu_systemsetting">
+                <s class="fa fa-gear"></s>
+                <a href="javascript:void(0)" target="_blank">系统设置</a>
+            </li>
+        }
+
+
+                    @*<li onclick="onMenuClick(this, '/DataManage/Index')" id="mnu_datamanage">
+                        <s class="fa fa-dropbox"></s>
+                        <a href="javascript:void(0)">胸痛数据</a>
+                    </li>*@
+
+                    <li class="module-user ">
+                        <s class="fa fa-user"></s>
+                        <a title="docare"><nobr id="user_name"></nobr></a>
+                        <div id="function_list">
+                            <a id="modifyPassword" href="/Account/Change" target="_blank">修改密码</a>
+                            <a id="logOut" href="/Account/LogOut">退出</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main-content">
+            @RenderBody()
+        </div>
+        <div class="footer">
+            <div height="30" colspan="2" align="center" valign="middle">
+                @ViewBag.CopyRight
+            </div>
+        </div>
+    </div>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="GRACE" Title="危险评分" >
+    <Group>
+      <RadioBox Code="GRACE001" Title="年龄" Desc="">
+        <Option Id="1" Text="＜ 30岁" Score="0"/>
+        <Option Id="2" Text="30 ~ 39岁" Score="8"/>
+        <Option Id="3" Text="40 ~ 49岁" Score="25"/>
+        <Option Id="4" Text="50 ~ 59岁" Score="41"/>
+        <Option Id="5" Text="60 ~ 69岁" Score="58"/>
+        <Option Id="6" Text="70 ~ 79岁" Score="75"/>
+        <Option Id="7" Text="80 ~ 89岁" Score="91"/>
+      </RadioBox>
+      <RadioBox Code="GRACE002" Title="心率" Desc="">
+        <Option Id="1" Text="＜50 次/min" Score="0"/>
+        <Option Id="2" Text="50 - 69 次/min" Score="3"/>
+        <Option Id="3" Text="70 - 89 次/min" Score="9"/>
+        <Option Id="4" Text="90 - 109 次/min" Score="15"/>
+        <Option Id="5" Text="110 - 149 次/min" Score="24"/>
+        <Option Id="6" Text="150 - 199 次/min" Score="38"/>
+        <Option Id="7" Text="≥200 次/min" Score="46"/>
+      </RadioBox>
+      <RadioBox Code="GRACE003" Title="收缩压" Desc="">
+        <Option Id="1" Text="＜80 mmHg" Score="58"/>
+        <Option Id="2" Text="80 - 99 mmHg" Score="53"/>
+        <Option Id="3" Text="100 - 119 mmHg" Score="43"/>
+        <Option Id="4" Text="120 - 139 mmHg" Score="34"/>
+        <Option Id="5" Text="140 - 159 mmHg" Score="24"/>
+        <Option Id="6" Text="160 - 199 mmHg" Score="10"/>
+        <Option Id="7" Text="≥200 mmHg" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="GRACE004" Title="肌酐" Desc="">
+        <Option Id="1" Text="0 - 0.39 mg/dL" Score="1"/>
+        <Option Id="2" Text="0.4 - 0.79 mg/dL" Score="4"/>
+        <Option Id="3" Text="0.8 - 1.19 mg/dL" Score="7"/>
+        <Option Id="4" Text="1.2 - 1.59 mg/dL" Score="10"/>
+        <Option Id="5" Text="1.6 - 1.99 mg/dL" Score="13"/>
+        <Option Id="6" Text="2.0 - 3.99 mg/dL" Score="21"/>
+        <Option Id="7" Text="≥4 mg/dL" Score="28"/>
+      </RadioBox>
+      <RadioBox Code="GRACE005" Title="Killip等级" Desc="">
+        <Option Id="1" Text="Ⅰ级" Score="0"/>
+        <Option Id="2" Text="Ⅱ级" Score="20"/>
+        <Option Id="3" Text="Ⅲ级" Score="39"/>
+        <Option Id="4" Text="Ⅳ级" Score="59"/>
+      </RadioBox>
+      <CheckBox Code="GRACE006" Title="危险因素" Desc="">
+        <Option Id="1" Text="入院时心脏骤停" Score="39"/>
+        <Option Id="2" Text="心电图ST段改变" Score="28"/>
+        <Option Id="3" Text="心肌坏死标志物升高" Score="14"/>
+      </CheckBox>
+    </Group>
+  </Template>
+</Config>

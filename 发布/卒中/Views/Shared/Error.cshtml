@@ -1,0 +1,39 @@
+﻿@using DoCare.Framework.Extension
+@{
+    Layout = null;
+}
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>错误页</title>
+    <link rel="stylesheet" type="text/css" href=@Url.GetCssJsUrl("~/App_Themes/Default/global.css")>
+    <link rel="stylesheet" type="text/css" href=@Url.GetCssJsUrl("~/App_Themes/Default/control.css")>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script>
+        $(function () {
+            $("#returnIndex").click(function () {
+                var top = getTopWindow();
+                top.location.href = '/Home/Index';
+            });
+        });
+        function getTopWindow() {
+            var p = window;
+            while (p != p.parent) {
+                p = p.parent;
+            }
+            return p;
+        }
+    </script>
+</head>
+<body>
+    <div id="error">
+        <div class="error-content">
+            <img src="~/App_Themes/Default/img/common/error.png">
+            <h2>抱歉，您访问的页面不存在！您可以<a id="returnIndex">返回首页</a>或<a href="javascript:history.go(-1);">返回上级页面</a></h2>
+        </div>
+    </div>
+</body>
+</html>

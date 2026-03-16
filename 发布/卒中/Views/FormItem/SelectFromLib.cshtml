@@ -1,0 +1,19 @@
+﻿@using DoCare.Framework.Extension;
+@using DoCare.CRF.Form.Data.Item;
+@{
+    Layout = null;
+}
+<script src=@Url.GetCssJsUrl("~/Scripts/Stroke/FormItem/SelectFromLib.js")></script>
+@Html.Hidden("count", (string)@ViewBag.Count)
+<input id="selectAll" type="checkbox" style="width: 16px; height: 17px; margin: 5px 5px 5px 20px;" />
+<span style="font-size: 14px;">全选</span>
+<div class="checkbox_selection_block">
+
+</div>
+<div id="pn"></div>
+<div class="clearfix"></div>
+<div class="btn_block">
+    <a id="select_ok" href="javaScript:;" class="btn blue">确认</a>
+    <a id="select_cancel" href="javaScript:;" target="_self" class="btn orange">取消</a>
+</div>
+

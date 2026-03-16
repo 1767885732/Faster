@@ -1,0 +1,144 @@
+﻿@using DoCare.Framework.Extension;
+@{
+    Layout = "~/Views/Shared/_LayoutExtend.cshtml";
+}
+<link href=@Url.Random("~/App_Themes/Default/page.check.css") rel="stylesheet" />
+<style type="text/css">
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
+<div id="examination" v-cloak>
+    <el-card v-if="HasData" class="box-card" v-for="(em,index) in examinations" v-bind:key="index">
+        <div class="event">
+            <div class="tit">
+                <h1>检查报告单</h1>
+            </div>
+            <div class="event-head">
+                <dl class="left">
+                    <dt>检查项目:</dt>
+                    <dd>{{em.Type|emptyReplace}}</dd>
+                </dl>
+                <dl class="right">
+                    <dt>检查号:</dt>
+                    <dd>
+                        {{em.Code|emptyReplace}}
+                        <img src="~/App_Themes/Default/img/icon/refresh.png" style="width:20px;cursor:pointer;" v-on:click="getExamination('true')" />
+                    </dd>
+                </dl>
+            </div>
+            <div class="event-info">
+                <dl>
+                    <dt>姓名</dt>
+                    <dd>{{em.PatientName|emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>性别</dt>
+                    <dd>{{em.PatientGender|emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>年龄</dt>
+                    <dd>{{em.PatientAge|emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>科别</dt>
+                    <dd>{{em.VisitOrgName|emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>检查类型</dt>
+                    <dd>{{em.Type|emptyReplace}}</dd>
+                </dl>
+            </div>
+            <div class="event-con">
+                <div class="check-img" v-if="em.ImageUrl!=''&&em.ImageUrl!=null">
+                    @*<a><img src="{{em.ImageUrl}}"></a>*@
+                </div>
+                <div class="check-words">
+                    <h3>检查部位</h3>
+                    <p>{{em.BodyParts|emptyReplace}}</p>
+                </div>
+                <div class="check-words">
+                    <h3>检查方法</h3>
+                    <p>{{em.TakeWay|emptyReplace}}</p>
+                </div>
+                <div class="check-words">
+                    <h3>影像表现</h3>
+                    <p>{{em.SymptomDesc|emptyReplace}}</p>
+                </div>
+                <div class="check-words">
+                    <h3>诊断意见</h3>
+                    <p>{{em.Conclusion|emptyReplace}}</p>
+                </div>
+            </div>
+            <div class="event-foot">
+                <dl>
+                    <dt>检查日期:</dt>
+                    <dd>{{em.StartTime|dateFmt|emptyReplace}}</dd>
+                </dl>
+                <dl v-if="em.PerformedBy == '放射科'">
+                    <dt>审核日期:</dt>
+                    <dd>{{em.VerifiedTime|dateFmt|emptyReplace}}</dd>
+                </dl>
+                <dl v-if="em.PerformedBy == '超声科'">
+                    <dt>报告日期:</dt>
+                    <dd>{{em.Time|dateFmt|emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>报告医师:</dt>
+                    <dd>{{em.Doctor|emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>复核医师:</dt>
+                    <dd>{{em.AuditDoctor|emptyReplace}}</dd>
+                </dl>
+            </div>
+        </div>
+    </el-card>
+    <div v-if="!HasData">
+        <div id="error">
+            <div class="error-content">
+                <img src="~/App_Themes/Default/img/common/fail.png" />
+                <h2>未查询到患者相关信息！您可以<a href="javascript:;" v-on:click="getExamination('true')">刷新重试</a>。</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Views/ExtendView/ExtendViewMixin.js"></script>
+<script>
+var patientNo = '@ViewBag.PatientNo';
+var org = '@ViewBag.Org';
+
+new Vue({
+    el: "#examination",
+    mixins: [extendMixin],
+    data: function () {
+        return {
+            patientNo: patientNo,
+            org: org,
+            examinations: [{}]
+        }
+    },
+    methods: {
+        getExamination: function (isRefresh) {
+            var _this = this;
+            axios.get("/ExtendView/GetExamination?patientNo=" + this.patientNo + "&org=" + this.org + "&isRefresh=" + isRefresh, {}).then(function (res) {
+                if (res.data.IsSuccess) {
+                    _this.examinations = res.data.Data;
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
+        }
+    },
+    mounted: function () {
+        this.getExamination('false');
+    },
+    computed: {
+        HasData: function () {
+            return this.examinations.length > 0
+        }
+    }
+})
+</script>

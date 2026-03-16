@@ -1,0 +1,11 @@
+﻿@if (IsSectionDefined("search"))
+{
+    <div class="page-header">
+        @RenderSection("search", false)
+    </div>
+}
+@RenderBody()
+
+<script type="text/javascript">
+    adminPlugin.tableInit();
+</script>

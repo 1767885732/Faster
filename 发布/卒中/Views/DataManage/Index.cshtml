@@ -1,0 +1,630 @@
+﻿@using DoCare.ToolKit
+
+@{
+    Layout = "~/Views/Shared/_LayoutContent.cshtml";
+}
+<link href="~/App_Themes/Default/progress_bar.css" rel="stylesheet" />
+<link href="~/App_Themes/Default/print.patient.css" rel="stylesheet" />
+<link href="~/Scripts/ui-grid/ui-grid.min.css" rel="stylesheet" />
+<script src="~/Scripts/ui-grid/ui-grid.js"></script>
+<link href="~/Scripts/pagination/tm.pagination.css" rel="stylesheet" />
+<script src="~/Scripts/pagination/tm.pagination.js"></script>
+<script src="~/Scripts/Export/ExportHandle.js"></script>
+<style>
+    .grid {
+        height: calc(100% - 41px);
+        height: -moz-calc(100% - 41px);
+        height: -webkit-calc(100% - 41px);
+    }
+
+    table {
+        border-collapse: separate !important;
+    }
+
+    .datetime {
+        cursor: pointer;
+        background-image: url(/App_Themes/Default/img/icon/datetime.png);
+        background-position: right center;
+        background-repeat: no-repeat;
+    }
+
+        .datetime:hover {
+            cursor: pointer;
+            background-image: url(/App_Themes/Default/img/icon/datetime-hover.png);
+        }
+
+    .main-s1 {
+        height: 28px;
+        margin-right: 20px;
+    }
+  
+</style>
+<script>
+    var HospitalList =  @Html.Raw(JsonKit.Serialize(ViewBag.OrgList));
+    var ComingTypeList =  @Html.Raw(JsonKit.Serialize(ViewBag.ComingTypeList));
+    var diagnosisTypeArray = @Html.Raw(JsonKit.Serialize(ViewBag.DiagnosisTypeList));
+    var treatmentDecisionArray = @Html.Raw(JsonKit.Serialize(ViewBag.TreatmentDecisionList));
+    var diagnosisTypeArrayJsonStr = JSON.stringify(diagnosisTypeArray);
+    var treatmentDecisionArrayJsonStr = JSON.stringify(treatmentDecisionArray);
+    var genderArray = @Html.Raw(JsonKit.Serialize(ViewBag.Genders));
+    var genderArrayJsonStr = JSON.stringify(genderArray);
+    var permission_TimeLineGenerate = @(ViewBag.Permission_TimeLineGenerate.ToString().ToLower());
+    var permission_Add = @(ViewBag.Permission_Add.ToString().ToLower());
+    var permission_Edit = @(ViewBag.Permission_Edit.ToString().ToLower());
+    var permission_Delete = @(ViewBag.Permission_Delete.ToString().ToLower());
+    var permission_Detail = @(ViewBag.Permission_Detail.ToString().ToLower());
+    var permission_Archive = @(ViewBag.Permission_Archive.ToString().ToLower());
+    var permission_UndoCompleted= @(ViewBag.Permission_UndoCompleted.ToString().ToLower());
+    var permission_Print = @(ViewBag.Permission_Print.ToString().ToLower());
+    var permission_Export = @(ViewBag.Permission_Export.ToString().ToLower());
+    var orgCode = "@ViewBag.OrgCode";
+    var myapp = angular.module('ngAppDataManageIndex', ['ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'tm.pagination', 'mdsdFilter', 'mdsdDirective','ngDataManageIndexExport']);
+    myapp.controller('MainController', ['$scope', 'uiGridConstants',function ($scope, uiGridConstants) {
+
+        //权限配置
+        $scope.isTimeLineGenerate = permission_TimeLineGenerate;
+        $scope.permissionAdd = permission_Add;  //新增
+        $scope.permissionEdit = permission_Edit;  //编辑
+        $scope.permissionDelete = permission_Delete;  //删除
+        $scope.permissionDetail = permission_Detail;  //查看
+        $scope.permissionArchive = permission_Archive;  //归档
+        $scope.permissionUndoCompleted = permission_UndoCompleted;  //撤销已完成
+        $scope.permissionPrint = permission_Print; // 打印
+        $scope.permissionExport = permission_Export; // 导出
+
+        $scope.hospitalList = HospitalList;
+        $scope.comingTypeList = ComingTypeList;
+        $scope.diagnosis = diagnosisTypeArray;
+        //分页配置
+        $scope.paginationConf = {
+            currentPage: 1,
+            totalItems: 0,
+            itemsPerPage: 20,
+            pagesLength: 9,
+            showJump:false,
+            perPageOptions: [20, 50, 100],
+            onChange: function(){
+                $scope.searchParams.page = this.currentPage;
+                $scope.searchParams.rows = this.itemsPerPage;
+                $scope.search();
+            }
+        };
+        //查询参数
+        $scope.searchParams = {
+            page:$scope.paginationConf.currentPage,
+            rows:$scope.paginationConf.itemsPerPage,
+            sort: "RegistDate",
+            order: "desc",
+            Name: "",
+            IdCardNo: "",
+            Type:"",
+            StartDate: "",
+            EndDate: "",
+            DiagnosisType:"",
+            VisitingNo: "",
+            ComingType: "",
+            OrgCode: "",
+            CreateName: ""
+        };
+        $scope.searchParams.OrgCode = ($scope.hospitalList!=null&&$scope.hospitalList.length==1)?$scope.hospitalList[0].Value:"";
+        //切换选项卡
+        $scope.tabChange = function ($event, type) {
+            var dom = $($event.target);
+            if (!$(dom).hasClass("hover"))
+            {
+                dom.siblings().removeClass("hover");
+                dom.addClass("hover");
+                $scope.paginationConf.currentPage = 1;
+                $scope.searchParams.page = 1;
+                $scope.searchParams.Type = type;
+                $scope.search();
+            }
+        }
+
+        //点击查询
+        $scope.searchClick = function(){
+            $scope.paginationConf.currentPage = 1;
+            $scope.searchParams.page = 1;
+            $scope.search();
+        }
+
+        //搜索
+        $scope.search = function () {
+            $.ajax({
+                type: 'POST',
+                data: $scope.searchParams,
+                datatype: "json",
+                url: AddUrlPrefix("/DataManage/QueryPatients"),
+                success: function (data) {
+                    if (data.IsSuccess) {
+                        $scope.$apply(function() {
+                            $scope.gridOptions.data = data.Data.rows;
+                            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+                            $scope.paginationConf.totalItems =  data.Data.total;
+                        });
+                    } else {
+                        console.log("请求列表数据失败:" + data.Message);
+                    }
+                }
+            });
+        }
+
+        //批量删除
+        $scope.batchDelete = function () {
+            var selectRows = $scope.gridApi.selection.getSelectedRows();
+            var ids = selectRows.map(function (entity) {
+                return entity.Id;
+            })
+
+            if (ids.length == 0) {
+                layer.alert("请选择要删除的记录", { title: '友情提示', icon: 0, closeBtn: 0, move: false });
+                return;
+            }
+            $scope.delete(ids);
+        }
+
+        //批量转绿通
+        $scope.batchGreen = function () {
+            var selectRows = $scope.gridApi.selection.getSelectedRows();
+            var ids = selectRows.map(function (entity) {
+                return entity.Id;
+            })
+
+            if (ids.length == 0) {
+                layer.alert("请选择要转绿通的记录", { title: '友情提示', icon: 0, closeBtn: 0, move: false });
+                return;
+            }
+            $scope.toGreen(ids);
+        }
+
+        //转绿通
+        $scope.toGreen = function (ids) {
+            debugger;
+            var confirmMsg = "确认转绿通吗？";
+            layer.confirm(confirmMsg, { icon: 3, title: '提示' }, function (index) {
+                $.ajax({
+                    type: 'POST',
+                    data: { ids: ids },
+                    datatype: "json",
+                    url: AddUrlPrefix("/DataManage/ToGreen/"),
+                    success: function (data) {
+                        if (data.IsSuccess) {
+                            layer.alert(data.Message,{title:'温馨提示', icon:1, closeBtn: 0, move: false}, function(index){
+                                layer.close(index);
+                                $scope.search(); //刷新列表
+                            });
+                        } else {
+                            layer.alert(data.Message, { title: '转绿通失败', icon: 2, closeBtn: 0, move: false });
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        }
+        $scope.deleteById = function (id) {
+            $scope.delete([id]);
+        }
+        //删除操作
+        $scope.delete = function (ids) {
+            debugger;
+            layer.confirm("确认删除吗？", { icon: 3, title: '提示' }, function (index) {
+                $.ajax({
+                    type: 'POST',
+                    data: { ids: ids },
+                    datatype: "json",
+                    url: AddUrlPrefix("/DataManage/DeletePatients/"),
+                    success: function (data) {
+                        if (data.IsSuccess) {
+                            layer.alert(data.Message,{title:'温馨提示', icon:1, closeBtn: 0, move: false}, function(index){
+                                layer.close(index);
+                                $scope.search(); //刷新列表
+                            });
+                        } else {
+                            layer.alert(data.Message, { title: '删除失败', icon: 2, closeBtn: 0, move: false });
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        }
+
+        //新增
+        $scope.create = function () {
+            $.post('/DataManage/CreatePatient', function (str) {
+                layer.open({
+                    zIndex: layer.zIndex,
+                    type: 1,
+                    title: '新增病例',
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1000px', '500px'],
+                    content: str,
+                });
+            });
+        }
+        //新增
+        //$scope.create = function () {
+        //    window.open(AddUrlPrefix("/DataManage/AddPatient"));
+        //}
+
+        //编辑
+        $scope.edit = function(registId){
+            window.open(AddUrlPrefix("/DataManage/EditPatient?registId=" + registId));
+        }
+
+        //时间轴数据初始化
+        $scope.timeLineGenerate = function() {
+            $.ajax({
+                type: 'POST',
+                url: AddUrlPrefix("/DataManage/TimeLineGenerate/"),
+                success: function (data) {
+                    if (data.IsSuccess) {
+                        alert("时间轴数据初始化成功");
+                    } else {
+                        console.log("时间轴数据初始化失败:" + data.Message);
+                    }
+                }
+            });
+        }
+
+        //归档
+        $scope.batchArchive = function () {
+            var selectRows = $scope.gridApi.selection.getSelectedRows();
+            var ids = selectRows.map(function(entity){
+                return entity.Id;
+            })
+
+            if (ids.length == 0 || ids.length > 1) {
+                layer.alert("请选择一条要归档的记录！", { title: '提示', icon: 0, closeBtn: 0, move: false });
+                return;
+            }
+
+            layer.confirm("确认归档吗？", { icon: 3, title: '提示' }, function (index) {
+                $.ajax({
+                    type: 'POST',
+                    data: { id: ids[0] },
+                    datatype: "json",
+                    url: AddUrlPrefix("/DataManage/Archive/"),
+                    success: function (data) {
+                        if (data.IsSuccess) {
+                            $scope.search();//刷新列表
+                        } else {
+                            layer.alert(data.Message, { title: '友情提示', icon: 2, closeBtn: 0, move: false });
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        }
+
+        //时间轴
+        $scope.timeline = function(id){
+
+            $.post('/DataManage/GetTimeline', {id : id}, function (str) {
+                layer.open({
+                    type: 1,
+                    title: '时间轴',
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1000px', '480px'],
+                    content: str,
+                });
+            });
+        }
+
+        //列表选项
+        $scope.gridOptions = {
+            useExternalSorting: true,
+            enableRowSelection: true,
+            enableColumnResizing:true,
+            enableColumnMenus:false,  //菜单栏不现实下拉菜单
+            columnDefs: [
+              { field: 'ClinicNo',displayName:'病例号',width:'10%', enableSorting: false},
+              { field: 'Name',displayName:'姓名',width:'6%', suppressRemoveSort:true,sortDirectionCycle:[uiGridConstants.ASC, uiGridConstants.DESC] },
+              { field: 'Age',displayName:'年龄',width:'5%', enableSorting: false  },
+              { field: 'Gender',displayName:'性别',width:'5%', enableSorting: false ,cellFilter: 'getValue:' + genderArrayJsonStr },
+              { field: 'PhoneNo1',displayName:'联系方式',width:'8%', enableSorting: false,cellTemplate: contactTemplate(), },
+              { field: 'RegistDate', displayName: '登记时间', width: '8%', sort: { direction: uiGridConstants.DESC, priority: 1 }, suppressRemoveSort: true, sortDirectionCycle: [uiGridConstants.DESC, uiGridConstants.ASC], cellFilter: 'dateFmt' },
+              { field: 'DiseaseTime', displayName: '发病时间', width: '8%', suppressRemoveSort: true, sortDirectionCycle: [uiGridConstants.DESC, uiGridConstants.ASC], cellFilter: 'dateFmt' },
+              { field: 'DiagnosisType', displayName: '诊断类型', width: orgCode!=""?'15%':'12%', enableSorting: false, cellFilter: 'getValue:' + diagnosisTypeArrayJsonStr },
+              //{ field: 'TreatmentDecision', displayName: '治疗决策', width: '8%', enableSorting: false, cellFilter: 'getValue:' + treatmentDecisionArrayJsonStr },
+              { field: 'OrgName', displayName: '医院名称', width: '13%', enableSorting: false,visible: orgCode!=""?false:true },
+              //{ field: 'CreateAccount', displayName: '创建者', width: '7%', enableSorting: false },
+              {
+                  field: 'Integrity', displayName: '完整度', width: '12%', enableSorting: false , align: 'center', cellTemplate: formatterTemplate(),
+              },
+              { field: 'Id', displayName: '操作', width: '13%', enableSorting: false, cellTemplate: operatorTemplate(), },
+            ],
+            onRegisterApi: function(gridApi) {
+                $scope.gridApi = gridApi;
+
+                $scope.gridApi.core.on.sortChanged( $scope, function ( grid, sortColumns ){//监听排序条件的改变
+                    if (sortColumns.length > 1) {
+                        // We have more than one sort. Kill the first one.
+                        // If this works we'll only ever have 0, 1 or 2 sortColumns,
+                        // and only ever 2 for the lifetime of this method.
+                        var column = null;
+                        for (var j = 0; j < grid.columns.length; j++) {
+                            if (grid.columns[j].field === sortColumns[0].field) {
+                                column = grid.columns[j];
+                                break;
+                            }
+                        }
+                        if (column) {
+                            sortColumns[1].sort.priority = 1; // have to do this otherwise the priority keeps going up.
+                            column.unsort();
+                        }
+                    }
+                    lastSort = sortColumns[sortColumns.length - 1];
+                    $scope.searchParams.sort = lastSort.field;
+                    $scope.searchParams.order = lastSort.sort.direction;
+                    $scope.search();  //调用搜索
+                });
+            }
+
+        };
+
+        function formatterTemplate() {
+            var html = '<section class="table_progress" style="margin-top:8px;">';
+            html += '<div class="progress" style="width:80%">'
+            html += '<span class="{{row.entity.Integrity <30 ? \'red\' : row.entity.Integrity <60 ? \'yellow\' : row.entity.Integrity <80 ? \'blue\' : \'green\'}}" style="width:{{row.entity.Integrity}}%;"></span>';
+            html += '<b style="padding-left: 8px;">{{row.entity.Integrity}}%</b>';
+            html += '</div>';
+            html += '</section>';
+            return html;
+        }
+
+        //联系方式模板
+        function contactTemplate(){
+            var html =  "<div class='ui-grid-cell-contents'>{{row.entity.PhoneNo1 ? row.entity.PhoneNo1 : row.entity.PhoneNo2 ? row.entity.PhoneNo2 : row.entity.TelNo}}</div>";
+            return html;
+        }
+
+        $scope.RevokeArchive = function (id) {
+
+            layer.confirm("确认撤销归档吗？", { icon: 3, title: '提示' }, function (index) {
+                $.ajax({
+                    type: 'POST',
+                    data: { id: id },
+                    datatype: "json",
+                    url: AddUrlPrefix("/DataManage/RevokeArchive"),
+                    success: function (data) {
+                        if (data.IsSuccess) {
+                            $scope.search();//刷新列表
+                        } else {
+                            layer.alert(data.Message, { title: '友情提示', icon: 2, closeBtn: 0, move: false });
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        }
+
+        $scope.UndoCompleted = function (id) {
+
+            layer.confirm("确认撤销已完成吗？", { icon: 3, title: '提示' }, function (index) {
+                $.ajax({
+                    type: 'POST',
+                    data: { id: id },
+                    datatype: "json",
+                    url: AddUrlPrefix("/DataManage/UndoCompleted"),
+                    success: function (data) {
+                        if (data.IsSuccess) {
+                            $scope.search();//刷新列表
+                        } else {
+                            layer.alert(data.Message, { title: '友情提示', icon: 2, closeBtn: 0, move: false });
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        }
+
+        $scope.CanEdit = function (isFiling) {
+            return $scope.permissionEdit && isFiling != "1";
+        }
+        $scope.CanRead = function (isFiling) {
+            return $scope.permissionDetail && !$scope.CanEdit(isFiling);
+        }
+        $scope.CanDelete = function (isFiling,isCompleted) {
+            return $scope.permissionDelete && isFiling != "1" && isCompleted != '1';
+        }
+        $scope.CanRevoke = function (isFiling){
+            return $scope.permissionArchive && isFiling == '1';
+        }
+        $scope.CanUndoCompleted = function (isCompleted){
+            return $scope.permissionUndoCompleted && isCompleted == '1';
+        }
+        //操作模板
+        function operatorTemplate(){
+            var html = '<div class="ui-grid-cell-contents">';
+            //html += '<a style="margin-left:10px;" ng-click="grid.appScope.timeline(row.entity.Id)"><img src="/App_Themes/Default/img/icon/opt-icon-timeline.png"/>时间轴</a>';
+                        html += '<a style="margin-left:10px;" ng-click="grid.appScope.timeline(row.entity.Id)"><img src="/App_Themes/Default/imgt/Fill 166.png"/>时间轴</a>';
+            //html += '<a style="margin-left:10px;" ng-show="grid.appScope.CanEdit(row.entity.IsFiling)" ng-click="grid.appScope.edit(row.entity.Id)"><img src="/App_Themes/Default/img/icon/opt-icon-edit.png"/>编辑</a>';
+                        html += '<a style="margin-left:10px;" ng-show="grid.appScope.CanEdit(row.entity.IsFiling)" ng-click="grid.appScope.edit(row.entity.Id)"><img src="/App_Themes/Default/imgt/Fill 214.png"/>编辑</a>';
+            html += '<a style="margin-left:10px;" ng-show="grid.appScope.CanRead(row.entity.IsFiling)" ng-click="grid.appScope.edit(row.entity.Id)"><img src="/App_Themes/Default/img/icon/opt-icon-edit.png"/>详情</a>';
+            //html += '<a style="margin-left:10px;" ng-show="grid.appScope.CanDelete(row.entity.IsFiling,row.entity.IsCompleted)" ng-click="grid.appScope.deleteById(row.entity.Id)"><img src="/App_Themes/Default/img/icon/opt-icon-del.png"/>删除</a>';
+                        html += '<a style="margin-left:10px;" ng-show="grid.appScope.CanDelete(row.entity.IsFiling,row.entity.IsCompleted)" ng-click="grid.appScope.deleteById(row.entity.Id)"><img src="/App_Themes/Default/imgt/tarsh_L.png"/>删除</a>';
+            html += '<a style="margin-left:10px;" ng-show="grid.appScope.CanUndoCompleted(row.entity.IsCompleted)" ng-click="grid.appScope.UndoCompleted(row.entity.Id)"><img src="/App_Themes/Default/img/icon/opt-icon-follow.png"/>撤销已完成</a>';
+            html += '<a style="margin-left:10px;" ng-show="grid.appScope.CanRevoke(row.entity.IsFiling)" ng-click="grid.appScope.RevokeArchive(row.entity.Id)"><img src="/App_Themes/Default/img/icon/opt-icon-follow.png"/>撤销归档</a>';
+            html += '</div>';
+
+            return html;
+        }
+
+    }]);
+    angular.bootstrap($("#container"), ['ngAppDataManageIndex']);
+    var tempData = { isEdit: false };
+</script>
+<script src="~/Scripts/Export/ExportHandle.js"></script>
+<div id="container" ng-app="ngAppDataManageIndex" ng-controller="MainController" v-cloak>
+    <div class="side-search2" style="padding-top:60px; background-color:azure">
+        <el-row>
+
+            <ul style="margin-top:40px">
+                <li onclick="onMenuClick(this, '/DataManage/Index')" id="mnu_datamanage" style=" padding:32px;
+        background:url('../../App_Themes/Default/imgt//数据管理.png')  no-repeat;">
+                </li>
+            </ul>
+            <label style="margin-left:5px">数据管理</label>
+
+        </el-row>
+        <el-row>
+            <ul style="margin-top:40px">
+                <li onclick="onMenuClick(this, '/Report/Index')" id="mnu_datastatistics" style=" padding:32px;
+        background:url('../../App_Themes/Default/imgt/质控管理.png')  no-repeat;">
+                </li>
+            </ul>
+            <label style="margin-left:5px">质控管理</label>
+        </el-row>
+        <el-row>
+            <ul style="margin-top:40px">
+                <li onclick="onMenuClick(this, '/DataCheck/Index')" id="mnu_datastatistics" style=" padding:32px;
+        background:url('../../App_Themes/Default/imgt/数据核查.png')  no-repeat;">
+                </li>
+            </ul>
+            <label style="margin-left:5px">数据查核</label>
+        </el-row>
+        <el-row>
+            <ul style="margin-top:40px">
+                <li onclick="onMenuClick(this, '/FollowUpManage/Index')" id="mnu_datastatistics" style=" padding:32px;
+        background:url('../../App_Themes/Default/imgt/随访管理.png')  no-repeat;">
+                </li>
+            </ul>
+            <label style="margin-left:5px">随访管理</label>
+        </el-row>
+        <el-row>
+            <ul style="margin-top:40px">
+                <li onclick="onMenuClick(this, '/Setting/Index')" id="mnu_datastatistics" style=" padding:32px;
+        background:url('../../App_Themes/Default/imgt/设置管理.png')  no-repeat;">
+                </li>
+            </ul>
+            <label style="margin-left:5px">设置管理</label>
+        </el-row>
+
+
+
+
+    </div>
+
+    <div class="right-container2" style="padding-top:80px;height:100px;  background-color:azure">
+        <el-row style="display:table;width:100%">
+            <el-col class="el-col-5">
+                <label style="margin-left:22px">医院:</label>
+                <select class="main-s1" style="width:200px" ng-model="searchParams.OrgCode" ng-options="item.Value as item.Text for item in hospitalList"></select>
+            </el-col>
+            <el-col class="el-col-5">
+                <label>患者姓名:</label>
+                <input class="main-s1" style="height:25px" type="text" ng-model="searchParams.Name">
+            </el-col>
+            <el-col class="el-col-2">
+                <input class="main-s1" style="margin-right:5px" type="checkbox" ng-model="searchParams.GreenChannel" ng-checked="searchParams.GreenChannel" /><label style="display: unset; vertical-align: middle;">绿通患者</label>
+            </el-col>
+            <el-col class="el-col-4">
+                <label>病例号:</label>
+                <input class="main-s1" style="height:25px" type="text" ng-model="searchParams.VisitingNo">
+            </el-col>
+            <el-col class="el-col-6">
+                <label>诊断类型:</label>
+                <select class="main-s1" style="width:220px" ng-model="searchParams.DiagnosisType" ng-options="item.Key as item.Value for item in diagnosis"></select>
+            </el-col>
+
+        </el-row>
+        <el-row style="display:table ;width:100%;padding-top:22px">
+            <el-col class="el-col-5">
+                <label style="margin-left:10px">登记人:</label>
+                <input class="main-s1" style="height:25px;width:196px;" type="text" maxlength="32" ng-model="searchParams.CreateName">
+            </el-col>
+            <el-col class="el-col-6">
+                <label>登记时间:</label>
+                <input type="text" style="width:100px"  class="datetime main-s1" id="StartDate" ng-model="searchParams.StartDate" date-picker="{{ {dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'EndDate\')}'} | json }}" />
+                &ndash;
+                <input type="text" style="width:100px" class="datetime main-s1" id="EndDate" ng-model="searchParams.EndDate" date-picker="{{ {dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'StartDate\')}'} | json }}" />
+
+            </el-col>
+            <el-col class="el-col-5">
+                <label>来院方式:</label>
+                <select class="main-s1" style="width:207px;" ng-model="searchParams.ComingType" ng-options="item.Key as item.Value for item in comingTypeList"></select>
+            </el-col>
+            <el-col class="el-col-6">
+                <label>身份证号:</label>
+                <input type="text" class="main-s1"   style="height:25px;width:216px"   ng-model="searchParams.IdCardNo">
+            </el-col>
+            <div id="searchBtn" class="row-box">
+                <button class="btn-primary" style="width:80px" ng-click="searchClick()"><i class="fa fa-fw fa-search"></i> 查询</button>
+            </div>
+        </el-row>
+
+    </div>
+
+
+    <div class="right-container2">
+        @*<div class="container" style="padding-top:10px; height:100px;  background-color:azure">*@
+        <div class="center">
+            <div class="operating-btn top-15 right-15">
+                <button id="timeLineGenerate" class="btn-warning" ng-if="isTimeLineGenerate" ng-click="timeLineGenerate()"><i class="fa fa-bitbucket"></i> 时间轴初始化</button>
+                <button id="create" class="btn-primary" ng-show="permissionAdd" ng-click="create()"><i class="fa fa-plus"></i> 新增病例</button>
+                <button id="batchGreen" class="btn-primary" ng-show="permissionDelete" style="background-color:green"  ng-click="batchGreen()"><i class="fa fa-arrow-circle-o-right"></i> 转绿通</button>
+                <button id="batchDelete" ng-show="permissionDelete" style="background-color:red;color:white;" ng-click="batchDelete()"><i class="fa fa-trash"></i> 删除</button>
+                <button id="batchArchive" class="btn-warning" ng-show="permissionArchive" ng-click="batchArchive()" ng-if="searchParams.Type=='4'">归档</button>
+                <list-export ng-show="permissionExport"><i class="fa fa-fw fa-download"></i></list-export>
+            </div>
+            <div class="tab">
+                <a id="all" class="hover" style="font-size:18px" ng-click="tabChange($event,'')">全部</a>
+                @*<a id="green" ng-click="tabChange($event,'1')" style="color:lightgreen;">绿通</a>*@
+                <a id="uncomplete"  style="font-size:18px;color:coral" ng-click="tabChange($event,'3')">填报中</a>
+                <a id="uncomplete"  style="font-size:18px;color:green" ng-click="tabChange($event,'4')">填报完成</a>
+                <a id="filing"  style="font-size:18px;color:darkgoldenrod" ng-click="tabChange($event,'9')">已归档</a>
+            </div>
+            <div id="con-filing-1" class="tab-below">
+                <div ui-grid="gridOptions" style="font-size:15px" ui-grid-selection ui-grid-resize-columns class="grid"></div>
+                <tm-pagination conf="paginationConf"></tm-pagination>
+            </div>
+        </div>
+    </div>
+
+    @*<form class="form-common side-search2 left">
+            <div class="row-box">
+                <label>医院:</label>
+                <select ng-model="searchParams.OrgCode" ng-options="item.Value as item.Text for item in hospitalList"></select>
+            </div>
+            <div class="row-box">
+                <label>患者姓名:</label>
+                <input type="text" maxlength="32" ng-model="searchParams.Name">
+            </div>
+            <div class="row-box">
+                <input type="checkbox" ng-model="searchParams.GreenChannel" ng-checked="searchParams.GreenChannel" /><label style="display: unset; vertical-align: middle;">绿通患者</label>
+            </div>
+            <div class="row-box">
+                <label>病例号:</label>
+                <input type="text" maxlength="32" ng-model="searchParams.VisitingNo">
+            </div>
+            <div class="row-box">
+                <label>诊断类型:</label>
+                <select ng-model="searchParams.DiagnosisType" ng-options="item.Key as item.Value for item in diagnosis"></select>
+            </div>
+            <div class="row-box">
+                <label>登记人:</label>
+                <input type="text" maxlength="32" ng-model="searchParams.CreateName">
+            </div>
+            <div class="row-box text-center">
+                <label>登记时间:</label>
+                <input type="text" class="left datetime" style="width:40%;" id="StartDate" ng-model="searchParams.StartDate" date-picker="{{ {dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'EndDate\')}'} | json }}" />
+                &ndash;
+                <input type="text" class="right datetime" style="width:40%;" id="EndDate" ng-model="searchParams.EndDate" date-picker="{{ {dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'StartDate\')}'} | json }}" />
+            </div>
+            <div class="clear"></div>
+            <div class="row-box">
+                <label>来院方式:</label>
+                <select ng-model="searchParams.ComingType" ng-options="item.Key as item.Value for item in comingTypeList"></select>
+            </div>
+            <div class="row-box">
+                <label>身份证:</label>
+                <input type="text" maxlength="32" ng-model="searchParams.IdCardNo">
+            </div>
+            <div id="searchBtn" class="row-box">
+                <button class="btn-primary" ng-click="searchClick()">查询</button>
+            </div>
+        </form>*@
+
+</div>

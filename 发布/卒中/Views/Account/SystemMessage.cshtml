@@ -1,0 +1,101 @@
+﻿@{
+    Layout = null;
+}
+<link href="~/Scripts/ui-grid/ui-grid.min.css" rel="stylesheet" />
+<script src="~/Scripts/ui-grid/ui-grid.js"></script>
+<link href="~/Scripts/pagination/tm.pagination.css" rel="stylesheet" />
+<script src="~/Scripts/pagination/tm.pagination.js"></script>
+<script>
+    $(function () {
+        var messageapp = angular.module('ngSystemMessage', ['ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'mdsdFilter', 'tm.pagination']);
+        messageapp.controller('MainController', ['$scope', 'uiGridConstants', function ($scope, uiGridConstants) {
+
+            //分页配置
+            $scope.paginationConf = {
+                currentPage: 1,
+                totalItems: 0,
+                itemsPerPage: 10,
+                pagesLength: 9,
+                showJump: false,
+                perPageOptions: [10, 20, 50],
+                onChange: function () {
+                    $scope.searchParams.page = this.currentPage;
+                    $scope.searchParams.rows = this.itemsPerPage;
+                    $scope.search();
+                }
+            };
+            //查询参数
+            $scope.searchParams = {
+                page: $scope.paginationConf.currentPage,
+                rows: $scope.paginationConf.itemsPerPage,
+                Status: "false",
+                SendDateStart: null,
+                SendDateEnd: null,
+            };
+
+            //点击查询
+            $scope.searchClick = function () {
+                $scope.paginationConf.currentPage = 1;
+                $scope.searchParams.page = 1;
+                $scope.search();
+            }
+
+            //搜索
+            $scope.search = function () {
+                $.ajax({
+                    type: 'POST',
+                    data: $scope.searchParams,
+                    datatype: "json",
+                    url: AddUrlPrefix("/Account/GetSystemMessageList"),
+                    success: function (data) {
+                        if (data.IsSuccess) {
+                            $scope.gridOptions.data = data.Data.rows;
+                            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+
+                            $scope.paginationConf.totalItems = data.Data.total;
+                        } else {
+                            console.log("请求列表数据失败:" + data.Message);
+                        }
+                    }
+                });
+            }
+
+            //列表选项
+            $scope.gridOptions = {
+                useExternalSorting: true,
+                enableRowSelection: true,
+                enableColumnResizing: true,
+                enableColumnMenus: false,  //菜单栏不现实下拉菜单
+                columnDefs: [
+                    { field: 'Subject', displayName: '消息主题', width: '10%', enableSorting: false },
+                    { field: 'SendDate', displayName: '发送时间', width: '10%', enableSorting: false, cellFilter: 'dateFmt' },
+                    { field: 'Content', displayName: '消息内容', width: '76%', enableSorting: false }
+                ],
+                onRegisterApi: function (gridApi) {
+                    $scope.gridApi = gridApi;
+                }
+            };
+        }]);
+
+        angular.bootstrap($(".popup")[0], ['ngSystemMessage']);
+    });
+</script>
+
+<div class="popup" ng-app="ngSystemMessage" ng-controller="MainController" style="margin:0px;">
+    <div class="layout-container layout-container-box left" style="min-width:100%; overflow:hidden;">
+        <div class="content content-box">
+            <div class="operating-btn top-15 right-15">
+                <button class="btn-primary" ng-click="searchClick()">查询</button>
+            </div>
+            <div class="search-block">
+                发送时间：从&nbsp;
+                <input type="text" class="Wdate fixWidth" id="SendDateStart" ng-model="searchParams.SendDateStart" onchange="" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy/M/d',maxDate:'#F{$dp.$D(\'SendDateEnd\')}'})" />
+                &nbsp;到&nbsp;
+                <input type="text" class="Wdate fixWidth" id="SendDateEnd" ng-model="searchParams.SendDateEnd" onchange="" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy/M/d',minDate:'#F{$dp.$D(\'SendDateStart\')}'})" />&nbsp;&nbsp;
+                已读：<input type="checkbox" value="1" ng-model="searchParams.Status">
+            </div>
+            <div ui-grid="gridOptions" ui-grid-selection ui-grid-resize-columns class="grid" style="height:78%;"></div>
+            <tm-pagination conf="paginationConf"></tm-pagination>
+        </div>
+    </div>
+</div>

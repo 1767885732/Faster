@@ -1,0 +1,165 @@
+﻿.form_tit_top {
+    width: auto;
+    color: #333;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+    padding-left: 10px;
+    border-bottom: #dedede 1px dotted;
+    clear: both;
+    display: block;
+    overflow: hidden;
+}
+
+.form_read_only {
+    width: auto;
+    /*min-width: 760px;*/
+    height: auto;
+    padding: 10px;
+    margin: 0 auto;
+    display: block;
+    overflow: hidden;
+}
+
+    .form_read_only fieldset {
+        height: auto;
+        margin: 0;
+        padding: 0 5px;
+        clear: both;
+        display: block;
+        overflow: hidden;
+    }
+
+    .form_read_only p.tit_block {
+        width: auto;
+        height: 24px;
+        color: #F90;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: left;
+        border-bottom: #cccccc 1px dashed;
+        line-height: 24px;
+        margin: 0 0 5px 0;
+        padding: 0;
+        clear: both;
+        display: block;
+        overflow: hidden;
+    }
+
+    .form_read_only div label, .form_read_only div span, .form_read_only div i {
+        line-height: 20px;
+        vertical-align: middle;
+        display: inline-block;
+        padding: 0;
+    }
+
+    .form_read_only div {
+        width: 33%;
+        height: 20px;
+        line-height: 20px;
+        margin: 0px 0px 5px 0px;
+        float: left;
+        /*background-color:#CCC;*/
+    }
+
+        .form_read_only div label {
+            /*min-width:100px;*/
+            /*min-width:50%;*/
+            height: 20px;
+            color: #6699cc;
+            font-weight: bold;
+            text-align: right;
+            margin: 0 5px 0 0;
+            /*background-color:#000;*/
+        }
+
+        .form_read_only div span {
+            /*min-width:120px;*/
+            /*min-width:57%;*/
+            height: 19px;
+            color: #000;
+            font-weight: normal;
+            text-align: left;
+            margin: 0px;
+            border-bottom: #99ccff 1px solid;
+            display: inline-block;
+            /*background-color:#CF0;*/
+        }
+
+        .form_read_only div i {
+            height: 19px;
+            color: #000;
+            font-weight: normal;
+            text-align: left;
+            margin: 0px;
+            font-style: normal;
+            display: inline-block;
+        }
+
+        .form_read_only div label span {
+            margin: 0 5px;
+            width: auto !important;
+            min-width: 20px;
+        }
+
+        .form_read_only div.wp_25, .form_read_only div.wp_33, .form_read_only div.wp_50, .form_read_only div.wp_66, .form_read_only div.wp_75, .form_read_only div.wp_100 {
+            float: left;
+        }
+
+        .form_read_only div.wp_25 {
+            width: 25%;
+        }
+
+        .form_read_only div.wp_33 {
+            width: 33%;
+        }
+
+        .form_read_only div.wp_50 {
+            width: 50%;
+        }
+
+        .form_read_only div.wp_66 {
+            width: 66%;
+        }
+
+        .form_read_only div.wp_75 {
+            width: 75%;
+        }
+
+        .form_read_only div.wp_100 {
+            width: 100%;
+        }
+
+        .form_read_only div.clear_group {
+            width: 100%;
+            height: 10px;
+            display: inline-table !important;
+            clear: both !important;
+            overflow: hidden;
+            background: none;
+            margin: 0 auto;
+            padding: 0;
+            /*background-color:#F60;*/
+        }
+
+        .form_read_only div.clear_column {
+            display: block !important;
+            clear: both !important;
+        }
+
+        .form_read_only div span.no_line {
+            width: auto;
+            min-width: 40px !important;
+            border: none;
+        }
+
+        .form_read_only div b {
+            width: auto;
+            min-width: 20px !important;
+            line-height: 20px;
+            font-weight: normal;
+            margin: -1px 6px 0 0px;
+            display: inline-block;
+            vertical-align: middle;
+        }

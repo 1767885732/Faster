@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="TreatmentPciPart" ViewName="介入手术部位">
+    <Member MemberId="NarrowLevel" MemberName="狭窄程度">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="TimiLevel" MemberName="造影时TIMI血流">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="BracketThrombus" MemberName="支架内血栓">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="BranchingSick" MemberName="是否分叉病变">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsCto" MemberName="是否CTO">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsCalcifiedLesions" MemberName="钙化病变">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsCulpritLesion" MemberName="罪犯病变">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsPci" MemberName="PCI">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsHandleInPci" MemberName="是否术中处理">
+      <Required Required="true" Enabled="1" />
+    </Member>    
+    <Member MemberId="HandleWay" MemberName="术中处理">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="GwPassageTime" MemberName="导丝通过时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="TimiLevelPost" MemberName="术后TIMI血流">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="BracketCount" MemberName="植入支架个数">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="BracketType" MemberName="支架种类">
+      <Required Required="true" Enabled="1" />
+    </Member>
+  </View>
+</Config>

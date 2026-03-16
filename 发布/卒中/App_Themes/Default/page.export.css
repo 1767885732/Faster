@@ -1,0 +1,296 @@
+﻿.popup{
+    width:calc(100% - 20px);
+    width:-moz-calc(100% - 20px);
+    width:-webkit-calc(100% - 20px);
+    height:calc(100% - 10px);
+    height:-moz-calc(100% - 10px);
+    height:-webkit-calc(100% - 10px);
+    margin:10px 10px 0;
+    position:absolute;
+}
+/*--------步骤--------*/
+ul{
+    height: 40px;
+    line-height: 40px;
+}
+ul li{
+    width: 33.3333%;
+    height: 40px;
+    float: left;
+    color: #fff;
+    text-align: center;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+    font-size: 18px;
+    letter-spacing: 1px;
+    background-color: #d8d8d8;
+    cursor: pointer;
+}
+ul li em{
+    height: 100%;
+    padding-left: 60px;
+    margin-right: 5px;
+    display: inline-block;
+    font-size: 30px;
+    background: url(img/initialize/datebace.png) 8px center no-repeat;
+}
+ul li:nth-child(2) em{
+    background-image: url(img/initialize/date.png);
+}
+ul li:last-child em{
+    background-image: url(img/initialize/result.png);
+}
+ul li .step-left{
+    width: 25px;
+    height: 100%;
+    float: left;
+    background: url(img/initialize/step-left.png) left no-repeat;
+}
+ul li .step-right{
+    width: 25px;
+    height: 100%;
+    float: right;
+    background: url(img/initialize/step-right.png) left no-repeat;
+}
+ul .hover{
+    background-color: #007ebc;
+}
+ul .hover .step-left{
+    background-image: url(img/initialize/step-selected-left.png);
+}
+ul .hover .step-right{
+    background-image: url(img/initialize/step-selected-right.png);
+}
+/*--------筛选条件--------*/
+.data{
+    margin-top: 20px;
+    height: calc(100% - 60px);
+    height: -moz-calc(100% - 60px);
+    height: -webkit-calc(100% - 60px);
+}
+.data form{
+    height: 100%;
+}
+.data form .btn-export{
+    width:20px;
+    height:23px;
+    border: none;
+    padding: 0;
+    position: absolute;
+    top:51%;
+    left:calc(25% + 22px);
+    left:-moz-calc(25% + 22px);
+    left:-webkit-calc(25% + 22px);
+    background-image: url('img/icon/export.png')
+}
+.data form .btn-export:hover{
+    background-color: #f0f0f0;
+}
+.data form fieldset{
+    width: calc(75% - 64px);
+    width: -moz-calc(75% - 64px);
+    width: -webkit-calc(75% - 64px);
+    height: calc(100% - 22px);
+    height: -moz-calc(100% - 22px);
+    height: -webkit-calc(100% - 22px);
+    padding: 10px;
+    float: left;
+    border: 1px solid #eaeaea;
+    overflow: auto;
+}
+.data form fieldset:first-child{
+    width: 25%;
+    margin-right: 20px;
+    display: inline;
+}
+.data form fieldset legend{
+    padding: 0 10px 0 2px;
+    color: #f4b400;
+    background: #fff;
+    font-size: 13px;
+    position: absolute;
+    top: 52px;
+}
+.data form label{
+    color: #666;
+    font-size: 13px;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    padding-left:10px;
+    margin: 0 auto 4px;
+}
+.data label:hover{
+    background-color: #eee;
+    cursor: pointer;
+}
+.data form fieldset label span{
+    width: 180px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.data label input[type='checkbox']{
+    float:left;
+    margin:9px 10px auto auto;
+    display: inline;
+}
+/*--------  已选条件 ----------*/
+.row-box{
+    width: 100%;
+    float: left;
+    margin-top: 20px;
+}
+.data form .row-box label{
+    width: 70px;
+    text-align: right;
+    display: inline-block;
+    margin:0  10px 0 0;
+}
+.data form .row-box label:hover{
+    background: none;
+    cursor: default;
+}
+.data form .row-box input, .data form .row-box select{
+    border: 1px solid #d8d8d8;
+}
+.data form .row-box input{
+    width:calc(100% - 122px);
+    width:-moz-calc(100% - 122px);
+    width:-webkit-calc(100% - 122px);
+    height: 24px;
+    line-height: 24px;
+    text-indent: 1em;
+}
+.data form .row-box .half-input{
+    width: calc(50% - 69px);
+    width: -moz-calc(50% - 69px);
+    width: -webkit-calc(50% - 69px);
+}
+.data form .row-box select{
+    width:calc(100% - 120px);
+    width:-moz-calc(100% - 120px);
+    width:-webkit-calc(100% - 120px);
+    height: 26px;
+    line-height: 26px;
+}
+.data form .row-box input:focus, .data form .row-box select:focus{
+    border:1px solid #71bce6;
+    box-shadow: 0 0 8px #71bce6;
+}
+.datetime{
+    cursor:pointer;
+    background-image:url(img/icon/datetime.png);
+    background-position: 98% center;
+    background-repeat: no-repeat;
+}
+.datetime:hover{
+    background-image:url(img/icon/datetime-hover.png);
+}
+.data form .row-box .del{
+    width: 16px;
+    height: 30px;
+    float: right;
+    background: url(img/icon/del.png) left center no-repeat;
+}
+.data form .row-box .del:hover{
+    background-position: -16px center;
+}
+/*--------  选择导出字段 ----------*/
+.data .field{
+    height: calc(100% - 22px);
+    height: -moz-calc(100% - 22px);
+    height: -webkit-calc(100% - 22px);
+    padding: 10px;
+    overflow: auto;
+    border: 1px solid #eaeaea;
+}
+.data .field label{
+    width: calc(25% - 20px);
+    width: -moz-calc(25% - 20px);
+    width: -webkit-calc(25% - 20px);
+    height: 30px;
+    line-height: 30px;
+    padding:0 10px;
+    margin-bottom:10px;
+    float: left;
+}
+.data .field label span{
+    width: 80%;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.data .top-area{
+    width: 100%;
+    height: 30px;
+    background-color: #f1f1f1;
+    position: absolute;
+    top: 40px;
+    border-bottom: 1px solid #eaeaea;
+}
+.data .top-area .check-all{
+    width: 100%;
+    display: block;
+}
+.data .top-area .check-all input{
+    margin-left: 20px;
+    display: inline;
+}
+.data .top-area .check-all span{
+    line-height: 30px;
+    font-weight: bold;
+}
+/*--------  预览结果  ----------*/
+.data .result{
+    height: calc(100% - 34px);
+    height: -moz-calc(100% - 34px);
+    height: -webkit-calc(100% - 34px);
+    overflow: auto;
+}
+.data .result table{
+    font-size: 12px;
+}
+.data .result table tr th, .data .result table tr td{
+    white-space: nowrap;
+    padding: 2px 10px;
+}
+.data .page{
+    margin-top: 6px;
+}
+
+/*--------未选择条件--------*/
+.location{
+    width: 68%;
+    height: 190px;
+    position: absolute;
+    top: 30%;
+    text-align: center;
+    color: #999;
+    line-height: 40px;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+    font-size: 14px;
+}
+
+.basic-table tr:nth-child(2n){
+    background-color:#f7f7f7;
+}
+
+input[type="button"], button {                 /*----------   默认按钮  ----------*/
+    height: 28px;
+    padding: 0 15px;
+    border: 1px solid #dedede;
+    background-color: #fff;
+    color: #333;
+    border-radius: 2px;
+    font-weight: 400;
+    cursor: pointer;
+}
+input[type="button"]:hover, button:hover{
+    background-color:#f1f1f1;
+}
+.btn-disabled, .btn-disabled:hover{             /*----------   禁用按钮  ----------*/
+    cursor: not-allowed;
+    opacity:.65;
+    background:#fff;
+}

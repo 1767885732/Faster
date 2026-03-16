@@ -1,0 +1,488 @@
+﻿@using DoCare.ToolKit
+@using DoCare.Framework.Extension
+@{
+    ViewBag.Title = "生命体征";
+    Layout = null;
+}
+
+<script src=@Url.GetCssJsUrl("~/Scripts/hover.js")></script>
+<script src="~/Scripts/echarts/echarts.min.js"></script>
+<script src="~/Scripts/echarts/macarons.js"></script>
+
+<script>
+    var patient =  @Html.Raw((JsonKit.Serialize(ViewBag.Patient)));
+    var scoreSetting = @Html.Raw((JsonKit.Serialize(ViewBag.ScoreSetting ?? new { })));
+    var app = angular.module('VitalSignApp', []);
+
+    // controller
+    app.controller('VitalSignController', function ($scope, $filter, $http) {
+        // 患者信息
+        $scope.patient = patient;
+        $scope.defaultIndex = 1;
+        $scope.scoreSetting = scoreSetting;
+        // 第几次tab选择样式
+        $scope.setType = function(index)
+        {
+            $scope.defaultIndex = index;
+        }
+        // 第几次tab选择样式
+        $scope.getClass = function(index)
+        {
+            if(index == $scope.defaultIndex)
+            {
+                if(index==3)
+                {
+                    $("#tabMonitor").css("height","580px");
+                }
+                return "selected";
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        // 画图表
+        $scope.drawChart = function(type)
+        {
+            // 重新画图
+            $http({
+                method: 'GET',
+                url: '/Treatment/GetMonitor?registId=' + $scope.patient.Id+"&type="+type
+            }).then(function successCallback(response) {
+                if(response.data.IsSuccess){
+                    var xAxisData = new Array();  //['溶栓前','15m','30m','45m','1h','6h','12h','18h','24h','3d','7d'];
+                    var seriesDataSbp = new Array();//[120, 119, 130, 130];
+                    var seriesDataDbp = new Array();//[60, 70, 68, 50];
+                    var seriesDataPulse = new Array();
+                    var seriesDataHeart = new Array();
+                    $scope.monitorList = response.data.Data;
+                    if($scope.monitorList!=null){
+                        for (var i = 0; i < $scope.monitorList.length; i++) {
+                            var monitor = $scope.monitorList[i];
+                            if(monitor.IsPrethrombolysis=="1")
+                            {
+                                xAxisData.push("溶栓前");
+                            }
+                            else
+                            {
+                                xAxisData.push(monitor.TimePoint + monitor.TimePointUnit);
+                            }
+                            if(monitor.VitalSign!=null){
+                                seriesDataSbp.push(monitor.VitalSign.Sbp);
+                                seriesDataDbp.push(monitor.VitalSign.Dbp);
+                                seriesDataPulse.push(monitor.VitalSign.PulseRate);
+                                seriesDataHeart.push(monitor.VitalSign.HeartRate);
+                            }
+                            else
+                            {
+                                seriesDataSbp.push(null);
+                                seriesDataDbp.push(null);
+                                seriesDataPulse.push(null);
+                                seriesDataHeart.push(null);
+                            }
+                        }
+                    }
+                    $scope.drawChart2(xAxisData,seriesDataDbp,seriesDataSbp,seriesDataPulse,seriesDataHeart);
+                }
+                else
+                {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+
+        $scope.drawChart(1);
+
+        $scope.drawChart2 = function(xAxisData,seriesDataDbp,seriesDataSbp,seriesDataPulse,seriesDataHeart)
+        {
+            if($('#chart-panel-2').length==1){
+                var myChart2 = echarts.init(document.getElementById('chart-panel-2'));
+                option = {
+                    title : {
+                        x: '00px',
+                        text: '脉搏/血压mmHg',
+                        textStyle:{
+                            fontSize: '14px'
+                        }
+                    },
+                    tooltip : {
+                        trigger: 'axis'
+                    },
+                    grid: {
+                        top: '50px',
+                        left: '50px',
+                        bottom: '20px'
+                    },
+                    legend: {
+                        x: 'center',
+                        data:['舒张压','收缩压','脉搏','心率']
+                    },
+                    calculable : true,
+                    xAxis : [
+                        {
+                            type : 'category',
+                            boundaryGap : false,
+                            data : xAxisData,
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value',
+                            axisLabel : {
+                                formatter: '{value}'
+                            }
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'舒张压',
+                            type:'line',
+                            data:seriesDataDbp,
+                            markPoint : {
+                                data : [
+                                    {type : 'max', name: '最大值'}
+                                ]
+                            },
+                            markLine : {
+                                data : [
+                                    {type : 'average', name: '平均值'}
+                                ]
+                            }
+                        },
+                        {
+                            name:'收缩压',
+                            type:'line',
+                            data:seriesDataSbp,
+                            markPoint : {
+                                data : [
+                                    {type : 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine : {
+                                data : [
+                                    {type : 'average', name : '平均值'}
+                                ]
+                            }
+                        },
+                        {
+                            name:'脉搏',
+                            type:'line',
+                            data:seriesDataPulse,
+                            markPoint : {
+                                data : [
+                                    {type : 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine : {
+                                data : [
+                                    {type : 'average', name : '平均值'}
+                                ]
+                            }
+                        },
+                        {
+                            name:'心率',
+                            type:'line',
+                            data:seriesDataHeart,
+                            markPoint : {
+                                data : [
+                                    {type : 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine : {
+                                data : [
+                                    {type : 'average', name : '平均值'}
+                                ]
+                            }
+                        }
+                    ]
+                };
+                myChart2.setOption(option);
+                window.onresize = myChart2.resize;
+            }
+        }
+
+        // 血压指标偏高偏低样式
+        $scope.vitalSignClass = function(vitalSign,type)
+        {
+            return null;
+            var result = $scope.vitalSignCheck(vitalSign,type);
+            if(result == 0)
+            {
+                return "dark-blue";
+            }
+            else if(result == 1)
+            {
+                return "red";
+            }
+            return null;
+        }
+
+        // 血压指标偏高偏低计算规则
+        $scope.vitalSignCheck = function(vitalSign,type)
+        {
+            return null;
+            if(vitalSign!=null)
+            {
+                if(type=='1'){
+                    if(vitalSign.Dbp > 90 || vitalSign.Sbp > 140)
+                    {
+                        return 1;
+                    }
+                    else if(vitalSign.Dbp < 60 || vitalSign.Sbp < 90)
+                    {
+                        return 0;
+                    }
+                }
+                else if(type=="2")
+                {
+                    if(vitalSign.RespiratoryRate>24)
+                    {
+                        return 1;
+                    }
+                    else if(vitalSign.RespiratoryRate<12)
+                    {
+                        return 0;
+                    }
+                }
+                else if(type=="3")
+                {
+                    if(vitalSign.PulseRate>100)
+                    {
+                        return 1;
+                    }
+                    else if(vitalSign.PulseRate<60)
+                    {
+                        return 0;
+                    }
+                }
+                else if(type=="4")
+                {
+                    if(vitalSign.Temperature>37.2)
+                    {
+                        return 1;
+                    }
+                    else if(vitalSign.Temperature<36)
+                    {
+                        return 0;
+                    }
+                }
+                else if(type=="5")
+                {
+                    if(vitalSign.BloodOxygen>100)
+                    {
+                        return 1;
+                    }
+                    else if(vitalSign.BloodOxygen<90)
+                    {
+                        return 0;
+                    }
+                }
+                else if(type=="6")
+                {
+                    if(vitalSign.HeartRate>100)
+                    {
+                        return 1;
+                    }
+                    else if(vitalSign.HeartRate<60)
+                    {
+                        return 0;
+                    }
+                }
+            }
+            return null;
+        }
+
+        // 偏低
+        $scope.vitalSignLower = function(vitalSign,type)
+        {
+            return false;
+            if($scope.vitalSignCheck(vitalSign,type)==0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        // 偏高
+        $scope.vitalSignHigher= function(vitalSign,type)
+        {
+            return false;
+            if($scope.vitalSignCheck(vitalSign,type)==1)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        // NHISS评分偏高偏低样式
+        $scope.scoreClass = function(scoreValue)
+        {
+            return null;
+            var result = $scope.scoreCheck(scoreValue);
+            if(result == 0)
+            {
+                return "dark-blue";
+            }
+            else if(result == 1)
+            {
+                return "red";
+            }
+            return null;
+        }
+
+        // NHISS评分偏高偏低计算规则
+        $scope.scoreCheck = function (scoreValue)
+        {
+            return null;
+            if(scoreValue!=null && $scope.scoreSetting!=null)
+            {
+                if($scope.scoreSetting.MaxValue!=null && scoreValue>$scope.scoreSetting.MaxValue)
+                {
+                    return 1;
+                }
+                else if($scope.scoreSetting.MinValue!=null && scoreValue<$scope.scoreSetting.MinValue)
+                {
+                    return 0;
+                }
+            }
+            return null;
+        }
+
+        // 偏低
+        $scope.scoreLower= function(scoreValue)
+        {
+            return false;
+            if($scope.scoreCheck(scoreValue)==0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        // 偏高
+        $scope.scoreHigher= function(scoreValue)
+        {
+            return false;
+            if($scope.scoreCheck(scoreValue)==1)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        // 编辑弹窗
+        $scope.edit = function(monitor,type)
+        {
+            if (!$scope.haslayer) {
+                $http({
+                    method: 'GET',
+                    url: '/Score/GetMonitorRecordId?registId=' + monitor.RegistId+"&monitorId="+monitor.Id
+                }).then(function successCallback(response) {
+                    if(response.data.IsSuccess){
+                        $.post('/Score/ScoreDetail', { registId:  $scope.patient.Id ,recordId: response.data.Data}, function (str) {
+                            layer.open({
+                                type: 1,
+                                title: '评分明细',
+                                maxmin: false,
+                                shadeClose: false, //点击遮罩关闭层
+                                area: ['1000px', '460px'],
+                                content: str,
+                                zIndex: 198910140,
+                                end: function () {
+                                    $scope.haslayer = false;
+                                    $scope.drawChart(type);
+                                }
+                            });
+                        });
+                    }
+                    else
+                    {
+                        layer.alert(response.data.Message, { icon: 2 });
+                    }
+                }, function errorCallback(response) {
+                    // 请求失败执行代码
+                    //layer.alert("请求失败！", { icon: 2 });
+                });
+                $scope.haslayer = true;
+            }
+        }
+    });
+
+    angular.bootstrap($("#divVitalSign")[0], ['VitalSignApp']);
+</script>
+
+<div class="popup" id="divVitalSign" ng-app="VitalSignApp" ng-controller="VitalSignController" ng-init="points=[1,2,3]">
+    <ul class="type-menu left">
+        <li>
+            <dl>
+                <dt>生命体征</dt>
+                <dd ng-click="setType(1);drawChart(1);" ng-class="getClass(1)">0-2小时 15min/次</dd>
+                <dd ng-click="setType(2);drawChart(2);" ng-class="getClass(2)">2-6小时 30min/次</dd>
+                <dd ng-click="setType(3);drawChart(3);" ng-class="getClass(3)">6-24小时 1H/次</dd>
+            </dl>
+        </li>
+    </ul>
+    <div class="monitor">
+        <div  ng-repeat="point in points" class="score-chart-box" ng-if="defaultIndex==point">
+            <div id="chart-panel-2" class="chart"></div>
+            <br />
+            <div>
+                <table id="tabMonitor" class="basic-table" style="width:800px;border:0px;overflow-y: hidden;overflow-x: hidden;">
+                    <tr>
+                        <th width="100px" style="padding:unset;text-align:center;">时间点</th>
+                        <th width="100px" style="padding:unset;text-align:center;">血压</th>
+                        <th width="100px" style="padding:unset;text-align:center;">呼吸</th>
+                        <th width="100px" style="padding:unset;text-align:center;">脉搏</th>
+                        <th width="100px" style="padding:unset;text-align:center;">体温</th>
+                        <th width="100px" style="padding:unset;text-align:center;">血氧</th>
+                        <th width="100px" style="padding:unset;text-align:center;">心率</th>
+                        <th width="100px" style="padding:unset;text-align:center;">NIHSS</th>
+                    </tr>
+                    <tr ng-repeat="monitor in monitorList">
+                        <td>{{monitor.IsPrethrombolysis=='1'?'溶栓前':monitor.TimePoint+monitor.TimePointUnit}}</td>
+                        <td ng-class="vitalSignClass(monitor.VitalSign,'1')" style="padding:unset;text-align:center;">
+                            {{monitor.VitalSign==null?'':(monitor.VitalSign.Sbp||'')+'/'+(monitor.VitalSign.Dbp||'')}}
+                            <span ng-show="vitalSignLower(monitor.VitalSign,'1')" style="color:#007ebc">&nbsp;&#8595;</span>
+                            <span ng-show="vitalSignHigher(monitor.VitalSign,'1')" style="color:#ed4e2a">&nbsp;&#8593;</span>
+                        </td>
+                        <td ng-class="vitalSignClass(monitor.VitalSign,'2')" style="padding:unset;text-align:center;">
+                            {{monitor.VitalSign==null?'':(monitor.VitalSign.RespiratoryRate)}}
+                            <span ng-show="vitalSignLower(monitor.VitalSign,'2')" style="color:#007ebc">&nbsp;&#8595;</span>
+                            <span ng-show="vitalSignHigher(monitor.VitalSign,'2')" style="color:#ed4e2a">&nbsp;&#8593;</span>
+                        </td>
+                        <td ng-class="vitalSignClass(monitor.VitalSign,'3')" style="padding:unset;text-align:center;">
+                            {{monitor.VitalSign==null?'':(monitor.VitalSign.PulseRate)}}
+                            <span ng-show="vitalSignLower(monitor.VitalSign,'3')" style="color:#007ebc">&nbsp;&#8595;</span>
+                            <span ng-show="vitalSignHigher(monitor.VitalSign,'3')" style="color:#ed4e2a">&nbsp;&#8593;</span>
+                        </td>
+                        <td ng-class="vitalSignClass(monitor.VitalSign,'4')" style="padding:unset;text-align:center;">
+                            {{monitor.VitalSign==null?'':(monitor.VitalSign.Temperature)}}
+                            <span ng-show="vitalSignLower(monitor.VitalSign,'4')" style="color:#007ebc">&nbsp;&#8595;</span>
+                            <span ng-show="vitalSignHigher(monitor.VitalSign,'4')" style="color:#ed4e2a">&nbsp;&#8593;</span>
+                        </td>
+                        <td ng-class="vitalSignClass(monitor.VitalSign,'5')" style="padding:unset;text-align:center;">
+                            {{monitor.VitalSign==null?'':(monitor.VitalSign.BloodOxygen)}}
+                            <span ng-show="vitalSignLower(monitor.VitalSign,'5')" style="color:#007ebc">&nbsp;&#8595;</span>
+                            <span ng-show="vitalSignHigher(monitor.VitalSign,'5')" style="color:#ed4e2a">&nbsp;&#8593;</span>
+                        </td>
+                        <td ng-class="vitalSignClass(monitor.VitalSign,'6')" style="padding:unset;text-align:center;">
+                            {{monitor.VitalSign==null?'':(monitor.VitalSign.HeartRate)}}
+                            <span ng-show="vitalSignLower(monitor.VitalSign,'6')" style="color:#007ebc">&nbsp;&#8595;</span>
+                            <span ng-show="vitalSignHigher(monitor.VitalSign,'6')" style="color:#ed4e2a">&nbsp;&#8593;</span>
+                        </td>
+                        <td ng-class="scoreClass(monitor.ScoreValue)" style="padding:unset;text-align:center;" ng-click="edit(monitor,point)">
+                            {{monitor.ScoreValue==null?'':monitor.ScoreValue}}
+                            <span ng-show="scoreLower(monitor.ScoreValue)" style="color:#007ebc">&nbsp;&#8595;</span>
+                            <span ng-show="scoreHigher(monitor.ScoreValue)" style="color:#ed4e2a">&nbsp;&#8593;</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

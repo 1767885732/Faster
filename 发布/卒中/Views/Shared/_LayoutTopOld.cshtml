@@ -1,0 +1,159 @@
+﻿@model DoCare.CVA.Web.Models.TopMenuModel
+@{
+    ViewBag.Title = Resources.AppName;
+    ViewBag.CopyRight = Resources.CopyRight;
+    ViewBag.Version = Resources.AppVersion;
+}
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/App_Themes/New/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/App_Themes/New/ionicons.min.css" rel="stylesheet" />
+</head>
+<script>
+    /* 二级导航收起展开方式 */
+    $(function () {
+        //页面中的DOM已经装载完成时，执行的代码
+        function domHover(domObj) {
+            domObj.hover(function () {
+                $(this).children("div").stop(true, true).slideDown("fast");
+            }, function () {
+                $(this).children("div").stop(true, true).slideUp("fast");
+            });
+        }
+        domHover($(".module-user"));
+
+        //注销登录
+        $("#logOut").click(function () {
+            window.location.href = "/Account/Logout/";
+        });
+
+        //菜单点击
+        $("ul.nav_menu li:not(.module-user)").click(function () {
+            var url = $(this).attr("url");
+            if (typeof url == 'undefined' || url == "") {
+
+            } else if (url.indexOf("http://") == 0) {
+
+                window.open(url);
+            } else {
+                window.location.href = url;
+            }
+        });
+
+        //系统消息
+        $("#sysMessage").click(function () {
+            $.post('/Account/SystemMessage', {}, function (str) {
+                layer.open({
+                    type: 1,
+                    title: '系统消息',
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['800px', '600px'],
+                    content: str,
+                });
+            });
+
+        });
+
+        //修改密码
+        $("#modifyPassword").click(function () {
+            $.post('/Account/ModifyPasswordView', {}, function (str) {
+                layer.open({
+                    type: 1,
+                    title: '修改密码',
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['400px', '300px'],
+                    content: str,
+                });
+            });
+
+        });
+
+        //帮助
+        $("#acrHelp").click(function (e) {
+            layer.open({
+                type: 2,
+                title: false,
+                btn: false,
+                maxmin: false,
+                shadeClose: false, //点击遮罩关闭层
+                area: ['340px', '270px'],
+                content: '../Account/Help'
+            });
+        });
+
+        //getUnreadMessageCount();
+        //设置定时器，没一分钟刷新一次
+        //setInterval(function () {
+        //    getUnreadMessageCount();
+        //}, 60000);
+
+    });
+
+    //function getUnreadMessageCount() {
+    //    var loginName = getCookie("_nk_");
+    //    if(!loginName){
+    //        console.log("用户长时间未操作，已自动退出，不再获取消息");
+    //        return;
+    //    }
+    //    $.ajax({
+    //        type: 'post',
+    //        url: '/Account/GetUnreadMessageCount',
+    //        data: { loginName: loginName },
+    //        cache: false,
+    //        dataType: 'json',
+    //        async: false,
+    //        success: function (data) {
+    //            if (data.IsSuccess) {
+    //                if (data.Data == 0) {
+    //                    $("#messageCount").hide();
+    //                    $("#messageTip").hide();
+    //                } else {
+    //                    $("#messageCount").show();
+    //                    $("#messageCount").html(data.Data);
+    //                    $("#messageTip").show();
+    //                }
+    //                console.log("获取消息数量成功：" + data.Data);
+    //            } else {
+    //                console.log("获取消息数量失败：" + data.Message);
+    //            }
+    //        }
+    //    });
+    //}
+
+</script>
+@*<h1 style="display:flex;width:70%">@ViewBag.Title<em>@ViewBag.Version</em>&nbsp;&nbsp;<img style="float:right;width:320px;height:50px;clear:both" src="../App_Themes/Default/img/icon/SDFE.png"/></h1>*@
+@*<h1 style="display:flex;width:70%">@ViewBag.Title<em>@ViewBag.Version</em></h1>*@
+<div class="nav">
+    <ul class="nav_menu">
+        @foreach (var menu in Model.MenuList)
+        {
+
+            var liClass = "";
+            if (Model.Selected == menu.PermissionKey)
+            {
+                liClass = "selected";
+            }
+           
+            <li class="@liClass" url="@menu.Action" data-menuId="@menu.Id">
+                <s class="@menu.Icon"></s>
+                <a href="javascript:void(0)">@menu.Name</a>
+            </li>
+
+
+
+        }
+        <li class="module-user">
+            <s class="fa fa-user" style="color:white;font-size:22px"></s>
+            @*<s class="menu-icon-user"></s>*@
+            <a title="@Model.CurrentUser.LoginName"><nobr>@Model.CurrentUser.Name</nobr></a>
+            <div>
+                <a id="sysMessage">系统消息</a>
+                <a id="modifyPassword">修改密码</a>
+                <a id="acrHelp" class="help">帮助</a>
+                <a id="logOut">退出</a>
+            </div>
+        </li>
+    </ul>
+</div>

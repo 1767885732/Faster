@@ -1,0 +1,128 @@
+﻿@using DoCare.ToolKit
+@model PatientTreatment
+@using DoCare.CVA.Data
+@*@using DoCare.Framework.Extension*@
+@{
+    Layout = null;
+}
+<script>
+    var Dictionary = @Html.Raw((JsonKit.Serialize(ViewBag.Dictionary)));
+    var data = @Html.Raw((JsonKit.Serialize(ViewBag.Result)));
+    $(function () {
+        var app = angular.module('ngAppTreatmentDecision', [ 'mdsdFilter', 'mdsdDirective']);
+        app.controller('ngCtrlTreatmentDecision', function ($scope, $filter, $http, $interval) {
+            // 患者救治信息
+            $scope.Emergency = data;
+
+            $scope.PermissionSave = PermissionSave;
+            // 字典：复选框内容
+            $scope.Dictionary = Dictionary;
+
+            // 是否选中
+            $scope.thrombolysisIsSelected = function (index, data) {
+                if (data != null) {
+                    if (data.length > 0) {
+                        return data[index];
+                    }
+                    else { return false; }
+                }
+                return false;
+            }
+
+            // 确认按钮事件
+            $scope.confirm = function(){
+                setTab('step',2,2);
+                $scope.drawChart(true);
+            }
+
+            // 是否选中
+            $scope.isSelected = function(index,object,value){
+                return object[index];
+            }
+
+            // 选择变化
+            $scope.updateSelection = function ($event, index, object) {
+                var checkbox = $event.target;
+                object[index] = checkbox.checked;
+            }
+
+            //清除
+            $scope.clearRelExclusionCriteria = function(arr){
+                for(var i =0; i < arr.length; i++){
+                    arr[i] = false;
+                }
+            }
+
+            //保存
+            $scope.SaveTreatmentDecision = function(){
+                    $.ajax({
+                        type: 'POST',
+                        data:$scope.Emergency,
+                        url: AddUrlPrefix("/Treatment/SaveTreatmentDecision/"),
+                        success: function (data) {
+                            if (data.IsSuccess) {
+                                layer.alert(data.Message,{title:'温馨提示', icon:1, closeBtn: 0, move: false}, function(index){
+                                    layer.closeAll();
+                                });
+                            } else {
+                                layer.alert(data.Message, { title: '删除失败', icon: 2, closeBtn: 0, move: false });
+                            }
+                        }
+                    });
+            }
+        });
+        angular.bootstrap($("#divTreatmentDecision")[0], ['ngAppTreatmentDecision']);
+    });
+    function setTab(name, cursel, n) {
+        for (i = 1; i <= n; i++) {
+            var menu = document.getElementById(name + i);
+            var con = document.getElementById("con-" + name + "-" + i);
+            menu.className = i == cursel ? "hover" : "";
+            con.style.display = i == cursel ? "block" : "none";
+        }
+    }
+</script>
+<div class="time-record">
+    <div id="divTreatmentDecision" ng-app="ngAppTreatmentDecision" ng-controller="ngCtrlTreatmentDecision">
+        <div class="thrombolysis" style="border: none">
+            <div id="con-step-1" class="con-step">
+                <div class="warm-tips taboo">
+                    <div class="mr-row-half ">
+                        <div class="mr-row bring">
+                            <h6>入选标准：</h6>
+                            <label ng-repeat="x in Dictionary[0].List" ng-class="isSelected($index,Emergency.InclusionCriteria,x.Value)?'imp-hist':''">
+                                <input type="checkbox" name="InclusionCriteria" ng-checked="isSelected($index,Emergency.InclusionCriteria,x.Value)" ng-click="updateSelection($event,$index,Emergency.InclusionCriteria)">
+                                <span>{{x.Value}}</span><br/>
+                            </label>
+                        </div>
+                        <div class="mr-row remove">
+                            <h6>发病3h相对排除标准：</h6>
+                            <label ng-repeat="x in Dictionary[2].List" ng-class="isSelected($index,Emergency.RelExclusionCriteria3h,x.Value) ? 'imp-hist':''">
+                                <input type="checkbox" name="RelExclusionCriteria3h" ng-checked="isSelected($index,Emergency.RelExclusionCriteria3h,x.Value)" ng-click="updateSelection($event,$index,Emergency.RelExclusionCriteria3h);clearRelExclusionCriteria(Emergency.RelExclusionCriteria45h)">
+                                <span>{{x.Value}}</span><br/>
+                            </label>
+                        </div>
+                        <div class="mr-row remove">
+                            <h6>发病4.5h相对排除标准：</h6>
+                            <label ng-repeat="x in Dictionary[3].List" ng-class="isSelected($index,Emergency.RelExclusionCriteria45h,x.Value) ? 'imp-hist':''">
+                                <input type="checkbox" name="RelExclusionCriteria45h" ng-checked="isSelected($index,Emergency.RelExclusionCriteria45h,x.Value)" ng-click="updateSelection($event,$index,Emergency.RelExclusionCriteria45h);clearRelExclusionCriteria(Emergency.RelExclusionCriteria3h)">
+                                <span>{{x.Value}}</span><br />
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mr-row-half remove">
+                        <h6>排除标准：</h6>
+                        <label ng-repeat="x in Dictionary[1].List" ng-class="isSelected($index,Emergency.ExclusionCriteria,x.Value)?'imp-hist':''">
+                            <input type="checkbox" name="ExclusionCriteria" ng-checked="isSelected($index,Emergency.ExclusionCriteria,x.Value)" ng-click="updateSelection($event,$index,Emergency.ExclusionCriteria)">
+                            <span>{{x.Value}}</span><br />
+                        </label>
+                    </div>
+                    <div class="con-step-btn m-t-10">
+                        <button class="btn-primary" ng-click="SaveTreatmentDecision()">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

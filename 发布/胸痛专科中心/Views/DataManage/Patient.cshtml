@@ -1,0 +1,140 @@
+﻿<div id="Regist">
+    <el-form v-bind:model="patient" v-bind:rules="rules" ref="registForm" label-width="100px" size="small" label-position="top">
+        <el-row v-bind:gutter="20">
+            <el-col v-bind:span="3">
+                <el-form-item label="姓名" prop="Regist.Name" id="Name" class="input_required">
+                    <el-input v-model="patient.Regist.Name" autocomplete="off" maxlength="20" size="mini">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="3">
+                <el-form-item label="性别" prop="Regist.Gender" class="input_required">
+                    <el-radio-group v-model="patient.Regist.Gender" size="mini">
+                        <el-radio-button v-for="(item,index) in GenderDict"
+                                         v-bind:label="item.Key"
+                                         v-bind:key="'Gender-'+ index"
+                                         size="mini">
+                            {{item.Value}}
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="3">
+                <el-form-item label="年龄" prop="Regist.Age" class="input_required">
+                    <el-input v-model="patient.Regist.Age" autocomplete="off" maxlength="10" size="mini" v-int="{max:200}">
+                        <template slot="append">
+                            岁
+                        </template>
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="3">
+                <el-form-item label="出生日期" prop="Regist.Birthday" >
+                    <el-date-picker v-model="patient.Regist.Birthday"
+                                    type="date"
+                                    placeholder="选择时间"
+                                    default-time="12:00:00"
+                                    size="mini">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="3">
+                <el-form-item label="身高" prop="Regist.Height" >
+                    <el-input v-model="patient.Regist.Height" autocomplete="off" 
+                              maxlength="10" size="mini" placeholder="请输入身高" v-int> 
+                        <template slot="append">
+                            cm
+                        </template>
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="3">
+                <el-form-item label="体重" prop="Regist.Weight" >
+                    <el-input v-model="patient.Regist.Weight" autocomplete="off" 
+                              maxlength="10" size="mini"  placeholder="请输入体重" v-float="{scale:1}">
+                        <template slot="append">
+                            kg
+                        </template>
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="3">
+                <el-form-item label="证件类型" prop="Regist.IdCard" size="mini" class="input_required">
+                    <el-select v-model="patient.Regist.IdCard" placeholder="请选择证件类型" size="mini">
+                        <el-option v-for="(item,index) in IdCardDict"
+                                   v-bind:key="'IdCard-'+ index"
+                                   v-bind:label="item.Value"
+                                   v-bind:value="item.Key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="3">
+                <el-form-item v-bind:label="IdCardLabel" prop="Regist.IdCardNo" v-show="patient.Regist.IdCard=='1' || patient.Regist.IdCard=='2'" class="input_required">
+                    <el-input v-model="patient.Regist.IdCardNo" autocomplete="off" maxlength="20" size="mini"></el-input>
+                </el-form-item>
+            </el-col>
+            
+        </el-row>
+        <el-row v-bind:gutter="20">
+            <el-col v-bind:span="3">
+                <el-form-item label="民族" prop="Regist.Nationality" >
+                    <el-select v-model="patient.Regist.Nationality" placeholder="请选择民族" size="mini">
+                        <el-option v-for="(item,index) in NationalityDict"
+                                   v-bind:key="'Nationality-'+ index"
+                                   v-bind:label="item.Value"
+                                   v-bind:value="item.Key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="3">
+                <el-form-item label="婚姻状况" prop="Regist.Marriage">
+                    <el-select v-model="patient.Regist.Marriage" placeholder="请选择婚姻状况" size="mini">
+                        <el-option v-for="(item,index) in MarriageDict"
+                                   v-bind:key="'Marriage-'+ index" v-bind:label="item.Value" v-bind:value="item.Key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="3">
+                <el-form-item label="文化程度" prop="Regist.CultureDegree" >
+                    <el-select v-model="patient.Regist.CultureDegree" placeholder="请选择文化程度" size="mini">
+                        <el-option v-for="(item,index) in CultureDegreeDict"
+                                   v-bind:key="'CultureDegree-'+ index"
+                                   v-bind:label="item.Value"
+                                   v-bind:value="item.Key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="6">
+                <el-form-item label="职业" prop="Regist.Job">
+                    <el-select v-model="patient.Regist.Job" placeholder="请选择职业" size="mini">
+                        <el-option v-for="(item,index) in JobDict"
+                                   v-bind:key="'Job-'+ index"
+                                   v-bind:label="item.Value"
+                                   v-bind:value="item.Key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="3">
+                <el-form-item label="联系电话" prop="Regist.PhoneNumber" >
+                    <el-input v-model="patient.Regist.PhoneNumber" maxlength="15" size="mini"></el-input>
+                </el-form-item>
+            </el-col>            
+            <el-col v-bind:span="6">
+                <el-form-item label="医院" prop="Regist.HospitalId">
+                    <el-select v-model="patient.Regist.HospitalId" placeholder="请选择医院" size="mini">
+                        <el-option v-for="(item,index) in HospitalDict"
+                                   v-bind:key="'Hospital-'+ index"
+                                   v-bind:label="item.Value"
+                                   v-bind:value="item.Key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+        </el-row>
+    </el-form>
+</div>

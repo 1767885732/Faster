@@ -1,0 +1,112 @@
+﻿@using DoCare.Framework.Extension;
+@{
+    Layout = "~/Views/Shared/_LayoutExtend.cshtml";
+}
+<link href=@Url.Random("~/App_Themes/Default/page.check.css") rel="stylesheet" />
+<style type="text/css">
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
+<div id="medication" v-cloak>
+    <el-card v-if="HasData" class="box-card" v-for="(me,index) in medications" v-bind:key="index">
+        <div class="event">
+            <div class="tit">
+                <h1>用药单</h1>
+                <span class="right">
+                    <img src="~/App_Themes/Default/img/icon/refresh.png" style="width:20px;cursor:pointer;" v-on:click="getMedication('true')" />
+                </span>
+            </div>
+            <div class="event-info">
+                <dl>
+                    <dt>姓名</dt>
+                    <dd>{{me.PatientName|emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>性别</dt>
+                    <dd>{{me.PatientGender|emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>年龄</dt>
+                    <dd>{{me.PatientAge|emptyReplace}}</dd>
+                </dl>
+
+            </div>
+            <div class="event-con">
+                <table class="basic-table">
+                    <tr>
+                        <th>序号</th>
+                        <th>组</th>
+                        <th>长临</th>
+                        <th>药品名</th>
+                        <th>规格</th>
+                        <th>剂量</th>
+                        <th>单位</th>
+                        <th>途径</th>
+                        <th>频次</th>
+                        <th>总量</th>
+                    </tr>
+                    <tr v-for="(item,index) in me.Items" v-bind:class="item.class">
+                        <td>{{index+1}}</td>
+                        <td>{{item.OrderSubNo|emptyReplace}}</td>
+                        <td>{{item.RepeatIndicator|emptyReplace}}</td>
+                        <td>{{item.DrugName|emptyReplace}}</td>
+                        <td>{{item.DrugSpec|emptyReplace}}</td>
+                        <td>{{item.DailyDose|emptyReplace}}</td>
+                        <td>{{item.Units|emptyReplace}}</td>
+                        <td>{{item.Administration|emptyReplace}}</td>
+                        <td>{{item.Ddds|emptyReplace}}</td>
+                        <td>{{item.TotalDose|emptyReplace}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </el-card>
+    <div v-if="!HasData">
+        <div id="error">
+            <div class="error-content">
+                <img src="~/App_Themes/Default/img/common/fail.png" />
+                <h2>未查询到患者相关信息！您可以<a href="javascript:;" v-on:click="getMedication('true')">刷新重试</a>。</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Views/ExtendView/ExtendViewMixin.js"></script>
+<script>
+var patientNo = '@ViewBag.PatientNo';
+var org = '@ViewBag.Org';
+
+new Vue({
+    el: "#medication",
+    mixins: [extendMixin],
+    data: function () {
+        return {
+            patientNo: patientNo,
+            org: org,
+            medications: [{}]
+        }
+    },
+    methods: {
+        getMedication: function (isRefresh) {
+            var _this = this;
+            axios.get("/ExtendView/GetMedication?patientNo=" + this.patientNo + "&org=" + this.org + "&isRefresh=" + isRefresh, {}).then(function (res) {
+                if (res.data.IsSuccess) {
+                    _this.medications = res.data.Data;
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
+        }
+    },
+    mounted: function () {
+        this.getMedication('false');
+    },
+    computed: {
+        HasData: function () {
+            return this.medications.length > 0
+        }
+    }
+})
+</script>

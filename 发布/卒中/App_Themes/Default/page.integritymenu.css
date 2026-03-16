@@ -1,0 +1,110 @@
+.integrity-menu{
+    height:100%;
+    display:inline-block;
+    overflow:hidden;
+    text-align: center;
+    background:#e6e7eb;
+}
+.stage{
+    width:120px;
+    height:100%;
+    overflow-y: auto;
+}
+.right-box-records {
+    width: calc(100% - 120px);
+    width: -moz-calc(100% - 120px);
+    width: -webkit-calc(100% - 120px);
+    height:100%;
+    min-width:1140px;
+    overflow:auto;
+}
+.stage div{
+    height: 16.666%;
+    position: relative;
+}
+.stage dl{
+    cursor:pointer;
+    display:block;
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -40px 0 0 -40px;
+    text-align: center;
+}
+.stage dl dt{
+    width:60px;
+    height:60px;
+    margin:0 auto;
+    display:block;
+    border-radius: 100%;
+}
+.stage dl dt span{
+    position:absolute;
+    top:0;
+    left:8px;
+}
+.stage dl dt sup{
+    font-size:10px;
+    width:24px;
+    text-align:center;
+    position:absolute;
+    top:-3px;
+    left:28px;
+    background:#e6e7eb;
+}
+.stage dl dt s{
+    width:40px;
+    height:40px;
+    border-radius: 50%;
+    display:inline-block;
+    margin:12px auto;
+    background-position: 0 0;
+    background-color:#eff0f4;
+    background-repeat:no-repeat;
+}
+.stage dl:hover dt s, .stage dl:active dt s, .stage .selected dt s{
+    background-color:#6cc8fb;
+    background-position:-40px 0;
+}
+.stage dl dt .progress-visited{
+    background-position:-80px 0;
+}
+.stage .disabled{
+    cursor:default;
+}
+.stage .disabled dt s, .stage .disabled:hover dt s{
+    background-color:#d2d3d4;
+    background-position:-120px 0;
+}
+.stage dl dt .stage-regist{
+    background-image:url(img/icon/stage-regist.png);
+}
+.stage dl dt .stage-ambulance{
+    background-image:url(img/icon/stage-ambulance.png);
+}
+.stage dl dt .stage-emergency{
+    background-image:url(img/icon/stage-emergency.png);
+}
+.stage dl dt .stage-cvac{
+    background-image:url(img/icon/stage-cvac.png);
+}
+.stage dl dt .stage-hospital{
+    background-image:url(img/icon/stage-hospital.png);
+}
+.stage dl dt .stage-prognosis{
+    background-image:url(img/icon/stage-prognosis.png);
+}
+.stage dl dd{
+    font-family: 'Microsoft Yahei', Arial, Helvetica, sans-serif, Tahoma, Geneva;
+    font-size: 13px;
+    color:#666;
+    margin-top: 4px;
+}
+.stage dl:hover dd{
+    color:#333;
+}
+.stage .disabled dd, .stage .disabled:hover dd{
+    color:#999;
+}

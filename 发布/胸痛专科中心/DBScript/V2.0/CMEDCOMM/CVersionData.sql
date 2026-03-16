@@ -1,0 +1,8 @@
+INSERT INTO MED_DBSCRIPT_VERSION VALUES
+(
+       NVL((SELECT MAX(SCRIPT_ID) FROM MED_DBSCRIPT_VERSION), 0) + 1,
+       'v5.0.12',
+       to_date('2013-09-03', 'yyyy-MM-dd'),
+       SYSDATE
+);
+COMMIT;

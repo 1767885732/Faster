@@ -1,0 +1,26 @@
+﻿@using DoCare.Framework.Extension
+@{
+    Layout = null;
+}
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>帮助</title>
+    <link href=@Url.GetCssJsUrl("~/App_Themes/Default/global.css") rel="stylesheet" />
+    <link href=@Url.GetCssJsUrl("~/App_Themes/Default/control.css") rel="stylesheet" />
+    <link href=@Url.GetCssJsUrl("~/App_Themes/Default/page.help.css") rel="stylesheet" />
+</head>
+<body>
+    <div class="popup">
+        <img class="logo" src="~/App_Themes/Default/img/common/logo-help.png">
+        <h2 class="sys-tit">@ViewBag.AppName @ViewBag.Version</h2>
+        <p class="build">Build #@ViewBag.Build</p>
+        <p class="copy">@ViewBag.CopyRight</p>
+    </div>
+</body>
+</html>

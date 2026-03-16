@@ -1,0 +1,128 @@
+-- Create table
+create table MED_PAT_MATERECORD
+(
+  patient_no        VARCHAR2(40) not null,
+  in_dept           VARCHAR2(40),
+  bed_no            VARCHAR2(40),
+  in_hos_time       DATE,
+  in_complaint      VARCHAR2(200),
+  preganet_week     VARCHAR2(50),
+  preganet_times    VARCHAR2(50),
+  product_times     VARCHAR2(50),
+  in_sense          VARCHAR2(20),
+  in_t              VARCHAR2(20),
+  in_p              VARCHAR2(20),
+  in_r              VARCHAR2(20),
+  in_bp             VARCHAR2(20),
+  in_spo2           VARCHAR2(20),
+  in_glu            VARCHAR2(20),
+  fetel_heart       VARCHAR2(20),
+  uter_height       VARCHAR2(20),
+  abd_index         VARCHAR2(20),
+  past_history      VARCHAR2(1000),
+  family_history    VARCHAR2(1000),
+  menarche_age      VARCHAR2(10),
+  menstrual_day     VARCHAR2(10),
+  menstrual_cycle   VARCHAR2(10),
+  menstrual_volume  VARCHAR2(10),
+  dysmenorrhea      VARCHAR2(10),
+  initial_diagnosis VARCHAR2(1000),
+  initial_doctor    VARCHAR2(20),
+  inhos_diagnosis   VARCHAR2(1000),
+  inhos_doctor      VARCHAR2(20),
+  high_risk         VARCHAR2(2000),
+  special_treatment VARCHAR2(200),
+  producted_bleed   VARCHAR2(200),
+  indication        VARCHAR2(200)
+)
+tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 16K
+    next 8K
+    minextents 1
+    maxextents unlimited
+  );
+-- Add comments to the columns 
+comment on column MED_PAT_MATERECORD.patient_no
+  is '患者编号';
+comment on column MED_PAT_MATERECORD.in_dept
+  is '入院科室';
+comment on column MED_PAT_MATERECORD.bed_no
+  is '床位';
+comment on column MED_PAT_MATERECORD.in_hos_time
+  is '入院时间';
+comment on column MED_PAT_MATERECORD.in_complaint
+  is '主诉';
+comment on column MED_PAT_MATERECORD.preganet_week
+  is '孕周';
+comment on column MED_PAT_MATERECORD.preganet_times
+  is '孕次';
+comment on column MED_PAT_MATERECORD.product_times
+  is '产次';
+comment on column MED_PAT_MATERECORD.in_sense
+  is '意识';
+comment on column MED_PAT_MATERECORD.in_t
+  is '体温';
+comment on column MED_PAT_MATERECORD.in_p
+  is '脉搏';
+comment on column MED_PAT_MATERECORD.in_r
+  is '呼吸';
+comment on column MED_PAT_MATERECORD.in_bp
+  is '血压';
+comment on column MED_PAT_MATERECORD.in_spo2
+  is '血氧';
+comment on column MED_PAT_MATERECORD.in_glu
+  is '血糖';
+comment on column MED_PAT_MATERECORD.fetel_heart
+  is '胎心';
+comment on column MED_PAT_MATERECORD.uter_height
+  is '宫高';
+comment on column MED_PAT_MATERECORD.abd_index
+  is '腹围';
+comment on column MED_PAT_MATERECORD.past_history
+  is '既往史';
+comment on column MED_PAT_MATERECORD.family_history
+  is '家族史';
+comment on column MED_PAT_MATERECORD.menarche_age
+  is '初潮年龄';
+comment on column MED_PAT_MATERECORD.menstrual_day
+  is '经期天数';
+comment on column MED_PAT_MATERECORD.menstrual_cycle
+  is '经期周期';
+comment on column MED_PAT_MATERECORD.menstrual_volume
+  is '月经量';
+comment on column MED_PAT_MATERECORD.dysmenorrhea
+  is '痛经';
+comment on column MED_PAT_MATERECORD.initial_diagnosis
+  is '初步诊断';
+comment on column MED_PAT_MATERECORD.initial_doctor
+  is '初步诊断医生';
+comment on column MED_PAT_MATERECORD.inhos_diagnosis
+  is '入院诊断';
+comment on column MED_PAT_MATERECORD.inhos_doctor
+  is '入院诊断医生';
+comment on column MED_PAT_MATERECORD.high_risk
+  is '高危因素';
+comment on column MED_PAT_MATERECORD.special_treatment
+  is '特殊治疗措施';
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table MED_PAT_MATERECORD
+  add constraint PK_MATERERODE primary key (PATIENT_NO)
+  using index 
+  tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Grant/Revoke object privileges 
+grant select, insert, update, delete on MED_PAT_MATERECORD to ROLE_DOCARE;

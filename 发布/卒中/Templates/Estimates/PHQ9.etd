@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="PHQ9" Title="9条目病人健康问卷" >
+    <Group>
+      <RadioBox Code="PHQ9001" Title="做事时提不起劲或没有兴趣" Desc="做事时提不起劲或没有兴趣">
+        <Option Id="01" Text="完全不会" Score="0"/>
+        <Option Id="02" Text="好几天" Score="1"/>
+        <Option Id="03" Text="一半以上的天数" Score="2"/>
+        <Option Id="04" Text="几乎每天" Score="3"/>
+      </RadioBox>
+      <RadioBox Code="PHQ9002" Title="感到心情低落、沮丧或绝望" Desc="感到心情低落、沮丧或绝望">
+        <Option Id="01" Text="完全不会" Score="0"/>
+        <Option Id="02" Text="好几天" Score="1"/>
+        <Option Id="03" Text="一半以上的天数" Score="2"/>
+        <Option Id="04" Text="几乎每天" Score="3"/>
+      </RadioBox>
+      <RadioBox Code="PHQ9003" Title="入睡困难、睡不安或睡眠或多" Desc="入睡困难、睡不安或睡眠或多">
+        <Option Id="01" Text="完全不会" Score="0"/>
+        <Option Id="02" Text="好几天" Score="1"/>
+        <Option Id="03" Text="一半以上的天数" Score="2"/>
+        <Option Id="04" Text="几乎每天" Score="3"/>
+      </RadioBox>
+      <RadioBox Code="PHQ9004" Title="感觉疲倦或没有活力" Desc="感觉疲倦或没有活力">
+        <Option Id="01" Text="完全不会" Score="0"/>
+        <Option Id="02" Text="好几天" Score="1"/>
+        <Option Id="03" Text="一半以上的天数" Score="2"/>
+        <Option Id="04" Text="几乎每天" Score="3"/>
+      </RadioBox>
+      <RadioBox Code="PHQ9005" Title="食欲不振或吃太多" Desc="食欲不振或吃太多">
+        <Option Id="01" Text="完全不会" Score="0"/>
+        <Option Id="02" Text="好几天" Score="1"/>
+        <Option Id="03" Text="一半以上的天数" Score="2"/>
+        <Option Id="04" Text="几乎每天" Score="3"/>
+      </RadioBox>
+      <RadioBox Code="PHQ9006" Title="觉得自己很糟—或觉得自己很失败，或让自己或家人失望" Desc="觉得自己很糟—或觉得自己很失败，或让自己或家人失望">
+        <Option Id="01" Text="完全不会" Score="0"/>
+        <Option Id="02" Text="好几天" Score="1"/>
+        <Option Id="03" Text="一半以上的天数" Score="2"/>
+        <Option Id="04" Text="几乎每天" Score="3"/>
+      </RadioBox>
+      <RadioBox Code="PHQ9007" Title="对事物专注有困难，例如阅读报纸或看电视时" Desc="对事物专注有困难，例如阅读报纸或看电视时">
+        <Option Id="01" Text="完全不会" Score="0"/>
+        <Option Id="02" Text="好几天" Score="1"/>
+        <Option Id="03" Text="一半以上的天数" Score="2"/>
+        <Option Id="04" Text="几乎每天" Score="3"/>
+      </RadioBox>
+      <RadioBox Code="PHQ9008" Title="有不如死掉或用某种方式伤害自己的念头" Desc="有不如死掉或用某种方式伤害自己的念头">
+        <Option Id="01" Text="完全不会" Score="0"/>
+        <Option Id="02" Text="好几天" Score="1"/>
+        <Option Id="03" Text="一半以上的天数" Score="2"/>
+        <Option Id="04" Text="几乎每天" Score="3"/>
+      </RadioBox>
+    </Group>
+  </Template>
+</Config>

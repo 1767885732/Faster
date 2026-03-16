@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DoCare.Core\DoCare.Core.csproj" />
+    <ProjectReference Include="..\Packs\DoCare.Mdsd.Emergency\DoCare.Mdsd.Emergency.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FastFrame">
+      <HintPath>..\..\src\FastFrame.dll</HintPath>
+    </Reference>
+    <Reference Include="FastFrame.AutoMapper">
+      <HintPath>..\..\src\FastFrame.AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="FastFrame.CodeGeneration">
+      <HintPath>..\..\src\FastFrame.CodeGeneration.dll</HintPath>
+    </Reference>
+    <Reference Include="FastFrame.EFCore">
+      <HintPath>..\..\src\FastFrame.EFCore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Entities\Configurations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SqlSugarCore" Version="4.6.4.9" />
+  </ItemGroup>
+
+</Project>

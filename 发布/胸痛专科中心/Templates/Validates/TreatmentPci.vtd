@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="TreatmentPci" ViewName="介入手术">
+    <Member MemberId="StartConduitTime" MemberName="启动导管室">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ActivateConduitTime" MemberName="导管室激活时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="PatientArrivalTime" MemberName="患者到达导管室">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="InterventionPerson" MemberName="介入医师">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="StartPunctureTime" MemberName="开始穿刺时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="StartRadiographyTime" MemberName="造影开始时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="PreoperativeTIMILevel" MemberName="TIMI血流等级(仅造影时)">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="AnticoagulationTime" MemberName="抗凝给药时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="AnticoagulationDrug" MemberName="抗凝药物">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="AnticoagulationDose" MemberName="抗凝药物剂量">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="AnticoagulationUnit" MemberName="抗凝药物单位">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="EndOperationTime" MemberName="手术结束时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsDelay" MemberName="是否延误">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Approach" MemberName="入路">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IntracavityImage" MemberName="腔内影像">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="FunctionTest" MemberName="功能检测">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="FunctionTestValue" MemberName="功能检测值">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsIabp" MemberName="IABP">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsPacemaker" MemberName="临时起搏器">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsEcmo" MemberName="ECMO">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsAuxiliaryDevice" MemberName="左心室辅助装置">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Complication" MemberName="术中并发症">
+      <Required Required="true" Enabled="1" />
+    </Member>
+  </View>
+</Config>

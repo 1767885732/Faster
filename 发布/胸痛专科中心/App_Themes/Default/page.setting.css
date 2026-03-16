@@ -1,0 +1,104 @@
+﻿[v-cloak] {
+    display: none;
+}
+.el-header, .el-main {
+    padding:5px 10px;
+}
+
+.operate-bar {
+    float:right;
+    padding: 5px 10px;
+}
+.setting-content {
+    height: calc(100vh - 180px);
+    overflow-x:hidden;
+    overflow-y:auto;
+}
+.setting-card {
+    margin-bottom:10px;
+}
+.setting-card .el-card__header {
+    padding:10px 20px;
+}
+.setting-card .el-card__body {
+    padding:10px 20px;
+}
+
+
+#setting .el-autocomplete,
+#setting .el-cascader,
+#setting .el-tag {
+    width:100%;
+}
+
+#setting .el-menu-item i {
+    font-size: 22px;
+    margin-right: 3px;
+}
+
+#setting .event-input .el-input-group__append {
+    background-color: #409eff;
+    color: #ffffff;
+    border-width: 0px !important;
+}
+/*#setting .el-form-item__label:after {
+    content: '<i class="el-icon-info"></i>';
+    font-size:16px;
+}*/
+
+#setting .hospital-mapping {
+    padding: 10px 5px;
+    top: -20px;
+    width: 98%;
+    position: relative;
+}
+
+#setting .hospital-mapping-button {
+    position: relative;
+    top: -5px;
+    right: -8px;
+    float: right;
+    z-index: 999;
+    font-size: 14px;
+    background: #d14131;
+    color: white;
+    padding: 3px;
+    border: none;
+    border-radius: 100px;
+}
+
+#setting .hint {
+    font-size:20px; 
+    align-self:center;
+}
+
+#setting .hospital-mapping .el-form-item {
+    margin:5px 0px!important;
+}
+
+    #setting .hospital-mapping .el-form-item__label {
+        width:80px!important;
+    }
+    #setting .hospital-mapping .el-form-item__content {
+        margin-left:80px!important;
+    }
+
+#setting .el-card__header .el-button {
+    float: right; 
+    padding:2px 0; 
+    width:60px;
+}
+.view-page span {
+    line-height:28px;
+    height:28px;
+    font-size:18px;
+}
+.view-page b {
+    display: inline-block;
+    width:120px;
+}
+.view-page li {
+    line-height:24px;
+    height:24px;
+    font-size:16px;
+}

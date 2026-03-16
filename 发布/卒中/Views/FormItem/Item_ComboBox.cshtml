@@ -1,0 +1,47 @@
+﻿@model DoCare.CRF.Form.Data.Item.MDComboBoxItem
+@using DoCare.Framework.Extension;
+@using DoCare.CRF.Form.Data.Item
+@{
+    string _checked = Model.Property.ScoreEnabled ? "checked" : "";
+}
+<script src=@Url.GetCssJsUrl("~/Scripts/Stroke/FormItem/ItemPropertyComm.js")></script>
+<script src=@Url.GetCssJsUrl("~/Scripts/Stroke/FormItem/ItemRadioBox.js")></script>    
+<div class="topic_add_block">
+
+    <div class="topic_add_btn_top">
+        <a id="AddRadioOption" href="javaScript:;" title="新增"><b class="plus"></b>新增</a>
+        <div class="score"><input id="chkScore" type="checkbox" style="height: 24px; vertical-align:middle" @_checked /><span class="mg_l_5">评分</span><input name="txtScore" type="text" class="mg_l_5" style="width: 80px; display: none;" placeholder="题目评分" value="@Model.Property.ScoreValue" /></div>
+    </div>
+    <div class="clearfix"></div>
+
+    @foreach (MDEnumPropertyItem Item in Model.Property.EnumItems)
+    {
+        <p class="option default line_b">
+            <input type="text" value="@Item.Text" style="width:75%" data-default="1">
+            <input name="txtScore" value="@Item.ScoreValue" type="text" class="mg_l_5" style="width: 80px; display: none;" placeholder="选项评分" />
+            @if (!Model.HasDefaultValue || !((string[])Model.DefaultValue).Contains(Item.Value))
+            {
+                <a href="javaScript:;" class="SetDefault" title="设为默认值">
+                    <span class="tag_deaultvalue">设为默认值</span>
+                </a>
+                <a href="javaScript:;" class="RemoveDefault" title="取消默认值" style="display:none;">
+                    <span class="tag_deaultvalue_actived"><b class="remove"></b>取消默认值</span>
+                </a>
+            }
+            else
+            {
+                <a href="javaScript:;" class="SetDefault" title="设为默认值" style="display:none;">
+                    <span class="tag_deaultvalue">设为默认值</span>
+                </a>
+                <a href="javaScript:;" class="RemoveDefault" title="取消默认值">
+                    <span class="tag_deaultvalue_actived"><b class="remove"></b>取消默认值</span>
+                </a>
+            }
+        </p>
+
+
+        <div class="topic_add_btn_grp fr">
+            <a href="javaScript:;" class="deleteOption" title="删除"><b class="remove"></b>删除</a>
+        </div>
+    }
+</div>

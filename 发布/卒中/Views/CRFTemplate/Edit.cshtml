@@ -1,0 +1,195 @@
+﻿@model DoCare.CRF.Form.MDTemplate
+@using DoCare.Framework.Extension;
+@using DoCare.CRF.Form.Data.Item
+@using DoCare.Data
+@{
+    ulong iStatus = 0;
+    MDProcessStatus status = MDProcessStatus.Draft;
+    if(ulong.TryParse(Model.Status, out iStatus)){
+         status = (MDProcessStatus)Enum.ToObject(typeof(MDProcessStatus), iStatus);
+    } 
+}
+<link href=@Url.GetCssJsUrl("~/Content/xxg_cz.css") rel="stylesheet" />
+<script src=@Url.GetCssJsUrl("~/Scripts/Stroke/FormItem.js")></script>
+<script src=@Url.GetCssJsUrl("~/Scripts/Stroke/templateEdit.js")></script>
+<script src=@Url.GetCssJsUrl("~/Scripts/Stroke/FormItem/ItemPropertyComm.js")></script>
+<style>
+    #tab_list {
+        margin: 0;
+        padding: 0;
+        float: right;
+    }
+
+    #tab_list a {
+        padding: 0px;
+        display: block;
+        margin: 0 auto 5px auto;
+        clear: both;
+        float: right;
+        overflow: hidden;
+    }
+
+    #tab_list a > i {
+        width: 20px;
+        height: 20px;
+        line-height: 30px;
+        display: inline-block;
+        vertical-align: middle;
+        margin: 5px 5px 0 0;
+        float: right;
+        z-index: 999;
+    }
+
+    .tab_sign {
+        background: url(../../Images/icon/tab_sign.png) no-repeat 0 0;
+    }
+
+    .tab_sign:hover {
+        background: url(../../Images/icon/tab_sign.png) no-repeat 0 -20px;
+    }
+
+    .remove_sign {
+        background: url(../../Images/icon/tab_sign.png) no-repeat -20px 0;
+    }
+
+    .remove_sign:hover {
+        background: url(../../Images/icon/tab_sign.png) no-repeat -20px -20px;
+    }
+
+    #tab_list a dt {
+        width: 150px;
+        height: 30px;
+        font-size: 14px;
+        line-height: 30px;
+        color: #666;
+        font-weight: normal;
+        text-align: left;
+        padding-left: 10px;
+        margin: 0;
+        display: block;
+        border-radius: 5px 0 0 5px;
+        background-color: #ccc;
+    }
+
+    #tab_list a.disabled dt {
+        width: 100%;
+        height: 30px;
+        line-height: 30px;
+        padding: 0;
+        border-radius: 10px 0 0 10px;
+        color: #666;
+        background-color: #45a1f6;
+    }
+
+    #tab_list a:hover dt {
+        color: #ffffff;
+        background-color: #1d7fdd;
+    }
+
+    #tab_list a.active dt {
+        color: #ffffff;
+        font-weight: bold;
+        background-color: #7ec3ff;
+    }
+
+    #tab_list a.disabled dt, #tab_list a:hover.disabled dt {
+        color: #666;
+        text-decoration: none !important;
+        cursor: default;
+    }
+
+    .textbox {
+        height: 22px !important;
+        margin-top: -3px !important;
+        border: 1px solid #c9c9c9 !important;
+        -webkit-border-radius: 0px !important;
+        border-radius: 0px !important;
+    }
+
+
+        .textbox .textbox-text {
+            border: none !important;
+            -webkit-border-radius: 0px !important;
+            border-radius: 0px !important;
+        }
+</style>
+
+<div id="container">
+    @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "_content_modify_form", @class = "form_block" })) { 
+        @Html.HiddenFor(m=>m.ID);
+        <input id="isLoadSuccess" type="hidden"/> 
+        <div class="content mg_10" style="overflow:hidden; min-width:1200px;">
+            <div id="container line_b">
+                <div class="form_tit">模板编辑</div>
+                <form class="form_block">
+                    <fieldset style="padding:10px 0 10px 150px;">
+                        <p>
+                            @Html.Label("模板名：", new { @class = "wd_100" })
+                            @Html.TextBoxFor(m => m.Name, new { @style = "width:80%;" , maxlength = "32"})
+                        </p>
+                        <p>
+                            @Html.Label("标题：", new { @class = "wd_100" })
+                           @Html.TextBoxFor(m => m.Title, new { @style = "width:80%;", maxlength = "100" })
+                        </p>
+                        <p class="wp_50">
+                            @Html.Label("有效时间：", new { @class = "wd_100" })
+                            @Html.TextBoxFor(m => m.EffectiveDate, "", new { @class = "Wdate", @onfocus = @"WdatePicker({skin:'whyGreen',dateFmt:'yyyy年M月d日',maxDate:'#F{$dp.$D(\'InvalidDate\')}'})" })
+                            @Html.Label("至", new { @class = "mg_l_5 mg_r_5" })
+                            @Html.TextBoxFor(m => m.InvalidDate, "", new { @class = "Wdate", @onfocus = @"WdatePicker({skin:'whyGreen',dateFmt:'yyyy年M月d日',minDate:'#F{$dp.$D(\'EffectiveDate\')}'})" })
+                        </p>
+                            @Html.Label("控制规则：", new { @class = "wd_100" })
+                            @Html.TextBoxFor(m => m.ControlRules, new { @style = "width:80%;" })
+                        </p>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="clearfix"></div>
+            <div class="container_inst">
+                <div class="menu_block fl">
+                    <dl id="tab_list">
+                        @foreach (MDFormItemCategory Category in Model.Categorys)
+                        {
+                            <a href="javaScript:;" name="Category" data-id="@Category.Code" data-name="@Category.Name">
+                                <i class="remove_sign" title="删除"></i>
+                                <dt>@Category.Name</dt>
+                            </a>
+                        }
+
+                        <a href="javaScript:;" id="addCatagory">
+                            <dt>增加类别</dt>
+                        </a>
+                    </dl>
+                </div>
+                <div class=" box_block">
+                    <div class="bg">
+                        <div id="_formItems">
+                        </div>
+                        <div id="div_noCategory" style="width: 100%; text-align: center; vertical-align: middle; display: none;">
+                            <div class="note_info" style="text-align:center;">暂时还没有分类哦！请先<a href="javaScript:;" onclick="selectCategories()">添加分类</a></div>
+                        </div>
+                        <div id="div_noFormItem" style="width: 100%; text-align: center; vertical-align: middle; display: none;">
+                            <div class="note_info" style="text-align:center;">
+                                暂时还没有题目哦！请先<a href="javaScript:;" onclick="createItem(this)">新建</a>
+                                或者<a href="javaScript:;" onclick="selectFromLib(this)">从题库选择</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn_block mg_t_20">
+                        @if (ViewBag.CanSubmitCRF && (status == MDProcessStatus.Draft || status == MDProcessStatus.Refuse))
+                        {
+                            <a id="btn_save" href="javaScript:;" class="btn blue">保存</a>
+                            <a id="btn_saveToAudit" href="javaScript:;" class="btn orange">提交审核</a>
+                        }
+                        else if (ViewBag.CanAuditCRF && status == MDProcessStatus.Auditing)
+                        {
+                            <a id="btn_agree" name="_agree" class="btn blue">审核通过</a>
+                            <a id="btn_refuse" name="_refuse" class="btn orange">审核拒绝</a>
+                        }
+                        <a id="btn_close" href="javaScript:;" class="btn white">关闭</a>
+                    </div>
+                </div>
+                
+                </div>
+        </div>
+    }   
+</div>

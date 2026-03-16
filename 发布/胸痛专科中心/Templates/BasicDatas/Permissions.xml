@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Permissions AppId="DoCareCPC">
+    <Permission Name="数据管理" Key="CPC_MNU_MR" >
+      <Permission Name="新增" Key="CPC_MR_ADD" />
+      <Permission Name="查看" Key="CPC_MR_READ" />
+      <Permission Name="删除" Key="CPC_MR_DELETE" />      
+      <Permission Name="编辑" Key="CPC_MR_EDIT" />      
+      <Permission Name="提交" Key="CPC_MR_AUDIT" />
+      <Permission Name="归档" Key="CPC_MR_FILING" />
+      <Permission Name="上报" Key="CPC_MR_REPORT" />
+      <Permission Name="打印" Key="CPC_MR_PRINT" />
+      <Permission Name="导出" Key="CPC_MR_EXPORT" />
+      <Permission Name="查询" Key="CPC_MR_QUERY" />
+    </Permission>
+    <Permission Name="统计分析" Key="CPC_MNU_SA"  >
+      <Permission Name="查看" Key="CPC_SA_READ" />
+    </Permission>
+    <Permission Name="数据维护" Key="CPC_MNU_DM" >
+      <Permission Name="恢复" Key="CPC_DM_RESTORE" />
+      <Permission Name="删除" Key="CPC_DM_DELETE"  />
+    </Permission>
+    <Permission Name="系统设定" Key="CPC_MNU_SS"  >
+      <Permission Name="通用配置" Key="CPC_SS_GENERAL"  />
+      <Permission Name="调阅配置" Key="CPC_SS_ACCESS"  />
+    </Permission>
+  </Permissions>
+</Config>
+
+
+
+
+
+
+
+
+

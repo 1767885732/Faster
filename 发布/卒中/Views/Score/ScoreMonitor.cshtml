@@ -1,0 +1,389 @@
+﻿@using DoCare.ToolKit
+@using DoCare.Framework.Extension
+@{
+    ViewBag.Title = "卒中评分";
+    Layout = null;
+}
+<script src="~/Scripts/JSLINQ.js"></script>
+<script>
+    var patient =  @Html.Raw((JsonKit.Serialize(ViewBag.Patient)));
+    var record =  @Html.Raw((JsonKit.Serialize(ViewBag.Record)));
+    var monitor =  @Html.Raw((JsonKit.Serialize(ViewBag.Monitor)));
+    var score =  @Html.Raw((JsonKit.Serialize(ViewBag.Score)));
+    var PermissionSave = @Html.Raw((JsonKit.Serialize(ViewBag.PermissionSave)));
+    var app = angular.module('ScoreApp', []);
+
+    // 日期控件指令
+    app.directive('wdatePicker', function () {
+        return {
+            restrict: "A",
+            link: function (scope, element, attr) {
+                element.bind('click', function () {
+                    window.WdatePicker({
+                        onpicked: function () { element.change() },
+                        oncleared: function () { element.change() },
+                        dateFmt: 'yyyy-MM-dd HH:mm'
+                    })
+                });
+            }
+        }
+    });
+
+    // controller
+    app.controller('ScoreController', function ($scope, $filter, $http) {
+        $scope.PermissionSave = PermissionSave;
+        // 患者信息
+        $scope.patient = patient;
+        $scope.registId = patient.Id;
+        // 默认评分次数选项卡，默认选择第一次
+        $scope.defaultIndex = 0;
+        // 评分记录
+        $scope.record = record;
+        $scope.score = score;
+        // 评分记录
+        $scope.monitor = monitor;
+        $scope.recordType = 3;
+        $scope.ManualTotalScore = 0;
+        $scope.ShowScoreValue = 0;
+        
+        if($scope.record!=null && $scope.record.ScoringTime!=null &&$scope.record.ScoringTime!='')
+        {
+            // 对时间格式：/Date(1448864369815)/ 的格式化
+            $scope.record.ScoringTime = $filter("date")($scope.record.ScoringTime.replace(/\/Date\((\d+)\)\//, "$1"), "yyyy-MM-dd HH:mm");
+        }
+        if($scope.score!=null)
+        {
+            $scope.ManualTotalScore = parseInt($scope.score.ScoreValue) | 0;
+        }
+        // 获取当前时间
+        $scope.getCurrentTime = function()
+        {
+            //类型：HAT = 1, LADS = 2, NIHSS = 3, STAF = 4
+            if($scope.record!=null){
+                $scope.record.ScoringTime = $filter('date')(new Date(),'yyyy-MM-dd HH:mm');
+            }
+            $scope.saveRecord();
+        }
+        // 文本框输入分值
+        $scope.changeScore = function($event,score,key,oldValue,title,enumItems){
+            if($scope.template.ScoreType==6)
+            {
+                return;
+            }
+            var hasScore = false; // 是否有此分值的选项
+            var value;
+            for (var i = 0; i < enumItems.length; i++) {
+                var enumItem = enumItems[i];
+                if(enumItem.ScoreValue == score)
+                {
+                    value = enumItem.Value;
+                    hasScore = true;
+                }
+            }
+            if(hasScore)
+            {
+                $scope.updateSelection(key,value,score,oldValue,title);
+            }
+            else
+            {
+                var msg = "没有"+score+"分值的选项";
+                layer.tips(msg, $event.target, {
+                    tips: [2, '#ed4e2a'],
+                    time: 3000
+                });
+            }
+        }
+        // 单选变化
+        $scope.updateSelection = function(key,value,score,oldValue,title){
+            $scope.ShowScoreValue = 1;
+            if(value!=oldValue){
+                // 特殊情况如果NiHiss 1a评分为3分，其中1b, 1c默认2分
+                var special = false;
+                if(title.indexOf("1a")>-1 && score == "3")
+                {
+                    special = true;
+                }
+                $scope.itemKeyValueList = new Array();
+                $scope.record.ScoreValue = 0;
+                for (var i = 0; i < $scope.record.ItemCategories[0].Items.length; i++) {
+                    var item = $scope.record.ItemCategories[0].Items[i];
+                    if(special && (item.Title.indexOf("1b")>-1 || item.Title.indexOf("1c")>-1 || item.Title.indexOf("8")>-1 || item.Title.indexOf("10")>-1 || item.Title.indexOf("11")>-1))
+                    {
+                        item.Score = 2;
+                        item.Value = "3";
+                        $scope.itemKeyValueList.push({Key:item.ID,Value:item.Value});
+                    }
+                    else if(special && (item.Title.indexOf("4")>-1 || item.Title.indexOf("9")>-1))
+                    {
+                        item.Score = 3;
+                        item.Value = "4";
+                        $scope.itemKeyValueList.push({Key:item.ID,Value:item.Value});
+                    }
+                    else if(special && (item.Title.indexOf("5")>-1 || item.Title.indexOf("6")>-1) )
+                    {
+                        item.Score = 4;
+                        item.Value = "5";
+                        $scope.itemKeyValueList.push({Key:item.ID,Value:item.Value});
+                    }
+                    else if(item.ID==key)
+                    {
+                        item.Score = parseInt(score);
+                        item.Value = value;
+                        $scope.itemKeyValueList.push({Key:item.ID,Value:value});
+                    }
+                    // NHISS评分9分不计总分
+                    $scope.record.ScoreValue += (item.Score!=null && item.Score!=9)?item.Score:0;
+                }
+                $scope.saveMultiData(JSON.stringify($scope.itemKeyValueList),$scope.record.ScoreValue);
+            }
+        }
+        // 保存评分
+        $scope.saveSingleData = function(itemKeyValue,totalScore)
+        {
+            if(!$scope.PermissionSave)
+            {
+                return;
+            }
+            $http({
+                method: 'POST',
+                url: '/Score/SaveSingleScore',
+                data: {recordId:$scope.record.ID,itemValue:itemKeyValue,totalScore:totalScore}
+            }).then(function successCallback(response) {
+                if(response.data.IsSuccess){
+                }
+                else
+                {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+        // 保存评分
+        $scope.saveMultiData = function(itemKeyValue,totalScore)
+        {
+            if(!$scope.PermissionSave)
+            {
+                return;
+            }
+            $http({
+                method: 'POST',
+                url: '/Score/SaveMultiScore',
+                data: {registId:$scope.registId,recordId:$scope.record.ID,itemValue:itemKeyValue,totalScore:totalScore}
+            }).then(function successCallback(response) {
+                if(response.data.IsSuccess){
+                }
+                else
+                {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+        // 保存记录（评分时间、评分医生）
+        $scope.saveRecord = function()
+        {
+            if($scope.record == null)
+            {
+                return;
+            }
+            if(!$scope.PermissionSave)
+            {
+                return;
+            }
+            $http({
+                method: 'POST',
+                url: '/Score/SaveRecord',
+                data: {
+                    recordType:3
+                    ,recordId:$scope.record.ID
+                    ,scoringTime:$scope.record.ScoringTime
+                    ,doctor:$scope.record.Doctor
+                }
+            }).then(function successCallback(response) {
+                if(response.data.IsSuccess){
+                }
+                else
+                {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+
+        $scope.SaveScore = function(tScore)
+        {
+            $scope.ManualTotalScore = parseInt(tScore) | 0;;
+            $scope.ShowScoreValue = 0;
+
+            $http({
+                method: 'POST',
+                url: '/Score/SaveScore',
+                data: {
+                    registId: $scope.registId,
+                    recordId: $scope.record.ID,
+                    totalScore: tScore
+                }
+            }).then(function successCallback(response) {
+                if (!response.data.IsSuccess) {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+
+        // 保存血压
+        $scope.saveVitalSign = function()
+        {
+            if(!$scope.PermissionSave)
+            {
+                return;
+            }
+            $http({
+                method: 'POST',
+                url: '/Score/SaveVitalSign',
+                data: {
+                    vitalSign:$scope.monitor.VitalSign,
+                    monitorId:$scope.monitor.Id
+                }
+            }).then(function successCallback(response) {
+                if(response.data.IsSuccess){
+                    $scope.monitor.VitalSign = response.data.Data;
+                    $scope.monitor.VitalSignId = response.data.Data.Id;
+
+                    $scope.monitor.VitalSign.CollectionTime = $filter("date")($scope.monitor.VitalSign.CollectionTime.replace(/\/Date\((\d+)\)\//, "$1"), "yyyy-MM-dd HH:mm");
+                    $scope.monitor.VitalSign.CreateDate = $filter("date")($scope.monitor.VitalSign.CreateDate.replace(/\/Date\((\d+)\)\//, "$1"), "yyyy-MM-dd HH:mm");
+                }
+                else
+                {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+        // 获取所以评分key-value值
+        $scope.getItemKeyValue = function()
+        {
+            $scope.itemKeyValueList = new Array();
+            for (var i = 0; i < $scope.record.ItemCategories[0].Items.length; i++) {
+                var item = $scope.record.ItemCategories[0].Items[i];
+                $scope.itemKeyValueList.push({Key:item.ID,Value:item.Value});
+            }
+        }
+        // 是否选中
+        $scope.isSelected = function(key,value,checkedValue){
+            return $.inArray( value, checkedValue==null?null:checkedValue.split(";")) >= 0;
+        }
+    });
+
+    // 自定义过滤器
+    app.filter('NoShowNull', function() { //可以注入依赖
+        return function(text) {
+            return text=="null"?"":text;
+        }
+    });
+
+    angular.bootstrap($("#scoreMonitor")[0], ['ScoreApp']);
+</script>
+<script>
+    // 字符中添加值 demo:"1;2;3" 添加"4"
+    function addValue(total,value)
+    {
+        // 判断原有数据是否为null，如果为null直接赋值
+        if(total!=null)
+        {
+            // 转换成数组
+            var totalArr = total.split(";");
+            // 没有直接添加，有则忽略
+            if($.inArray(value, totalArr)==-1)
+            {
+                // 添加
+                totalArr.push(value);
+                // 重新转换成字符串
+                total = totalArr.join(";");
+            }
+        }
+        else
+        {
+            total = value;
+        }
+        return total;
+    }
+
+    // 字符中去除值  demo:"1;2;3" 删除"2"
+    function delValue(total,value)
+    {
+        // 转换成数组
+        var totalArr = total.split(";");
+        // 查找位置
+        var index = $.inArray(value, totalArr);
+        // 存在直接去除
+        if(index>-1)
+        {
+            // 删除
+            totalArr.splice(index,1);
+            // 重新转换成字符串
+            total = totalArr.join(";");
+        }
+        return total;
+    }
+</script>
+<div class="popup" id="scoreMonitor" ng-app="ScoreApp" ng-controller="ScoreController">
+    <ul class="type-menu left">
+        <li>
+            <label>舒张压</label>
+            <input type="text" ng-model="monitor.VitalSign.Dbp"  ng-blur="saveVitalSign()">
+        </li>
+        <li>
+            <label>收缩压</label>
+            <input type="text" ng-model="monitor.VitalSign.Sbp"  ng-blur="saveVitalSign()">
+        </li>
+        <li>
+            <label>呼吸</label>
+            <input type="text" ng-model="monitor.VitalSign.RespiratoryRate" ng-blur="saveVitalSign()">
+        </li>
+        <li>
+            <label>脉搏</label>
+            <input type="text" ng-model="monitor.VitalSign.PulseRate" ng-blur="saveVitalSign()">
+        </li>
+        <li>
+            <label>体温</label>
+            <input type="text" ng-model="monitor.VitalSign.Temperature" ng-blur="saveVitalSign()">
+        </li>
+        <li>
+            <label>血氧</label>
+            <input type="text" ng-model="monitor.VitalSign.BloodOxygen" ng-blur="saveVitalSign()">
+        </li>
+        <li>
+            <label>心率</label>
+            <input type="text" ng-model="monitor.VitalSign.HeartRate" ng-blur="saveVitalSign()">
+        </li>
+        <li style="display:none;">
+            <label>血糖</label>
+            <input type="text" ng-model="monitor.VitalSign.BloodSugar" ng-blur="saveVitalSign()">
+        </li>
+    </ul>
+    <fieldset class="medical-record left">
+        <div class="score-box">
+            @Html.Partial("../Score/_Record")
+        </div>
+    </fieldset>
+</div>
+
+<script>
+    function subNav(obj) {
+        $(obj).toggleClass("currentDd").siblings(".subNav").removeClass("currentDd");
+        // 修改数字控制速度， slideUp(0)控制卷起速度
+        $(obj).next(".navContent").slideToggle(100).siblings(".navContent").slideUp(100);
+    }
+</script>
+

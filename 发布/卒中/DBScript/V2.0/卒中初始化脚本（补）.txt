@@ -1,0 +1,418 @@
+--1.创建表空间和用户
+create tablespace tsp_MedCva
+	logging
+	datafile 'C:\app\Administrator\oradata\docare\MedCva.dbf'
+	size 300M
+	reuse
+	autoextend on
+	next 20M
+	maxsize unlimited
+	extent management local segment space management auto;
+	
+create user medcva
+	identified by medcva
+	default tablespace tsp_MedCva
+	temporary tablespace temp
+	quota unlimited on tsp_MedCva;
+grant connect,resource to medcva;
+grant role_docare,dba to medcva;	
+
+--2.导出最新的dmp文件 
+--exp medsdmp/medsdm@orcl file=c:\medsdmp.dmp 
+--3.导入最新的dmp文件（不要连错用户）
+imp medcva/medcva@docare file=C:\Users\Administrator\Desktop\新版卒中\medCVA.dmp full=y
+imp medpub/MEDPUB@docare file=C:\Users\Administrator\Desktop\新版卒中\medpub.dmp full=y
+imp CVAFY/CVAFY@docare file=C:\Users\Administrator\Desktop\附一数据库2019-06-10\备份\cpcuser\ora_bak\CPCUSER\BAK_2019-06-09.dmp full=y
+
+--4.执行更新脚本
+drop table CFS_PATIENT_QCI;
+drop table CFS_QCI_REPORT;
+drop table CFS_QCI_REPORT_MONTH;
+drop table CFS_QCI_REPORT_PARAM;
+drop table CFS_QCI_REPORT_SEASON;
+drop table CFS_QCI_REPORT_WEEK;
+drop table CFS_QCI_REPORT_YEAR;
+drop table CFS_TIME_STATISTICS;
+drop table CM_ACTION_PERMISSIONS;
+drop table CM_FIELD_DEFINITION;
+drop table cm_identifiers_info;
+
+drop table cm_organization_validate;
+drop table cm_qci;
+drop table cm_qci_algorithm;
+drop table cm_qci_dateitem;
+
+drop table cm_qci_define;
+drop table cm_qci_dependon;
+drop table cm_qci_version;
+drop table cm_qc_attribute_dic;
+drop table cm_version;
+drop table cpc_data_question;
+drop table cpc_data_question_clarify;
+drop table cpc_diagnosis_ad;
+drop table cpc_diagnosis_nstemi;
+drop table cpc_diagnosis_pe;
+drop table cpc_diagnosis_stemi;
+drop table cpc_diagnosis_ua;
+drop table cpc_emergency_info;
+drop table cpc_outcome_info;
+drop table cpc_register_info;
+drop table cpc_score;
+drop table mdm_patient_info;
+drop table ws_patient_triage;
+drop table cva_wholecourse_management;
+drop table cva_wab_score;
+
+create table MED_ESTIMATE
+(
+  id                      VARCHAR2(36) not null,
+  regist_id          VARCHAR2(36) not null,
+  RELATION_ID        VARCHAR2(36),
+  Code            VARCHAR2(36),
+  Name              VARCHAR2(16),
+  Title            VARCHAR2(80),  
+  Description        VARCHAR2(500),
+  Doctor          VARCHAR2(50),
+  Time              DATE,
+  Value              VARCHAR2(30),
+  CREATE_NAME        VARCHAR2(50),
+  CREATE_DATE        DATE,
+  UPDATE_NAME        VARCHAR2(50),
+  UPDATE_DATE        DATE,
+  constraint MED_ESTIMATE_PK primary key (ID)
+)
+;
+grant select, insert, update, delete on MED_ESTIMATE to ROLE_DOCARE;
+
+create table MED_ESTIMATE_ITEM
+(
+  id                      VARCHAR2(36) not null,
+  ESTIMATE_ID        VARCHAR2(36) not null,
+  CODE              VARCHAR2(36),
+  Type              VARCHAR2(16),
+  Title            VARCHAR2(80),  
+  Description        VARCHAR2(500),
+  Content          CLOB,
+  Group_No            VARCHAR2(36),
+  Group_Name        VARCHAR2(80),
+  Order_No            NUMBER(11),
+  constraint MED_ESTIMATE_ITEM_PK primary key (ID)
+)
+;
+grant select, insert, update, delete on MED_ESTIMATE_ITEM to ROLE_DOCARE;
+
+create table MED_DICTIONARY
+(
+  CODE      VARCHAR2(64) not null,
+  NAME      VARCHAR2(128) not null,
+  KEY        VARCHAR2(32) not null,
+  VALUE      VARCHAR2(128) not null,
+  DESCRIPTION    VARCHAR2(512),
+  PinYin      VARCHAR2(20),
+  IS_DELETE    VARCHAR2(1),
+  CUSTOM_CODE    VARCHAR2(20),
+  ORDER_NO    NUMBER(11),
+  constraint MED_DICTIONARY_PK primary key (CODE, KEY)
+  );
+
+grant select, insert, update, delete on MED_DICTIONARY to ROLE_DOCARE;
+
+create table CM_MENUS
+(
+  id             VARCHAR2(36) not null,
+  name           VARCHAR2(100),
+  action         VARCHAR2(250),
+  icon           VARCHAR2(32),
+  description    VARCHAR2(200),
+  parent_id      VARCHAR2(36),
+  permission_key VARCHAR2(100),
+  sequence       NUMBER(4),
+  enabled        CHAR(1),
+  constraint CM_MENUS_PK primary key (ID)
+)
+;
+grant select, insert, update, delete, alter on CM_MENUS to ROLE_DOCARE;
+
+
+create table CM_TIME_NODES
+(
+  id          VARCHAR2(36) not null,
+  name        VARCHAR2(64) not null,
+  name_en     VARCHAR2(64) not null,
+  description VARCHAR2(512),
+  is_key      CHAR(1) default '0',
+  sequence    NUMBER(5,1),
+  constraint CM_TIME_NODES_PK primary key (ID)
+)
+;
+grant select, insert, update, delete on CM_TIME_NODES to ROLE_DOCARE;
+
+create table MED_TIMELINES
+(
+  id          VARCHAR2(36) not null,
+  time_id     VARCHAR2(64) not null,
+  time_value  DATE,
+  doc_id      VARCHAR2(36) not null,
+  is_key_time CHAR(1) default '0',
+  constraint MED_TIMELINES_PK primary key (ID)
+)
+;
+grant select, insert, update, delete, alter on MED_TIMELINES to ROLE_DOCARE;
+
+create table CM_SYSTEM_SETTINGS
+(
+  id             VARCHAR2(36) not null,
+  setting        CLOB,
+  constraint CM_SYSTEM_SETTINGS_PK primary key (id)
+)
+;
+grant select, insert, update, delete on CM_SYSTEM_SETTINGS to ROLE_DOCARE;
+
+--患者登记表
+ALTER TABLE CVA_PATIENT_REGIST RENAME TO CVA_REGIST;
+ALTER TABLE CVA_REGIST ADD followup_doc_status CHAR(1) default '0';
+ALTER TABLE CVA_REGIST ADD followup_nur_status CHAR(1) default '0';
+ALTER TABLE CVA_REGIST ADD FILING_DATE DATE;
+ALTER TABLE CVA_REGIST ADD DISCHARGE_TIME DATE;
+ALTER TABLE CVA_REGIST ADD admission_time DATE;
+ALTER TABLE CVA_REGIST ADD is_completed CHAR(1) default '0';
+ALTER TABLE CVA_REGIST ADD is_filing CHAR(1) default '0';
+alter table CVA_REGIST modify patient_id null;
+--日志表
+create table MED_MEDICAL_ACTIONS
+(
+  id             VARCHAR2(36) not null,
+  action         VARCHAR2(36),
+  action_name    VARCHAR2(50),
+  action_time    DATE,
+  description    CLOB,
+  event_id       VARCHAR2(36),
+  patient_name   VARCHAR2(50),
+  patient_age    VARCHAR2(10),
+  patient_idcard VARCHAR2(18),
+  patient_phone  VARCHAR2(15),
+  patient_sex    VARCHAR2(1),
+  user_id        VARCHAR2(30),
+  user_name      VARCHAR2(50),
+  constraint MED_MEDICAL_ACTIONS_PK primary key (id)
+)
+;
+grant select, insert, update, delete, alter on MED_MEDICAL_ACTIONS to ROLE_DOCARE;
+
+--急救
+ALTER TABLE cva_pre_hospital_first_aid RENAME TO CVA_FIRST_AID;
+ALTER TABLE CVA_FIRST_AID ADD T NUMBER(3, 1);
+ALTER TABLE CVA_FIRST_AID ADD P NUMBER(3);
+ALTER TABLE CVA_FIRST_AID ADD R NUMBER(3);
+ALTER TABLE CVA_FIRST_AID ADD SP NUMBER(3);
+ALTER TABLE CVA_FIRST_AID ADD DP NUMBER(3);
+ALTER TABLE CVA_FIRST_AID ADD HR NUMBER(3);
+ALTER TABLE CVA_FIRST_AID ADD SPO NUMBER(3);
+ALTER TABLE CVA_FIRST_AID ADD BS NUMBER(4,2);
+ALTER TABLE CVA_FIRST_AID ADD sense VARCHAR2(60);
+
+--急诊
+ALTER TABLE cva_emergency_treatment RENAME TO CVA_EMERGENCY;
+ALTER TABLE CVA_EMERGENCY ADD NIHSS_SCORE_VALUE NUMBER(3);
+ALTER TABLE CVA_EMERGENCY ADD NIHSS_SCORE_ID VARCHAR2(36);
+ALTER TABLE CVA_EMERGENCY ADD NIHSS_SCORE VARCHAR2(1);
+ALTER TABLE CVA_EMERGENCY ADD MRS_SCORE_VALUE NUMBER(3);
+ALTER TABLE CVA_EMERGENCY ADD MRS_SCORE_ID VARCHAR2(36);
+ALTER TABLE CVA_EMERGENCY ADD ECG_DIAGNOSIS_TIME DATE;
+ALTER TABLE CVA_EMERGENCY ADD SECOND_CT_END_TIME DATE;
+ALTER TABLE CVA_EMERGENCY ADD SECOND_CT_START_TIME DATE;
+
+--患者救治
+ALTER TABLE cva_patient_treatment RENAME TO CVA_TREATMENT;
+ALTER TABLE CVA_TREATMENT ADD IAT_EMBOLECTOMY_DEVICE_OTHER VARCHAR2(50);
+alter table CVA_TREATMENT modify IAT_IS_MC_VEP VARCHAR2(16);
+
+--住院诊疗
+ALTER TABLE cva_inhospital_treatment RENAME TO CVA_INHOSPITAL;
+ALTER TABLE CVA_INHOSPITAL ADD INPATIENT_NO VARCHAR2(36);
+
+--患者转归
+ALTER TABLE cva_patient_outcome RENAME TO CVA_OUTCOME;
+ALTER TABLE CVA_OUTCOME ADD LIPIDMODULATION_REASON VARCHAR2(500);
+ALTER TABLE CVA_OUTCOME ADD Lipidmodulation_Used VARCHAR2(1);
+ALTER TABLE CVA_OUTCOME ADD Hypoglycemic_Reason  VARCHAR2(500);
+ALTER TABLE CVA_OUTCOME ADD Hypoglycemic_Used VARCHAR2(1);
+ALTER TABLE CVA_OUTCOME ADD Antiplatelet_Reason  VARCHAR2(500);
+ALTER TABLE CVA_OUTCOME ADD Antiplatelet_Used VARCHAR2(1);
+ALTER TABLE CVA_OUTCOME ADD Anticoagulation_Reason  VARCHAR2(500);
+ALTER TABLE CVA_OUTCOME ADD Anticoagulation_Used VARCHAR2(1);
+ALTER TABLE CVA_OUTCOME ADD Antihypertensive_Reason  VARCHAR2(500);
+ALTER TABLE CVA_OUTCOME ADD Antihypertensive_Used VARCHAR2(1);
+ALTER TABLE CVA_OUTCOME ADD total_amount NUMBER(10);
+ALTER TABLE CVA_OUTCOME ADD other_diagnosis  VARCHAR2(100);
+ALTER TABLE CVA_OUTCOME ADD diagnosis VARCHAR2(100);
+ALTER TABLE CVA_OUTCOME ADD discharge_time DATE;
+
+
+-- 系统配置表 
+create table CM_SYSTEM_SETTINGS
+(
+  id             VARCHAR2(36) not null,
+  setting        CLOB,
+  constraint CM_SYSTEM_SETTINGS_PK primary key (id)
+)
+;
+grant select, insert, update, delete on CM_SYSTEM_SETTINGS to ROLE_DOCARE;
+
+insert into CM_SYSTEM_SETTINGS (ID, SETTING)
+values ('DoCareCVAC.VALIDATE_LEVEL', '<CLOB>');
+
+insert into CM_SYSTEM_SETTINGS (ID, SETTING)
+values ('DoCareWS.VALIDATE_LEVEL', '<CLOB>');
+
+insert into CM_SYSTEM_SETTINGS (ID, SETTING)
+values ('DoCareCPC.VALIDATE_LEVEL', '<CLOB>');
+
+insert into CM_SYSTEM_SETTINGS (ID, SETTING)
+values ('DoCareCVAC.ScoreSetting', '<CLOB>');
+
+insert into CM_SYSTEM_SETTINGS (ID, SETTING)
+values ('DoCareCVAC.FollowUpSetting', '<CLOB>');
+
+insert into CM_SYSTEM_SETTINGS (ID, SETTING)
+values ('DoCareCPC.CommonSetting', '<CLOB>');
+
+insert into CM_SYSTEM_SETTINGS (ID, SETTING)
+values ('DoCareCPC.CommonSettingDefultValue', '<CLOB>');
+
+insert into CM_SYSTEM_SETTINGS (ID, SETTING)
+values ('DoCareCVAC.CommonSetting', '<CLOB>');
+
+insert into CM_SYSTEM_SETTINGS (ID, SETTING)
+values ('DoCareCVAC.CommonSettingDefultValue', '<CLOB>');
+
+insert into CM_SYSTEM_SETTINGS (ID, SETTING)
+values ('DoCareCVAC.WPScoreSetting', '<CLOB>');
+
+update CM_SYSTEM_SETTINGS set SETTING='{"BeginPoint":"2","DaysAfterPoint":1,"Interval":1,"Times":6,"TemplateID":"3E1C57F73A734CFD9C9B8F9BF13AC29C","UseNormalSetting":false,"UseSpecialSetting":true,"DayList":[1,3,7,14,30,90,365],"SpecialDetailList":[{"Days":1,"Unit":"1"},{"Days":3,"Unit":"1"},{"Days":1,"Unit":"2"},{"Days":2,"Unit":"2"},{"Days":1,"Unit":"3"},{"Days":1,"Unit":"4"},{"Days":1,"Unit":"5"}]}' where ID ='DoCareCVAC.FollowUpSetting';
+
+ALTER TABLE CVA_FOLLOWUP_CALENDAR ADD followup_date DATE;
+ALTER TABLE CVA_FOLLOWUP_CALENDAR ADD followup_by VARCHAR2(50);
+ALTER TABLE CVA_FOLLOWUP_CALENDAR ADD followup_info CLOB;
+ALTER TABLE CVA_FOLLOWUP_CALENDAR ADD followup_type VARCHAR2(2) not null;
+ALTER TABLE CVA_FOLLOWUP_CALENDAR ADD is_again_hospitalized CHAR(1) default '0';
+ALTER TABLE CVA_FOLLOWUP_CALENDAR ADD url VARCHAR2(500);
+ALTER TABLE CVA_FOLLOWUP_CALENDAR ADD is_die CHAR(1) default '0';
+
+alter table cva_emergency modify MRs_Score_Value VARCHAR2(16);
+alter table cva_emergency modify NIHSS_Score_Value VARCHAR2(16);
+alter table cva_treatment add TEMPERATURE VARCHAR2(10);
+-- Add comments to the columns 
+comment on column cva_treatment.TEMPERATURE
+  is '体温';
+
+alter table cva_treatment add SBP VARCHAR2(10);
+-- Add comments to the columns 
+comment on column cva_treatment.SBP
+  is '收缩压';
+
+alter table cva_treatment add DBP VARCHAR2(10);
+-- Add comments to the columns 
+comment on column cva_treatment.DBP
+  is '舒张压';
+        
+alter table cva_treatment add HEART_RATE VARCHAR2(10);
+-- Add comments to the columns 
+comment on column cva_treatment.HEART_RATE
+  is '心率';
+
+alter table cva_treatment add PULSE VARCHAR2(10);
+-- Add comments to the columns 
+comment on column cva_treatment.PULSE
+  is '脉搏';
+
+alter table cva_treatment add SP02 VARCHAR2(10);
+-- Add comments to the columns 
+comment on column cva_treatment.SP02
+  is 'Sp02';
+
+
+-- Add/modify columns 
+alter table CVA_REGIST add followup_doc_status CHAR(1) default '0';
+alter table CVA_REGIST add followup_nur_status CHAR(1) default '0';
+alter table CVA_REGIST add filing_date DATE;
+alter table CVA_REGIST add discharge_time DATE;
+alter table CVA_REGIST add admission_time DATE;
+alter table CVA_REGIST add is_filing CHAR(1) default '0';
+alter table CVA_REGIST add is_completed CHAR(1) default '0';
+-- Add comments to the columns 
+comment on column CVA_REGIST.followup_doc_status
+  is '医生随访单状态';
+comment on column CVA_REGIST.followup_nur_status
+  is '护士随访单状态';
+
+
+
+-- Add/modify columns 
+alter table cva_emergency add SECOND_CT_START_TIME date;
+alter table cva_emergency add SECOND_CT_END_TIME date;
+-- Add comments to the columns 
+comment on column cva_emergency.SECOND_CT_START_TIME
+  is '第二次进CT的时间';
+comment on column cva_emergency.SECOND_CT_END_TIME
+  is '第二次出CT的时间';
+
+alter table cva_treatment add IS_EMBOLECTOMY NVARCHAR2(10);
+comment on column cva_treatment.IS_EMBOLECTOMY
+  is '是否取栓';
+  
+alter table CVA_INHOSPITAL add RESPONSIBLE_VESSEL VARCHAR2(16);
+comment on column CVA_INHOSPITAL.RESPONSIBLE_VESSEL
+  is '责任血管';
+  
+alter table cva_emergency add ecg_diagnosis_time DATE;    
+alter table cva_emergency add nihss_score VARCHAR2(1);  
+alter table cva_emergency add nihss_score_value number(3);  
+alter table cva_emergency add nihss_score_id VARCHAR2(36); 
+alter table cva_emergency add mrs_score_id VARCHAR2(36); 
+alter table cva_emergency add mrs_score_value number(3); 
+alter table cva_first_aid add sense VARCHAR2(60); 
+alter table cva_first_aid add T NUMBER(3, 1); 
+alter table cva_first_aid add P NUMBER(3); 
+alter table cva_first_aid add R NUMBER(3); 
+alter table cva_first_aid add SP NUMBER(3); 
+alter table cva_first_aid add DP NUMBER(3); 
+alter table cva_first_aid add HR NUMBER(3); 
+alter table cva_first_aid add SPO NUMBER(3); 
+alter table cva_first_aid add BS NUMBER(4,2); 
+alter table cva_inhospital add inpatient_no VARCHAR2(36); 
+alter table cva_outcome add Lipidmodulation_Reason	VARCHAR2(500);
+alter table cva_outcome add Lipidmodulation_Used	VARCHAR2(1);
+  		
+alter table cva_outcome add Antiplatelet_Reason	VARCHAR2(500);
+alter table cva_outcome add Antiplatelet_Used	VARCHAR2(1);
+
+alter table cva_outcome add Anticoagulation_Reason	VARCHAR2(500);
+alter table cva_outcome add Anticoagulation_Used	VARCHAR2(1);
+
+alter table cva_outcome add Antihypertensive_Reason	VARCHAR2(500);
+alter table cva_outcome add Antihypertensive_Used	VARCHAR2(1);
+alter table cva_outcome add Hypoglycemic_Reason	VARCHAR2(500);
+alter table cva_outcome add Hypoglycemic_Used	VARCHAR2(1);
+alter table cva_outcome add total_amount	NUMBER(10,3);
+alter table cva_outcome add other_diagnosis	VARCHAR2(100);
+alter table cva_outcome add diagnosis_type	VARCHAR2(1);  
+alter table cva_outcome add DIAGNOSIS	VARCHAR2(100); 
+alter table cva_outcome add discharge_time			DATE;
+CREATE TABLE CVA_FOLLOWUP_CALENDAR
+(
+  id                    VARCHAR2(36) not null,
+  regist_id             VARCHAR2(36) not null,
+  plan_date             DATE,
+  event_name            VARCHAR2(64),
+  event_desc            VARCHAR2(512),
+  followup_date         DATE,
+  followup_by           VARCHAR2(50),
+  followup_info         CLOB,
+  followup_type         VARCHAR2(2) not null,
+  is_again_hospitalized CHAR(1) default '0',
+  url                   VARCHAR2(500),
+  is_event_completed    CHAR(1) default '0',
+  is_die                CHAR(1) default '0',
+  CONSTRAINT CVA_FOLLOWUP_CALENDAR_PK PRIMARY KEY (ID)
+);

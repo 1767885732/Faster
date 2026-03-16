@@ -1,0 +1,1535 @@
+﻿@model DoCare.CVA.Business.Model.FollowupNursingModel
+@using DoCare.ToolKit
+@using DoCare.Framework.Extension
+@{
+    Layout = null;
+    ViewBag.Title = "Nursing";
+}
+<style>
+    .table_wab {
+        width: 100%;
+    }
+
+        .table_wab tr {
+            height: auto;
+            line-height: 24px;
+        }
+
+            .table_wab tr th {
+                padding: 6px 8px;
+                text-align: center;
+                border: 1px solid #ddd;
+            }
+
+            .table_wab tr td {
+                height: auto;
+                text-align: center;
+                line-height: 22px !important;
+                border: 1px solid #ddd;
+                padding: 2px 10px;
+                line-height: 24px;
+                position: relative;
+            }
+
+            .table_wab tr:hover td, .table_wab tr.actived td {
+                background-color: #dbf0ff !important;
+            }
+
+
+             .check-up {
+            margin-left: 0.5%;
+            width: 99%;
+            font-size: 12px;
+        }
+
+            .check-up tr td {
+                border: 1px solid #ddd;
+                padding: 2px 10px;
+                height: 24px;
+                line-height: 24px;
+            }
+
+                .check-up tr td:nth-child(2n+1) {
+                    text-align: right;
+                }
+
+                .check-up tr td:nth-child(2n):hover {
+                    background-color: #dbf0ff;
+                }
+
+                .check-up tr td:nth-child(1) {
+                    width: 55%;
+                }
+
+                .check-up tr td:nth-child(2) {
+                    width: 35%;
+                }
+
+                .check-up tr td:nth-child(3) {
+                    width: 10%;
+                }
+
+                    .check-up tr td:nth-child(2) select, .check-up tr td:nth-child(3) select {
+                        width: 100%;
+                    }
+
+        h2 {
+            margin: 10px 0px 10px 0.5%;
+        }
+
+        label {
+            color: black;
+        }
+
+        .txtBorder {
+            border-left: none;
+            border-right: none;
+            border-top: none;
+            width: 50px;
+        }
+</style>
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/global.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/frame.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/control.css") rel="stylesheet" />
+<link href="~/Scripts/jquery-easyui/themes/icon.css" rel="stylesheet" />
+<link href="~/Scripts/jquery-easyui/themes/default/easyui.css" rel="stylesheet" />
+<link href="~/Scripts/ui-grid/ui-grid.min.css" rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/Scripts/pagination/tm.pagination.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/page.records.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/page.followup.css") rel="stylesheet" />
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/DatePicker/WdatePicker.js"></script>
+<script src="~/Scripts/DoCareMVCComm.js"></script>
+<script src="~/Scripts/jquery-ajaxSetup.js"></script>
+<script src="~/Scripts/moment.js"></script>
+<script src="~/Scripts/layer/layer.js"></script>
+<script src="~/Scripts/cookieKit.js"></script>
+<script src="~/Scripts/angular/angular.min.js"></script>
+<script src="~/Scripts/filterModule.js"></script>
+<script src="~/Scripts/directiveModule.js"></script>
+
+<script>
+    var model = @Html.Raw(JsonKit.Serialize(Model));
+    var app = angular.module('NursingApp', ['mdsdFilter', 'mdsdDirective']);
+    app.controller('NursingController', function ($scope, $filter, $http) {
+        $scope.model = model;
+        $scope.getByIndex = function(index,id)
+        {
+            $scope.model.ActiveId = id;
+        }
+
+        $scope.save = function(item)
+        {
+            $http.post('/FollowUpManage/SaveNursing', {
+                detail: item
+            }).then(function (json) {
+                if (json.data.IsSuccess) {
+                    layer.alert("保存成功", { icon: 1 });
+                } else {
+                    layer.alert("保存失败:" + json.data.Message, { icon: 2 });
+                }
+            }, function (error) {
+                layer.alert("保存失败:" + error, { icon: 2 });
+            });
+        }
+
+        // 选择变化
+        $scope.updateSelection = function ($event, index, object) {
+            var checkbox = $event.target;
+            object[index] = checkbox.checked;
+        }
+
+        // 是否选中
+        $scope.isSelected = function (index, data) {
+            if (data != null) {
+                if (data.length > 0) {
+                    return data[index];
+                }
+                else { return false; }
+            }
+            return false;
+        }
+
+        $scope.showNihss = function (detail) {
+            $.post('/Estimate/EstimateNIHSS', { registId: detail.RegistId, recordId: detail.FollowupNursing.FlupScore.NihssRecordId }, function (str) {
+                layer.open({
+                    id: 'insert-form',
+                    type: 1,
+                    title: "评分明细",
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1100px', '560px'],
+                    content: str,
+                    cancel: function (index, layero) {
+                        $scope.$apply(function () {
+                            if (layero.find("#scoreChanged").val() == "1") {
+                                // 更新分值
+                                detail.FollowupNursing.FlupScore.NihssScore = layero.find("#score").html();
+                                detail.FollowupNursing.FlupScore.NihssRecordId = layero.find("#recordId").val();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        $scope.showMrs = function (detail) {
+            $.post('/Estimate/EstimateMRS', { registId: detail.RegistId, recordId: detail.FollowupNursing.FlupScore.MrsRecordId }, function (str) {
+                layer.open({
+                    id: 'insert-form',
+                    type: 1,
+                    title: "评分明细",
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1100px', '560px'],
+                    content: str,
+                    cancel: function (index, layero) {
+                        $scope.$apply(function () {
+                            if (layero.find("#scoreChanged").val() == "1") {
+                                // 更新分值
+                                detail.FollowupNursing.FlupScore.MrsScore = layero.find("#score").html();
+                                detail.FollowupNursing.FlupScore.MrsRecordId = layero.find("#recordId").val();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        $scope.showPadua = function (detail) {
+            $.post('/Estimate/EstimatePADUA', { registId: detail.RegistId, recordId: detail.FollowupNursing.Dvt.PaduaRecordId }, function (str) {
+                layer.open({
+                    id: 'insert-form',
+                    type: 1,
+                    title: "评分明细",
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1100px', '560px'],
+                    content: str,
+                    cancel: function (index, layero) {
+                        $scope.$apply(function () {
+                            if (layero.find("#scoreChanged").val() == "1") {
+                                // 更新分值
+                                detail.FollowupNursing.Dvt.PaduaScore = layero.find("#score").html();
+                                detail.FollowupNursing.Dvt.PaduaRecordId = layero.find("#recordId").val();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        $scope.showGcs = function (detail) {
+            $.post('/Estimate/EstimateGCS', { registId: detail.RegistId, recordId: detail.FollowupNursing.NeurogenicBladder.GcsRecordId }, function (str) {
+                layer.open({
+                    id: 'insert-form',
+                    type: 1,
+                    title: "评分明细",
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1100px', '560px'],
+                    content: str,
+                    cancel: function (index, layero) {
+                        $scope.$apply(function () {
+                            if (layero.find("#scoreChanged").val() == "1") {
+                                // 更新分值
+                                detail.FollowupNursing.NeurogenicBladder.GcsScore = layero.find("#score").html();
+                                detail.FollowupNursing.NeurogenicBladder.GcsRecordId = layero.find("#recordId").val();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+    });
+
+    angular.bootstrap($("#Nursing")[0], ['NursingApp']);
+</script>
+<div class="content" style="overflow-x:unset;overflow-y:unset;" id="Nursing" ng-app="NursingApp" ng-controller="NursingController">
+    <fieldset class="medical-record">
+        <div class="content1">
+            <div class="main-content1">
+                <div class="stats-block">
+                    <div class="tab-months">
+                        <input ng-repeat="item in model.FollowupDetails" type="button" value="{{item.EventDesc}}" class="btn-months" ng-class="item.Id==model.ActiveId?'active':''" ng-click="getByIndex($index,item.Id)" />
+                    </div>
+                    <div ng-repeat="detail in model.FollowupDetails" ng-if="detail.Id == model.ActiveId">
+                        <button type="button" class="operating-btn medical-save-btn" ng-click="save(detail)" id="btnSave"><img src="~/App_Themes/Default/img/icon/save.png"></button>
+                        <div class="basic-info">
+                            @*<div class="info-label">随访基本信息&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="btn-primary" style="border-radius: 3px;color:white;height: 35px;font-size: 10px;" ng-click="Export()">导出</span></div>*@
+                            <div class="basic-content1" style="justify-content:flex-start;">
+                                <div style="width:30%">
+                                    <span class="info-label">是否完成本次随访</span>
+                                    <label>
+                                        <input type="radio" name="IsComplete" ng-model="detail.FollowupNursing.FlupBaseInfo.IsComplete" value="1">&nbsp;<span>是</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="IsComplete" ng-model="detail.FollowupNursing.FlupBaseInfo.IsComplete" value="0">&nbsp;<span>否</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="score-table" style="border:1px solid #ededed">
+                            <div id="divMain" class="score-detail">
+                                <fieldset class="medical-record">
+                                    <div style="width:100%;">
+                                        <div class="info-label">随访详细信息</div>
+                                        <table class="check-up">
+                                            <tr>
+                                                <td style="width:20%;">
+                                                    <strong>本次随访时间：</strong>
+                                                </td>
+                                                <td style="width:75%;">
+                                                    <label>
+                                                        <input type="datetime" ng-model="detail.FollowupNursing.FlupBaseInfo.FollowupDate" id="FollowupDate" name="FollowupDate" class="txtBorder" style="width:150px" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}">
+                                                        &nbsp;&nbsp;随访人（医生/护士）：<input type="text" ng-model="detail.FollowupNursing.FlupBaseInfo.FollowupDoc" name="FollowupDoc" class="txtBorder" style="width:200px;" />
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:20%;">
+                                                    <strong>随访方式：</strong>
+                                                </td>
+                                                <td style="width:75%;">
+                                                    <label>
+                                                        <input type="radio" value="1" name="FollowUpType" ng-model="detail.FollowupNursing.FlupBaseInfo.FollowUpType" />&nbsp;电话&nbsp;&nbsp;
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" value="2" name="FollowUpType" ng-model="detail.FollowupNursing.FlupBaseInfo.FollowUpType" />&nbsp;网络&nbsp;&nbsp;
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" value="99" name="FollowUpType" ng-model="detail.FollowupNursing.FlupBaseInfo.FollowUpType" />&nbsp;其他&nbsp;&nbsp;
+                                                    </label>
+                                                    <label>
+                                                        <input ng-show="detail.FlupBaseInfo.FollowUpType=='99'" type="text" ng-model="detail.FollowupNursing.FlupBaseInfo.FollowUpTypeOther" name="FollowUpTypeOther" class="txtBorder" style="width:100px;" />
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:20%;">
+                                                    <strong>是否失访：</strong>
+                                                </td>
+                                                <td style="width:75%;">
+                                                    <label>
+                                                        <input type="radio" value="0" name="IslossToVisit" ng-model="detail.FollowupNursing.FlupBaseInfo.IslossToVisit" />&nbsp;否&nbsp;&nbsp;
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" value="1" name="IslossToVisit" ng-model="detail.FollowupNursing.FlupBaseInfo.IslossToVisit" />&nbsp;是
+                                                    </label>
+                                                    <label ng-show="detail.FollowupNursing.FlupBaseInfo.IslossToVisit=='1'">
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;失访原因：
+                                                        <label>
+                                                            <input type="radio" value="1" name="LossToVisitCause" ng-model="detail.FollowupNursing.FlupBaseInfo.LossToVisit.LossToVisitCause" />&nbsp;失去联系&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" value="2" name="LossToVisitCause" ng-model="detail.FollowupNursing.FlupBaseInfo.LossToVisit.LossToVisitCause" />&nbsp;拒绝参加调查&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" value="99" name="LossToVisitCause" ng-model="detail.FollowupNursing.FlupBaseInfo.LossToVisit.LossToVisitCause" />&nbsp;其他&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input ng-show="detail.FollowupNursing.FlupBaseInfo.LossToVisit.LossToVisitCause=='99'" type="text" name="LossToVisitOther" ng-model="detail.FollowupNursing.FlupBaseInfo.LossToVisit.LossToVisitOther" class="txtBorder" style="width:100px;" />
+                                                        </label>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr ng-show="detail.FollowupNursing.FlupBaseInfo.IslossToVisit=='0'">
+                                                <td style="width:20%;">
+                                                    <strong>是否死亡：</strong>
+                                                </td>
+                                                <td style="width:75%;">
+                                                    <label>
+                                                        <input type="radio" value="0" name="IsDie" ng-click="IsDie('0','2')" ng-model="detail.FollowupNursing.FlupBaseInfo.IsDie" />&nbsp;否&nbsp;&nbsp;
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" value="1" name="IsDie" ng-click="IsDie('1','2')" ng-model="detail.FollowupNursing.FlupBaseInfo.IsDie" />&nbsp;是
+                                                        <span ng-show="detail.FollowupNursing.FlupBaseInfo.IsDie=='1'">
+                                                            ，死亡原因：
+                                                            <label><input type="radio" value="1" name="DieCause" ng-model="detail.FollowupNursing.FlupBaseInfo.Die.DieCause" />&nbsp;脑卒中&nbsp;&nbsp;</label>
+                                                            <label><input type="radio" value="2" name="DieCause" ng-model="detail.FollowupNursing.FlupBaseInfo.Die.DieCause" />&nbsp;冠心病&nbsp;&nbsp;</label>
+                                                            <label><input type="radio" value="3" name="DieCause" ng-model="detail.FollowupNursing.FlupBaseInfo.Die.DieCause" />&nbsp;恶性肿瘤&nbsp;&nbsp;</label>
+                                                            <label><input type="radio" value="4" name="DieCause" ng-model="detail.FollowupNursing.FlupBaseInfo.Die.DieCause" />&nbsp;呼吸系统疾病&nbsp;&nbsp;</label>
+                                                            <label><input type="radio" value="5" name="DieCause" ng-model="detail.FollowupNursing.FlupBaseInfo.Die.DieCause" />&nbsp;损伤和中毒&nbsp;&nbsp;</label>
+                                                            <label><input type="radio" value="6" name="DieCause" ng-model="detail.FollowupNursing.FlupBaseInfo.Die.DieCause" />&nbsp;其他&nbsp;&nbsp;</label>
+                                                            <label><input type="radio" value="7" name="DieCause" ng-model="detail.FollowupNursing.FlupBaseInfo.Die.DieCause" />&nbsp;不详</label><br />
+                                                        </span>
+                                                        <span ng-show="detail.FollowupNursing.FlupBaseInfo.IsDie=='1'">死亡时间：<input type="datetime" ng-model="detail.FollowupNursing.FlupBaseInfo.Die.DieTime" id="DieTime" name="DieTime" class="txtBorder" style="width:150px" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}"></span>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:20%;">
+                                                    <strong>是否再次入院：</strong>
+                                                </td>
+                                                <td style="width:75%;">
+                                                    <label>
+                                                        <input type="radio" value="0" name="IsAgainHospitalized" ng-model="detail.FollowupNursing.FlupBaseInfo.IsAgainHospitalized" />&nbsp;否&nbsp;&nbsp;
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" value="1" name="IsAgainHospitalized" ng-model="detail.FollowupNursing.FlupBaseInfo.IsAgainHospitalized" />&nbsp;是&nbsp;&nbsp;
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <div ng-show="detail.FollowupNursing.FlupBaseInfo.IsDie=='0' && detail.FollowupNursing.FlupBaseInfo.IslossToVisit=='0' && detail.FollowupNursing.FlupBaseInfo.IsAgainHospitalized=='0'">
+                                            <div class="info-label">随访期间基本情况</div>
+                                            <table class="check-up">
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>随访期间就诊信息：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            门诊就诊次数：
+                                                            <input type="text" ng-model="detail.FollowupNursing.FlupBaseSituation.OutpatientVisits" name="OutpatientVisits" class="txtBorder" style="width:10%" />次，急诊就诊次数：
+                                                            <input type="text" ng-model="detail.FollowupNursing.FlupBaseSituation.EmergencyVisits" name="EmergencyVisits" class="txtBorder" style="width:10%" />次，住院次数：
+                                                            <input type="text" ng-model="detail.FollowupNursing.FlupBaseSituation.HospitalizationCount" name="HospitalizationCount" class="txtBorder" style="width:10%" />次，
+                                                            月均门诊医疗费用：<input type="text" ng-model="detail.FollowupNursing.FlupBaseSituation.OutpatientMedExpenses" name="OutpatientMedExpenses" class="txtBorder" style="width:10%" />元
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>随访期间护理人员：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="checkbox" value="1" name="NursingStaff" ng-checked="isSelected(0,detail.FollowupNursing.FlupBaseSituation.NursingStaff)" ng-click="updateSelection($event,0,detail.FollowupNursing.FlupBaseSituation.NursingStaff)" />&nbsp;家属&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="2" name="NursingStaff" ng-checked="isSelected(1,detail.FollowupNursing.FlupBaseSituation.NursingStaff)" ng-click="updateSelection($event,1,detail.FollowupNursing.FlupBaseSituation.NursingStaff)" />&nbsp;医疗机构护理人员&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="3" name="NursingStaff" ng-checked="isSelected(2,detail.FollowupNursing.FlupBaseSituation.NursingStaff)" ng-click="updateSelection($event,2,detail.FollowupNursing.FlupBaseSituation.NursingStaff)" />&nbsp;保姆&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="4" name="NursingStaff" ng-checked="isSelected(3,detail.FollowupNursing.FlupBaseSituation.NursingStaff)" ng-click="updateSelection($event,3,detail.FollowupNursing.FlupBaseSituation.NursingStaff)" />&nbsp;自我照顾&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="99" name="NursingStaff" ng-checked="isSelected(4,detail.FollowupNursing.FlupBaseSituation.NursingStaff)" ng-click="updateSelection($event,4,detail.FollowupNursing.FlupBaseSituation.NursingStaff)" />&nbsp;其他
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>随访期间工作情况：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupBaseSituation.WorkSituation" value="1" name="WorkSituation" />&nbsp;正常工作&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupBaseSituation.WorkSituation" value="2" name="WorkSituation" />&nbsp;出勤减少&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupBaseSituation.WorkSituation" value="3" name="WorkSituation" />&nbsp;不工作
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <div class="info-label">随访期间新发事件</div>
+                                            <table class="check-up">
+                                                <tr>
+                                                    <td colspan="2"><strong>随访期间新发疾病事件（期间存在多次发作的，发病时间填写第一次发病时间）</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(0,detail.FollowupNursing.FlupNewDisease.NewDisease)" ng-click="updateSelection($event,0,detail.FollowupNursing.FlupNewDisease.NewDisease)" value="1" name="NewDisease" />&nbsp;卒中
+                                                            <label ng-show="detail.FollowupNursing.FlupNewDisease.NewDisease[0]">
+                                                                <label>
+                                                                    ，卒中类型：
+                                                                    <input type="checkbox" ng-checked="isSelected(0,detail.FollowupNursing.FlupNewDisease.CvaDisease.CvaType)" ng-click="updateSelection($event,0,detail.FollowupNursing.FlupNewDisease.CvaDisease.CvaType)" value="1" name="CvaType" />&nbsp;脑梗死&nbsp;&nbsp;
+                                                                </label>
+                                                                <label>
+                                                                    <input type="checkbox" ng-checked="isSelected(1,detail.FollowupNursing.FlupNewDisease.CvaDisease.CvaType)" ng-click="updateSelection($event,1,detail.FollowupNursing.FlupNewDisease.CvaDisease.CvaType)" value="2" name="CvaType" />&nbsp;脑出血&nbsp;&nbsp;
+                                                                </label>
+                                                                <label>
+                                                                    <input type="checkbox" ng-checked="isSelected(2,detail.FollowupNursing.FlupNewDisease.CvaDisease.CvaType)" ng-click="updateSelection($event,2,detail.FollowupNursing.FlupNewDisease.CvaDisease.CvaType)" value="3" name="CvaType" />&nbsp;蛛网膜下腔出血&nbsp;&nbsp;
+                                                                </label>
+                                                                <label>
+                                                                    <input type="checkbox" ng-checked="isSelected(3,detail.FollowupNursing.FlupNewDisease.CvaDisease.CvaType)" ng-click="updateSelection($event,3,detail.FollowupNursing.FlupNewDisease.CvaDisease.CvaType)" value="4" name="CvaType" />&nbsp;其他未分类卒中，发病时间：
+                                                                </label>
+                                                                <label>
+                                                                    <input type="text" name="CvaYear" ng-model="detail.FollowupNursing.FlupNewDisease.CvaDisease.CvaYear" class="txtBorder" />年
+                                                                    <input type="text" name="CvaMonth" ng-model="detail.FollowupNursing.FlupNewDisease.CvaDisease.CvaMonth" class="txtBorder" />月
+                                                                </label>
+                                                            </label>
+                                                        </label><br />
+
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(1,detail.FollowupNursing.FlupNewDisease.NewDisease)" ng-click="updateSelection($event,1,detail.FollowupNursing.FlupNewDisease.NewDisease)" value="2" name="NewDisease" />&nbsp;TIA
+                                                            <label ng-show="detail.FollowupNursing.FlupNewDisease.NewDisease[1]">
+                                                                ，发病时间：
+                                                                <input type="text" ng-model="detail.FollowupNursing.FlupNewDisease.TiaDisease.TiaYear" name="TiaYear" class="txtBorder" />年
+                                                                <input type="text" ng-model="detail.FollowupNursing.FlupNewDisease.TiaDisease.TiaMonth" name="TiaMonth" class="txtBorder" />月
+                                                            </label>
+                                                        </label><br />
+
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(2,detail.FollowupNursing.FlupNewDisease.NewDisease)" ng-click="updateSelection($event,2,detail.FollowupNursing.FlupNewDisease.NewDisease)" value="3" name="NewDisease" />&nbsp;心肌梗死
+                                                            <label ng-show="detail.FollowupNursing.FlupNewDisease.NewDisease[2]">
+                                                                ，发病时间：
+                                                                <input type="text" ng-model="detail.FollowupNursing.FlupNewDisease.MIOnsetDisease.MIOnsetYear" name="MIOnsetYear" class="txtBorder" />年
+                                                                <input type="text" ng-model="detail.FollowupNursing.FlupNewDisease.MIOnsetDisease.MIOnsetMonth" name="MIOnsetMonth" class="txtBorder" />月
+                                                            </label>
+                                                        </label><br />
+
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(3,detail.FollowupNursing.FlupNewDisease.NewDisease)" ng-click="updateSelection($event,3,detail.FollowupNursing.FlupNewDisease.NewDisease)" value="4" name="NewDisease" />&nbsp;不稳定心绞痛
+                                                            <label ng-show="detail.FollowupNursing.FlupNewDisease.NewDisease[3]">
+                                                                ，发病时间：
+                                                                <input type="text" ng-model="detail.FollowupNursing.FlupNewDisease.UAPOnsetDisease.UAPOnsetYear" name="UAPOnsetYear" class="txtBorder" />年
+                                                                <input type="text" ng-model="detail.FollowupNursing.FlupNewDisease.UAPOnsetDisease.UAPOnsetMonth" name="UAPOnsetMonth" class="txtBorder" />月
+                                                            </label>
+                                                        </label><br />
+
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(4,detail.FollowupNursing.FlupNewDisease.NewDisease)" ng-click="updateSelection($event,4,detail.FollowupNursing.FlupNewDisease.NewDisease)" value="5" name="NewDisease" />&nbsp;心力衰竭（住院）
+                                                            <label ng-show="detail.FollowupNursing.FlupNewDisease.NewDisease[4]">
+                                                                ，发病时间：
+                                                                <input type="text" ng-model="detail.FollowupNursing.FlupNewDisease.HFOnsetDisease.HFOnsetYear" name="HFOnsetYear" class="txtBorder" />年
+                                                                <input type="text" ng-model="detail.FollowupNursing.FlupNewDisease.HFOnsetDisease.HFOnsetMonth" name="HFOnsetMonth" class="txtBorder" />月
+                                                            </label>
+                                                        </label><br />
+
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(5,detail.FollowupNursing.FlupNewDisease.NewDisease)" ng-click="updateSelection($event,5,detail.FollowupNursing.FlupNewDisease.NewDisease)" value="6" name="NewDisease" />&nbsp;肺栓塞
+                                                            <label ng-show="detail.FollowupNursing.FlupNewDisease.NewDisease[5]">
+                                                                ，发病时间：
+                                                                <input type="text" ng-model="detail.FollowupNursing.FlupNewDisease.PEOnsetDisease.PEOnsetYear" name="PEOnsetYear" class="txtBorder" />年
+                                                                <input type="text" ng-model="detail.FollowupNursing.FlupNewDisease.PEOnsetDisease.PEOnsetMonth" name="PEOnsetMonth" class="txtBorder" />月
+                                                            </label>
+                                                        </label><br />
+
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(6,detail.FollowupNursing.FlupNewDisease.NewDisease)" ng-click="updateSelection($event,6,detail.FollowupNursing.FlupNewDisease.NewDisease)" value="7" name="NewDisease" />&nbsp;周围血管疾病（住院）
+                                                            <label ng-show="detail.FollowupNursing.FlupNewDisease.NewDisease[6]">
+                                                                ，发病时间：
+                                                                <input type="text" ng-model="detail.FollowupNursing.FlupNewDisease.PVDOnsetDisease.PVDOnsetYear" name="PVDOnsetYear" class="txtBorder" />年
+                                                                <input type="text" ng-model="detail.FollowupNursing.FlupNewDisease.PVDOnsetDisease.PVDOnsetMonth" name="PVDOnsetMonth" class="txtBorder" />月
+                                                            </label>
+                                                        </label><br />
+
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(7,detail.FollowupNursing.FlupNewDisease.NewDisease)" ng-click="updateSelection($event,7,detail.FollowupNursing.FlupNewDisease.NewDisease)" value="8" name="NewDisease" />&nbsp;因其他疾病住院
+                                                            <label ng-show="detail.FollowupNursing.FlupNewDisease.NewDisease[7]">
+                                                                ，住院主要诊断：<input type="text" ng-model="detail.FollowupNursing.FlupNewDisease.InhospitalDisease.HospitalDiagnosis" name="HospitalDiagnosis" style="width:200px" class="txtBorder" />
+                                                            </label>
+                                                        </label><br />
+
+                                                        <label><input type="checkbox" ng-checked="isSelected(8,detail.FollowupNursing.FlupNewDisease.NewDisease)" ng-click="updateSelection($event,8,detail.FollowupNursing.FlupNewDisease.NewDisease)" value="99" name="NewDisease" />&nbsp;以上均无</label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <table class="check-up">
+                                                <tr>
+                                                    <td colspan="2" style="border-top:none"><strong>随访期间新发疾病危险因素</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <label><input type="checkbox" ng-checked="isSelected(0,detail.FollowupNursing.FlupNewDisease.RiskFactors)" ng-click="updateSelection($event,0,detail.FollowupNursing.FlupNewDisease.RiskFactors)" value="1" name="RiskFactors" />&nbsp;高血压&nbsp;&nbsp;</label>
+                                                        <label><input type="checkbox" ng-checked="isSelected(1,detail.FollowupNursing.FlupNewDisease.RiskFactors)" ng-click="updateSelection($event,1,detail.FollowupNursing.FlupNewDisease.RiskFactors)" value="2" name="RiskFactors" />&nbsp;糖尿病&nbsp;&nbsp;</label>
+                                                        <label><input type="checkbox" ng-checked="isSelected(2,detail.FollowupNursing.FlupNewDisease.RiskFactors)" ng-click="updateSelection($event,2,detail.FollowupNursing.FlupNewDisease.RiskFactors)" value="3" name="RiskFactors" />&nbsp;血脂异常&nbsp;&nbsp;</label>
+                                                        <label><input type="checkbox" ng-checked="isSelected(3,detail.FollowupNursing.FlupNewDisease.RiskFactors)" ng-click="updateSelection($event,3,detail.FollowupNursing.FlupNewDisease.RiskFactors)" value="4" name="RiskFactors" />&nbsp;房颤&nbsp;&nbsp;</label>
+                                                        <label><input type="checkbox" ng-checked="isSelected(4,detail.FollowupNursing.FlupNewDisease.RiskFactors)" ng-click="updateSelection($event,4,detail.FollowupNursing.FlupNewDisease.RiskFactors)" value="99" name="RiskFactors" />&nbsp;以上均无 </label>
+
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                            <div class="info-label">随访期间生活方式</div>
+                                            <table class="check-up">
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>吸烟情况：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupLifeStyle.SmokingSituation" value="1" name="SmokingSituation" />&nbsp;从不吸烟&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FollowupNursing.FlupLifeStyle.SmokingSituation" value="2" name="SmokingSituation" />&nbsp;现在吸烟&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupLifeStyle.SmokingSituation" value="3" name="SmokingSituation" />&nbsp;已戒烟
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>饮酒情况：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupLifeStyle.DrinkingSituation" value="1" name="DrinkingSituation" />&nbsp;从不饮酒&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupLifeStyle.DrinkingSituation" value="2" name="DrinkingSituation" />&nbsp;少量饮酒&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupLifeStyle.DrinkingSituation" value="3" name="DrinkingSituation" />&nbsp;经常大量饮酒&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupLifeStyle.DrinkingSituation" value="4" name="DrinkingSituation" />&nbsp;已戒酒
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>运动情况：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupLifeStyle.MotionSituation" value="1" name="MotionSituation" />&nbsp;经常运动（相当于快步走的中强度运动，且每周>=3次，每次>=30分钟&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupLifeStyle.MotionSituation" value="2" name="MotionSituation" />&nbsp;缺乏运动（不符合上述经常运动标准者）
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                            <div class="info-label">随访期间危险因素控制情况</div>
+                                            <table class="check-up">
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <strong>血压</strong>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>血压监测频率：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.BloodPressureMF" value="1" name="BloodPressureMF" />&nbsp;每周测量&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.BloodPressureMF" value="2" name="BloodPressureMF" />&nbsp;每月测量&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.BloodPressureMF" value="3" name="BloodPressureMF" />&nbsp;未达到&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.BloodPressureMF" value="4" name="BloodPressureMF" />&nbsp;未测量
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <strong>平时血压水平</strong>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>收缩压：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.Sp" value="1" name="sp" />&nbsp;&lt;120mmHg&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.Sp" value="2" name="sp" />&nbsp;120-139mmHg&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.Sp" value="3" name="sp" />&nbsp;140-159mmHg&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.Sp" value="4" name="sp" />&nbsp;160-179mmHg&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.Sp" value="5" name="sp" />&nbsp;&ge;180mmHg
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>舒张压：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.Dp" value="1" name="dp" />&nbsp;&lt;80mmHg&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.Dp" value="2" name="dp" />&nbsp;80-89mmHg&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.Dp" value="3" name="dp" />&nbsp;90-99mmHg&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.Dp" value="4" name="dp" />&nbsp;100-109mmHg&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupRiskFactors.Dp" value="5" name="dp" />&nbsp;&ge;110mmHg
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <strong>血糖（糖尿病患者填写）</strong>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>血糖测量频率：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" value="1" ng-model="detail.FollowupNursing.FlupRiskFactors.BloodGlucoseMF" name="BloodGlucoseMF" />&nbsp;每周测量&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" value="2" ng-model="detail.FollowupNursing.FlupRiskFactors.BloodGlucoseMF" name="BloodGlucoseMF" />&nbsp;每月测量&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" value="3" ng-model="detail.FollowupNursing.FlupRiskFactors.BloodGlucoseMF" name="BloodGlucoseMF" />&nbsp;未达到&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" value="4" ng-model="detail.FollowupNursing.FlupRiskFactors.BloodGlucoseMF" name="BloodGlucoseMF" />&nbsp;未测量
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>平时血糖水平：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            空腹血糖：
+                                                            <input type="radio" value="1" ng-model="detail.FollowupNursing.FlupRiskFactors.FastingBloodGlucose" name="FastingBloodGlucose" />&nbsp;&lt;7.0mmol/L&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" value="2" ng-model="detail.FollowupNursing.FlupRiskFactors.FastingBloodGlucose" name="FastingBloodGlucose" />&nbsp;&ge;7.1mmol/L
+                                                        </label>
+                                                        <label>
+                                                            餐后两小时血糖：
+                                                            <input type="radio" value="1" ng-model="detail.FollowupNursing.FlupRiskFactors.FastingBloodGlucose2H" name="FastingBloodGlucose2H" />&nbsp;&lt;11.1mmol/L&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" value="2" ng-model="detail.FollowupNursing.FlupRiskFactors.FastingBloodGlucose2H" name="FastingBloodGlucose2H" />&nbsp;&ge;11.1mmol/L
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                            <div class="info-label">随访期间用药情况</div>
+                                            <table class="check-up">
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>抗栓药物：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" value="1" ng-model="detail.FollowupNursing.FlupUseDrugSituation.IsAnti" name="IsAnti" />&nbsp;是&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" value="2" ng-model="detail.FollowupNursing.FlupUseDrugSituation.IsAnti" name="IsAnti" />&nbsp;否
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>服用药物名称：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <table style="border:none;margin-left: -10px">
+                                                            <tr style="border:none">
+                                                                <td style="width:33%;border:none">
+                                                                    <label>
+                                                                        <input type="checkbox" ng-checked="isSelected(0,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" ng-click="updateSelection($event,0,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" value="1" name="AntiDrugName" />&nbsp;阿司匹林
+                                                                        <span ng-show="detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName[0]">，每日计量：<input type="text" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Anti.AspirinDose" name="AspirinDose" class="txtBorder">mg</span>
+                                                                    </label>
+                                                                </td>
+                                                                <td style="width:33%;border:none">
+                                                                    <label>
+                                                                        <input type="checkbox" ng-checked="isSelected(1,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" ng-click="updateSelection($event,1,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" value="2" name="AntiDrugName" />&nbsp;氯吡格雷
+                                                                        <span ng-show="detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName[1]">，每日计量：<input type="text" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Anti.ClopidogrelDose" name="ClopidogrelDose" class="txtBorder">mg</span>
+                                                                    </label>
+                                                                </td>
+                                                                <td style="width:33%;border:none">
+                                                                    <label>
+                                                                        <input type="checkbox" ng-checked="isSelected(2,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" ng-click="updateSelection($event,2,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" value="3" name="AntiDrugName" />&nbsp;奥扎格雷
+                                                                        <span ng-show="detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName[2]">，每日计量：<input type="text" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Anti.OzagrelDose" name="OzagrelDose" class="txtBorder">mg</span>
+                                                                    </label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr style="border:none">
+                                                                <td style="width:33%;border:none">
+                                                                    <label>
+                                                                        <input type="checkbox" ng-checked="isSelected(3,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" ng-click="updateSelection($event,3,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" value="4" name="AntiDrugName" />&nbsp;双嘧达莫
+                                                                        <span ng-show="detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName[3]">，每日计量：<input type="text" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Anti.DipyridamoleDose" name="DipyridamoleDose" class="txtBorder">mg</span>
+                                                                    </label>
+                                                                </td>
+                                                                <td style="width:33%;border:none">
+                                                                    <label>
+                                                                        <input type="checkbox" ng-checked="isSelected(4,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" ng-click="updateSelection($event,4,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" value="5" name="AntiDrugName" />&nbsp;赛氯吡啶
+                                                                        <span ng-show="detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName[4]">，每日计量：<input type="text" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Anti.ChlorpyridineDose" name="ChlorpyridineDose" class="txtBorder">mg</span>
+                                                                    </label>
+                                                                </td>
+                                                                <td style="width:33%;border:none">
+                                                                    <label>
+                                                                        <input type="checkbox" ng-checked="isSelected(5,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" ng-click="updateSelection($event,5,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" value="6" name="AntiDrugName" />&nbsp;西洛他唑
+                                                                        <span ng-show="detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName[5]">，每日计量：<input type="text" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Anti.CilostazolDose" name="CilostazolDose" class="txtBorder">mg</span>
+                                                                    </label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr style="border:none">
+                                                                <td style="width:33%;border:none">
+                                                                    <label>
+                                                                        <input type="checkbox" ng-checked="isSelected(6,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" ng-click="updateSelection($event,6,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" value="7" name="AntiDrugName" />&nbsp;华法令
+                                                                        <span ng-show="detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName[6]">，每日计量：<input type="text" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Anti.WarfarinDose" name="WarfarinDose" class="txtBorder">mg</span>
+                                                                    </label>
+                                                                </td>
+                                                                <td style="width:33%;border:none">
+                                                                    <label>
+                                                                        <input type="checkbox" ng-checked="isSelected(7,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" ng-click="updateSelection($event,7,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" value="8" name="AntiDrugName" />&nbsp;达比加群
+                                                                        <span ng-show="detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName[7]">，每日计量：<input type="text" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Anti.DabigaDose" name="DabigaDose" class="txtBorder">mg</span>
+                                                                    </label>
+                                                                </td>
+                                                                <td style="width:33%;border:none">
+                                                                    <label>
+                                                                        <input type="checkbox" ng-checked="isSelected(8,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" ng-click="updateSelection($event,8,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" value="9" name="AntiDrugName" />&nbsp;利伐沙班
+                                                                        <span ng-show="detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName[8]">，每日计量：<input type="text" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Anti.RivaroxabanDose" name="RivaroxabanDose" class="txtBorder">mg</span>
+                                                                    </label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr style="border:none">
+                                                                <td style="width:33%;border:none">
+                                                                    <label>
+                                                                        <input type="checkbox" ng-checked="isSelected(9,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" ng-click="updateSelection($event,9,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" value="10" name="AntiDrugName" />&nbsp;阿哌沙班
+                                                                        <span ng-show="detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName[9]">，每日计量：<input type="text" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Anti.ApixabanDose" name="ApixabanDose" class="txtBorder">mg</span>
+                                                                    </label>
+                                                                </td>
+                                                                <td style="width:33%;border:none">
+                                                                    <label>
+                                                                        <input type="checkbox" ng-checked="isSelected(10,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" ng-click="updateSelection($event,10,detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName)" value="99" name="AntiDrugName" />&nbsp;其他药品
+                                                                        <span ng-show="detail.FollowupNursing.FlupUseDrugSituation.Anti.AntiDrugName[10]">：<input type="text" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Anti.OtherDrug" class="txtBorder" style="width:200px;"></span>
+                                                                    </label>
+                                                                </td>
+                                                                <td style="width:33%;border:none"></td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>降压药：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" value="1" ng-model="detail.FollowupNursing.FlupUseDrugSituation.IsHypotensor" name="IsHypotensor" />&nbsp;是&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" value="2" ng-model="detail.FollowupNursing.FlupUseDrugSituation.IsHypotensor" name="IsHypotensor" />&nbsp;否
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>服用降压药种类：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" value="1" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorCategory" name="HypotensorCategory" />&nbsp;1种&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" value="2" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorCategory" name="HypotensorCategory" />&nbsp;2种&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" value="3" ng-model="detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorCategory" name="HypotensorCategory" />&nbsp;&ge;3种
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>服用降压药类型：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(0,detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorType)" ng-click="updateSelection($event,0,detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorType)" value="1" name="HypotensorCategory" />&nbsp;ACEI&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(1,detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorType)" ng-click="updateSelection($event,1,detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorType)" value="2" name="HypotensorCategory" />&nbsp;ARB&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(2,detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorType)" ng-click="updateSelection($event,2,detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorType)" value="3" name="HypotensorCategory" />&nbsp;利尿剂&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(3,detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorType)" ng-click="updateSelection($event,3,detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorType)" value="4" name="HypotensorCategory" />&nbsp;&beta;受体阻滞剂&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(4,detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorType)" ng-click="updateSelection($event,4,detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorType)" value="5" name="HypotensorCategory" />&nbsp;钙拮抗剂&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(5,detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorType)" ng-click="updateSelection($event,5,detail.FollowupNursing.FlupUseDrugSituation.Hypotensor.HypotensorType)" value="99" name="HypotensorCategory" />&nbsp;其他
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>降糖药：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupUseDrugSituation.IsHypoglycemic" value="1" name="IsHypoglycemic" />&nbsp;是&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupUseDrugSituation.IsHypoglycemic" value="2" name="IsHypoglycemic" />&nbsp;否
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>服用降糖药类型：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(0,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" ng-click="updateSelection($event,0,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" value="1" name="HypoglycemicType" />&nbsp;胰岛素&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(1,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" ng-click="updateSelection($event,1,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" value="2" name="HypoglycemicType" />&nbsp;磺酰脲类&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(2,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" ng-click="updateSelection($event,2,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" value="3" name="HypoglycemicType" />&nbsp;双胍类&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(3,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" ng-click="updateSelection($event,3,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" value="4" name="HypoglycemicType" />&nbsp;&beta;糖苷酶抑制剂&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(4,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" ng-click="updateSelection($event,4,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" value="5" name="HypoglycemicType" />&nbsp;胰岛素增敏剂&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(5,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" ng-click="updateSelection($event,5,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" value="6" name="HypoglycemicType" />&nbsp;非磺酰脲类促胰岛素分泌剂&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" ng-checked="isSelected(6,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" ng-click="updateSelection($event,6,detail.FollowupNursing.FlupUseDrugSituation.Hypoglycemic.HypoglycemicType)" value="99" name="HypoglycemicType" />&nbsp;其他
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>调脂药：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupUseDrugSituation.IsLipidRegulating" value="1" name="IsLipidRegulating" />&nbsp;是&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupUseDrugSituation.IsLipidRegulating" value="2" name="IsLipidRegulating" />&nbsp;否
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>服用调脂药类型：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="checkbox" value="1" ng-checked="isSelected(0,detail.FollowupNursing.FlupUseDrugSituation.LipidRegulating.LipidRegulatingType)" ng-click="updateSelection($event,0,detail.FollowupNursing.FlupUseDrugSituation.LipidRegulating.LipidRegulatingType)" name="LipidRegulatingType" />&nbsp;他汀类&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="2" ng-checked="isSelected(1,detail.FollowupNursing.FlupUseDrugSituation.LipidRegulating.LipidRegulatingType)" ng-click="updateSelection($event,1,detail.FollowupNursing.FlupUseDrugSituation.LipidRegulating.LipidRegulatingType)" name="LipidRegulatingType" />&nbsp;贝特类&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="3" ng-checked="isSelected(2,detail.FollowupNursing.FlupUseDrugSituation.LipidRegulating.LipidRegulatingType)" ng-click="updateSelection($event,2,detail.FollowupNursing.FlupUseDrugSituation.LipidRegulating.LipidRegulatingType)" name="LipidRegulatingType" />&nbsp;烟酸及其衍生物&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="4" ng-checked="isSelected(3,detail.FollowupNursing.FlupUseDrugSituation.LipidRegulating.LipidRegulatingType)" ng-click="updateSelection($event,3,detail.FollowupNursing.FlupUseDrugSituation.LipidRegulating.LipidRegulatingType)" name="LipidRegulatingType" />&nbsp;胆固醇吸收抑制剂&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="99" ng-checked="isSelected(4,detail.FollowupNursing.FlupUseDrugSituation.LipidRegulating.LipidRegulatingType)" ng-click="updateSelection($event,4,detail.FollowupNursing.FlupUseDrugSituation.LipidRegulating.LipidRegulatingType)" name="LipidRegulatingType" />&nbsp;其他
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                @*<tr ng-show="detail.EventName == '1' || detail.EventName=='3' || detail.EventName=='5'">*@
+                                                <tr ng-show="detail.FollowupType == '2'">
+                                                    <td style="width:20%;">
+                                                        <strong>药物依从性：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupUseDrugSituation.DrugUseCompliance" value="1" name="DrugUseCompliance" />&nbsp;规律&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupUseDrugSituation.DrugUseCompliance" value="2" name="DrugUseCompliance" />&nbsp;间断&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupUseDrugSituation.DrugUseCompliance" value="3" name="DrugUseCompliance" />&nbsp;不服药&nbsp;&nbsp;
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr ng-show="detail.FollowupType == '2'">
+                                                    <td style="width:20%;">
+                                                        <strong>药物不良反应：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" value="1" ng-model="detail.FollowupNursing.FlupUseDrugSituation.AdverseDrugReaction" name="AdverseDrugReaction" />&nbsp;无&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" value="2" ng-model="detail.FollowupNursing.FlupUseDrugSituation.AdverseDrugReaction" name="AdverseDrugReaction" />&nbsp;有&nbsp;&nbsp;
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                            <div class="info-label">评分&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                                            <table class="check-up">
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>mRS评分：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupScore.IsMrs" name="IsMrs" value="1">&nbsp;&nbsp;是&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupScore.IsMrs" name="IsMrs" value="0">&nbsp;&nbsp;否
+                                                            <span ng-if="detail.FollowupNursing.FlupScore.IsMrs=='1'" >&nbsp;&nbsp;评分 &nbsp;&nbsp;<span><input type="text" style="text-align:center" ng-click="showMrs(detail)" ng-model="detail.FollowupNursing.FlupScore.MrsScore" name="MrsScore" class="txtBorder" />分</span></span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr ng-show="detail.FollowupType == '2'">
+                                                    <td style="width:20%;">
+                                                        <strong>NIHSS评分(面访必填)：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupScore.IsNihss" name="IsNihss" value="1">&nbsp;&nbsp;是&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="detail.FollowupNursing.FlupScore.IsNihss" name="IsNihss" value="2">&nbsp;&nbsp;否
+                                                            <span ng-if="detail.FollowupNursing.FlupScore.IsNihss=='1'">&nbsp;&nbsp;评分&nbsp;&nbsp;&nbsp;<span><input type="text" style="text-align:center" ng-click="showNihss(detail)" ng-model="detail.FollowupNursing.FlupScore.NihssScore" name="NihssScore" class="txtBorder" />分</span></span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                            <div class="info-label">DVT</div>
+                                            <table class="check-up">
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>Padua评分：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="text" style="text-align:center" ng-click="showPadua(detail)" ng-model="detail.FollowupNursing.Dvt.PaduaScore" name="PaduaScore" class="txtBorder" />分
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>是否预防深静脉血栓：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="IsPreventDeepVeinThrom" ng-model="detail.FollowupNursing.Dvt.IsPreventDeepVeinThrom" value="1">&nbsp;<span>是</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="IsPreventDeepVeinThrom" ng-model="detail.FollowupNursing.Dvt.IsPreventDeepVeinThrom" value="0">&nbsp;<span>否</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>双下肢B超结果：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="checkbox" value="1" name="DoubleBResult" ng-checked="isSelected(0,detail.FollowupNursing.Dvt.DoubleBResult)" ng-click="updateSelection($event,0,detail.FollowupNursing.Dvt.DoubleBResult)" />&nbsp;无血栓&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="2" name="DoubleBResult" ng-checked="isSelected(1,detail.FollowupNursing.Dvt.DoubleBResult)" ng-click="updateSelection($event,1,detail.FollowupNursing.Dvt.DoubleBResult)" />&nbsp;肌间血栓&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="3" name="DoubleBResult" ng-checked="isSelected(2,detail.FollowupNursing.Dvt.DoubleBResult)" ng-click="updateSelection($event,2,detail.FollowupNursing.Dvt.DoubleBResult)" />&nbsp;腓静脉血栓&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="4" name="DoubleBResult" ng-checked="isSelected(3,detail.FollowupNursing.Dvt.DoubleBResult)" ng-click="updateSelection($event,3,detail.FollowupNursing.Dvt.DoubleBResult)" />&nbsp;腘静脉血栓&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="5" name="DoubleBResult" ng-checked="isSelected(4,detail.FollowupNursing.Dvt.DoubleBResult)" ng-click="updateSelection($event,4,detail.FollowupNursing.Dvt.DoubleBResult)" />&nbsp;股静脉血栓&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="6" name="DoubleBResult" ng-checked="isSelected(5,detail.FollowupNursing.Dvt.DoubleBResult)" ng-click="updateSelection($event,5,detail.FollowupNursing.Dvt.DoubleBResult)" />&nbsp;其他类型的血栓
+                                                            <span ng-show="detail.FollowupNursing.Dvt.DoubleBResult[5]">：<input type="text" name="" ng-model="detail.FollowupNursing.Dvt.LisBLEBThrombosis" class="txtBorder" style="width:200px;"></span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>D-二聚体：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="text" style="width:100%" ng-model="detail.FollowupNursing.Dvt.DTwoPolymer" name="DTwoPolymer" />
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                            <div class="info-label">神经源性膀胱</div>
+                                            <table class="check-up">
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>有无神经源性膀胱：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="IsNeurogenicBladder" ng-model="detail.FollowupNursing.NeurogenicBladder.IsNeurogenicBladder" value="1" /><span>有</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="IsNeurogenicBladder" ng-model="detail.FollowupNursing.NeurogenicBladder.IsNeurogenicBladder" value="2" /><span>无</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>GCS评分：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="text" style="text-align:center" ng-click="showGcs(detail)" ng-model="detail.FollowupNursing.NeurogenicBladder.GcsScore" name="GcsScore" class="txtBorder" />分
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>膀胱病变部位：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="LesionSiteBladder" ng-model="detail.FollowupNursing.NeurogenicBladder.LesionSiteBladder" value="1" /><span>上尿路</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="LesionSiteBladder" ng-model="detail.FollowupNursing.NeurogenicBladder.LesionSiteBladder" value="2" /><span>下尿路</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>肾功能：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="RenalFunction" ng-model="detail.FollowupNursing.NeurogenicBladder.RenalFunction" validateName="RenalFunction" value="1"><span>正常</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="RenalFunction" ng-model="detail.FollowupNursing.NeurogenicBladder.RenalFunction" validateName="RenalFunction" value="2"><span>异常</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>膀胱类型：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="BladderType" ng-model="detail.FollowupNursing.NeurogenicBladder.BladderType" validateName="BladderType" value="1"><span>尿失禁</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="BladderType" ng-model="detail.FollowupNursing.NeurogenicBladder.BladderType" validateName="BladderType" value="2"><span>尿潴留</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>发生时间：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="datetime" style="width:30%" ng-model="detail.FollowupNursing.NeurogenicBladder.OccurrenceTime" id="OccurrenceTime" name="OccurrenceTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}">
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>提醒排尿：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="RemindingUrination" ng-model="detail.FollowupNursing.NeurogenicBladder.RemindingUrination" value="1"><span>有</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="RemindingUrination" ng-model="detail.FollowupNursing.NeurogenicBladder.RemindingUrination" value="2"><span>无</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>排尿方式：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="Urination" ng-model="detail.FollowupNursing.NeurogenicBladder.Urination" validateName="Urination" value="1"><span>自解</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="Urination" ng-model="detail.FollowupNursing.NeurogenicBladder.Urination" validateName="Urination" value="2"><span>尿不湿</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="Urination" ng-model="detail.FollowupNursing.NeurogenicBladder.Urination" validateName="Urination" value="3"><span>尿袋</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>是留置导尿：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="IsLienGuideUrine" ng-model="detail.FollowupNursing.NeurogenicBladder.IsLienGuideUrine" value="1"><span>是</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="IsLienGuideUrine" ng-model="detail.FollowupNursing.NeurogenicBladder.IsLienGuideUrine" value="2"><span>否</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>尿量：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="UrineVolume" ng-model="detail.FollowupNursing.NeurogenicBladder.UrineVolume" validateName="UrineVolume" value="1"><span>小于100ml</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="UrineVolume" ng-model="detail.FollowupNursing.NeurogenicBladder.UrineVolume" validateName="UrineVolume" value="2"><span>100ml- 200ml</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="UrineVolume" ng-model="detail.FollowupNursing.NeurogenicBladder.UrineVolume" validateName="UrineVolume" value="3"><span>200ml-300ml</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="UrineVolume" ng-model="detail.FollowupNursing.NeurogenicBladder.UrineVolume" validateName="UrineVolume" value="4"><span>大于300ml</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>间断夹管：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="IntePinchTube" ng-model="detail.FollowupNursing.NeurogenicBladder.IntePinchTube" validateName="IntePinchTube" value="1"><span>有</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="IntePinchTube" ng-model="detail.FollowupNursing.NeurogenicBladder.IntePinchTube" validateName="IntePinchTube" value="2"><span>无</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>拔管时间：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="datetime" style="width:30%" ng-model="detail.FollowupNursing.NeurogenicBladder.ExtubationTime" id="ExtubationTime" name="ExtubationTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}">
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>间隔时间：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="IntervalTime" ng-model="detail.FollowupNursing.NeurogenicBladder.IntervalTime" validateName="IntervalTime" value="1"><span>小于1h</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="IntervalTime" ng-model="detail.FollowupNursing.NeurogenicBladder.IntervalTime" validateName="IntervalTime" value="2"><span>1h-2h</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="IntervalTime" ng-model="detail.FollowupNursing.NeurogenicBladder.IntervalTime" validateName="IntervalTime" value="3"><span>2h-3h</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="IntervalTime" ng-model="detail.FollowupNursing.NeurogenicBladder.IntervalTime" validateName="IntervalTime" value="4"><span>3h-4h</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="IntervalTime" ng-model="detail.FollowupNursing.NeurogenicBladder.IntervalTime" validateName="IntervalTime" value="5"><span>4h-5h</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="IntervalTime" ng-model="detail.FollowupNursing.NeurogenicBladder.IntervalTime" validateName="IntervalTime" value="6"><span>大于5h</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>尿路感染：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="UrinaryInfected" ng-model="detail.FollowupNursing.NeurogenicBladder.UrinaryInfected" validateName="UrinaryInfected" value="1"><span>有</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="UrinaryInfected" ng-model="detail.FollowupNursing.NeurogenicBladder.UrinaryInfected" validateName="UrinaryInfected" value="2"><span>无</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>尿常规结果：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="UrineRoutineResults" ng-model="detail.FollowupNursing.NeurogenicBladder.UrineRoutineResults" validateName="UrineRoutineResults" value="1"><span>阴性</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="UrineRoutineResults" ng-model="detail.FollowupNursing.NeurogenicBladder.UrineRoutineResults" validateName="UrineRoutineResults" value="2"><span>阳性</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>尿培养结果：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="UrineCultureResults" ng-model="detail.FollowupNursing.NeurogenicBladder.UrineCultureResults" validateName="UrineCultureResults" value="1"><span>阴性</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="UrineCultureResults" ng-model="detail.FollowupNursing.NeurogenicBladder.UrineCultureResults" validateName="UrineCultureResults" value="2"><span>阳性</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>饮水量：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="WaterIntake" ng-model="detail.FollowupNursing.NeurogenicBladder.WaterIntake" validateName="WaterIntake" value="1"><span>小于500ml</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="WaterIntake" ng-model="detail.FollowupNursing.NeurogenicBladder.WaterIntake" validateName="WaterIntake" value="2"><span>500ml-1500ml</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="WaterIntake" ng-model="detail.FollowupNursing.NeurogenicBladder.WaterIntake" validateName="WaterIntake" value="3"><span>1500ml-2500ml</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="WaterIntake" ng-model="detail.FollowupNursing.NeurogenicBladder.WaterIntake" validateName="WaterIntake" value="4"><span>大于2500ml</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>24H尿量：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="H24UrineVolume" ng-model="detail.FollowupNursing.NeurogenicBladder.H24UrineVolume" value="1"><span>小于500ml</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="H24UrineVolume" ng-model="detail.FollowupNursing.NeurogenicBladder.H24UrineVolume" value="2"><span>500ml- 1500ml</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="H24UrineVolume" ng-model="detail.FollowupNursing.NeurogenicBladder.H24UrineVolume" value="3"><span>1500ml-2500ml</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="H24UrineVolume" ng-model="detail.FollowupNursing.NeurogenicBladder.H24UrineVolume" value="4"><span>大于2500ml</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>24H总次数：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="Total24HNumber" ng-model="detail.FollowupNursing.NeurogenicBladder.Total24HNumber" validateName="Total24HNumber" value="1"><span>小于2次</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="Total24HNumber" ng-model="detail.FollowupNursing.NeurogenicBladder.Total24HNumber" validateName="Total24HNumber" value="2"><span>2次-4次</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="Total24HNumber" ng-model="detail.FollowupNursing.NeurogenicBladder.Total24HNumber" validateName="Total24HNumber" value="3"><span>4次-6次</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="Total24HNumber" ng-model="detail.FollowupNursing.NeurogenicBladder.Total24HNumber" validateName="Total24HNumber" value="4"><span>大于6次</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>康复治疗项目：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="checkbox" value="1" name="RecoveryTP" ng-checked="isSelected(0,detail.FollowupNursing.NeurogenicBladder.RecoveryTP)" ng-click="updateSelection($event,0,detail.FollowupNursing.NeurogenicBladder.RecoveryTP)" />&nbsp;膀胱再训练&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="2" name="RecoveryTP" ng-checked="isSelected(1,detail.FollowupNursing.NeurogenicBladder.RecoveryTP)" ng-click="updateSelection($event,1,detail.FollowupNursing.NeurogenicBladder.RecoveryTP)" />&nbsp;排尿意识训练&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="3" name="RecoveryTP" ng-checked="isSelected(2,detail.FollowupNursing.NeurogenicBladder.RecoveryTP)" ng-click="updateSelection($event,2,detail.FollowupNursing.NeurogenicBladder.RecoveryTP)" />&nbsp;盆底肌训练&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="4" name="RecoveryTP" ng-checked="isSelected(3,detail.FollowupNursing.NeurogenicBladder.RecoveryTP)" ng-click="updateSelection($event,3,detail.FollowupNursing.NeurogenicBladder.RecoveryTP)" />&nbsp;扳机点排尿&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="5" name="RecoveryTP" ng-checked="isSelected(4,detail.FollowupNursing.NeurogenicBladder.RecoveryTP)" ng-click="updateSelection($event,4,detail.FollowupNursing.NeurogenicBladder.RecoveryTP)" />&nbsp;延时排尿&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="checkbox" value="6" name="RecoveryTP" ng-checked="isSelected(5,detail.FollowupNursing.NeurogenicBladder.RecoveryTP)" ng-click="updateSelection($event,5,detail.FollowupNursing.NeurogenicBladder.RecoveryTP)" />&nbsp;间歇导尿&nbsp;&nbsp;
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>康复开始时间：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="datetime" style="width:30%" ng-model="detail.FollowupNursing.NeurogenicBladder.RecoveryStartTime" id="RecoveryStartTime" name="RecoveryStartTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}">
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>持续时间：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="radio" name="Duration" ng-model="detail.FollowupNursing.NeurogenicBladder.Duration" validateName="Duration" value="1"><span>小于1w</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="Duration" ng-model="detail.FollowupNursing.NeurogenicBladder.Duration" validateName="Duration" value="2"><span>1w-2w</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="Duration" ng-model="detail.FollowupNursing.NeurogenicBladder.Duration" validateName="Duration" value="3"><span>2w-3w</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="Duration" ng-model="detail.FollowupNursing.NeurogenicBladder.Duration" validateName="Duration" value="4"><span>3w-4w</span>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="Duration" ng-model="detail.FollowupNursing.NeurogenicBladder.Duration" validateName="Duration" value="5"><span>大于4w</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:20%;">
+                                                        <strong>转归时间：</strong>
+                                                    </td>
+                                                    <td style="width:75%;">
+                                                        <label>
+                                                            <input type="datetime" style="width:30%" ng-model="detail.FollowupNursing.NeurogenicBladder.TurnTime" id="TurnTime" name="TurnTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}">
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                            <div ng-show="detail.FollowupType == '2'">
+                                                <div class="info-label">检查（12个月随访患者必填）</div>
+                                                <table class="check-up">
+                                                    <tr>
+                                                        <td colspan="2"><strong>体格检查</strong></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width:100%;" colspan="2">
+                                                            <label>体重：<input type="text" ng-model="detail.FollowupNursing.FlupInspect.Weight" name="Weight" class="txtBorder">kg&nbsp;&nbsp;收缩压：<input type="text" ng-model="detail.FollowupNursing.FlupInspect.Sbp" name="sbp" class="txtBorder">mmHg，舒张压：<input type="text" ng-model="detail.FollowupNursing.FlupInspect.Dbp" name="dbp" class="txtBorder">mmHg&nbsp;&nbsp;</label>
+                                                            <label>
+                                                                心电图：
+                                                                <input type="radio" ng-model="detail.FollowupNursing.FlupInspect.Ecg" name="Ecg" value="1" />&nbsp;已查&nbsp;&nbsp;
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" ng-model="detail.FollowupNursing.FlupInspect.Ecg" name="Ecg" value="2" />&nbsp;未查
+                                                            </label>
+                                                            <label ng-show="detail.FollowupNursing.FlupInspect.Ecg == '1'">
+                                                                ，检查结果：
+                                                                <label>
+                                                                    <input type="checkbox" ng-checked="isSelected(0,detail.FollowupNursing.FlupInspect.EcgResult)" ng-click="updateSelection($event,0,detail.FollowupNursing.FlupInspect.EcgResult)" name="EcgResult" />&nbsp;房颤&nbsp;&nbsp;
+                                                                </label>
+                                                                <label>
+                                                                    <input type="checkbox" ng-checked="isSelected(1,detail.FollowupNursing.FlupInspect.EcgResult)" ng-click="updateSelection($event,1,detail.FollowupNursing.FlupInspect.EcgResult)" name="EcgResult" />&nbsp;房扑&nbsp;&nbsp;
+                                                                </label>
+                                                                <label>
+                                                                    <input type="checkbox" ng-checked="isSelected(2,detail.FollowupNursing.FlupInspect.EcgResult)" ng-click="updateSelection($event,2,detail.FollowupNursing.FlupInspect.EcgResult)" name="EcgResult" />&nbsp;其他类型&nbsp;&nbsp;
+                                                                </label>
+                                                                <label>
+                                                                    <input type="checkbox" ng-checked="isSelected(3,detail.FollowupNursing.FlupInspect.EcgResult)" ng-click="updateSelection($event,3,detail.FollowupNursing.FlupInspect.EcgResult)" name="EcgResult" />&nbsp;正常
+                                                                </label>
+                                                            </label>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                <table class="check-up" style="border-top:none;">
+                                                    <tr>
+                                                        <td colspan="2" style="border-top:none"><strong>实验室检查</strong></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width:100%;" colspan="2">
+                                                            <label>血糖：空腹血糖：<input type="text" ng-model="detail.FollowupNursing.FlupInspect.SrFastingBloodGlucose" name="SrFastingBloodGlucose" class="txtBorder">mmol/L，餐后两小时血糖（推荐）：<input type="text" ng-model="detail.FollowupNursing.FlupInspect.SrFastingBloodGlucose2H" name="SrFastingBloodGlucose2H" class="txtBorder">mmol/L，糖化血红蛋白：<input type="text" ng-model="detail.FollowupNursing.FlupInspect.GlycosylatedHemoglobin" name="GlycosylatedHemoglobin" class="txtBorder">%</label><br />
+
+                                                            <label>血脂四项：甘油三酯：<input type="text" name="Triglyceride" ng-model="detail.FollowupNursing.FlupInspect.Triglyceride" class="txtBorder" />mmol/L，胆固醇：<input type="text" name="Cholesterol" class="txtBorder" ng-model="detail.FollowupNursing.FlupInspect.Cholesterol" />mmol/L，低密度脂蛋白胆固醇：<input type="text" ng-model="detail.FollowupNursing.FlupInspect.Ldlc" name="Ldlc" class="txtBorder" />mmol/L，高密度脂蛋白胆固醇<input type="text" ng-model="detail.FollowupNursing.FlupInspect.Hdlc" name="Hdlc" class="txtBorder" />mmol/L</label><br />
+
+                                                            <label>同型半胱氨酸：<input type="text" ng-model="detail.FollowupNursing.FlupInspect.Homocysteine" name="Homocysteine" class="txtBorder" />μmmol/L</label>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+
+                                                <div class="info-label">健康教育计划</div>
+                                                <table class="check-up" style="border-top:none;margin-bottom:50px;">
+                                                    <tr>
+                                                        <td style="width:20%;">
+                                                            <strong>健康教育处方：</strong>
+                                                        </td>
+                                                        <td style="width:75%;">
+                                                            <label>
+                                                                <input type="radio" value="1" ng-model="detail.FollowupNursing.HealthEducationPlan.HealthEducationPrescription" name="HealthEducationPrescription" />&nbsp;疾病相关知识指导&nbsp;&nbsp;
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" value="2" ng-model="detail.FollowupNursing.HealthEducationPlan.HealthEducationPrescription" name="HealthEducationPrescription" />&nbsp;饮食指导&nbsp;&nbsp;
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" value="3" ng-model="detail.FollowupNursing.HealthEducationPlan.HealthEducationPrescription" name="HealthEducationPrescription" />&nbsp;&ge;康复运动指导&nbsp;&nbsp;
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" value="4" ng-model="detail.FollowupNursing.HealthEducationPlan.HealthEducationPrescription" name="HealthEducationPrescription" />&nbsp;心理指导&nbsp;&nbsp;
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" value="5" ng-model="detail.FollowupNursing.HealthEducationPlan.HealthEducationPrescription" name="HealthEducationPrescription" />&nbsp;血压血糖监测&nbsp;&nbsp;
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" value="6" ng-model="detail.FollowupNursing.HealthEducationPlan.HealthEducationPrescription" name="HealthEducationPrescription" />&nbsp;&ge;戒烟限酒指导&nbsp;&nbsp;
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" value="7" ng-model="detail.FollowupNursing.HealthEducationPlan.HealthEducationPrescription" name="HealthEducationPrescription" />&nbsp;&ge;其他&nbsp;&nbsp;
+                                                            </label>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width:20%;">
+                                                            <strong>特殊嘱托：</strong>
+                                                        </td>
+                                                        <td style="width:75%;">
+                                                            <label>
+                                                                <input type="text" style="width:100%" ng-model="detail.FollowupNursing.HealthEducationPlan.SpecialInstructions" name="SpecialInstructions" />
+                                                            </label>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width:20%;">
+                                                            <strong>下次随访时间：</strong>
+                                                        </td>
+                                                        <td style="width:75%;">
+                                                            <label>
+                                                                <input type="text" name="NextFuYear" ng-model="detail.FollowupNursing.HealthEducationPlan.NextFuYear" class="txtBorder" />年
+                                                                <input type="text" name="NextFuMonths" ng-model="detail.FollowupNursing.HealthEducationPlan.NextFuMonths" class="txtBorder" />月
+                                                                <input type="text" name="NextFuDay" ng-model="detail.FollowupNursing.HealthEducationPlan.NextFuDay" class="txtBorder" />日
+                                                            </label>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+

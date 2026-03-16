@@ -1,0 +1,30 @@
+﻿@using DoCare.Framework.Extension;
+@{
+    Layout = null;
+}
+<link href=@Url.GetCssJsUrl("~/Content/xxg_cz.css") rel="stylesheet" />
+<script src=@Url.GetCssJsUrl("~/Scripts/Stroke/templateCreate.js")></script>
+<div id="light1" class="popup_block" style="width:800px;">    
+    <form class="form_block">
+        <fieldset>
+            <p class="tit_block">请指定CRF的制作方法</p>
+            <p class="line_b">
+                <input type="radio" name="create_crf" value="new" checked>
+                <span>新建空白的问卷</span>
+            </p>
+            <p>
+                <input type="radio" name="create_crf" value="import">
+                <span>导入CRF文件</span><a id="preview" class="btn white" style="display:none;">预览</a>
+            </p>
+            <p class="mg_l_10" id="uploadFile" style="display:none;">
+                <input type="file">
+                <a href="" class="btn white">上传文件</a>
+            </p>
+        </fieldset>
+    </form>
+    <div class="clearfix"></div>
+    <div class="btn_block">
+        <a id="submit" class="btn blue">提交</a>
+        <a id="close" class="btn orange" data-options="iconCls:'icon-cancel'">取消</a>
+    </div>
+</div>

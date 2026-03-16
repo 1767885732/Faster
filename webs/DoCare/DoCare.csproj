@@ -1,0 +1,152 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+	 <ServerGarbageCollection>false</ServerGarbageCollection>
+	 <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <UserSecretsId>f67896b7-7315-4ad1-b5f5-46211bc66b91</UserSecretsId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp2.2\DoCare.xml</DocumentationFile>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <NoWarn>1701;1702;1591;</NoWarn>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Areas\Admin\Views\**" />
+    <Compile Remove="Hangfire\**" />
+    <Compile Remove="Startups\Migrations\SqlServer\**" />
+    <Compile Remove="wwwroot\assets\ace\**" />
+    <Content Remove="Areas\Admin\Views\**" />
+    <Content Remove="Hangfire\**" />
+    <Content Remove="Startups\Migrations\SqlServer\**" />
+    <Content Remove="wwwroot\assets\ace\**" />
+    <EmbeddedResource Remove="Areas\Admin\Views\**" />
+    <EmbeddedResource Remove="Hangfire\**" />
+    <EmbeddedResource Remove="Startups\Migrations\SqlServer\**" />
+    <EmbeddedResource Remove="wwwroot\assets\ace\**" />
+    <None Remove="Areas\Admin\Views\**" />
+    <None Remove="Hangfire\**" />
+    <None Remove="Startups\Migrations\SqlServer\**" />
+    <None Remove="wwwroot\assets\ace\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\EcgMonitorController.cs" />
+    <Compile Remove="Controllers\TestController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="log4net.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Startups\Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Areas\Admin\Pages\CodeGeneration\Entities.cshtml" />
+    <None Include="Areas\Admin\Pages\CodeGeneration\EntityConfiguration.cshtml" />
+    <None Include="Areas\Admin\Pages\Dashboard\Index.cshtml" />
+    <None Include="Areas\Admin\Pages\Index.cshtml" />
+    <None Include="Areas\Admin\Pages\Shared\Components\Menu\Menu.cshtml" />
+    <None Include="Areas\Admin\Pages\Shared\Partial\Footer.cshtml" />
+    <None Include="Areas\Admin\Pages\Shared\Partial\Navbar.cshtml" />
+    <None Include="Areas\Admin\Pages\Shared\_Layout.cshtml" />
+    <None Include="Areas\Admin\Pages\Shared\_PageFooter.cshtml" />
+    <None Include="Areas\Admin\Pages\Shared\_PageNavbar.cshtml" />
+    <None Include="Areas\Admin\Pages\_ViewImports.cshtml" />
+    <None Include="Areas\Admin\Pages\_ViewStart.cshtml" />
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="8.0.0" />
+    <PackageReference Include="Citms.EntityFrameworkCore.Oracle" Version="1.0.3" />
+    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.4.10" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
+    <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.0.138" />
+    <PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.0.138" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="RazorEngine.NetCore" Version="2.2.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.6.0-preview4.19212.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\services\DoCare.Core.EntityConfiguration\DoCare.Core.EntityConfiguration.csproj" />
+    <ProjectReference Include="..\..\services\DoCare.KJCHospital\DoCare.KJCHospital.csproj" />
+    <ProjectReference Include="..\..\services\Packs\DoCare.EcgConversion\DoCare.EcgConversion.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FastFrame">
+      <HintPath>..\..\src\FastFrame.dll</HintPath>
+    </Reference>
+    <Reference Include="FastFrame.AspNetCore">
+      <HintPath>..\..\src\FastFrame.AspNetCore.dll</HintPath>
+    </Reference>
+    <Reference Include="FastFrame.AutoMapper">
+      <HintPath>..\..\src\FastFrame.AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="FastFrame.CodeGeneration">
+      <HintPath>..\..\src\FastFrame.CodeGeneration.dll</HintPath>
+    </Reference>
+    <Reference Include="FastFrame.EFCore">
+      <HintPath>..\..\src\FastFrame.EFCore.dll</HintPath>
+    </Reference>
+    <Reference Include="FastFrame.EFCore.Oracle">
+      <HintPath>..\..\src\FastFrame.EFCore.Oracle.dll</HintPath>
+    </Reference>
+    <Reference Include="FastFrame.Log4Net">
+      <HintPath>..\..\src\FastFrame.Log4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="FastFrame.MiniProfile">
+      <HintPath>..\..\src\FastFrame.MiniProfile.dll</HintPath>
+    </Reference>
+    <Reference Include="FastFrame.Swagger">
+      <HintPath>..\..\src\FastFrame.Swagger.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="XMLFile.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
+
+</Project>

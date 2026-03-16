@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="ABCD2" Title="ABCD2评分" >
+    <Group>
+      <RadioBox Code="ABCD2001" Title="年龄是否>60岁" Desc="年龄是否>60岁">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="ABCD2002" Title="血压（mmHg）" Desc="血压是否收缩压>140或舒张压>90">
+        <Option Id="01" Text="收缩压>140或舒张压>90" Score="1"/>
+        <Option Id="02" Text="其他" Score="0"/>
+      </RadioBox>
+      <CheckBox Code="ABCD2003" Title="临床症状" Desc="临床症状">
+        <Option Id="01" Text="单侧无力" Score="1"/>
+        <Option Id="02" Text="不伴有无力的言语障碍" Score="1"/>
+      </CheckBox>
+      <CheckBox Code="ABCD2004" Title="临床症状持续时间" Desc="临床症状持续时间">
+        <Option Id="01" Text=">60分钟" Score="1"/>
+        <Option Id="02" Text="10~59分钟" Score="1"/>
+      </CheckBox>
+      <RadioBox Code="ABCD2005" Title="是否有糖尿病" Desc="是否糖尿病">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+    </Group>
+  </Template>
+</Config>

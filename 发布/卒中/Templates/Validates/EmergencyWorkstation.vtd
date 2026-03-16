@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="EmergencyWorkstation" ViewName="急诊工作站">
+    <Member MemberId="AttackTime" MemberName="发病时间" MemberCode="D020001">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="AttackAddress" MemberName="发病地址">
+      <Required Required="false" Enabled="1" />
+      <Length MaxLength="50" Enabled="1" />
+    </Member>
+    <Member MemberId="ArrivedHospitalTime" MemberName="到达本院大门时间" MemberCode="D020101">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="AdmissionTime" MemberName="卒中团队接诊时间" MemberCode="D020102">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="EcgTime" MemberName="院内首份心电图" MemberCode="D020120">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="EcgDiagnoseTime" MemberName="心电图诊断时间" MemberCode="D020121">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="OpenVeinTime" MemberName="开通静脉时间" MemberCode="D010203">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="MainComplaint" MemberName="主诉">
+      <Required Required="false" Enabled="1" />
+      <Length MaxLength="50" Enabled="1" />
+    </Member>
+    <Member MemberId="PresentIllness" MemberName="现病史">
+      <Required Required="false" Enabled="1" />
+      <Length MaxLength="50" Enabled="1" />
+    </Member>
+    <Member MemberId="DiagnosisDoctor" MemberName="诊断医生" >
+      <Required Required="false" Enabled="1" />
+      <Length MaxLength="20" Enabled="1" />
+    </Member>
+    <Member MemberId="Diagnosis" MemberName="初步诊断">
+      <Required Required="false" Enabled="1" />
+    </Member>
+  </View>
+</Config>

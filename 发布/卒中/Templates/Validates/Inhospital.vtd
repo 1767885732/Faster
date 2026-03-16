@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="Inhospital" ViewName="住院诊疗">    
+    <Member MemberId="InpatientNo" MemberName="住院号">
+      <Required Required="false" Enabled="1" />
+      <Length MaxLength="50" Enabled="1" />
+    </Member>
+    <Member MemberId="InhosState" MemberName="入院情况">
+      <Required Required="false" Enabled="1" />
+      <Length MaxLength="50" Enabled="1" />
+    </Member>
+    <Member MemberId="InhosDate" MemberName="入院时间" MemberCode="D020400">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="0" />
+    </Member>
+    <Member MemberId="OcspType" MemberName="OCSP分型">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="ToastType" MemberName="TOAST分型">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="CissType" MemberName="CISS分型">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="AntiplateletUsed" MemberName="是否用抗血小板药物">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="AntiplateletOther" MemberName="其他抗血小板药物">
+      <Length MaxLength="50" Enabled="1" />
+    </Member>
+    <Member MemberId="AntiplateletNoUseReason" MemberName="抗血小板未用药原因">
+      <Length MaxLength="100" Enabled="1" />
+    </Member>
+    <Member MemberId="AnticoagulantUsed" MemberName="是否用抗凝药物">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="AnticoagulantOther" MemberName="其他抗凝药物">
+      <Length MaxLength="50" Enabled="1" />
+    </Member>
+    <Member MemberId="AnticoagulantNoUseReason" MemberName="抗凝未用药原因">
+      <Length MaxLength="100" Enabled="1" />
+    </Member>
+    <Member MemberId="LipidModulationStatinsUsed" MemberName="是否用调脂他汀药物">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="LipidModulationStatinsOther" MemberName="其他调脂他汀药物">
+      <Length MaxLength="50" Enabled="1" />
+    </Member>
+    <Member MemberId="LipidModulationStatinsNoUseReason" MemberName="调脂他汀未用药原因">
+      <Length MaxLength="100" Enabled="1" />
+    </Member>
+    <Member MemberId="LipidModulationNonStatinsUsed" MemberName="是否用调脂非他汀药物">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="LipidModulationNonStatinsOther" MemberName="其他调脂非他汀药物">
+      <Length MaxLength="50" Enabled="1" />
+    </Member>
+    <Member MemberId="LipidModulationNonStatinsNoUseReason" MemberName="调脂非他汀未用药原因">
+      <Length MaxLength="100" Enabled="1" />
+    </Member>
+    <Member MemberId="CollatCcircUsed" MemberName="是否用改善侧枝循环药物">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="CollatCcircOther" MemberName="其他改善侧枝循药物">
+      <Length MaxLength="50" Enabled="1" />
+    </Member>
+    <Member MemberId="CollatCcircNoUseReason" MemberName="改善侧枝循未用药原因">
+      <Length MaxLength="100" Enabled="1" />
+    </Member>
+  </View>
+</Config>

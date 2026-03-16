@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="Regist" ViewName="患者登记">
+    <Member MemberId="HospitalId" MemberName="医疗机构">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Name" MemberName="姓名">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Gender" MemberName="性别">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Age" MemberName="年龄">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Birthday" MemberName="出生日期">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="Job" MemberName="职业">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="Nationality" MemberName="民族">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="Marriage" MemberName="婚姻">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="CultureDegree" MemberName="文化程度">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="IdCard" MemberName="证件类别">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IdCardNo" MemberName="身份证">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="PhoneNumber" MemberName="联系电话">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="Height" MemberName="身高">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="Weight" MemberName="体重">
+      <Required Required="true" Enabled="0" />
+    </Member>
+  </View>
+</Config>

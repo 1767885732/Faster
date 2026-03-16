@@ -1,0 +1,352 @@
+﻿@using DoCare.ToolKit;
+@using DoCare.Framework.Extension;
+@{
+    ViewBag.Title = "Index";
+    Layout = Layout = "~/Views/Shared/_LayoutWorkstation.cshtml";
+}
+<link href=@Url.Random("~/App_Themes/Default/page.dm.mr.css") rel="stylesheet" />
+<script>
+    var model = @Html.Raw(JsonKit.Serialize(ViewBag.Model));
+    console.log(model);
+</script>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+    /*提交错误提醒空白换行*/
+    .el-message {
+        white-space: pre !important;
+    }
+
+    #main-layout .el-form {
+        margin-top: 0px !important;
+    }
+
+    .el-scrollbar__wrap {
+        overflow-x: hidden;
+    }
+
+    #main-layout .el-main {
+        padding: 5px;
+    }
+
+    #main-layout .el-header {
+        padding: 0 5px;
+    }
+
+    #main-layout .el-tab-pane {
+        min-width: 700px;
+        height: calc(100vh - 210px) !important;
+    }
+
+    #main-layout .el-tab-pane .mr-panel {
+        margin: -10px 8px 10px 0px;
+    }
+</style>
+<div id="EmergencyWS" v-cloak>
+    <el-container>
+        <!-- 时间轴 -->
+        <el-aside width="200px">
+            <div style='padding:10px; height:calc(100vh - 130px);'>
+                <el-scrollbar style='height:100%;'>
+                    <el-timeline reverse='reverse'>
+                        <el-timeline-item v-for='(activity, index) in timenodes'
+                                          v-bind:key='index'
+                                          v-bind:timestamp='activity.time'
+                                          color='#409EFF'>
+                            {{activity.name}}
+                        </el-timeline-item>
+                    </el-timeline>
+                </el-scrollbar>
+            </div>
+        </el-aside>
+        <el-container>
+            <el-header height="140px">
+                <div id="Regist">
+                    <el-form v-bind:model="patient" v-bind:rules="rules" ref="registForm" label-width="100px" size="mini" label-position="top">
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="姓名" prop="Name" size="mini" id="Name">
+                                    <el-input v-model="patient.Name" autocomplete="off" maxlength="20">
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="4">
+                                <el-form-item label="性别" prop="Gender" size="mini">
+                                    <el-radio-group v-model="patient.Gender">
+                                        <el-radio-button v-for="(item,index) in GenderDict"
+                                                         v-bind:label="item.Key"
+                                                         v-bind:key="'Gender-'+ index">
+                                            {{item.Value}}
+                                        </el-radio-button>
+                                    </el-radio-group>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="4">
+                                <el-form-item label="年龄" prop="Age" size="mini">
+                                    <el-input v-model="patient.Age" autocomplete="off" maxlength="10">
+                                        <template slot="append">
+                                            岁
+                                        </template>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="联系电话" prop="PhoneNumber" size="mini">
+                                    <el-input v-model="patient.PhoneNumber" maxlength="15"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="身份证" prop="IdCardNo" size="mini">
+                                    <el-input v-model="patient.IdCardNo" autocomplete="off" maxlength="20"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="门诊ID" prop="OutpatientNo" size="mini">
+                                    <el-input v-model="patient.OutpatientNo" autocomplete="off" maxlength="20"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="住院ID" prop="InpatientNo" size="mini">
+                                    <el-input v-model="patient.InpatientNo" autocomplete="off" maxlength="20"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form>
+                </div>
+            </el-header>
+            <el-main>
+                <div class="operate-bar">
+                    <el-button-group>
+                        <el-button type="primary" v-if="patient.CanTriage" icon="specialty docare_baocun" v-on:click="onSave()" size="small">保存</el-button>
+                        <el-button type="warning" v-if="!patient.CanTriage" icon="specialty docare_baocun" size="mini">该患者病历在专科系统中目前处于无法修改的状态</el-button>
+                    </el-button-group>
+                </div>
+                <el-tabs v-model="activeName">
+                    <el-tab-pane label="患者胸痛信息" name="first">
+                        <el-scrollbar style='height:100%;'>
+                            <div class="mr-panel">
+                                <el-form v-bind:model="patient" v-bind:rules="rules" ref="registForm" label-width="100px" size="mini" label-position="top">
+                                    <el-row v-bind:gutter="24">
+                                        <el-col v-bind:span="8">
+                                            <el-form-item label="发病时间" prop="AttackTime">
+                                                <el-date-picker v-model="patient.AttackTime"
+                                                                type="datetime" v-on:blur="onDateSelected"
+                                                                format="yyyy-MM-dd HH:mm"
+                                                                placeholder="选择日期" size="mini">
+                                                </el-date-picker>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col v-bind:span="16">
+                                            <el-form-item label="发病地址" prop="AttackAddress">
+                                                <el-input v-model="patient.AttackAddress" autocomplete="off" size="mini" maxlength="120"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row v-bind:gutter="24">
+                                        <el-col v-bind:span="24">
+                                            <el-form-item label="来院方式" prop="ComingType">
+                                                <el-radio-group v-model="patient.ComingType" size="mini">
+                                                    <el-radio-button v-for="(item,index) in ComingDict"
+                                                                     v-bind:label="item.Key" v-bind:key="'ComingWay-'+ index">
+                                                        {{item.Value}}
+                                                    </el-radio-button>
+                                                </el-radio-group>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row v-bind:gutter="24">
+                                        <el-col v-bind:span="8" v-if="patient.ComingType=='1'||patient.ComingType=='2'||patient.ComingType=='3'">
+                                            <el-form-item label="到达本院大门时间" prop="ArrivedHospitalTime">
+                                                <el-date-picker v-model="patient.ArrivedHospitalTime"
+                                                                type="datetime" v-on:blur="onDateSelected"
+                                                                format="yyyy-MM-dd HH:mm"
+                                                                placeholder="选择日期" size="mini">
+                                                </el-date-picker>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col v-bind:span="8">
+                                            <el-form-item label="首次医疗接触时间" prop="FmcTime">
+                                                <el-date-picker v-model="patient.FmcTime"
+                                                                type="datetime" v-on:blur="onDateSelected"
+                                                                format="yyyy-MM-dd HH:mm"
+                                                                placeholder="选择日期" size="mini">
+                                                </el-date-picker>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col v-bind:span="8" v-if="patient.ComingType=='2'">
+                                            <el-form-item label="院内接诊时间" prop="AdmissionTime">
+                                                <el-date-picker v-model="patient.AdmissionTime"
+                                                                type="datetime" v-on:blur="onDateSelected"
+                                                                format="yyyy-MM-dd HH:mm"
+                                                                placeholder="选择日期" size="mini">
+                                                </el-date-picker>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col v-bind:span="8" v-if="patient.ComingType=='1'||patient.ComingType=='3'">
+                                            <el-form-item label="首诊医师接诊时间" prop="AdmissionTime">
+                                                <el-date-picker v-model="patient.AdmissionTime"
+                                                                type="datetime" v-on:blur="onDateSelected"
+                                                                format="yyyy-MM-dd HH:mm"
+                                                                placeholder="选择日期" size="mini">
+                                                </el-date-picker>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col v-bind:span="8">
+                                            <el-form-item label="首份心电图时间" prop="EcgTime">
+                                                <el-date-picker v-model="patient.EcgTime"
+                                                                type="datetime" v-on:blur="onDateSelected"
+                                                                format="yyyy-MM-dd HH:mm"
+                                                                placeholder="选择日期" size="mini">
+                                                </el-date-picker>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col v-bind:span="8">
+                                            <el-form-item label="心电图诊断时间" prop="EcgDiagnosisTime">
+                                                <el-date-picker v-model="patient.EcgDiagnosisTime"
+                                                                type="datetime" v-on:blur="onDateSelected"
+                                                                format="yyyy-MM-dd HH:mm"
+                                                                placeholder="选择日期" size="mini">
+                                                </el-date-picker>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row v-bind:gutter="24">
+                                        <el-col v-bind:span="24">
+                                            <el-form-item label="胸痛评估" prop="DistressCase">
+                                                <el-radio-group v-model="patient.DistressCase" size="mini">
+                                                    <el-radio-button v-for="(item,index) in DistressCaseDict"
+                                                                     v-bind:label="item.Key"
+                                                                     v-bind:key="'DistressCase-'+ index">
+                                                        {{item.Value}}
+                                                    </el-radio-button>
+                                                </el-radio-group>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row v-bind:gutter="24">
+                                        <el-col v-bind:span="8">
+                                            <el-form-item label="通知心内科会诊" prop="IsConsultation">
+                                                <el-radio-group v-model="patient.IsConsultation" size="mini">
+                                                    <el-radio-button v-for="(item,index) in YesOrNoDict"
+                                                                     v-bind:label="item.Key"
+                                                                     v-bind:key="index">
+                                                        {{item.Value}}
+                                                    </el-radio-button>
+                                                </el-radio-group>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col v-bind:span="8" v-if="patient.IsConsultation=='1'">
+                                            <el-form-item label="通知心内科会诊时间" prop="ConsultationNotifyTime">
+                                                <el-date-picker v-model="patient.ConsultationNotifyTime" style="width:75%;"
+                                                                type="datetime" v-on:blur="onDateSelected"
+                                                                format="yyyy-MM-dd HH:mm"
+                                                                placeholder="选择日期" size="mini">
+                                                </el-date-picker>
+                                                <el-button type="primary" icon="specialty" v-on:click="now('ConsultationNotifyTime')" size="mini">当前</el-button>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row v-bind:gutter="24">
+                                        <el-col v-bind:span="24">
+                                            <el-form-item label="初步诊断" prop="DiagnosisCode">
+                                                <el-radio-group v-model="patient.DiagnosisCode">
+                                                    <el-radio-button v-for="(item,index) in DiagnosisDict" v-bind:label="item.Key" v-bind:key="'CpDiagnosisCode-'+ index">
+                                                        {{item.Value}}
+                                                    </el-radio-button>
+                                                </el-radio-group>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row v-bind:gutter="24">
+                                        <el-col v-bind:span="8">
+                                            <el-form-item label="初步诊断时间" prop="DiagnosisTime">
+                                                <el-date-picker v-model="patient.DiagnosisTime" style="width:75%;"
+                                                                type="datetime" v-on:blur="onDateSelected"
+                                                                format="yyyy-MM-dd HH:mm"
+                                                                placeholder="选择日期" size="mini">
+                                                </el-date-picker>
+                                                <el-button type="primary" icon="specialty" v-on:click="now('DiagnosisTime')" size="mini">当前</el-button>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col v-bind:span="8">
+                                            <el-form-item label="诊断医生" prop="DiagnosisDoctor">
+                                                <el-input v-model="patient.DiagnosisDoctor" autocomplete="off" size="mini" maxlength="120"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col v-bind:span="8" v-if="patient.DiagnosisCode=='2'||patient.DiagnosisCode=='3'||patient.DiagnosisCode=='4'">
+                                            <el-form-item label="心功能分级" prop="KillipLevel">
+                                                <el-select v-model="patient.KillipLevel" placeholder="请选择Killip分级" size="mini">
+                                                    <el-option v-for="(item,index) in KillipLevelDict" v-bind:key="'StemiKillipLevel-'+ index" v-bind:label="item.Value" v-bind:value="item.Key">
+                                                    </el-option>
+                                                </el-select>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row v-bind:gutter="24">
+                                        <el-col v-bind:span="8">
+                                            <el-form-item label="抗血小板治疗" prop="IsAntiplatelet">
+                                                <el-radio-group v-model="patient.IsAntiplatelet" size="mini">
+                                                    <el-radio-button v-for="(item,index) in YesOrNoDict"
+                                                                     v-bind:label="item.Key"
+                                                                     v-bind:key="index">
+                                                        {{item.Value}}
+                                                    </el-radio-button>
+                                                </el-radio-group>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col v-bind:span="8" v-if="patient.IsAntiplatelet=='1'">
+                                            <el-form-item label="时间" prop="AspirinTime">
+                                                <el-date-picker v-model="patient.AspirinTime"
+                                                                type="datetime" v-on:blur="onDateSelected"
+                                                                format="yyyy-MM-dd HH:mm"
+                                                                placeholder="选择日期" size="mini">
+                                                </el-date-picker>
+                                                @*<el-button type="primary" icon="specialty" v-on:click="now('AspirinTime')" size="mini">当前</el-button>*@
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row v-bind:gutter="24" v-if="patient.IsAntiplatelet=='1'">
+                                        <el-col v-bind:span="8">
+                                            <el-form-item label="阿司匹林" prop="AspirinDose">
+                                                <el-input v-model="patient.AspirinDose" autocomplete="off" size="mini" maxlength="20">
+                                                    <template slot="append">
+                                                        mg
+                                                    </template>
+                                                </el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col v-bind:span="8">
+                                            <el-form-item label="氯吡格雷" prop="ClopidogrelDose">
+                                                <el-input v-model="patient.ClopidogrelDose" autocomplete="off" size="mini" maxlength="20">
+                                                    <template slot="append">
+                                                        mg
+                                                    </template>
+                                                </el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col v-bind:span="8">
+                                            <el-form-item label="替格瑞洛" prop="TigrilloDose">
+                                                <el-input v-model="patient.TigrilloDose" autocomplete="off" size="mini" maxlength="20">
+                                                    <template slot="append">
+                                                        mg
+                                                    </template>
+                                                </el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                </el-form>
+                            </div>
+                        </el-scrollbar>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-main>
+        </el-container>
+    </el-container>
+</div>
+
+<script src="@Url.Random("~/Views/DataManage/ApiService.js")"></script>
+<script src="@Url.Random("~/Views/DataManage/Common.js")"></script>
+<script src="@Url.Random("~/Views/WorkStation/EmergencyWS.js")"></script>

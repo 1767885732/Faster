@@ -1,0 +1,63 @@
+﻿@using DoCare.ToolKit
+@{
+    ViewBag.Title = "数据回收";
+    Layout = null;
+}
+<link href="~/Scripts/ui-grid/ui-grid.min.css" rel="stylesheet" />
+<script src="~/Scripts/ui-grid/ui-grid.js"></script>
+<link href="~/Scripts/pagination/tm.pagination.css" rel="stylesheet" />
+<script src="~/Scripts/pagination/tm.pagination.js"></script>
+<style>
+    .grid {
+        height: calc(100% - 41px);
+        height: -moz-calc(100% - 41px);
+        height: -webkit-calc(100% - 41px);
+    }
+
+    table {
+        border-collapse: separate !important;
+    }
+
+    .datetime {
+        cursor: pointer;
+        background-image: url(/App_Themes/Default/img/icon/datetime.png);
+        background-position: right center;
+        background-repeat: no-repeat;
+    }
+
+        .datetime:hover {
+            cursor: pointer;
+            background-image: url(/App_Themes/Default/img/icon/datetime-hover.png);
+        }
+</style>
+<script>
+    var hospitalList =  @Html.Raw(JsonKit.Serialize(ViewBag.OrgList));
+    var comingTypeList =  @Html.Raw(JsonKit.Serialize(ViewBag.ComingTypeList));
+    var diagnosisTypeArray = @Html.Raw(JsonKit.Serialize(ViewBag.DiagnosisTypeList));
+    var diagnosisTypeArrayJsonStr = JSON.stringify(diagnosisTypeArray);
+    var hospitalListJsonStr = JSON.stringify(hospitalList);
+    var genderArray = @Html.Raw(JsonKit.Serialize(ViewBag.Genders));
+    var genderArrayJsonStr = JSON.stringify(genderArray);
+</script>
+<script src="~/Scripts/Stroke/DataCheck/dataRecycle.js"></script>
+
+<div class="content" ng-app="ngAppDataRecycle" ng-controller="DataRecycleController">
+    <div style="width: 99%;position: absolute;top: 0px">
+        <div class="layout-container layout-container-box left" style="min-width:100%">
+            <div class="content content-box">
+                <div class="operating-btn top-15 right-15">
+                    <button class="btn-primary" ng-click="searchClick()">查询</button>
+                    <button id="create" class="btn-warning" ng-click="operation(2)">恢复</button>
+                    <button id="batchDelete" class="btn-danger" ng-click="operation(1)">删除</button>
+                </div>
+                <div class="search-block" id="search_block">
+                    <select ng-model="searchParams.OrgCode" ng-options="item.Key as item.Value for item in hospitalList"></select>
+                    <select ng-model="searchParams.DiagnosisType" ng-options="item.Key as item.Value for item in diagnosis"></select>
+                    <input type="text" maxlength="32" ng-model="searchParams.Name" style="height:26px;border:1px solid #ccc" placeholder="请输入患者姓名">
+                </div>
+                <div ui-grid="gridOptions" ui-grid-selection ui-grid-resize-columns class="grid" style="height:82%;"></div>
+                <tm-pagination conf="paginationConf"></tm-pagination>
+            </div>
+        </div>
+    </div>
+</div>

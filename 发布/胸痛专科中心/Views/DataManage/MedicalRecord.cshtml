@@ -1,0 +1,1851 @@
+﻿@using DoCare.ToolKit;
+@using DoCare.Framework.Extension;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutMedicalRecord.cshtml";
+}
+<script src="~/Views/DataManage/AsideTimeline.js"></script>
+<script type="text/javascript" src="~/Scripts/extension/element-china-area-data/app.js"></script>
+<script type="text/javascript" src="~/Scripts/extension/html2canvas.js"></script>
+<script type="text/javascript" src="~/Scripts/extension/jspdf.debug.js"></script>
+<script>
+    var model = @Html.Raw(JsonKit.Serialize(ViewBag.Model));
+    console.log("model:",model);
+</script>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+
+    .el-scrollbar__wrap {
+        overflow-x: hidden;
+    }
+
+    .medicalrecord {
+        width: 1024px;
+        margin: 10px auto;
+    }
+
+        .medicalrecord h1 {
+            text-align: center;
+            line-height: 50px;
+            font-size: 24px;
+        }
+
+        .medicalrecord .el-form {
+            margin: 5px 10px;
+        }
+
+        .medicalrecord .el-form-item {
+            margin-bottom: 0px;
+        }
+
+        .medicalrecord .el-form-item__label {
+            text-align: left !important;
+            padding: 0 5px 0 0;
+        }
+
+        .medicalrecord .subtitle {
+            background-color: #ffffff !important;
+            border-width: 0px !important;
+            line-height: 40px;
+            height: 32px;
+        }
+
+        .medicalrecord .operate-panel {
+            margin-top: -30px;
+            position: relative;
+            float: right;
+            right: 10px;
+        }
+</style>
+<div id="medicalrecord" v-cloak class="medicalrecord">
+    <el-container>
+        <el-header height="36px">
+            <el-form v-bind:model="emr" label-width="120px" size="small">
+                <el-row v-bind:gutter="24">
+                    <el-col v-bind:span="24">
+                        <h1>{{patient.Regist.HospitalName}}胸痛患者病历</h1>
+                        <div class="operate-panel">
+                            <el-button type="primary" icon="el-icon-printer" v-on:click="print()" size="mini" id="printButton">打印</el-button>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-form>
+        </el-header>
+        <el-container>
+            <!-- 时间轴 -->
+            @*<el-aside width="240px">
+                <aside-timeline v-bind:id="registId" ref="timeline"></aside-timeline>
+                </el-aside>*@
+            <el-main>
+                <el-form v-bind:model="patient" label-width="120px" size="small">
+                    <el-tag style="width:100%;">基本信息</el-tag>
+                    <el-row v-bind:gutter="24">
+                        <el-col v-bind:span="8">
+                            <el-form-item label="姓名">
+                                <span>{{patient.Regist.Name}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="性别">
+                                <span>{{patient.Regist.Gender}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="年龄">
+                                <span>{{patient.Regist.Age}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="出生日期">
+                                <span>{{patient.Regist.Birthday}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="身高">
+                                <span>{{patient.Regist.Height}} cm</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="体重">
+                                <span>{{patient.Regist.Weight}} kg</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="职业">
+                                <span>{{patient.Regist.Job}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="民族">
+                                <span>{{patient.Regist.Nationality}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="婚姻状况">
+                                <span>{{patient.Regist.Marriage}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="文化程度">
+                                <span>{{patient.Regist.CultureDegree}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="联系电话">
+                                <span>{{patient.Regist.PhoneNumber}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item v-bind:label="patient.Regist.IdCard">
+                                <span>{{patient.Regist.IdCardNo}}</span>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-tag style="width:100%;">急救信息</el-tag>
+                    <el-row v-bind:gutter="24">
+                        <el-col v-bind:span="8">
+                            <el-form-item label="门诊ID">
+                                <span>{{patient.Admission.OutpatientNo}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="住院ID">
+                                <span>{{patient.Admission.InpatientNo}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="发病时间">
+                                <span>{{patient.Admission.AttackTime}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8" v-if="patient.Admission.IsAttackUncertain == '1'">
+                            <el-form-item label="发病区间">
+                                <span>{{patient.Admission.AttackZone}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="16">
+                            <el-form-item label="发病地址">
+                                <span>{{patient.Admission.AttackProvince}}{{patient.Admission.AttackCity}}{{patient.Admission.AttackArea}}{{patient.Admission.AttackAddress}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="医保类型">
+                                <span>{{patient.Admission.Insurance}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="医保编号">
+                                <span>{{patient.Admission.InsuranceNo}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-form-item label="大病医保">
+                                <span>{{patient.Admission.IsStrickenInsurance}}</span>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <!--病情现况-->
+                    <div>
+                        <el-tag size="mini" class="subtitle">病情现况</el-tag>
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="胸痛评估">
+                                    <span>{{patient.Admission.DistressCase}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="16">
+                                <el-form-item label="其他症状">
+                                    <span>{{patient.Admission.DistressCaseDetail}} </span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <!--来院方式-->
+                    <div>
+                        <el-tag size="mini" class="subtitle">来院方式</el-tag>
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="来院方式">
+                                    <span>{{patient.Admission.ComingType}} </span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <!--呼救（120或其他）出车-->
+                    <div v-if="patient.Admission.ComingType=='呼救（120或其他）出车'">
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="出车单位">
+                                    <span>{{patient.Admission.AmbulanceDepartment}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="呼救时间">
+                                    <span>{{patient.Admission.HelpTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="到达本院大门时间">
+                                    <span>{{patient.Admission.ArrivedHospitalTime}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="直接转送上级医院">
+                                    <span>{{patient.Admission.IsTransHospital}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="首次医疗接触时间">
+                                    <span>{{patient.Admission.FmcTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="首诊医师接诊时间">
+                                    <span>{{patient.Admission.AdmissionTime}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="医护人员">
+                                    <span>{{patient.Admission.AdmissionDoctor}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <!--转院（包含任何机构）-->
+                    <div v-if="patient.Admission.ComingType=='转院（包含任何医疗机构）'">
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="转院类型">
+                                    <span>{{patient.Admission.ZcyyType}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="医院名称">
+                                    <span>{{patient.Admission.ZcyyHospitalName}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="首次医疗接触时间">
+                                    <span>{{patient.Admission.FmcTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="转出医院入门时间">
+                                    <span>{{patient.Admission.ZcyyVisitTime}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="决定转院时间">
+                                    <span>{{patient.Admission.ZcyyDecisionTime}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="转出医院出门时间">
+                                    <span>{{patient.Admission.ZcyyLeaveTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="到达本院大门时间">
+                                    <span>{{patient.Admission.ArrivedHospitalTime}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="院内接诊时间">
+                                    <span>{{patient.Admission.AdmissionTime}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="医护人员">
+                                    <span>{{patient.Admission.AdmissionDoctor}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <!--自行来院-->
+                    <div v-if="patient.Admission.ComingType=='自行来院'">
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="到达本院大门时间">
+                                    <span>{{patient.Admission.ArrivedHospitalTime}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="首次医疗接触时间">
+                                    <span>{{patient.Admission.FmcTime}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="首诊医师接诊时间">
+                                    <span>{{patient.Admission.AdmissionTime}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="医护人员">
+                                    <span>{{patient.Admission.AdmissionDoctor}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <!--院内发病-->
+                    <div v-if="patient.Admission.ComingType=='院内发病'">
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="发病科室">
+                                    <span>{{patient.Admission.AttackDept}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="首次医疗接触时间">
+                                    <span>{{patient.Admission.FmcTime}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="床位医生接触时间">
+                                    <span>{{patient.Admission.AdmissionTime}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="离开科室时间">
+                                    <span>{{patient.Admission.LeaveDeptTime}} </span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="医护人员">
+                                    <span>{{patient.Admission.AdmissionDoctor}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <!--基础生命体征-->
+                    <div>
+                        <el-tag size="mini" class="subtitle">基础生命体征</el-tag>
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="意识">
+                                    <span>{{patient.Admission.ConsciousnessType}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="呼吸">
+                                    <span>{{patient.Admission.RespirationRate}} 次/分钟</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="脉搏">
+                                    <span>{{patient.Admission.PulseRate}} 次/分钟</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="心率">
+                                    <span>{{patient.Admission.HeartRate}} 次/分钟</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="血压">
+                                    <span>{{patient.Admission.BloodPressure}} mmHg</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="体温">
+                                    <span>{{patient.Admission.Temperature}} ℃</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <!--院前溶栓-->
+                    <div v-if="patient.Admission.ComingType=='呼救（120或其他）出车'||patient.Admission.ComingType=='转院（包含任何医疗机构）'">
+                        <el-tag size="mini" class="subtitle">院前溶栓治疗</el-tag>
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="溶栓筛查">
+                                    <span>{{patient.Admission.RsScreen}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Admission.RsScreen=='合适'">
+                                <el-form-item label="溶栓治疗">
+                                    <span>{{patient.Admission.IsRs}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Admission.RsScreen=='不合适'">
+                                <el-form-item label="存在禁忌症" prop="Admission.IsRsTaboo">
+                                    <span>{{patient.Admission.IsRsTaboo=='1'?'是':'否'}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Admission.RsScreen=='合适' && patient.Admission.IsRs=='有'">
+                                <el-form-item label="直达溶栓场所">
+                                    <span>{{patient.Admission.IsRsDirect}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row v-bind:gutter="24" v-if="patient.Admission.RsScreen=='合适' && patient.Admission.IsRs=='有'">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="溶栓场所">
+                                    <span>{{patient.Admission.RsPlace}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="开始知情同意">
+                                    <span>{{patient.Admission.RsStartAgreeTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="签署知情同意书">
+                                    <span>{{patient.Admission.RsSignAgreeTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="开始溶栓时间">
+                                    <span>{{patient.Admission.RsStartTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="溶栓结束时间">
+                                    <span>{{patient.Admission.RsEndTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="药物">
+                                    <span>{{patient.Admission.RsDrugType}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="剂量">
+                                    <span>{{patient.Admission.RsDrugCode}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="溶栓再通">
+                                    <span>{{patient.Admission.IsRsRecanalization}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Admission.IsRsRecanalization=='是'">
+                                <el-form-item label="溶栓后造影时间">
+                                    <span>{{patient.Admission.RsRadiographyTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Admission.IsRsRecanalization=='否'">
+                                <el-form-item label="补救PCI">
+                                    <span>{{patient.Admission.IsRemedyPci}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="实际手术时间" size="mini" v-if="patient.Admission.IsRsRecanalization=='否' && patient.Admission.IsRemedyPci=='是'">
+                                    <span>{{patient.Admission.ActualPciTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="手术场所" size="mini" v-if="patient.Admission.IsRsRecanalization=='否' && patient.Admission.IsRemedyPci=='是'">
+                                    <span>{{patient.Admission.PciPlace}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <el-row v-bind:gutter="24">
+                        <el-col v-bind:span="24">
+                            <el-form-item label="患者情况备注">
+                                <span>{{patient.Admission.PatientRemarks}}</span>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <!-- 胸痛诊疗 -->
+                    <el-tag style="width:100%;">胸痛诊疗</el-tag>
+                    <!--心电图-->
+                    <div>
+                        <el-tag size="mini" class="subtitle">心电图</el-tag>
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="心电图">
+                                    <span>{{patient.Diagnosis.IsEcg}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.IsEcg=='否'">
+                                <el-form-item label="未获得原因">
+                                    <span>{{patient.Diagnosis.NoEcgReason}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row v-bind:gutter="24" v-for="(ecg,index) in patient.EcgList" v-bind:key="index" v-if="patient.Diagnosis.IsEcg=='是'">
+                            <el-col v-bind:span="8">
+                                <el-form-item v-bind:label="index==0?'首份心电图时间':'心电图时间'">
+                                    <span>{{ecg.CheckTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="心电图文件">
+                                    <span>{{ecg.FileName}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="心电图确诊时间">
+                                    <span>{{ecg.DiagnosisTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <!--远程心电图传输-->
+                    <div>
+                        <el-tag size="mini" class="subtitle">远程心电图传输</el-tag>
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="接收120/网络医院心电图">
+                                    <span>{{patient.Diagnosis.EcgTransmission}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.EcgTransmission=='是'">
+                                <el-form-item label="接收时间">
+                                    <span>{{patient.Diagnosis.EcgTransmissionTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.EcgTransmission=='是'">
+                                <el-form-item label="传输方式">
+                                    <span>{{patient.Diagnosis.EcgTransmissionType}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <!--实验室检查-->
+                    <div>
+                        <el-tag size="mini" class="subtitle">实验室检查</el-tag>
+                        <el-row v-bind:gutter="24" v-if="patient.Diagnosis.IsTroponin=='0'">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="肌钙蛋白">
+                                    <span>否</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row v-bind:gutter="24" v-for="(troponin,index) in patient.DiagnosisTest.TroponinList" v-bind:key="index" v-if="patient.Diagnosis.IsTroponin=='1'">
+                            <el-col v-bind:span="8">
+                                <el-form-item v-bind:label="index==0?'首份肌钙蛋白':'肌钙蛋白'">
+                                    <span>{{troponin.Category}}&nbsp;&nbsp;{{troponin.Result}}&nbsp;&nbsp;{{troponin.Unit}}&nbsp;&nbsp;{{troponin.Conclusion}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="抽血完成时间">
+                                    <span>{{troponin.SamplingTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="获得报告时间">
+                                    <span>{{troponin.ReportTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.IsScr=='0'">
+                                <el-form-item label="血清肌酐">
+                                    <span>否</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.IsScr=='1'">
+                                <el-form-item label="血清肌酐">
+                                    <span>{{patient.DiagnosisTest.Scr.Result}}&nbsp;&nbsp;{{patient.DiagnosisTest.Scr.Unit}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.IsDdimer=='0'">
+                                <el-form-item label="D-二聚体">
+                                    <span>否</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.IsDdimer=='1'">
+                                <el-form-item label="D-二聚体">
+                                    <span>{{patient.DiagnosisTest.Ddimer.Result}}&nbsp;&nbsp;{{patient.DiagnosisTest.Ddimer.Unit}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.IsBnp=='0'">
+                                <el-form-item label="BNP">
+                                    <span>否</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.IsBnp=='1'">
+                                <el-form-item label="BNP">
+                                    <span>{{patient.DiagnosisTest.Bnp.Result}}&nbsp;&nbsp;{{patient.DiagnosisTest.Bnp.Unit}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.IsNtProbnp=='0'">
+                                <el-form-item label="NT-proBNP">
+                                    <span>否</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.IsNtProbnp=='1'">
+                                <el-form-item label="NT-proBNP">
+                                    <span>{{patient.DiagnosisTest.NtProbnp.Result}}&nbsp;&nbsp;{{patient.DiagnosisTest.NtProbnp.Unit}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.IsMyo=='0'">
+                                <el-form-item label="Myo">
+                                    <span>否</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.IsMyo=='1'">
+                                <el-form-item label="Myo">
+                                    <span>{{patient.DiagnosisTest.Myo.Result}}&nbsp;&nbsp;{{patient.DiagnosisTest.Myo.Unit}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.IsCkmb=='0'">
+                                <el-form-item label="CKMB">
+                                    <span>否</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Diagnosis.IsCkmb=='1'">
+                                <el-form-item label="CKMB">
+                                    <span>{{patient.DiagnosisTest.Ckmb.Result}}&nbsp;&nbsp;{{patient.DiagnosisTest.Ckmb.Unit}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <!--心内科会诊-->
+                    <div>
+                        <el-tag size="mini" class="subtitle">心内科会诊</el-tag>
+                        <el-row v-bind:gutter="24" v-if="patient.Diagnosis.IsConsultation=='0'">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="肌钙蛋白">
+                                    <span>否</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row v-bind:gutter="24" v-if="patient.Diagnosis.IsConsultation=='1'">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="会诊类型">
+                                    <span>{{patient.Diagnosis.ConsultationType}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="通知会诊时间">
+                                    <span>{{patient.Diagnosis.ConsultationNotifyTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="会诊时间">
+                                    <span>{{patient.Diagnosis.ConsultationTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <!--诊断-->
+                    <div>
+                        <el-tag size="mini" class="subtitle">诊断</el-tag>
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="初步诊断">
+                                    <span>{{DiagnosisDesc}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="初步诊断时间">
+                                    <span>{{patient.Diagnosis.DiagnosisTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="医生">
+                                    <span>{{patient.Diagnosis.DiagnosisDoctor}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <!--患者自愿放弃后续治疗-->
+                    <div>
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="患者放弃后续治疗">
+                                    <span>{{patient.Diagnosis.IsGiveupTreatment}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <div>
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8" v-if="showNacsType">
+                                <el-form-item label="非ACS心源性胸痛类型">
+                                    <span>{{patient.Diagnosis.NacsType}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="showNccpType">
+                                <el-form-item label="其它非心源性胸痛">
+                                    <span>{{patient.Diagnosis.NccpType}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="showHandleWay">
+                                <el-form-item label="处理措施">
+                                    <span>{{patient.Diagnosis.HandleWay}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="showHandleWay">
+                                <el-form-item label="患者情况备注">
+                                    <span>{{patient.Diagnosis.PatientRemarks}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="showKillip">
+                                <el-form-item label="心功能分级">
+                                    <span>{{patient.Diagnosis.KillipLevel}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="showIsBypass">
+                                <el-form-item label="绕行急诊">
+                                    <span>{{patient.Diagnosis.IsBypassEmergency}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="showIsBypass">
+                                <el-form-item label="绕行CCU">
+                                    <span>{{patient.Diagnosis.IsBypassCcu}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <!--药物-->
+                        <div v-if="showDrugs">
+                            <el-tag size="mini" class="subtitle">初始</el-tag>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="抗血小板治疗">
+                                        <span>{{patient.Treatment.IsAntiplatelet}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Treatment.IsAntiplatelet=='是'">
+                                    <el-form-item label="阿司匹林">
+                                        <span>{{patient.Treatment.AspirinTime}} &nbsp;&nbsp;{{patient.Treatment.AspirinDose}}mg</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Treatment.IsAntiplatelet=='是'">
+                                    <el-form-item label="氯吡格雷">
+                                        <span>{{patient.Treatment.ClopidogrelTime}} &nbsp;&nbsp;{{patient.Treatment.ClopidogrelDose}}mg</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Treatment.IsAntiplatelet=='是'">
+                                    <el-form-item label="替格瑞洛">
+                                        <span>{{patient.Treatment.TigrilloTime}} &nbsp;&nbsp;{{patient.Treatment.TigrilloDose}}mg</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="抗凝">
+                                        <span>{{patient.Treatment.IsAnticoagulation}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Treatment.IsAnticoagulation=='是'">
+                                    <el-form-item v-bind:label="patient.Treatment.AnticoagulationDrug">
+                                        <span>{{patient.Treatment.AnticoagulationTime}} &nbsp;&nbsp;{{patient.Treatment.AnticoagulationDose}}{{patient.Treatment.AnticoagulationUnit}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="他汀治疗">
+                                        <span>{{patient.Treatment.IsStatin}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="β受体阻滞剂">
+                                        <span>{{patient.Treatment.IsBetaBlocker}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--Grace评估-->
+                        <div v-if="showDrugs">
+                            <el-tag size="mini" class="subtitle">Grace评估</el-tag>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="Grace评估">
+                                        <span>{{patient.Diagnosis.GraceRiskFactors}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="Grace极高危条件">
+                                        <span>{{patient.Diagnosis.GraceVhrConditions}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Diagnosis.GraceVhrConditions==null||patient.Diagnosis.GraceVhrConditions.length==0">
+                                    <el-form-item label="Grace分值">
+                                        <span>{{patient.Diagnosis.GraceScore}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="Grace危险分层">
+                                        <span>{{patient.Diagnosis.GraceHazardLevel}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--影像学检查-->
+                        <div v-if="showIsEct||showIsCdu||showIsMri">
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8" v-if="showIsEct">
+                                    <el-form-item label="急诊CT">
+                                        <span>{{patient.Diagnosis.IsEct=='1'?'是':'否'}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="showIsCdu">
+                                    <el-form-item label="彩超">
+                                        <span>{{patient.Diagnosis.IsCdu=='1'?'是':'否'}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="showIsMri">
+                                    <el-form-item label="MRI">
+                                        <span>{{patient.Diagnosis.IsMri=='1'?'是':'否'}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24" v-if="showEct">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="通知CT室时间">
+                                        <span>{{patient.Diagnosis.CtNoticeTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="CT室完成准备">
+                                        <span>{{patient.Diagnosis.CtFinishTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="CT扫描开始时间">
+                                        <span>{{patient.Diagnosis.CtScanTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="CT报告时间">
+                                        <span>{{patient.Diagnosis.CtReportTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24" v-if="showCdu">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="通知彩超室时间">
+                                        <span>{{patient.Diagnosis.NoticeCduTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="彩超检查时间">
+                                        <span>{{patient.Diagnosis.CduCheckTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="彩超出结果时间">
+                                        <span>{{patient.Diagnosis.CheckResultTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--心外科会诊-->
+                        <div v-if="showCsc">
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="通知心外科会诊">
+                                        <span>{{patient.Diagnosis.CscNoticeTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="心外科会诊时间">
+                                        <span>{{patient.Diagnosis.CscTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--夹层类型-->
+                        <div v-if="showInterlayerType">
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="夹层类型">
+                                        <span>{{patient.Treatment.InterlayerType}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="治疗策略">
+                                        <span>{{StrategyDesc}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--再次危险分层-->
+                        <div v-if="showGraceRehazardLevel">
+                            <el-tag size="mini" class="subtitle">再次危险分层</el-tag>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="再次危险分层">
+                                        <span>{{patient.Diagnosis.GraceRehazardLevel}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Diagnosis.GraceRehazardLevel!='未做'&&patient.Diagnosis.GraceRehazardLevel!=null">
+                                    <el-form-item label="再次危险分层时间">
+                                        <span>{{patient.Diagnosis.GraceRehazardTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--STEMI再灌注措施-->
+                        <div v-if="showReperfusion">
+                            <el-tag size="mini" class="subtitle">再灌注措施</el-tag>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="再灌注措施">
+                                        <span>{{patient.Treatment.IsReperfusion=='1'?'是':'否'}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Treatment.IsReperfusion=='0'">
+                                    <el-form-item label="无再灌注措施">
+                                        <span>{{ReperfusionMeasureDesc}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Treatment.IsReperfusion=='1'">
+                                    <el-form-item label="措施">
+                                        <span>{{SetmiReperfusionMeasureDesc}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Treatment.IsReperfusion=='1'&&patient.Treatment.ReperfusionMeasure==RS">
+                                    <el-form-item label="溶栓后措施">
+                                        <span>{{patient.Treatment.ReperfusionMeasureRs}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--NSTEMI--处理策略 || UA--处理策略-->
+                        <div v-if="showStrategy">
+                            <el-tag size="mini" class="subtitle">处理策略</el-tag>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="策略">
+                                        <span>{{StrategyDesc}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Treatment.Strategy=='2'">
+                                    <el-form-item label="侵入性策略">
+                                        <span>{{InvasiveStrategyDesc}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--STEMI--直接PCI || NSTEMI(UA)--紧急介入治疗 -->
+                        <div v-if="showZJPCI||showJJJR">
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="决定医生">
+                                        <span>{{patient.Treatment.DecisionDoctor}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="决定介入手术时间">
+                                        <span>{{patient.Treatment.DecisionPciTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="启动导管室时间">
+                                        <span>{{patient.TreatmentPci.StartConduitTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="开始知情同意时间">
+                                        <span>{{patient.Treatment.PciStartAgreeTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="签署知情同意时间">
+                                        <span>{{patient.Treatment.PciSignAgreeTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--PE--治疗信息-->
+                        <div v-if="showRiskLamination">
+                            <el-tag size="mini" class="subtitle">治疗信息</el-tag>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="危险分层">
+                                        <span>{{patient.Treatment.RiskLevel}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="开始抗凝治疗时间">
+                                        <span>{{patient.Treatment.AnticoagulationTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--STEMI--溶栓 || PE--溶栓-->
+                        <div v-if="showRS">
+                            <el-row v-bind:gutter="24" v-if="showBJPCI">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="决定介入手术时间">
+                                        <span>{{patient.Treatment.DecisionPciTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="造影开始时间">
+                                        <span>{{patient.TreatmentPci.StartRadiographyTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-tag size="mini" class="subtitle">院内溶栓治疗</el-tag>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="溶栓筛查">
+                                        <span>{{RsScreenDesc}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Treatment.RsScreen=='1'">
+                                    <el-form-item label="溶栓治疗" prop="Treatment.IsRs">
+                                        <span>{{patient.Treatment.IsRs=='1'?'是':'否'}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Treatment.RsScreen=='0'">
+                                    <el-form-item label="存在禁忌症" prop="Treatment.IsRsTaboo">
+                                        <span>{{patient.Treatment.IsRsTaboo=='1'?'是':'否'}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24" v-if="patient.Treatment.IsRs=='1' && patient.Diagnosis.DiagnosisCode == STEMI">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="直达溶栓场所">
+                                        <span>{{patient.Treatment.IsRsDirect}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="溶栓场所">
+                                        <span>{{patient.Treatment.RsPlace}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="开始知情同意">
+                                        <span>{{patient.Treatment.RsStartAgreeTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="签署知情同意书">
+                                        <span>{{patient.Treatment.RsSignAgreeTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="开始溶栓时间">
+                                        <span>{{patient.Treatment.RsStartTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="溶栓结束时间">
+                                        <span>{{patient.Treatment.RsEndTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="药物">
+                                        <span>{{patient.Treatment.RsDrugType}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="剂量">
+                                        <span>{{patient.Treatment.RsDrugCode}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="溶栓再通">
+                                        <span>{{patient.Treatment.IsRsRecanalization}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--NSTEMI--24H内介入治疗 || UA--24H内介入治疗-->
+                        <div v-if="show24H">
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="实际介入治疗时间">
+                                        <span>{{patient.Treatment.PciActualTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--STEMI--择期介入-->
+                        <div v-if="showZQJR">
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="决定介入手术时间">
+                                        <span>{{patient.Treatment.DecisionPciTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="造影开始时间">
+                                        <span>{{patient.Treatment.StartRadiographyTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--STEMI--CABG-->
+                        <div v-if="showCABG">
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="决定CABG时间">
+                                        <span>{{patient.Treatment.CabgDecisionTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="开始CABG时间">
+                                        <span>{{patient.Treatment.CabgStartTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--STEMI--转运PCI-->
+                        <div v-if="showZYPCI">
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="转运PCI">
+                                        <span>{{PciTransferTypeDesc}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!--导管室-->
+                        <div v-if="showDGS">
+                            <el-tag style="width:100%;">导管室</el-tag>
+                            <div v-if="showJRSS">
+                                <el-tag size="mini" class="subtitle">介入手术</el-tag>
+                                <el-row v-bind:gutter="24">
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="导管室激活时间">
+                                            <span>{{patient.TreatmentPci.ActivateConduitTime}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="患者到达导管室">
+                                            <span>{{patient.TreatmentPci.PatientArrivalTime}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="介入医师">
+                                            <span>{{patient.TreatmentPci.InterventionPerson}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="开始穿刺时间">
+                                            <span>{{patient.TreatmentPci.StartPunctureTime}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="造影开始时间">
+                                            <span>{{patient.TreatmentPci.StartRadiographyTime}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="抗凝给药时间">
+                                            <span>{{patient.TreatmentPci.AnticoagulationTime}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="抗凝药物">
+                                            {{patient.TreatmentPci.AnticoagulationDrug}}
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="抗凝药物剂量">
+                                            {{patient.TreatmentPci.AnticoagulationDose}}{{patient.TreatmentPci.AnticoagulationUnit}}
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="手术结束时间">
+                                            <span>{{patient.TreatmentPci.EndOperationTime}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="D2W时间">
+                                            {{D2W}}
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="是否延误">
+                                            {{patient.TreatmentPci.IsDelay=='1'?'是':(patient.TreatmentPci.IsDelay=='0'?'否':'')}}
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8" v-if="patient.TreatmentPci.IsDelay=='1'">
+                                        <el-form-item label="延误原因">
+                                            <span>{{patient.TreatmentPci.DelayReason}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </div>
+                            <el-tag size="mini" class="subtitle">入路</el-tag>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="24">
+                                    <el-form-item label="入路">
+                                        {{patient.TreatmentPci.Approach}}
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-tag size="mini" class="subtitle">冠脉造影</el-tag>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="24">
+                                    <el-form-item label="部位">
+                                        {{CagPositionDesc}}
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <div v-for="(position,index) in ['01','02','03']" v-if="showPosition(position)">
+                                <el-tag size="mini" class="subtitle" v-if="position=='01'">右冠近段</el-tag>
+                                <el-tag size="mini" class="subtitle" v-if="position=='02'">右冠中段</el-tag>
+                                <el-tag size="mini" class="subtitle" v-if="position=='03'">右冠远段</el-tag>
+                                <el-row v-bind:gutter="24">
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="狭窄程度">
+                                            <span>{{patient.TreatmentPciPart[index].NarrowLevel}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="造影时TIMI血流">
+                                            <span>{{patient.TreatmentPciPart[index].TimiLevel}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="支架内血栓">
+                                            <span>{{patient.TreatmentPciPart[index].BracketThrombus}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="是否分叉病变">
+                                            <span>{{patient.TreatmentPciPart[index].BranchingSick}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="是否CTO">
+                                            <span>{{patient.TreatmentPciPart[index].IsCto}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="钙化病变">
+                                            <span>{{patient.TreatmentPciPart[index].IsCalcifiedLesions}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="罪犯病变">
+                                            <span>{{patient.TreatmentPciPart[index].IsCulpritLesion}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8">
+                                        <el-form-item label="PCI">
+                                            <span>{{patient.TreatmentPciPart[index].IsPci=='1'?'是':(patient.TreatmentPciPart[index].IsPci=='0'?'否':'')}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8" v-if="patient.TreatmentPciPart[index].IsPci=='1'">
+                                        <el-form-item label="术中处理">
+                                            <span>{{patient.TreatmentPciPart[index].HandleWay}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8" v-if="patient.TreatmentPciPart[index].IsPci=='1'">
+                                        <el-form-item label="导丝通过时间">
+                                            <span>{{patient.TreatmentPciPart[index].GwPassageTime}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8" v-if="patient.TreatmentPciPart[index].IsPci=='1'">
+                                        <el-form-item label="术后TIMI血流">
+                                            <span>{{patient.TreatmentPciPart[index].TimiLevelPost}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8" v-if="patient.TreatmentPciPart[index].IsPci=='1'">
+                                        <el-form-item label="植入支架个数">
+                                            <span>{{patient.TreatmentPciPart[index].BracketCount}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col v-bind:span="8"  v-if="patient.TreatmentPciPart[index].IsPci=='1'&&(patient.TreatmentPciPart[index].BracketCount=='2'||patient.TreatmentPciPart[index].BracketCount=='3'||patient.TreatmentPciPart[index].BracketCount=='4')">
+                                        <el-form-item label="支架种类">
+                                            <span>{{patient.TreatmentPciPart[index].BracketType}}</span>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </div>
+                            <el-tag size="mini" class="subtitle">器械</el-tag>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="腔内影像">
+                                        {{patient.TreatmentPci.IntracavityImage}}
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="功能检测">
+                                        {{patient.TreatmentPci.FunctionTest}}
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="数值">
+                                        {{patient.TreatmentPci.FunctionTestValue}}
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="IABP">
+                                        {{patient.TreatmentPci.IsIabp}}
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="临时起搏器">
+                                        {{patient.TreatmentPci.IsPacemaker}}
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="ECMO">
+                                        {{patient.TreatmentPci.IsEcmo}}
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="左心室辅助装置">
+                                        {{patient.TreatmentPci.IsAuxiliaryDevice}}
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="24">
+                                    <el-form-item label="术中并发症">
+                                        {{patient.TreatmentPci.Complication}}
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </div>
+                    <!--患者转归-->
+                    <div v-if="patient.Diagnosis.IsGiveupTreatment=='否'||patient.Diagnosis.IsGiveupTreatment==null">
+                        <el-tag style="width:100%;">患者转归</el-tag>
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="出院诊断">
+                                    <span>{{DischargeDiagnosisDesc}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="确诊时间">
+                                    <span>{{patient.Discharge.DiagnosisTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <!-- 非心源性胸痛 -->
+                        <el-row v-bind:gutter="gutter" v-if="IsNacs()">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="非ACS心源性胸痛类型" prop="Discharge.NacsType">
+                                    <span>{{patient.Discharge.NacsType}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row v-bind:gutter="gutter" v-if="IsNccp()">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="其它非心源性胸痛类型" prop="Discharge.NccpType">
+                                    <span>{{patient.Discharge.NccpType}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <div v-if="IsCpc()">
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="院内新发心力衰竭" prop="Discharge.IsHeartFailure">
+                                        <span>{{patient.Discharge.IsHeartFailure}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="住院期间并发症" prop="Discharge.Complication">
+                                        <span>{{patient.Discharge.Complication}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <div v-if="IsCpc()">
+                            <el-tag size="mini" class="subtitle">危险因素</el-tag>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="高血压">
+                                        <span>{{patient.Discharge.IsHypertension}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="高脂血症">
+                                        <span>{{patient.Discharge.IsHyperlipidemia}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="糖尿病">
+                                        <span>{{patient.Discharge.IsDiabetes}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="肥胖">
+                                        <span>{{patient.Discharge.IsObesity}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="早发CVD家族史(男<55岁，女<60岁)">
+                                        <span>{{patient.Discharge.IsCvdHr}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="吸烟">
+                                        <span>{{patient.Discharge.IsSmoking}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-show="patient.Discharge.IsSmoking == '是'">
+                                    <el-form-item label="吸烟">
+                                        <span>{{patient.Discharge.SmokingSituation}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-tag size="mini" class="subtitle">合并疾病</el-tag>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="冠心病">
+                                        <span>{{patient.Discharge.IsChd}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-show="patient.Discharge.IsChd == '是'">
+                                    <el-form-item label="血运重建史">
+                                        <span>{{patient.Discharge.IsChdHor}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="心房颤动">
+                                        <span>{{patient.Discharge.IsAf}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-show="patient.Discharge.IsAf == '是'">
+                                    <el-form-item label="分型">
+                                        <span>{{patient.Discharge.AfType}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="慢性心力衰竭">
+                                        <span>{{patient.Discharge.IsChf}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-show="patient.Discharge.IsChf == '是'">
+                                    <el-form-item label="NYHA分级">
+                                        <span>{{patient.Discharge.ChfNyha}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="脑血管疾病">
+                                        <span>{{patient.Discharge.IsCvd}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-show="patient.Discharge.IsCvd == '是'">
+                                    <el-form-item label="描述">
+                                        <span>{{patient.Discharge.CvdTypeCategory}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="心脏瓣膜病">
+                                        <span>{{patient.Discharge.IsVhd}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="外周动脉疾病">
+                                        <span>{{patient.Discharge.IsPad}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="主动脉瘤">
+                                        <span>{{patient.Discharge.IsAneurysm}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="COPD">
+                                        <span>{{patient.Discharge.IsCopd}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="慢性肾病">
+                                        <span>{{patient.Discharge.IsCkd}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="贫血">
+                                        <span>{{patient.Discharge.IsAnemia}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="消化性溃疡">
+                                        <span>{{patient.Discharge.IsPepticUlcer}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="甲状腺功能异常">
+                                        <span>{{patient.Discharge.IsThyroidDysfunction}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="恶性肿瘤">
+                                        <span>{{patient.Discharge.IsMalignantTumor}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-tag size="mini" class="subtitle">检查结果</el-tag>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="72h内肌钙蛋白">
+                                        <span>{{patient.Discharge.IsTroponin}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Discharge.IsTroponin == '是'">
+                                    <el-form-item label="最高值">
+                                        <span>{{patient.DischargeTest.Troponin.Category}}{{patient.DischargeTest.Troponin.Result}} ng/mL</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="脑钠肽">
+                                        <span>{{patient.Discharge.IsBnp}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Discharge.IsBnp == '是'">
+                                    <el-form-item label="脑钠肽">
+                                        <span>{{patient.DischargeTest.Bnp.Category}}{{patient.DischargeTest.Bnp.Result}} pg/mL</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="总胆固醇(TC)">
+                                        <span>{{patient.Discharge.IsTc}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Discharge.IsTc == '是'">
+                                    <el-form-item label="数值">
+                                        <span>{{patient.DischargeTest.Tc.Result}} mmol/L</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="甘油三酯(TG)">
+                                        <span>{{patient.Discharge.IsTg}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Discharge.IsTg == '是'">
+                                    <el-form-item label="数值">
+                                        <span>{{patient.DischargeTest.Tg.Result}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="高密度脂蛋白(HDL-C)">
+                                        <span>{{patient.Discharge.IsHdlC}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Discharge.IsHdlC == '是'">
+                                    <el-form-item label="数值">
+                                        <span>{{patient.DischargeTest.HdlC.Result}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="低密度脂蛋白(LDL-C)">
+                                        <span>{{patient.Discharge.IsLdlC}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Discharge.IsLdlC == '是'">
+                                    <el-form-item label="数值">
+                                        <span>{{patient.DischargeTest.LdlC.Result}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="超声心动图">
+                                        <span>{{patient.Discharge.IsUcc}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Discharge.IsUcc == '是'">
+                                    <el-form-item label="LVEF">
+                                        <span>{{patient.Discharge.Lvef}} %(诊疗过程中最低值)</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Discharge.IsUcc == '是'">
+                                    <el-form-item label="室壁瘤">
+                                        <span>{{patient.Discharge.IsVentricularAneurysm}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8" v-if="patient.Discharge.IsUcc == '1'">
+                                    <el-form-item label="局部室壁活动异常">
+                                        <span>{{patient.Discharge.IsRwma}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+
+                        <!--出院信息-->
+                        <el-tag size="mini" class="subtitle">出院信息</el-tag>
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="住院天数">
+                                    <span>{{patient.Discharge.Hod}}天</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="总费用">
+                                    <span>{{patient.Discharge.TotalCost}} 元</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="患者转归" size="mini">
+                                    <span>{{OutcomeCodeDesc}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <!-- 出院 -->
+                        <div v-if="IsLeave()">
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="出院时间">
+                                        <span>{{patient.Discharge.LeaveTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="治疗结果">
+                                        <span>{{patient.Discharge.TreatmentResult}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-tag style="width:100%;" v-if="IsCpc() && IsLeave()">出院带药方案</el-tag>
+                            <el-row v-bind:gutter="24" v-if="IsCpc() && IsLeave()">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="抗血小板药物">
+                                        <span>{{patient.Discharge.IsAntiplatelet}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24" v-for="(dapt,index) in patient.DischargeDrugs.Dapt" v-bind:key="'DaptItem-' + index" v-if="IsCpc() && IsLeave() && patient.Discharge.IsAntiplatelet == '是'">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="药物名称">
+                                        <span>{{dapt.Code}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="频次">
+                                        <span>{{dapt.RateCount}}{{dapt.RateTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="剂量">
+                                        <span>{{dapt.Dose}}mg</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row v-bind:gutter="24" v-if="IsCpc() && IsLeave()">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="ACEI/ARB">
+                                        <span>{{patient.Discharge.IsAceiOrArb}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24" v-for="(aceiorarb,index) in patient.DischargeDrugs.Aceiorarb" v-bind:key="'AceiorarbItem-' + index" v-if="IsCpc() && IsLeave() && patient.Discharge.IsAceiOrArb == '是'">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="药物名称">
+                                        <span>{{aceiorarb.Code}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="频次">
+                                        <span>{{aceiorarb.RateCount}}{{aceiorarb.RateTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="剂量">
+                                        <span>{{aceiorarb.Dose}}mg</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row v-bind:gutter="24" v-if="IsCpc() && IsLeave()">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="调脂药物">
+                                        <span>{{patient.Discharge.IsLipidRegulation}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24" v-for="(statins,index) in patient.DischargeDrugs.Statins" v-bind:key="'StatinsItem-' + index" v-if="IsCpc() && IsLeave() && patient.Discharge.IsLipidRegulation == '是'">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="药物名称">
+                                        <span>{{statins.Code}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="频次">
+                                        <span>{{statins.RateCount}}{{statins.RateTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="剂量">
+                                        <span>{{statins.Dose}} mg</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row v-bind:gutter="24" v-if="IsCpc() && IsLeave()">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="β受体阻滞剂">
+                                        <span>{{patient.Discharge.IsBetaBlocker}}</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24" v-for="(retardant,index) in patient.DischargeDrugs.Retardant" v-bind:key="'RetardantItem-' + index" v-if="IsCpc() && IsLeave() && patient.Discharge.IsBetaBlocker == '是'">
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="药物名称">
+                                        <span>{{retardant.Code}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="频次">
+                                        <span>{{retardant.RateCount}}{{retardant.RateTime}}</span>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="8">
+                                    <el-form-item label="剂量">
+                                        <span>{{retardant.Dose}} mg</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <!-- 转院 -->
+                        <el-row v-bind:gutter="gutter" v-if="IsTransferHospital()">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="离开本院大门时间">
+                                    <span>{{patient.Discharge.LeaveTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="医院名称">
+                                    <span>{{patient.Discharge.HospitalName}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="是否是网络医院">
+                                    <span>{{patient.Discharge.IsNetHospital}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row v-bind:gutter="gutter" v-if="IsTransferHospital()">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="转运PCI">
+                                    <span>{{patient.Discharge.IsTransPci=='1'?'是':(patient.Discharge.IsTransPci=='0'?'否':'')}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="IsTransPci()">
+                                <el-form-item label="直达导管室">
+                                    <span>{{patient.Discharge.IsDirectToCr}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="IsTransPci()">
+                                <el-form-item label="实际介入手术开始时间">
+                                    <span>{{patient.Discharge.PciActualTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row v-bind:gutter="24" v-if="IsTransPci()">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="传输心电图至协作单位">
+                                    <span>{{patient.Discharge.EcgTransmission}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Discharge.EcgTransmission=='是'">
+                                <el-form-item label="接收时间">
+                                    <span>{{patient.Discharge.EcgTransmissionTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8" v-if="patient.Discharge.EcgTransmission=='是'">
+                                <el-form-item label="传输方式">
+                                    <span>{{patient.Discharge.EcgTransmissionType}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <!-- 转科 -->
+                        <el-row v-bind:gutter="gutter" v-if="IsTransferDept()">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="转科时间">
+                                    <span>{{patient.Discharge.DeptTransferTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="接诊科室">
+                                    <span>{{patient.Discharge.AdmissionDept}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="转科原因描述">
+                                    <span>{{patient.Discharge.DeptTransferReason}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <!-- 离院宣教 -->
+                        <el-row v-bind:gutter="gutter" v-if="IsEducation()">
+                            <el-col v-bind:span="24">
+                                <el-form-item label="离院宣教">
+                                    {{patient.Discharge.Education}}
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <!-- 死亡 -->
+                        <el-row v-bind:gutter="gutter" v-if="IsDeath()">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="死亡时间">
+                                    <span>{{patient.Discharge.DeathTime}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="死亡原因">
+                                    <span>{{patient.Discharge.DeathCause}}</span>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-bind:span="8">
+                                <el-form-item label="死亡原因描述">
+                                    <span>{{patient.Discharge.DeathCauseDesc}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <!-- 患者情况备注 -->
+                        <el-row v-bind:gutter="24">
+                            <el-col v-bind:span="8">
+                                <el-form-item label="患者情况备注">
+                                    <span>{{patient.Discharge.PatientRemarks}}</span>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                </el-form>
+            </el-main>
+        </el-container>
+    </el-container>
+</div>
+<script src="@Url.Random("~/Views/DataManage/ApiService.js")"></script>
+<script src="@Url.Random("~/Views/DataManage/MedicalRecord.js")"></script>

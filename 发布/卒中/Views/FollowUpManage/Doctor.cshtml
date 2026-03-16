@@ -1,0 +1,918 @@
+﻿@model DoCare.CVA.Business.Model.FollowupDoctorModel
+@using DoCare.ToolKit
+@using DoCare.Framework.Extension
+@{
+    Layout = null;
+    ViewBag.Title = "Doctor";
+}
+<style>
+    .table_wab {
+        width: 100%;
+    }
+
+        .table_wab tr {
+            height: auto;
+            line-height: 24px;
+        }
+
+            .table_wab tr th {
+                padding: 6px 8px;
+                text-align: center;
+                border: 1px solid #ddd;
+            }
+
+            .table_wab tr td {
+                height: auto;
+                text-align: center;
+                line-height: 22px !important;
+                border: 1px solid #ddd;
+                padding: 2px 10px;
+                line-height: 24px;
+                position: relative;
+            }
+
+            .table_wab tr:hover td, .table_wab tr.actived td {
+                background-color: #dbf0ff !important;
+            }
+</style>
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/global.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/frame.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/control.css") rel="stylesheet" />
+<link href="~/Scripts/jquery-easyui/themes/icon.css" rel="stylesheet" />
+<link href="~/Scripts/jquery-easyui/themes/default/easyui.css" rel="stylesheet" />
+<link href="~/Scripts/ui-grid/ui-grid.min.css" rel="stylesheet" />
+<link href="~/Scripts/pagination/tm.pagination.css" rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/page.records.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/page.followup.css") rel="stylesheet" />
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/DatePicker/WdatePicker.js"></script>
+<script src="~/Scripts/DoCareMVCComm.js"></script>
+<script src="~/Scripts/jquery-ajaxSetup.js"></script>
+<script src="~/Scripts/moment.js"></script>
+<script src="~/Scripts/layer/layer.js"></script>
+<script src="~/Scripts/cookieKit.js"></script>
+<script src="~/Scripts/angular/angular.min.js"></script>
+<script src="~/Scripts/filterModule.js"></script>
+<script src="~/Scripts/directiveModule.js"></script>
+
+<script>
+    var model = @Html.Raw(JsonKit.Serialize(Model));
+    var app = angular.module('DoctorApp', ['mdsdFilter', 'mdsdDirective']);
+    app.controller('DoctorController', function ($scope, $filter, $http) {
+        $scope.model = model;
+        console.log(model);
+        $scope.getByIndex = function(index,id)
+        {
+            $scope.model.ActiveId = id;
+        }
+
+        $scope.save = function(item)
+        {
+            var index = layer.load();
+            $http.post('/FollowUpManage/SaveDoctor', {
+                detail: item
+            }).then(function (json) {
+                if (json.data.IsSuccess) {
+                    layer.alert("保存成功", { icon: 1 });
+                } else {
+                    layer.alert("保存失败:" + json.data.Message, { icon: 2 });
+                }
+                layer.close(index);
+            }, function (error) {
+                layer.alert("保存失败:" + error, { icon: 2 });
+                layer.close(index);
+            });
+        }
+
+        $scope.clearNoNum = function (obj, attr) {
+            debugger;
+            //先把非数字的都替换掉，除了数字和.
+            obj[attr] = obj[attr].replace(/[^\d.]/g, "");
+            //必须保证第一个为数字而不是.
+            obj[attr] = obj[attr].replace(/^\./g, "");
+            //保证只有出现一个.而没有多个.
+            obj[attr] = obj[attr].replace(/\.{2,}/g, "");
+            //保证.只出现一次，而不能出现两次以上
+            obj[attr] = obj[attr].replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        }
+
+        function isNumber(val) {
+
+            var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+            var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+            if (regPos.test(val) || regNeg.test(val)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function getWabScore(FollowupXml) {
+            var fluencyScore = FollowupXml.FluencyA != null && FollowupXml.FluencyB != null ? FollowupXml.FluencyA * 1 + FollowupXml.FluencyB * 1 : null;
+            var listeningComprehensionScore = FollowupXml.ListeningComprehensionA != null && FollowupXml.ListeningComprehensionB != null && FollowupXml.ListeningComprehensionC != null ? (FollowupXml.ListeningComprehensionA * 1 + FollowupXml.ListeningComprehensionB * 1 + FollowupXml.ListeningComprehensionC * 1) / 20 : null;
+            var retellScore = FollowupXml.Retell != null ? FollowupXml.Retell * 1 / 10 : null;
+            var namedScore = FollowupXml.NamedA != null && FollowupXml.NamedB != null && FollowupXml.NamedC != null && FollowupXml.NamedD != null ? (FollowupXml.NamedA * 1 + FollowupXml.NamedB * 1 + FollowupXml.NamedC * 1 + FollowupXml.NamedD * 1) / 10 : null;
+            return { fluencyScore: fluencyScore, listeningComprehensionScore: listeningComprehensionScore, retellScore: retellScore, namedScore: namedScore};
+        }
+
+        $scope.CalcAQScore = function (FollowupXml) {
+            var scores = getWabScore(FollowupXml);
+
+            if (scores.fluencyScore != null && scores.listeningComprehensionScore != null && scores.retellScore != null && scores.namedScore != null
+                && isNumber(scores.fluencyScore) && isNumber(scores.listeningComprehensionScore) && isNumber(scores.retellScore) && isNumber(scores.namedScore)) {
+                if (FollowupXml.WabType != "0") { // 已选中无失语时不需要获取失语类型
+                    // 根据失语评分获取失语类型
+                    GetWabType(FollowupXml,scores.fluencyScore, scores.listeningComprehensionScore, scores.retellScore, scores.namedScore);
+                }
+                FollowupXml.Aq = ((scores.fluencyScore + scores.listeningComprehensionScore + scores.retellScore + scores.namedScore) * 2).toFixed(2);
+                return FollowupXml.Aq;
+            } else {
+                FollowupXml.Aq = null;
+                return null;
+            }
+        }
+
+        function GetWabType(FollowupXml,fluencyScore, listeningComprehensionScore, retellScore, namedScore) {
+            $http.post('/FollowUpManage/GetWabType', { fluencyScore: fluencyScore, listeningComprehensionScore: listeningComprehensionScore, retellScore: retellScore, namedScore: namedScore
+            }).then(function (json) {
+                if (json.data.IsSuccess) {
+                    FollowupXml.WabType = json.data.Data;
+                } else {
+                    console.log(json.data.Message);
+                }
+            }, function (error) {
+                console.log("请求失败!"+error);
+            });
+        }
+
+        $scope.noWabClick = function ($event,FollowupXml) {
+            var checkbox = $event.target;
+            if (checkbox.checked) {
+                FollowupXml.WabType = "0";
+            } else {
+                FollowupXml.WabType = null;
+                var scores = getWabScore(FollowupXml);
+                if (scores.fluencyScore != null && scores.listeningComprehensionScore != null && scores.retellScore != null && scores.namedScore != null
+                    && isNumber(scores.fluencyScore) && isNumber(scores.listeningComprehensionScore) && isNumber(scores.retellScore) && isNumber(scores.namedScore)) {
+
+                    // 根据失语评分获取失语类型
+                    GetWabType(FollowupXml,scores.fluencyScore, scores.listeningComprehensionScore, scores.retellScore, scores.namedScore);
+                }
+            }
+        }
+
+        // 选择变化
+        $scope.updateSelection = function ($event, index, object) {
+            var checkbox = $event.target;
+            object[index] = checkbox.checked;
+        }
+
+        // 是否选中
+        $scope.isSelected = function (index, data) {
+            if (data != null) {
+                if (data.length > 0) {
+                    return data[index];
+                }
+                else { return false; }
+            }
+            return false;
+        }
+        
+        $scope.showNihss = function (FollowupXml) {
+            $.post('/Estimate/EstimateNIHSS', { registId: $scope.model.RegistId, recordId: FollowupXml.NihssRecordId }, function (str) {
+                layer.open({
+                    id: 'insert-form',
+                    type: 1,
+                    title: "评分明细",
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1100px', '560px'],
+                    content: str,
+                    cancel: function (index, layero) {
+                        $scope.$apply(function () {
+                            if (layero.find("#scoreChanged").val() == "1") {
+                                // 更新分值
+                                FollowupXml.NihssScore = layero.find("#score").html();
+                                FollowupXml.NihssRecordId = layero.find("#recordId").val();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+        $scope.showPhq9 = function (FollowupXml) {
+            $.post('/Estimate/EstimatePHQ9', { registId: $scope.model.RegistId, recordId: FollowupXml.Phq9RecordId }, function (str) {
+                layer.open({
+                    id: 'insert-form',
+                    type: 1,
+                    title: "评分明细",
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1100px', '560px'],
+                    content: str,
+                    cancel: function (index, layero) {
+                        $scope.$apply(function () {
+                            if (layero.find("#scoreChanged").val() == "1") {
+                                // 更新分值
+                                FollowupXml.Phq9Score = layero.find("#score").html();
+                                FollowupXml.Phq9RecordId = layero.find("#recordId").val();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+        $scope.showHamd = function (FollowupXml) {
+            $.post('/Estimate/EstimateHAMD', { registId: $scope.model.RegistId, recordId: FollowupXml.HamdRecordId }, function (str) {
+                layer.open({
+                    id: 'insert-form',
+                    type: 1,
+                    title: "评分明细",
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1100px', '560px'],
+                    content: str,
+                    cancel: function (index, layero) {
+                        $scope.$apply(function () {
+                            if (layero.find("#scoreChanged").val() == "1") {
+                                // 更新分值
+                                FollowupXml.HamdScore = layero.find("#score").html();
+                                FollowupXml.HamdRecordId = layero.find("#recordId").val();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+        $scope.showBi = function (FollowupXml) {
+            $.post('/Estimate/EstimateBI', { registId: $scope.model.RegistId, recordId: FollowupXml.BiRecordId }, function (str) {
+                layer.open({
+                    id: 'insert-form',
+                    type: 1,
+                    title: "评分明细",
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1100px', '560px'],
+                    content: str,
+                    cancel: function (index, layero) {
+                        $scope.$apply(function () {
+                            if (layero.find("#scoreChanged").val() == "1") {
+                                // 更新分值
+                                FollowupXml.BiScore = layero.find("#score").html();
+                                FollowupXml.BiRecordId = layero.find("#recordId").val();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+        $scope.showMmse = function (FollowupXml) {
+            $.post('/Estimate/EstimateMMSE', { registId: $scope.model.RegistId, recordId: FollowupXml.MmseRecordId }, function (str) {
+                layer.open({
+                    id: 'insert-form',
+                    type: 1,
+                    title: "评分明细",
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1100px', '560px'],
+                    content: str,
+                    cancel: function (index, layero) {
+                        $scope.$apply(function () {
+                            if (layero.find("#scoreChanged").val() == "1") {
+                                // 更新分值
+                                FollowupXml.MmseScore = layero.find("#score").html();
+                                FollowupXml.MmseRecordId = layero.find("#recordId").val();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+        $scope.showMoca = function (FollowupXml) {
+            $.post('/Estimate/EstimateMOCA', { registId: $scope.model.RegistId, recordId: FollowupXml.MocaRecordId }, function (str) {
+                layer.open({
+                    id: 'insert-form',
+                    type: 1,
+                    title: "评分明细",
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1100px', '560px'],
+                    content: str,
+                    cancel: function (index, layero) {
+                        $scope.$apply(function () {
+                            if (layero.find("#scoreChanged").val() == "1") {
+                                // 更新分值
+                                FollowupXml.MocaScore = layero.find("#score").html();
+                                FollowupXml.MocaRecordId = layero.find("#recordId").val();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+        $scope.showIqCode = function (FollowupXml) {
+            $.post('/Estimate/EstimateIQCODE', { registId: $scope.model.RegistId, recordId: FollowupXml.IqCodeRecordId }, function (str) {
+                layer.open({
+                    id: 'insert-form',
+                    type: 1,
+                    title: "评分明细",
+                    maxmin: false,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1100px', '560px'],
+                    content: str,
+                    cancel: function (index, layero) {
+                        $scope.$apply(function () {
+                            if (layero.find("#scoreChanged").val() == "1") {
+                                // 更新分值
+                                FollowupXml.IqCodeScore = layero.find("#score").html();
+                                FollowupXml.IqCodeRecordId = layero.find("#recordId").val();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+    });
+
+    angular.bootstrap($("#Doctor")[0], ['DoctorApp']);
+</script>
+<div class="content" style="overflow-x:unset;overflow-y:unset;" id="Doctor" ng-app="DoctorApp" ng-controller="DoctorController">
+    <fieldset class="medical-record">
+        <div class="content1">
+            <div class="main-content1">
+                <div class="stats-block">
+                    <div class="tab-months">
+                        <input ng-repeat="item in model.FollowupDocDetails" type="button" value="{{item.FollowupCalendar.EventDesc}}" class="btn-months" ng-class="item.FollowupCalendar.Id==model.ActiveId?'active':''" ng-click="getByIndex($index,item.FollowupCalendar.Id)" />
+                    </div>
+                    <div ng-repeat="detail in model.FollowupDocDetails" ng-if="detail.FollowupCalendar.Id==model.ActiveId">
+                        <button type="button" class="operating-btn medical-save-btn" ng-click="save(detail)" id="btnSave"><img src="~/App_Themes/Default/img/icon/save.png"></button>
+                        <div class="basic-info">
+                            <div class="info-label">随访基本信息</div>
+                            <hr />
+                            <div class="basic-content1">
+                                <div style="width:25%;">
+                                    <span class="info-label">随访时间</span>
+                                    <input class="basic-input" style="width:60%" ng-model="detail.FollowupXml.FollowupDate" id="dFollowupDate" name="FollowupDate" type="datetime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}">
+                                </div>
+                                <div style="width:30%;">
+                                    <span class="info-label">随访人</span>
+                                    <input class="basic-input" style="width:70%" type="text" ng-model="detail.FollowupXml.FollowupDoc" id="FollowupDoc" name="FollowupDoc">
+                                </div>
+                                <div style="width:25%">
+                                </div>
+                                <div style="width:25%">
+                                </div>
+                            </div>
+                            <div>
+                                <div style="width:100%">
+                                    <span class="info-label">是否失访</span>
+                                    <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                        <input type="radio" name="IsLossFollowup" ng-model="detail.FollowupXml.IsLossFollowup" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                    </label>
+                                    <label ng-show="detail.FollowupXml.IsLossFollowup=='1'">
+                                        <span style="">失访原因</span>
+                                        <label ng-repeat="item in model.LossToVisitCauseDict">
+                                            <input type="radio" name="LossToVisitCause" ng-model="detail.FollowupXml.LossToVisitCause" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                        <label>
+                                            <input ng-show="detail.FollowupXml.LossToVisitCause=='99'" type="text" name="LossFollowupReasons" ng-model="detail.FollowupXml.LossFollowupReasons" class="txtBorder" style="width:42%;" />
+                                        </label>
+                                    </label>
+                                </div>
+                                <div style="width:100%">
+                                    <span class="info-label">是否死亡</span>
+                                    <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                        <input type="radio" name="IsDie" ng-click="IsDie(item.Key,'1')" ng-model="detail.FollowupXml.IsDie" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                    </label>
+                                    <label ng-show="detail.FollowupXml.IsDie=='1'">
+                                        <span>死亡时间：<input type="datetime" ng-model="detail.FollowupXml.DieTime" id="dDieTime" name="DieTime" class="txtBorder" style="width:150px" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}"></span>
+                                    </label>
+                                    <label class="info-label">
+                                        <span ng-show="detail.FollowupXml.IsDie=='1'">
+                                            死亡原因：
+                                            <label ng-repeat="item in model.DieCauseDict">
+                                                <input type="radio" name="DieCause" ng-model="detail.FollowupXml.DieCause" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                            </label>
+                                        </span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <span class="info-label">是否再次入院</span>
+                                    <label>
+                                        <input type="radio" value="0" name="IsAgainHospitalized" ng-model="detail.FollowupXml.IsAgainHospitalized" />&nbsp;否&nbsp;&nbsp;
+                                    </label>
+                                    <label>
+                                        <input type="radio" value="1" name="IsAgainHospitalized" ng-model="detail.FollowupXml.IsAgainHospitalized" />&nbsp;是&nbsp;&nbsp;
+                                    </label>
+                                </div>
+                                @*<div style="width:100%">
+                                    <span class="info-label">是否结束流程</span>
+                                    <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                        <input type="radio" name="IsEnd" ng-change="IsEnd(item.Key,'1')" ng-model="detail.FollowupXml.IsEnd" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                    </label>
+                                    <label ng-show="detail.FollowupXml.IsEnd=='1'">
+                                        结束原因：
+                                        <label ng-repeat="item in model.EndCauseDict">
+                                            <input type="radio" name="EndCause" ng-model="detail.FollowupXml.EndCause" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                    </label>
+                                </div>*@
+                                <div style="width:100%">
+                                    <span class="info-label">是否完成本次随访</span>
+                                    <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                        <input type="radio" name="IsComplete" ng-model="detail.FollowupXml.IsComplete" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="score-table" style="border:1px solid #ededed;overflow: hidden;" ng-show="detail.FollowupXml.IsLossFollowup=='0' && detail.FollowupXml.IsDie=='0' && detail.FollowupXml.IsAgainHospitalized =='0'">
+                            <div class="info-label">随访详细信息&nbsp;&nbsp;&nbsp;&nbsp;@*<span class="btn-primary" style="border-radius: 3px;color:white;height: 35px;font-size: 10px;" ng-click="ShowDocScore('1')" ng-show="$scope.patient.Stage !='3'">  评分</span>*@</div>
+                            <hr />
+                            <div lass="row-box">
+                                <h4 class="tit-block">吞咽功能</h4>
+                                <div class="row-box">
+                                    <div style="width: 25%;float:left;">
+                                        <label><b validateSnow="IsTia"></b>缺血性卒中/TIA复发：</label><br />
+                                        <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                            <input type="radio" name="IsTia" ng-model="detail.FollowupXml.IsTia" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                    </div>
+                                    <div style="width: 25%;float:left;">
+                                        <label><b validateSnow="IsIschemicEvents"></b>其他缺血性事件：</label><br />
+                                        <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                            <input type="radio" name="IsIschemicEvents" ng-model="detail.FollowupXml.IsIschemicEvents" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                    </div>
+                                    <div style="width: 25%;float:left;">
+                                        <label><b validateSnow="PulmonaryInfection"></b>肺部感染：</label><br />
+                                        <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                            <input type="radio" name="PulmonaryInfection" ng-model="detail.FollowupXml.PulmonaryInfection" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                    </div>
+                                    <div style="width: 25%;float:left;">
+                                        <label><b validateSnow="DisturbanceConsciou"></b>意识障碍：</label><br />
+                                        <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                            <input type="radio" name="DisturbanceConsciou" ng-model="detail.FollowupXml.DisturbanceConsciou" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mr-row" style="margin-bottom:5px;" ng-show="detail.FollowupXml.DisturbanceConsciou=='0'">
+                                    <label class="label-tit" style="text-align:left;min-width:120px;"><b></b>饮水:</label>
+                                    <label ng-repeat="item in model.DringkingDict">
+                                        <input type="radio" name="Dringking" ng-model="detail.FollowupXml.Dringking" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                    </label>
+                                </div>
+                                <div ng-show="(detail.FollowupXml.Dringking == '2' || detail.FollowupXml.Dringking == '3' || detail.FollowupXml.Dringking == '4' || detail.FollowupXml.Dringking == '5' || detail.FollowupXml.Dringking == '6') && detail.FollowupXml.DisturbanceConsciou=='0'">
+                                    <div class="mr-row" style="margin-bottom:5px;">
+                                        <label class="label-tit" style="text-align:left;min-width:120px;"><b></b>饮食指导:</label>
+                                        <label ng-repeat="item in model.DietaryGuidanceDict">
+                                            <input type="radio" name="DietaryGuidance" ng-model="detail.FollowupXml.DietaryGuidance" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                    </div>
+                                    <div id="diet-mouth" ng-show="detail.FollowupXml.DietaryGuidance == '1'">
+                                        <div class="mr-row" style="margin-bottom:5px;">
+                                            <label class="label-tit" style="text-align:left;min-width:120px;"><b></b>稠度:</label>
+                                            <label ng-repeat="item in model.ConsistencyDict">
+                                                <input type="radio" name="Consistency" ng-model="detail.FollowupXml.Consistency" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                            </label>
+                                        </div>
+                                        <div class="mr-row" style="margin-bottom:5px;">
+                                            <label class="label-tit" style="text-align:left;min-width:120px;"><b></b>一口量:</label>
+                                            <label ng-repeat="item in model.BiteSizeDict">
+                                                <input type="radio" name="BiteSize" ng-model="detail.FollowupXml.BiteSize" value="{{item.Key}}"><span>{{item.Value}}ml</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="depressed" ng-show="detail.FollowupXml.DisturbanceConsciou=='0'">
+                                <h4 class="tit-block">卒中后抑郁</h4>
+                                <div class="row-box" style="margin-bottom:5px;">
+                                    <div style="width: 25%;float:left;">
+                                        <label>是否再次发病：</label><br />
+                                        <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                            <input type="radio" name="IsReadmission" ng-model="detail.FollowupXml.IsReadmission" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                    </div>
+                                    <div style="width: 25%;float:left;">
+                                        <label><b validateSnow="IsIschemicEvents"></b>是否再次住院：</label><br />
+                                        <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                            <input type="radio" name="IsRelapse" ng-model="detail.FollowupXml.IsRelapse" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row-box" style="margin-bottom:5px;">
+                                    <div style="width: 49%;float:left;">
+                                        <label><b validateSnow="AntiplateletName"></b>抗血小板药：</label><br />
+                                        <label>
+                                            <input type="text" name="AntiplateletName" ng-model="detail.FollowupXml.AntiplateletName" validateName="AntiplateletName" />
+                                        </label>
+                                    </div>
+                                    <div style="width: 49%;float:left;margin-left:10px;">
+                                        <label><b validateSnow="AntiplateletDose"></b>抗血小板药剂量：</label><br />
+                                        <label>
+                                            <input type="text" name="AntiplateletDose" ng-model="detail.FollowupXml.AntiplateletDose" validateName="AntiplateletDose" />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row-box">
+                                    <div style="width: 49%;float:left;">
+                                        <br />
+                                        <label><b validateSnow="LipidName"></b>调脂药：</label>
+                                        <label>
+                                            <input type="text" name="LipidName" ng-model="detail.FollowupXml.LipidName" validateName="LipidName" />
+                                        </label>
+                                    </div>
+                                    <div style="width: 49%;float:left;margin-left:10px;">
+                                        <br />
+                                        <label><b validateSnow="LipidDose"></b>调脂药剂量：</label>
+                                        <label>
+                                            <input type="text" name="LipidDose" ng-model="detail.FollowupXml.LipidDose" validateName="LipidDose" />
+                                        </label>
+                                    </div>
+                                </div>
+                                <h4 class="tit-block">抑郁评分</h4>
+                                <table class="basic-table score-table" style="width:100%;margin-top:10px;">
+                                    <tr>
+                                        <td style="width:12%">
+                                            PHQ9
+                                            <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-show="detail.FollowupXml.Phq9IsNoEvaluate=='0'" ng-click="showPhq9(detail.FollowupXml)">评分</button>
+                                        </td>
+                                        <td style="width:12%;text-align:center">
+                                            {{detail.FollowupXml.Phq9IsNoEvaluate == "1" ? "--" : detail.FollowupXml.Phq9Score}}
+                                        </td>
+                                        <td style="width:40%">
+                                            <label><b validateSnow="IsIschemicEvents"></b>无法评估：</label>
+                                            <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                                <input type="radio" name="Phq9IsNoEvaluate" ng-model="detail.FollowupXml.Phq9IsNoEvaluate" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                            </label>
+                                            <label ng-show="detail.FollowupXml.Phq9IsNoEvaluate=='1'">
+                                                <input type="text" ng-model="detail.FollowupXml.Phq9NoEvaluateReason" style="width:300px;" placeholder="请输入无法评估原因"/>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <span ng-show="detail.FollowupXml.Phq9IsNoEvaluate=='0' && detail.FollowupXml.Phq9Score!=null && detail.FollowupXml.Phq9Score>=0 && detail.FollowupXml.Phq9Score<=4 ? true : false">没有抑郁</span>
+                                            <span ng-show="detail.FollowupXml.Phq9IsNoEvaluate=='0' && detail.FollowupXml.Phq9Score!=null && detail.FollowupXml.Phq9Score>=5 && detail.FollowupXml.Phq9Score<=9 ? true : false">轻度抑郁，观察等待，随访时复查PHQ-9</span>
+                                            <span ng-show="detail.FollowupXml.Phq9IsNoEvaluate=='0' && detail.FollowupXml.Phq9Score!=null && detail.FollowupXml.Phq9Score>=10 && detail.FollowupXml.Phq9Score<=14 ? true : false">中度抑郁	制定治疗计划,考虑咨询,随访和/药物治疗</span>
+                                            <span ng-show="detail.FollowupXml.Phq9IsNoEvaluate=='0' && detail.FollowupXml.Phq9Score!=null && detail.FollowupXml.Phq9Score>=15 && detail.FollowupXml.Phq9Score<=19 ? true : false">中重度抑郁，积极药物治疗和/心理治疗</span>
+                                            <span ng-show="detail.FollowupXml.Phq9IsNoEvaluate=='0' && detail.FollowupXml.Phq9Score!=null && detail.FollowupXml.Phq9Score>=20 ? true : false">重度抑郁,立即首先选择药物治疗,若严重损伤或对治疗无效,建议转移至精神疾病专家,进行心理治疗和/综合治疗</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:12%">
+                                            HAMD
+                                            <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-show="detail.FollowupXml.HamdIsNoEvaluate=='0'" ng-click="showHamd(detail.FollowupXml)">评分</button>
+                                        </td>
+                                        <td style="width:12%;text-align:center">
+                                            {{detail.FollowupXml.HamdIsNoEvaluate == "1" ? "--" : detail.FollowupXml.HamdScore}}
+                                        </td>
+                                        <td style="width:40%">
+                                            <label><b validateSnow="IsIschemicEvents"></b>无法评估：</label>
+                                            <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                                <input type="radio" name="HamdIsNoEvaluate" ng-model="detail.FollowupXml.HamdIsNoEvaluate" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                            </label>
+                                            <label ng-show="detail.FollowupXml.HamdIsNoEvaluate=='1'">
+                                                <input type="text" ng-model="detail.FollowupXml.HamdNoEvaluateReason" style="width:300px;" placeholder="请输入无法评估原因"/>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <span ng-show="detail.FollowupXml.HamdIsNoEvaluate=='0' && detail.FollowupXml.HamdScore != null && detail.FollowupXml.HamdScore>=0 && detail.FollowupXml.HamdScore<7 ? true : false">正常</span>
+                                            <span ng-show="detail.FollowupXml.HamdIsNoEvaluate=='0' && detail.FollowupXml.HamdScore != null && detail.FollowupXml.HamdScore>=7 && detail.FollowupXml.HamdScore<=17 ? true : false">轻度抑郁，患者表现为心境低落，精神姜靡，反应迟钝，言语缓慢，思维混乱，注意力难以集中，失眠或思卧</span>
+                                            <span ng-show="detail.FollowupXml.HamdIsNoEvaluate=='0' && detail.FollowupXml.HamdScore != null && detail.FollowupXml.HamdScore>=18 && detail.FollowupXml.HamdScore<=24 ? true : false">中度抑郁，除上述症状加重外，常有兴趣丧失，精力明显减退，持续疲乏，活动明显减少，联想困难，自我评价过低，食欲减退，情绪不稳</span>
+                                            <span ng-show="detail.FollowupXml.HamdIsNoEvaluate=='0' && detail.FollowupXml.HamdScore != null && detail.FollowupXml.HamdScore>24 ? true : false">重度抑郁，除以上症状加重外，常有精神运动明显迟滞，过分自责或内疚感，可达妄想程度，体重明显下降，性欲全失，反复出现死亡或自杀念头</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:12%">
+                                            NIHSS
+                                            <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-show="detail.FollowupXml.NihssIsNoEvaluate=='0'" ng-click="showNihss(detail.FollowupXml)">评分</button>
+                                        </td>
+                                        <td style="width:12%;text-align:center">{{detail.FollowupXml.NihssIsNoEvaluate == "1" ? "--" : detail.FollowupXml.NihssScore}}</td>
+                                        <td style="width:40%">
+                                            <label><b validateSnow="IsIschemicEvents"></b>无法评估：</label>
+                                            <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                                <input type="radio" name="NihssIsNoEvaluate" ng-model="detail.FollowupXml.NihssIsNoEvaluate" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                            </label>
+                                            <label ng-show="detail.FollowupXml.NihssIsNoEvaluate=='1'">
+                                                <input type="text" ng-model="detail.FollowupXml.NihssNoEvaluateReason" style="width:300px;" placeholder="请输入无法评估原因" />
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <span ng-show="detail.FollowupXml.NihssIsNoEvaluate=='0' && detail.FollowupXml.NihssScore != null && detail.FollowupXml.NihssScore>=0 && detail.FollowupXml.NihssScore<=1 ? true : false">正常或近乎正常</span>
+                                            <span ng-show="detail.FollowupXml.NihssIsNoEvaluate=='0' && detail.FollowupXml.NihssScore != null && detail.FollowupXml.NihssScore>=2 && detail.FollowupXml.NihssScore<=4 ? true : false">轻度卒中/小卒中</span>
+                                            <span ng-show="detail.FollowupXml.NihssIsNoEvaluate=='0' && detail.FollowupXml.NihssScore != null && detail.FollowupXml.NihssScore>=5 && detail.FollowupXml.NihssScore<=15 ? true : false">中度卒中</span>
+                                            <span ng-show="detail.FollowupXml.NihssIsNoEvaluate=='0' && detail.FollowupXml.NihssScore != null && detail.FollowupXml.NihssScore>=16 && detail.FollowupXml.NihssScore<=20 ? true : false">中度-重度卒中</span>
+                                            <span ng-show="detail.FollowupXml.NihssIsNoEvaluate=='0' && detail.FollowupXml.NihssScore != null && detail.FollowupXml.NihssScore>=21 ? true : false">重度卒中</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:12%">
+                                            BI
+                                            <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-show="detail.FollowupXml.BiIsNoEvaluate=='0'" ng-click="showBi(detail.FollowupXml)">评分</button>
+                                        </td>
+                                        <td style="width:12%;text-align:center">{{detail.FollowupXml.BiIsNoEvaluate == "1" ? "--" : detail.FollowupXml.BiScore}}</td>
+                                        <td style="width:40%">
+                                            <label><b validateSnow="IsIschemicEvents"></b>无法评估：</label>
+                                            <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                                <input type="radio" name="BiIsNoEvaluate" ng-model="detail.FollowupXml.BiIsNoEvaluate" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                            </label>
+                                            <label ng-show="detail.FollowupXml.BiIsNoEvaluate=='1'">
+                                                <input type="text" ng-model="detail.FollowupXml.BiNoEvaluateReason" style="width:300px;" placeholder="请输入无法评估原因" />
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <span ng-show="detail.FollowupXml.BiIsNoEvaluate=='0' && detail.FollowupXml.BiScore != null && detail.FollowupXml.BiScore>=0 && detail.FollowupXml.BiScore<20 ? true : false">极严重功能障碍</span>
+                                            <span ng-show="detail.FollowupXml.BiIsNoEvaluate=='0' && detail.FollowupXml.BiScore != null && detail.FollowupXml.BiScore>=20 && detail.FollowupXml.BiScore<=45 ? true : false">严重功能障碍</span>
+                                            <span ng-show="detail.FollowupXml.BiIsNoEvaluate=='0' && detail.FollowupXml.BiScore != null && detail.FollowupXml.BiScore>=46 && detail.FollowupXml.BiScore<=70 ? true : false">中度功能障碍</span>
+                                            <span ng-show="detail.FollowupXml.BiIsNoEvaluate=='0' && detail.FollowupXml.BiScore != null && detail.FollowupXml.BiScore>=71 && detail.FollowupXml.BiScore<=95 ? true : false">轻度功能障碍</span>
+                                            <span ng-show="detail.FollowupXml.BiIsNoEvaluate=='0' && detail.FollowupXml.BiScore != null && detail.FollowupXml.BiScore>=100 ? true : false">ADL自理</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="depressed" ng-show="detail.FollowupXml.DisturbanceConsciou=='0'">
+                                <h4 class="tit-block">卒中后认知障碍</h4>
+                                @*<div class="left-area">*@
+                                <div class="mr-row">
+                                    <label><b></b>文化程度:</label>
+                                    <label ng-repeat="item in model.EducationDegreeDict">
+                                        <input type="radio" name="EducationDegree" ng-model="detail.FollowupXml.EducationDegree" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                    </label>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label>
+                                        <label><b></b>无法评估:</label>
+                                        <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                            <input type="radio" name="IsNoEvaluate" ng-model="detail.FollowupXml.IsNoEvaluate" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                    </label>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label ng-show="detail.FollowupXml.IsNoEvaluate=='1'">
+                                        <label><b></b>无法评估项:</label>
+                                        <label ng-repeat="item in model.NoEvaluateDict">
+                                            <input type="radio" name="NoEvaluate" ng-model="detail.FollowupXml.NoEvaluate" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                    </label>
+                                </div>
+                                <table class="basic-table score-table" style="width:100%" ng-show="detail.FollowupXml.IsNoEvaluate=='0'">
+                                    <tr>
+                                        <td style="width:12%">
+                                            MMSE
+                                            <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-show="detail.FollowupXml.MmseIsNoEvaluate=='0'" ng-click="showMmse(detail.FollowupXml)">评分</button>
+                                        </td>
+                                        <td style="width:12%;text-align:center">{{detail.FollowupXml.MmseIsNoEvaluate == "1" ? "--" : detail.FollowupXml.MmseScore}}</td>
+                                        <td style="width:40%">
+                                            <label><b validateSnow="IsIschemicEvents"></b>无法评估：</label>
+                                            <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                                <input type="radio" name="MmseIsNoEvaluate" ng-model="detail.FollowupXml.MmseIsNoEvaluate" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                            </label>
+                                            <label ng-show="detail.FollowupXml.MmseIsNoEvaluate=='1'">
+                                                <input type="text" ng-model="detail.FollowupXml.MmseNoEvaluateReason" style="width:300px;" placeholder="请输入无法评估原因" />
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <span ng-show="detail.FollowupXml.MmseIsNoEvaluate=='0' && detail.FollowupXml.EducationDegree == '1' ? true : false">文盲≤17分</span>
+                                            <span ng-show="detail.FollowupXml.MmseIsNoEvaluate=='0' && detail.FollowupXml.EducationDegree == '2' ? true : false">小学≤20分</span>
+                                            <span ng-show="detail.FollowupXml.MmseIsNoEvaluate=='0' && detail.FollowupXml.EducationDegree == '3' ? true : false">初中及以上≤24分</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:12%">
+                                            MOCA
+                                            <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-show="detail.FollowupXml.MocaIsNoEvaluate=='0'" ng-click="showMoca(detail.FollowupXml)">评分</button>
+                                        </td>
+                                        <td style="width:12%;text-align:center">{{detail.FollowupXml.MocaIsNoEvaluate == "1" ? "--" : detail.FollowupXml.MocaScore}}</td>
+                                        <td style="width:40%">
+                                            <label><b validateSnow="IsIschemicEvents"></b>无法评估：</label>
+                                            <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                                <input type="radio" name="MocaIsNoEvaluate" ng-model="detail.FollowupXml.MocaIsNoEvaluate" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                            </label>
+                                            <label ng-show="detail.FollowupXml.MocaIsNoEvaluate=='1'">
+                                                <input type="text" ng-model="detail.FollowupXml.MocaNoEvaluateReason" style="width:300px;" placeholder="请输入无法评估原因" />
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <span ng-show="detail.FollowupXml.MocaIsNoEvaluate=='0' && detail.FollowupXml.MocaScore!=null && (detail.FollowupXml.MocaScore>= 0 || detail.FollowupXml.MocaScore<10) ? true : false">重度（MOCA ＜ 10分）</span>
+                                            <span ng-show="detail.FollowupXml.MocaIsNoEvaluate=='0' && detail.FollowupXml.MocaScore!=null && detail.FollowupXml.MocaScore>= 10 && detail.FollowupXml.MocaScore< 18 ? true : false">中度（18分 ＞ MOCA ≥ 10分）</span>
+                                            <span ng-show="detail.FollowupXml.MocaIsNoEvaluate=='0' && detail.FollowupXml.MocaScore!=null && detail.FollowupXml.MocaScore>=18 && detail.FollowupXml.MocaScore<=26 ? true : false">轻度（26分 ＞ MOCA ≥ 18分）</span>
+                                            <span ng-show="detail.FollowupXml.MocaIsNoEvaluate=='0' && detail.FollowupXml.MocaScore!=null && detail.FollowupXml.MocaScore>=26 ? true : false">正常（MOCA ≥ 26分）</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:12%">
+                                            IQCODE
+                                            <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-show="detail.FollowupXml.IqCodeIsNoEvaluate=='0'" ng-click="showIqCode(detail.FollowupXml)">评分</button>
+                                        </td>
+                                        <td style="width:12%;text-align:center">{{detail.FollowupXml.IqCodeIsNoEvaluate == "1" ? "--" : detail.FollowupXml.IqCodeScore}}</td>
+                                        <td style="width:40%">
+                                            <label><b validateSnow="IsIschemicEvents"></b>无法评估：</label>
+                                            <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                                <input type="radio" name="IqCodeIsNoEvaluate" ng-model="detail.FollowupXml.IqCodeIsNoEvaluate" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                            </label>
+                                            <label ng-show="detail.FollowupXml.IqCodeIsNoEvaluate=='1'">
+                                                <input type="text" ng-model="detail.FollowupXml.IqCodeNoEvaluateReason" style="width:300px;" placeholder="请输入无法评估原因" />
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <span ng-show="detail.FollowupXml.IqCodeIsNoEvaluate && detail.FollowupXml.IqCodeScore!=null && detail.FollowupXml.IqCodeScore<3.19 ? true : false">可除外MCI的可能</span>
+                                            <span ng-show="detail.FollowupXml.IqCodeIsNoEvaluate && detail.FollowupXml.IqCodeScore!=null && detail.FollowupXml.IqCodeScore>=3.19 && detail.FollowupXml.IqCodeScore< 3.25 ? true : false">日常生活，能力受损</span>
+                                            <span ng-show="detail.FollowupXml.IqCodeIsNoEvaluate && detail.FollowupXml.IqCodeScore!=null && detail.FollowupXml.IqCodeScore>=3.25 && detail.FollowupXml.IqCodeScore<=3.31 ? true : false">轻度MC</span>
+                                            <span ng-show="detail.FollowupXml.IqCodeIsNoEvaluate && detail.FollowupXml.IqCodeScore!=null && detail.FollowupXml.IqCodeScore>3.31 && detail.FollowupXml.IqCodeScore<=19 ? true : false">轻度AD的可能</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="depressed aphasia" ng-show="detail.FollowupXml.DisturbanceConsciou=='0'">
+                                <h4 class="tit-block">卒中后失语</h4>
+                                <div class="row-box">
+                                    <div style="width: 25%;float:left;margin-top:10px;">
+                                        <label><b validateSnow="IsEvaluate"></b>是否评估：</label><br />
+                                        <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                            <input type="radio" name="IsEvaluate" ng-model="detail.FollowupXml.IsEvaluate" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                    </div>
+                                    <div style="width: 75%;float:left;margin-top:10px;" ng-show="detail.FollowupXml.IsEvaluate=='0'">
+                                        <label><b validateSnow="NoEvaluateReason"></b>未评原因：</label><br />
+                                        <label ng-repeat="item in model.NoEvaluateReasonDict">
+                                            <input type="radio" name="NoEvaluateReason" ng-model="detail.FollowupXml.NoEvaluateReason" value="{{item.Key}}">
+                                            <span>{{item.Value}}</span>
+                                        </label>
+                                        <input style="margin-top: -5px;width: 200px;" ng-show="detail.FollowupXml.NoEvaluateReason=='99'" type="text" ng-model="detail.FollowupXml.OtherNoEvaluateReason" />
+                                    </div>
+                                </div>
+                                <div class="clear"></div>
+                                <div ng-show="detail.FollowupXml.IsEvaluate=='1'">
+                                    <div class="left-area">
+                                        <table class="basic-table score-table">
+                                            <tr>
+                                                <td rowspan="2">
+                                                    自发语
+                                                    <span class="level" ng-show="detail.FollowupXml.FluencyA != null && detail.FollowupXml.FluencyB != null">{{detail.FollowupXml.FluencyA*1+detail.FollowupXml.FluencyB*1}}分</span>
+                                                    <span>(A+B)</span>
+                                                </td>
+                                                <td class="withbg">A 信息内容</td>
+                                                <td><input type="text" ng-model="detail.FollowupXml.FluencyA" ng-keyup="clearNoNum(detail.FollowupXml,'FluencyA')" ng-change="CalcAQScore(detail.FollowupXml)"><em style="top:5px;">分</em></td>
+                                            </tr>
+                                            <tr>
+                                                <td>B 流畅性、语法能力、错语</td>
+                                                <td><input type="text" ng-model="detail.FollowupXml.FluencyB" ng-keyup="clearNoNum(detail.FollowupXml,'FluencyB')" ng-change="CalcAQScore(detail.FollowupXml)"><em style="top:5px;">分</em></td>
+                                            </tr>
+                                            <tr>
+                                                <td rowspan="3">
+                                                    听理解<span class="level" ng-show="detail.FollowupXml.ListeningComprehensionA != null && detail.FollowupXml.ListeningComprehensionB != null && detail.FollowupXml.ListeningComprehensionC != null">{{(detail.FollowupXml.ListeningComprehensionA*1+detail.FollowupXml.ListeningComprehensionB*1+detail.FollowupXml.ListeningComprehensionC*1)/20}}分</span>
+                                                    <span>(A+B+C)/20</span>
+                                                </td>
+                                                <td class="withbg">A 是/不是</td>
+                                                <td><input type="text" ng-model="detail.FollowupXml.ListeningComprehensionA" ng-keyup="clearNoNum(detail.FollowupXml,'ListeningComprehensionA')" ng-change="CalcAQScore(detail.FollowupXml)"><em style="top:5px;">分</em></td>
+                                            </tr>
+                                            <tr>
+                                                <td>B 单词听理解</td>
+                                                <td><input type="text" ng-model="detail.FollowupXml.ListeningComprehensionB" ng-keyup="clearNoNum(detail.FollowupXml,'ListeningComprehensionB')" ng-change="CalcAQScore(detail.FollowupXml)"><em style="top:5px;">分</em></td>
+                                            </tr>
+                                            <tr>
+                                                <td>C 口头执行指令</td>
+                                                <td><input type="text" ng-model="detail.FollowupXml.ListeningComprehensionC" ng-keyup="clearNoNum(detail.FollowupXml,'ListeningComprehensionC')" ng-change="CalcAQScore(detail.FollowupXml)"><em style="top:5px;">分</em></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    复述
+                                                    <span class="level" ng-show="detail.FollowupXml.Retell != null">{{(detail.FollowupXml.Retell*1)/10}}分</span>
+                                                    <b>（得分/10）</b>
+                                                </td>
+                                                <td><input type="text" ng-model="detail.FollowupXml.Retell" ng-keyup="clearNoNum(detail.FollowupXml,'Retell')" ng-change="CalcAQScore(detail.FollowupXml)"><em style="top:5px;">分</em></td>
+                                            </tr>
+                                            <tr>
+                                                <td rowspan="4">
+                                                    命名
+                                                    <span class="level" ng-show="detail.FollowupXml.NamedA != null && detail.FollowupXml.NamedB != null && detail.FollowupXml.NamedC != null && detail.FollowupXml.NamedD != null">{{(detail.FollowupXml.NamedA*1+detail.FollowupXml.NamedB*1+detail.FollowupXml.NamedC*1+detail.FollowupXml.NamedD*1)/10}}</span>
+                                                    <span>(A+B+C+D)/10</span>
+                                                </td>
+                                                <td class="withbg">A 呼名</td>
+                                                <td><input type="text" ng-model="detail.FollowupXml.NamedA" ng-keyup="clearNoNum(detail.FollowupXml,'NamedA')" ng-change="CalcAQScore(detail.FollowupXml)"><em style="top:5px;">分</em></td>
+                                            </tr>
+                                            <tr>
+                                                <td>B 语联想</td>
+                                                <td><input type="text" ng-model="detail.FollowupXml.NamedB" ng-keyup="clearNoNum(detail.FollowupXml,'NamedB')" ng-change="CalcAQScore(detail.FollowupXml)"><em style="top:5px;">分</em></td>
+                                            </tr>
+                                            <tr>
+                                                <td>C 句子完成</td>
+                                                <td><input type="text" ng-model="detail.FollowupXml.NamedC" ng-keyup="clearNoNum(detail.FollowupXml,'NamedC')" ng-change="CalcAQScore(detail.FollowupXml)"><em style="top:5px;">分</em></td>
+                                            </tr>
+                                            <tr>
+                                                <td>D 回答问题</td>
+                                                <td><input type="text" ng-model="detail.FollowupXml.NamedD" ng-keyup="clearNoNum(detail.FollowupXml,'NamedD')" ng-change="CalcAQScore(detail.FollowupXml)"><em style="top:5px;">分</em></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="conclusion">
+                                        <span class="reuslt">AQ</span>
+                                        <div style="position:relative;display:inline;"><input type="text" ng-model="detail.FollowupXml.Aq" style="text-align:center;width:100px;padding-right:15px;" ng-keyup="clearNoNum(detail.FollowupXml,'Aq')" /><em style="position:absolute;top:0;right:10px;">分</em></div>
+                                        <div style="margin-left:10px;display:inline;"><input type="checkbox" id="NoWab" name="NoWab" ng-model="detail.FollowupXml.WabType" ng-click="noWabClick($event,detail.FollowupXml)" ng-checked="detail.FollowupXml.WabType=='0'" /><label for="NoWab">无失语</label></div>
+                                        <table class="table_wab">
+                                            <tr>
+                                                <th>失语类型</th>
+                                                <th>流畅性</th>
+                                                <th>听理解</th>
+                                                <th>复述</th>
+                                                <th>命名</th>
+                                            </tr>
+                                            <tr ng-class="detail.FollowupXml.WabType=='1'?'actived':''" ng-click="detail.FollowupXml.WabType='1'">
+                                                <td>完全性失语</td>
+                                                <td>0--4</td>
+                                                <td>0--3.9</td>
+                                                <td>0--4.9</td>
+                                                <td>0--6</td>
+                                            </tr>
+                                            <tr ng-class="detail.FollowupXml.WabType=='2'?'actived':''" ng-click="detail.FollowupXml.WabType='2'">
+                                                <td>运动性失语</td>
+                                                <td>0--5</td>
+                                                <td>4--10</td>
+                                                <td>0--7.9</td>
+                                                <td>0--8</td>
+                                            </tr>
+                                            <tr ng-class="detail.FollowupXml.WabType=='3'?'actived':''" ng-click="detail.FollowupXml.WabType='3'">
+                                                <td>感觉性失语</td>
+                                                <td>5--10</td>
+                                                <td>0--6.9</td>
+                                                <td>0--7.9</td>
+                                                <td>0--9</td>
+                                            </tr>
+                                            <tr ng-class="detail.FollowupXml.WabType=='4'?'actived':''" ng-click="detail.FollowupXml.WabType='4'">
+                                                <td>命名性失语</td>
+                                                <td>5--10</td>
+                                                <td>7--10</td>
+                                                <td>7--10</td>
+                                                <td>0--9</td>
+                                            </tr>
+                                            <tr ng-class="detail.FollowupXml.WabType=='5'?'actived':''" ng-click="detail.FollowupXml.WabType='5'">
+                                                <td>经皮质混合性失语</td>
+                                                <td>0--4</td>
+                                                <td>0--3.9</td>
+                                                <td>5--10</td>
+                                                <td>0--6</td>
+                                            </tr>
+                                            <tr ng-class="detail.FollowupXml.WabType=='6'?'actived':''" ng-click="detail.FollowupXml.WabType='6'">
+                                                <td>经皮质运动性失语</td>
+                                                <td>0--4</td>
+                                                <td>4--10</td>
+                                                <td>8--10</td>
+                                                <td>0--8</td>
+                                            </tr>
+                                            <tr ng-class="detail.FollowupXml.WabType=='7'?'actived':''" ng-click="detail.FollowupXml.WabType='7'">
+                                                <td>经皮质感觉性失语</td>
+                                                <td>5--10</td>
+                                                <td>0--6.9</td>
+                                                <td>8--10</td>
+                                                <td>0--9</td>
+                                            </tr>
+                                            <tr ng-class="detail.FollowupXml.WabType=='8'?'actived':''" ng-click="detail.FollowupXml.WabType='8'">
+                                                <td>传导性失语</td>
+                                                <td>5--10</td>
+                                                <td>7--10</td>
+                                                <td>0--6.9</td>
+                                                <td>0--9</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row-box">
+                                    <div style="width: 25%;float:left;margin-top:10px;">
+                                        <label><b validateSnow="IsIntervene"></b>是否干预：</label><br />
+                                        <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                            <input type="radio" name="IsIntervene" ng-model="detail.FollowupXml.IsIntervene" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                    </div>
+                                    <div style="width: 75%;float:left;margin-top:10px;" ng-show="detail.FollowupXml.IsIntervene=='1'">
+                                        <label><b validateSnow="InterveneWay"></b>干预方法：</label><br />
+                                        <label ng-repeat="x in model.InterveneWayDict">
+                                            <input name="InterveneWay" type="checkbox" ng-checked="isSelected($index,detail.FollowupXml.InterveneWay)" ng-click="updateSelection($event,$index,detail.FollowupXml.InterveneWay)">
+                                            <span>{{x.Value}}</span>
+                                        </label>
+                                        <label>
+                                            <input type="text" id="InterveneOther" name="InterveneOther" ng-model="detail.FollowupXml.InterveneOther" ng-show="detail.FollowupXml.InterveneWay[4]" />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row-box">
+                                    <div style="width: 25%;float:left;margin-top:10px;">
+                                        <label><b validateSnow="IsEvaluate"></b>fMRI：</label><br />
+                                        <label ng-repeat="item in model.YesOrNoDict.slice().reverse()">
+                                            <input type="radio" name="IsFmri" ng-model="detail.FollowupXml.IsFmri" value="{{item.Key}}"><span>{{item.Value}}</span>
+                                        </label>
+                                    </div>
+                                    <div style="width: 25%;float:left;margin-top:10px;" ng-show="detail.FollowupXml.IsFmri == '1'">
+                                        <label>影像号:</label><br />
+                                        <label><input type="text" ng-model="detail.FollowupXml.ImageNo" style="margin-top:5px;"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+

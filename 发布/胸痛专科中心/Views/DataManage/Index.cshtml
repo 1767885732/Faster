@@ -1,0 +1,897 @@
+﻿@using DoCare.ToolKit;
+@using DoCare.Framework.Extension;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutContent.cshtml";
+}
+<link href=@Url.Random("~/App_Themes/Default/page.dm.index.css") rel="stylesheet" />
+
+
+
+
+
+@*新增*@
+
+@*<link href="~/App_Themes/New/bootstrap.min.css" rel="stylesheet" />*@
+<link href="~/App_Themes/New/font-awesome.min.css" rel="stylesheet" />
+<link href="~/App_Themes/New/font-awesome.css" rel="stylesheet" />
+@*<link href="~/App_Themes/New/ionicons.min.css" rel="stylesheet" />*@
+@*<link href="~/App_Themes/New/AdminLTE.css" rel="stylesheet" />*@
+@*<link href="~/App_Themes/New/_all-skins.min.css" rel="stylesheet" />
+    <script src="~/App_Themes/New/jquery.min.js"></script>
+    <script src="~/App_Themes/New/bootstrap.min.js"></script>
+    <script src="~/App_Themes/New/fastclick.js"></script>*@
+@*<script src="~/App_Themes/New/adminlte.min.js"></script>*@
+@*<script src="~/App_Themes/New/demo.js"></script>*@
+
+
+
+
+
+
+
+
+<style>
+    [v-cloak] {
+        display: none;
+    }
+    /*提醒空白换行*/
+    .el-tooltip__popper {
+        white-space: pre !important;
+    }
+
+    .el-table .cell p.tip_red {
+        color: red;
+        font-size: 12px;
+    }
+
+    .el-table .cell p.tip_green {
+        color: green;
+        font-size: 12px;
+    }
+
+    .main-sidebar {
+        background: url("../../App_Themes/Default/img/side.png") repeat-y;
+    }
+
+    .main-s1 {
+        padding-right: 5px;
+    }
+
+    .main-s2 {
+        margin-top: 0px;
+    }
+
+    .main-s3 {
+        font-weight: bold;
+        font-size: 15px
+    }
+
+    .item1 li {
+        padding: 30px;
+        background: url('../../App_Themes/Default/imgt//编组 6.png') no-repeat;
+    }
+</style>
+<script>
+    var Model =  @Html.Raw(JsonKit.Serialize(ViewBag.Model));
+</script>
+
+<div id="index" v-cloak>
+
+
+
+    <div class="search-bar2" style="padding-top:10px; background-color:azure">
+        <el-row>
+
+            <ul style="margin-top:40px">
+                <li onclick="onMenuClick(this, '/DataManage/Index')" id="mnu_datamanage" style=" padding:30px;
+        background:url('../../App_Themes/Default/imgt//编组 6.png')  no-repeat;">
+                    @*<a href="javascript:void(0)">胸痛管理</a>*@
+                </li>
+            </ul>
+            <label style="margin-left:5px">胸痛数据</label>
+
+        </el-row>
+        <el-row>
+            <ul style="margin-top:40px">
+                <li onclick="onMenuClick(this, '/DataStatistics/Index')" id="mnu_datastatistics" style=" padding:30px;
+        background:url('../../App_Themes/Default/imgt/编组 7.png')  no-repeat;">
+                </li>
+            </ul>
+            <label  style="margin-left:5px">数据统计</label>
+        </el-row>
+        <el-row>
+            <ul style="margin-top:40px">
+                <li onclick="onMenuClick(this, '/SystemSetting/Index')" id="mnu_datastatistics" style=" padding:30px;
+        background:url('../../App_Themes/Default/imgt/编组 11.png')  no-repeat;">
+                </li>
+            </ul>
+            <label  style="margin-left:5px">系统设置</label>
+        </el-row>
+
+        @*<el-row>
+                <label>诊断类型:</label>
+                <el-select v-model="searchParams.DiagnosisType"
+                           placeholder="请选择诊断"
+                           size="small">
+                    <el-option v-for="item in DiagnosisDict"
+                               v-bind:key="item.Key"
+                               v-bind:label="item.Value"
+                               v-bind:value="item.Key">
+                    </el-option>
+                </el-select>
+            </el-row>*@
+
+
+
+
+    </div>
+
+
+    <div class="container" style="padding-top:10px; height:100px;  background-color:azure">
+        <el-row>
+            <el-col>
+                <label style="margin-left:50px">患者姓名:</label>
+                <el-input style="width:160px;margin-right:60px" v-model="searchParams.Name"
+                          placeholder="请输入姓名"
+                          maxlength="32"
+                          size="small"></el-input>
+            </el-col>
+            <el-col class="el-col-6">
+                <label>医院:</label>
+                <el-select style="width:300px" v-model="searchParams.OrgCode"
+                           placeholder="请选择医院"
+                           size="small">
+                    <el-option v-for="item in HospitalDict"
+                               v-bind:key="item.Key"
+                               v-bind:label="item.Value"
+                               v-bind:value="item.Key">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col class="el-col-6">
+                <label>诊断类型:</label>
+                <el-select style="width:273px" v-model="searchParams.DiagnosisType"
+                           placeholder="请选择诊断"
+                           size="small">
+                    <el-option v-for="item in DiagnosisDict"
+                               v-bind:key="item.Key"
+                               v-bind:label="item.Value"
+                               v-bind:value="item.Key">
+                    </el-option>
+                </el-select>
+            </el-col>
+            @*<el-col style="margin-left:120px">
+                <el-button style="margin:0px" type="primary" size="small" class="search-button" icon="fa fa-fw fa-search" v-on:click="searchClick" v-if="Queryable">查询</el-button>
+            </el-col>*@
+
+
+        </el-row>
+        <el-row>
+            <el-col class="el-col-6">
+                <label style="margin-left:50px">来院方式:</label>
+                <el-select style="width:220px" v-model="searchParams.ComingType"
+                           placeholder="请选择来院方式"
+                           size="small">
+                    <el-option v-for="item in ComingTypeDict"
+                               v-bind:key="item.Key"
+                               v-bind:label="item.Value"
+                               v-bind:value="item.Key">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col class="el-col-12">
+                <label style="margin-left:20px">时间范围:</label>
+
+                <el-date-picker v-model="searchParams.StartDate"
+                                style="width:49%;font-size:12px; width:290px"
+                                size="small"
+                                type="date"
+                                placeholder="开始日期"
+                                v-bind:picker-options="pickerOptions1">
+                </el-date-picker>
+                <el-date-picker v-model="searchParams.EndDate"
+                                size="small"
+                                style="width:49%;font-size:12px; width:290px"
+                                type="date"
+                                placeholder="结束日期"
+                                v-bind:picker-options="pickerOptions1">
+                </el-date-picker>
+
+            </el-col>
+            <el-col>
+                <el-button style="margin:0px" type="primary" size="small" class="search-button" icon="fa fa-fw fa-search" v-on:click="searchClick" v-if="Queryable">查询</el-button>
+            </el-col>
+
+            <el-col style="margin-left:20px">
+                <el-button style="margin:0px" type="primary" size="small" class="search-button" icon="fa fa-fw fa-search-plus" v-on:click="advSearchClick" v-if="Queryable">高级查询</el-button>
+            </el-col>
+
+        </el-row>
+
+        @*<el-row>
+            <label>患者姓名:</label>
+            <el-input v-model="searchParams.Name"
+                      placeholder="请输入姓名"
+                      maxlength="32"
+                      size="small"></el-input>
+        </el-row>
+
+
+        <el-row>
+            <label>诊断类型:</label>
+            <el-select v-model="searchParams.DiagnosisType"
+                       placeholder="请选择诊断"
+                       size="small">
+                <el-option v-for="item in DiagnosisDict"
+                           v-bind:key="item.Key"
+                           v-bind:label="item.Value"
+                           v-bind:value="item.Key">
+                </el-option>
+            </el-select>
+        </el-row>
+        <el-row>
+            <label>来院方式:</label>
+            <el-select v-model="searchParams.ComingType"
+                       placeholder="请选择来院方式"
+                       size="small">
+                <el-option v-for="item in ComingTypeDict"
+                           v-bind:key="item.Key"
+                           v-bind:label="item.Value"
+                           v-bind:value="item.Key">
+                </el-option>
+            </el-select>
+        </el-row>
+        <el-row>
+            <label>时间范围:</label>
+            <div>
+                <el-date-picker v-model="searchParams.StartDate"
+                                style="width:49%;font-size:12px;"
+                                size="small"
+                                type="date"
+                                placeholder="开始日期"
+                                v-bind:picker-options="pickerOptions1">
+                </el-date-picker>
+                <el-date-picker v-model="searchParams.EndDate"
+                                size="small"
+                                style="width:49%;font-size:12px;"
+                                type="date"
+                                placeholder="结束日期"
+                                v-bind:picker-options="pickerOptions1">
+                </el-date-picker>
+            </div>
+        </el-row>
+
+        <el-row type="flex" justify="end">
+            <el-col style="margin-right:5px;">
+                <el-button type="primary" size="small" class="search-button" icon="fa fa-fw fa-search" v-on:click="searchClick" v-if="Queryable">查询</el-button>
+            </el-col>
+            <el-col style="margin-left:5px;margin-right:2px;">
+                <el-button type="primary" size="small" class="search-button" icon="fa fa-fw fa-search-plus" v-on:click="advSearchClick" v-if="Queryable">高级查询</el-button>
+            </el-col>
+        </el-row>*@
+
+    </div>
+
+    <div class="container" style="padding-top:10px; background-color:azure">
+        <div class="center" style="background-color:azure">
+            <div class="operate-bar">
+                @*<el-button type="primary" size="medium" icon="el-icon-plus" v-on:click="addPatient" v-if="showAdd()">新增病历</el-button>*@
+                <el-button type="primary" size="medium" icon="fa fa-plus main-s1" v-on:click="addPatient" v-if="showAdd()">新增病历</el-button>
+                <el-button type="danger" size="medium" icon="el-icon-delete" v-on:click="deletePatients" v-if="showDelete()">删除</el-button>
+                <el-button type="warning" size="medium" icon="el-icon-refresh" v-on:click="refreshTimeline" v-if="showRefreshTimeline()">初始化时间轴及完整度</el-button>
+                <el-button type="primary" size="medium" icon="el-icon-back" v-on:click="undoCompletedPatients" v-if="showArchive()">撤回</el-button>
+                <el-button type="primary" size="medium" icon="el-icon-finished" v-on:click="archivedPatients" v-if="showArchive()">归档</el-button>
+                <el-button type="primary" size="medium" icon="el-icon-finished" v-on:click="archivedPatientsAll" v-if="showArchiveAll()">一键归档</el-button>
+                <el-button type="primary" size="medium" icon="el-icon-back" v-on:click="undoArchivedPatients" v-if="showRevokeArchive()">撤销归档</el-button>
+                <el-button type="primary" size="medium" icon="el-icon-download" v-on:click="exportData" v-if="showExport()">导出</el-button>
+                <el-button type="primary" size="medium" icon="el-icon-upload2" v-on:click="uploadToCPA" v-if="showReport()">上报</el-button>
+                <el-button type="success" size="medium" icon="el-icon-check" v-on:click="restorePatients" v-if="showRestore()">恢复</el-button>
+                <el-button type="danger" size="medium" icon="el-icon-delete" v-on:click="deletePatientsHard" v-if="showDeleteHard()">彻底删除</el-button>
+            </div>
+            <div class="tab side-tab">
+                <el-tabs v-model="searchParams.Type" v-on:tab-click="tabClick">
+                    <el-tab-pane name="0">
+                        <div slot="label">全部<span class="counter-primary">{{countData.Item1}}</span></div>
+                    </el-tab-pane>
+                    <el-tab-pane label="填报中" name="1">
+                        <div slot="label">填报中<span class="counter-primary">{{countData.Item2}}</span></div>
+                    </el-tab-pane>
+                    <el-tab-pane label="填报完成" name="2">
+                        <div slot="label">已提交<span class="counter-success">{{countData.Item3}}</span></div>
+                    </el-tab-pane>
+                    <el-tab-pane label="已归档" name="3">
+                        <div slot="label">已归档<span class="counter-success">{{countData.Item4}}</span></div>
+                    </el-tab-pane>
+                    <el-tab-pane label="已上报" name="4">
+                        <div slot="label">已上报<span class="counter-success">{{countData.Item5}}</span></div>
+                    </el-tab-pane>
+                    <el-tab-pane label="已删除" name="5">
+                        <div slot="label">已删除<span class="counter-info">{{countData.Item6}}</span></div>
+                    </el-tab-pane>
+                </el-tabs>
+            </div>
+            <div class="table-panel">
+                <el-table v-bind:data="tableData"
+                          v-bind:stripe="true"
+                          @*v-bind:height="tableHeight"*@
+                          height="100%"
+                          ref="patientTable"
+                          v-on:selection-change="handleMultipleSelection"
+                          size="mini">
+                    <el-table-column v-bind:key="Math.random()" type="selection"
+                                     width="30">
+                    </el-table-column>
+                    <el-table-column v-bind:key="Math.random()" prop="Name"
+                                     label="患者姓名" style="font-size:15px"
+                                     min-width="80"
+                                     align="center">
+                    </el-table-column>
+                    <el-table-column v-bind:key="Math.random()" prop="GenderDesc"
+                                     label="性别" style="font-size:15px"
+                                     min-width="50"
+                                     align="center">
+                    </el-table-column>
+                    <el-table-column v-bind:key="Math.random()" prop="Age"
+                                     label="年龄"
+                                     min-width="50"
+                                     align="center">
+                    </el-table-column>
+                    <el-table-column v-bind:key="Math.random()" prop="ComingTypeDesc"
+                                     label="来院方式"
+                                     min-width="130"
+                                     align="center">
+                    </el-table-column>
+                    <el-table-column v-bind:key="Math.random()" prop="ReceptionTime"
+                                     label="接诊时间"
+                                     min-width="120"
+                                     v-bind:formatter="timeFormat"
+                                     align="center">
+                    </el-table-column>
+                    <el-table-column v-bind:key="Math.random()" prop="ChiefComplaint"
+                                     label="主诉"
+                                     min-width="130"
+                                     align="center" v-if="searchParams.Type == '0' || searchParams.Type == '1'">
+                    </el-table-column>
+                    <el-table-column v-bind:key="Math.random()" prop="DiagnosisDesc"
+                                     label="诊断"
+                                     min-width="120"
+                                     align="center">
+                    </el-table-column>
+                    <el-table-column v-bind:key="Math.random()" prop="ReportStatusDesc"
+                                     label="上报状态"
+                                     min-width="80"
+                                     align="center" v-if="searchParams.Type == '4' || searchParams.Type == '2'">
+                    </el-table-column>
+                    @*<el-table-column v-bind:key="Math.random()" prop="InpatientNo"
+                                         label="住院号"
+                                         min-width="80"
+                                         align="center">
+                        </el-table-column>
+                        <el-table-column v-bind:key="Math.random()" prop="DischargeTime"
+                                         label="出院时间"
+                                         min-width="120"
+                                         v-bind:formatter="timeFormat"
+                                         align="center">
+                        </el-table-column>*@
+                    <el-table-column v-bind:key="Math.random()" prop="Integrity"
+                                     label="信息完整度"
+                                     min-width="120"
+                                     align="center"
+                                     v-if="searchParams.Type == '0' || searchParams.Type == '1'">
+                        <template slot-scope="scope">
+                            <div style="display:flex;">
+                                <i class="fa fa-fw fa-info-circle" style="font-size:20px; align-self:center;" v-on:click="validateResult(scope.row.Id)"></i>
+                                <el-progress style="flex-grow:1" v-bind:text-inside="true" v-bind:stroke-width="26" v-bind:percentage="scope.row.Integrity?scope.row.Integrity:0" v-bind:status="calcIntegrity(scope.row.Integrity)"></el-progress>
+                                @*<i class="el-icon-info" style="font-size:20px; align-self:center;" v-on:click="validateResult(scope.row.Id)"></i>*@
+
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column v-bind:key="Math.random()" prop="CompleteTime"
+                                     label="填报完成时间"
+                                     min-width="120"
+                                     v-bind:formatter="timeFormat"
+                                     align="center"
+                                     v-if="searchParams.Type == '2'">
+                        <template slot-scope="scope">
+                            <span>{{formatTime(scope.row.CompleteTime)}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column v-bind:key="Math.random()" prop="FilingTime"
+                                     label="归档时间"
+                                     min-width="120"
+                                     v-bind:formatter="timeFormat"
+                                     align="center"
+                                     v-if="searchParams.Type == '3'">
+                        <template slot-scope="scope">
+                            <span>{{formatTime(scope.row.FilingTime)}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column v-bind:key="Math.random()" prop="ReportTime"
+                                     label="上报时间"
+                                     min-width="120"
+                                     v-bind:formatter="timeFormat"
+                                     align="center"
+                                     v-if="searchParams.Type == '4' || searchParams.Type == '2'">
+                        <template slot-scope="scope">
+                            <span>{{formatTime(scope.row.ReportTime)}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column v-bind:key="Math.random()" prop="DeleteTime"
+                                     label="删除时间"
+                                     min-width="120"
+                                     v-bind:formatter="timeFormat"
+                                     align="center"
+                                     v-if="searchParams.Type == '5'">
+                        <template slot-scope="scope">
+                            <span>{{formatTime(scope.row.DeleteTime)}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column v-bind:key="Math.random()" fixed="right" label="操作" min-width="250" width="250" align="center">
+                        <template slot-scope="scope">
+                            <el-button size="mini"
+                                       v-on:click="handleEdit(scope.$index, scope.row)"
+                                       v-if="showView(scope.row)">查看</el-button>
+                            <el-button size="mini"
+                                       type="warning"
+                                       v-on:click="handleEdit(scope.$index, scope.row)"
+                                       v-if="showEdit(scope.row)"><i class="fa fa-edit"></i>编辑</el-button>
+                            <el-button size="mini"
+                                       type="danger"
+                                       v-on:click="handleDelete(scope.$index, scope.row)"
+                                       v-if="showDelete(scope.row)"><i class="el-icon-delete"></i>删除</el-button>
+                            <el-button size="mini" type="primary" v-if="Viewable" v-on:click="handleTimeline(scope.$index, scope.row)"><i class="fa fa-bitbucket"></i>时间轴</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+
+                <el-pagination v-on:size-change="handleSizeChange"
+                               v-on:current-change="handleCurrentChange"
+                               v-bind:current-page.sync="searchParams.page"
+                               v-bind:page-size="searchParams.rows"
+                               layout="prev, pager, next, jumper"
+                               v-bind:total="dataTotal">
+                </el-pagination>
+            </div>
+            <el-dialog title="新增病例" v-bind:visible.sync="dialogVisible" width="80%">
+                <div class="dlg-add-container">
+                    <el-row>
+                        <el-radio-group v-model="options.From" v-on:change="sourceFromChange">
+                            <el-radio-button label="1">急救</el-radio-button>
+                            <el-radio-button label="2">急诊</el-radio-button>
+                            <el-radio-button label="3">门诊</el-radio-button>
+                            <el-radio-button label="0">住院</el-radio-button>
+                        </el-radio-group>
+                    </el-row>
+                    <el-row>
+                        <div style="width:100%;padding:5px 0;display:flex;">
+                            <div style="flex-grow:1">
+                                <el-select v-model="options.OrgCode"
+                                           placeholder="请选择医院"
+                                           size="mini" style="width:100%;">
+                                    <el-option v-for="item in HospitalDict"
+                                               v-bind:key="item.Key"
+                                               v-bind:label="item.Value"
+                                               v-bind:value="item.Key">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                            <div style="flex-grow:2;margin-left:10px;">
+                                <el-date-picker v-model="options.DateRange"
+                                                type="daterange"
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期"
+                                                size="mini" style="width:100%">
+                                </el-date-picker>
+                            </div>
+                            <div style="flex-grow:1;margin-left:10px;">
+                                <el-input v-model="options.Name"
+                                          placeholder="请输入姓名"
+                                          size="mini"></el-input>
+                            </div>
+                            <div style="flex-grow:1;margin-left:10px;" v-if="options.From != '1'&&options.From != '2'&&false">
+                                <el-input v-model="options.No"
+                                          v-bind:placeholder="showData.noInput"
+                                          size="mini"></el-input>
+                            </div>
+                            <div style="width:220px;flex-grow:0;margin-left:30px;">
+                                <el-button size="mini" icon="fa fa-fw fa-star-o" type="primary" v-on:click="newPatient">空白病例</el-button>
+                                @*<el-button size="mini" icon="el-icon-search" circle v-on:click="QueryIF"></el-button>*@
+                                <el-button size="mini" type="warning" icon="fa fa-fw fa-search" circle v-on:click="QueryIF"></el-button>
+                                <el-button size="mini" type="success" icon="el-icon-check" circle v-on:click="doAdd"></el-button>
+                            </div>
+                        </div>
+                    </el-row>
+                    <div style="margin-top:10px">
+                        <el-table v-bind:data="gridData" ref="gridTable" height="300" size="mini" border highlight-current-row v-on:current-change="handleSelectionChange">
+                            <el-table-column type="index"
+                                             width="50"
+                                             align="center">
+                            </el-table-column>
+                            <el-table-column v-if="options.From != '1'" property="DisplayNo" v-bind:label="showData.noCol"></el-table-column>
+                            <el-table-column property="Name" label="患者姓名"></el-table-column>
+                            <el-table-column property="BirthDate" label="出生日期"></el-table-column>
+                            <el-table-column property="Gender" label="性别"></el-table-column>
+                            <el-table-column property="Time" v-bind:label="showData.timeCol"></el-table-column>
+                            <el-table-column property="Complaint" label="主诉（或诊断）"></el-table-column>
+                        </el-table>
+                    </div>
+                </div>
+            </el-dialog>
+            <el-dialog title="时间轴" class="dialog_timeline" v-bind:visible.sync="timelineVisible" width="70%" hei>
+                <div class="patient">
+                    <el-row>
+                        <el-col v-bind:span="6">
+                            <div>患者姓名</div>
+                            <span>{{timelineHeader.Name}}</span>
+                        </el-col>
+                        <el-col v-bind:span="6">
+                            <div>患者性别</div>
+                            <span>{{timelineHeader.GenderDesc}}</span>
+                        </el-col>
+                        <el-col v-bind:span="6">
+                            <div>患者年龄</div>
+                            <span>{{timelineHeader.Age}}</span>
+                        </el-col>
+                        <el-col v-bind:span="6">
+                            <div>联系方式</div>
+                            <span>{{timelineHeader.PhoneNumber}}</span>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col v-bind:span="6">
+                            <div>诊断</div>
+                            <span>{{timelineHeaderExt.DiagnosisDesc}}</span>
+                        </el-col>
+                        <el-col v-bind:span="6">
+                            <div>门诊号</div>
+                            <span>{{timelineHeader.OutpatientNo}}</span>
+                        </el-col>
+                        <el-col v-bind:span="6">
+                            <div>住院号</div>
+                            <span>{{timelineHeader.InpatientNo}}</span>
+                        </el-col>
+                        <el-col v-bind:span="6">
+                            <div>接诊时间</div>
+                            <span>{{timelineHeader.ReceptionTime}}</span>
+                        </el-col>
+                    </el-row>
+                </div>
+                <el-divider></el-divider>
+                <div style="padding:0 8px;">
+                    <el-scrollbar style="width:100%;">
+                        <div style="width:100%;">
+                            <div class="timeline">
+                                <div class="timenodes" v-for="(node, index) in timenodes">
+                                    <label class="time-label">{{node.name}}</label>
+                                    <div class="time-node">
+                                        <div v-bind:class="[index==0 ? 'time-node-left-line-placeholder' : 'time-node-left-line']"></div>
+                                        <a class="time-node-spot"></a>
+                                        <div v-bind:class="[index==timenodes.length-1 ? 'time-node-right-line-placeholder' : 'time-node-right-line']"></div>
+                                    </div>
+                                    <label class="time-value">{{node.time}}</label>
+                                    <div class="time-desc">
+                                        <div v-for='(d,i) in node.description' v-bind:class='d.color'>{{d.desc}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*
+                                <el-steps v-bind:active="timenodes.length" v-bind:align-center="true" v-bind:space="200">
+                                    <el-step v-for="(node, index) in timenodes" v-bind:key="index" v-bind:title="node.name" v-bind:description="node.time" icon="el-icon-time"></el-step>
+                                </el-steps>
+                            *@
+                        </div>
+                    </el-scrollbar>
+                </div>
+                <el-divider></el-divider>
+                <div class="description">
+                    @*<div>说明：</div>
+                        <div>时间节点：意思是实际救治过程中的具体事件的时间定义描述；</div>
+                        <div>发生时间：表示对应时间节点的时间，默认只显示小时和分钟，如10:15表示十点十五分，如果跨天，则增加天，如29 20:00，表示29号的二十点；</div>
+                        <div>实际时长：表示的当前这个时间节点发生的时间距离上一个时间节点之间的时长，上一个时间是相对的，不确定是那个时间，就是时间轴上显示的前一个时间节点；</div>
+                        <div>字体橘色：表示是关键时间节点，可能是需要考核的关键点；</div>
+                    *@
+                </div>
+            </el-dialog>
+            <el-dialog title="导出条件" v-bind:visible.sync="exportVisible" width="40%" class="dlg-export">
+                <el-form abel-position="left" label-width="100px" v-bind:model="exportModel" ref="exportForm">
+                    <el-form-item label="时间范围" prop="DateRange">
+                        <el-date-picker v-model="exportModel.DateRange"
+                                        type="daterange"
+                                        range-separator="至"
+                                        start-placeholder="开始日期"
+                                        end-placeholder="结束日期"
+                                        size="large">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="姓名" prop="Name">
+                        <el-input v-model="exportModel.Name" placeholder="请输入姓名" size="large"></el-input>
+                    </el-form-item>
+                    <el-form-item label="诊断" prop="DiagnosisType">
+                        <el-select v-model="exportModel.DiagnosisType"
+                                   placeholder="请选择诊断"
+                                   size="large">
+                            <el-option v-for="item in DiagnosisDict"
+                                       v-bind:key="item.Key"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                    <el-button type="primary" v-on:click="doExport">导出</el-button>
+                    <el-button v-on:click="resetForm('exportForm')">重置</el-button>
+                    <el-button v-on:click="exportVisible = false">关闭</el-button>
+                </span>
+            </el-dialog>
+
+            <el-dialog title="高级查询" class="dlg-advance-search" v-bind:visible.sync="advSearchVisible" width="50%">
+                <el-form label-position="right" label-width="100px" v-bind:model="advSearchParams">
+                    <el-row style="margin-top:0px" v-bind:gutter="20">
+                        <el-col v-bind:span="12">
+                            <el-form-item label="医院">
+                                <el-select v-model="advSearchParams.OrgCode"
+                                           placeholder="请选择医院"
+                                           size="mini">
+                                    <el-option v-for="item in HospitalDict"
+                                               v-bind:key="item.Key"
+                                               v-bind:label="item.Value"
+                                               v-bind:value="item.Key">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="12">
+                            <el-form-item label="患者姓名">
+                                <el-input v-model="advSearchParams.Name"
+                                          placeholder="请输入姓名"
+                                          maxlength="32"
+                                          size="mini"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row style="margin-top:0px" v-bind:gutter="20">
+                        <el-col v-bind:span="12">
+                            <el-form-item label="性别">
+                                <el-select v-model="advSearchParams.Gender"
+                                           placeholder="请选择性别"
+                                           size="mini">
+                                    <el-option v-for="item in GenderDict"
+                                               v-bind:key="item.Key"
+                                               v-bind:label="item.Value"
+                                               v-bind:value="item.Key">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="12">
+                            <el-form-item label="诊断类型">
+                                <el-select v-model="advSearchParams.DiagnosisType"
+                                           placeholder="请选择诊断"
+                                           size="mini">
+                                    <el-option v-for="item in DiagnosisDict"
+                                               v-bind:key="item.Key"
+                                               v-bind:label="item.Value"
+                                               v-bind:value="item.Key">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row style="margin-top:0px" v-bind:gutter="20">
+                        <el-col v-bind:span="12">
+                            <el-form-item label="来院方式">
+                                <el-select v-model="advSearchParams.ComingType"
+                                           placeholder="请选择来院方式"
+                                           size="mini">
+                                    <el-option v-for="item in ComingTypeDict"
+                                               v-bind:key="item.Key"
+                                               v-bind:label="item.Value"
+                                               v-bind:value="item.Key">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="12">
+                            <el-form-item label="是否放弃治疗">
+                                <el-select v-model="advSearchParams.IsGiveup"
+                                           placeholder="请选择是否放弃治疗"
+                                           size="mini">
+                                    <el-option v-for="item in YesOrNoDict"
+                                               v-bind:key="item.Key"
+                                               v-bind:label="item.Value"
+                                               v-bind:value="item.Key">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row style="margin-top:0px" v-bind:gutter="20">
+                        <el-col v-bind:span="12">
+                            <el-form-item label="出院诊断">
+                                <el-select v-model="advSearchParams.DischargeDiagnosisType"
+                                           placeholder="请选择出院诊断"
+                                           size="mini">
+                                    <el-option v-for="item in DischargeDiagnosisDict"
+                                               v-bind:key="item.Key"
+                                               v-bind:label="item.Value"
+                                               v-bind:value="item.Key">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col v-bind:span="12">
+                            <el-form-item label="转归方式">
+                                <el-select v-model="advSearchParams.OutcomeType"
+                                           placeholder="请选择转归方式"
+                                           size="mini">
+                                    <el-option v-for="item in OutcomeDict"
+                                               v-bind:key="item.Key"
+                                               v-bind:label="item.Value"
+                                               v-bind:value="item.Key">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row style="margin-top:0px" v-bind:gutter="20">
+                        <el-col v-bind:span="12">
+                            <el-form-item label="时间范围">
+                                <el-date-picker v-model="advSearchParams.StartDate"
+                                                size="mini"
+                                                style="width:49%"
+                                                type="date"
+                                                placeholder="开始日期"
+                                                v-bind:picker-options="pickerOptions1">
+                                </el-date-picker>
+                                <el-date-picker v-model="advSearchParams.EndDate"
+                                                size="mini"
+                                                style="width:49%"
+                                                type="date"
+                                                placeholder="结束日期"
+                                                v-bind:picker-options="pickerOptions1">
+                                </el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                    <el-button type="primary" v-on:click="doAdvSearch">查询</el-button>
+                    <el-button v-on:click="advSearchVisible = false">关闭</el-button>
+                </span>
+            </el-dialog>
+            <el-dialog title="提示"
+                       v-bind:visible.sync="tipVisible"
+                       width="36%">
+                <div class="dlg-tips">
+                    <el-table v-bind:data="CommitTips" height="360" style="width: 100%" border>
+                        <el-table-column type="index" width="50" align="center"></el-table-column>
+                        <el-table-column property="MemberId" label="模块" width="150"></el-table-column>
+                        <el-table-column property="MemberName" label="项目" width="260"></el-table-column>
+                        <el-table-column property="Message" label="提示"></el-table-column>
+                    </el-table>
+                </div>
+                <div slot="footer" class="dialog-footer">
+                    <el-button type="primary" v-on:click="tipVisible = false">确 定</el-button>
+                </div>
+            </el-dialog>
+            <el-dialog title="提示"
+                       v-bind:visible.sync="tipUplpadVisible"
+                       width="50%">
+                <div class="dlg-tips">
+                    <el-table v-bind:data="UploadTips" height="360" style="width: 100%" border>
+                        <el-table-column type="index" width="50" align="center"></el-table-column>
+                        <el-table-column property="Name" label="姓名" width="150"></el-table-column>
+                        @*<el-table-column property="UploadStatus" label="上报状态" width="260"></el-table-column>*@
+                        <el-table-column label="上报状态" width="260">
+                            <template slot-scope="scope">
+                                <p v-bind:class="scope.row.UploadStatus?'tip_green':'tip_red'">{{ scope.row.UploadStatusDesc }}</p>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="提示信息" style="color:red;">
+                            <template slot-scope="scope">
+                                <el-tooltip placement="top">
+                                    <div slot="content">{{scope.row.Message}}</div>
+                                    <i class="el-icon-info" style="font-size: 20px; align-self: center;"></i>
+                                </el-tooltip>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                <div slot="footer" class="dialog-footer">
+                    <el-button type="primary" v-on:click="tipUplpadVisible = false">确 定</el-button>
+                </div>
+            </el-dialog>
+        </div>
+    </div>
+
+    @*<div class="search-bar2" style="padding-top:10px; background-color:azure">
+            <el-row>
+                <label>患者姓名:</label>
+                <el-input v-model="searchParams.Name"
+                          placeholder="请输入姓名"
+                          maxlength="32"
+                          size="small"></el-input>
+            </el-row>
+            <el-row>
+                <label>医院:</label>
+                <el-select v-model="searchParams.OrgCode"
+                           placeholder="请选择医院"
+                           size="small">
+                    <el-option v-for="item in HospitalDict"
+                               v-bind:key="item.Key"
+                               v-bind:label="item.Value"
+                               v-bind:value="item.Key">
+                    </el-option>
+                </el-select>
+            </el-row>
+
+            <el-row>
+                <label>诊断类型:</label>
+                <el-select v-model="searchParams.DiagnosisType"
+                           placeholder="请选择诊断"
+                           size="small">
+                    <el-option v-for="item in DiagnosisDict"
+                               v-bind:key="item.Key"
+                               v-bind:label="item.Value"
+                               v-bind:value="item.Key">
+                    </el-option>
+                </el-select>
+            </el-row>
+            <el-row>
+                <label>来院方式:</label>
+                <el-select v-model="searchParams.ComingType"
+                           placeholder="请选择来院方式"
+                           size="small">
+                    <el-option v-for="item in ComingTypeDict"
+                               v-bind:key="item.Key"
+                               v-bind:label="item.Value"
+                               v-bind:value="item.Key">
+                    </el-option>
+                </el-select>
+            </el-row>
+            <el-row>
+                <label>时间范围:</label>
+                <div>
+                    <el-date-picker v-model="searchParams.StartDate"
+                                    style="width:49%;font-size:12px;"
+                                    size="small"
+                                    type="date"
+                                    placeholder="开始日期"
+                                    v-bind:picker-options="pickerOptions1">
+                    </el-date-picker>
+                    <el-date-picker v-model="searchParams.EndDate"
+                                    size="small"
+                                    style="width:49%;font-size:12px;"
+                                    type="date"
+                                    placeholder="结束日期"
+                                    v-bind:picker-options="pickerOptions1">
+                    </el-date-picker>
+                </div>
+            </el-row>
+
+            <el-row type="flex" justify="end">
+                <el-col style="margin-right:5px;">
+                    <el-button type="primary" size="small" class="search-button" icon="fa fa-fw fa-search" v-on:click="searchClick" v-if="Queryable">查询</el-button>
+                </el-col>
+                <el-col style="margin-left:5px;margin-right:2px;">
+                    <el-button type="primary" size="small" class="search-button" icon="fa fa-fw fa-search-plus" v-on:click="advSearchClick" v-if="Queryable">高级查询</el-button>
+                </el-col>
+            </el-row>
+        </div>*@
+
+</div>
+
+<script src="@Url.Random("~/Views/DataManage/Index.js")"></script>
+<script src="@Url.Random("~/Views/DataManage/ApiService.js")"></script>
+
+
+
+
+
+
+

@@ -1,0 +1,37 @@
+-- Create table
+create table MED_PAT_TIMENODES
+(
+  patient_no VARCHAR2(40) not null,
+  tag_id     VARCHAR2(40) not null,
+  item_name  VARCHAR2(60) not null,
+  item_value DATE,
+  bind_time  DATE
+)
+tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table MED_PAT_TIMENODES
+  add constraint PK_MED_PAT_TIMENODES primary key (PATIENT_NO, TAG_ID, ITEM_NAME)
+  using index 
+  tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Grant/Revoke object privileges 
+grant select, insert, update, delete on MED_PAT_TIMENODES to ROLE_DOCARE;

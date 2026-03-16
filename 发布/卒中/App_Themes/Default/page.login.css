@@ -1,0 +1,101 @@
+﻿#container{
+    width:100%;
+    height:500px;
+    position:absolute;
+    margin-top:-246px;
+    top:50%;
+    overflow:hidden;
+    display:block;
+}
+#loginForm{
+    width:600px;
+    height:400px;
+    margin:0 auto;
+    padding:80px 50px 10px;
+    /*background:url(img/login/logo.png) left top no-repeat;*/
+    border:1px solid #ccc;
+    box-shadow: 0 0 30px rgba(0,0,0,.2);
+}
+#loginForm .sys-name{
+    width:320px;
+    float:left;
+}
+#loginForm .sys-name h2{
+    width:auto;
+    height:21px;
+    line-height: 21px;
+    padding-left:74px;
+    font-size:17px;
+    color:#007ebc;
+    letter-spacing:2px;
+    /*background:url(img/login/docare.png) left no-repeat;*/
+}
+#loginForm .sys-name span{
+    line-height: 24px;
+    padding-left: 74px;
+    color:#999;
+}
+#loginForm .sys-name img{
+    padding:20px 0 0 30px;
+}
+#loginForm form{
+    width:200px;
+    height:292px;
+    border:1px solid #d0d0d0;
+    float:right;
+    display:inline;
+    padding:24px;
+    color:#007ebc;
+}
+#loginForm form label h1{
+    font-weight:normal;
+    letter-spacing:2px;
+    line-height:80px;
+}
+#loginForm form #UserID, form #UserPwd{
+    width:188px;
+    height:24px;
+    line-height:24px;
+    padding:0 5px;
+    background:#fff;
+    border:1px solid #d0d0d0;
+    display:block;
+    margin:10px auto 15px;
+}
+#loginForm form #UserID:focus, form #UserPwd:focus{
+    box-shadow:1px 1px 2px rgba(0,0,0,.2);
+}
+#loginForm form button{
+    width:200px;
+    height:33px;
+    line-height:33px;
+    margin-top:10px;
+    font-size:13px;
+    background:#007ebc;
+}
+#loginForm form button:hover{
+    background:#006da3;
+}
+#loginForm #copyright{
+    width:100%;
+    margin:40px auto;
+    float:left;
+    text-align:center;
+    color:#999;
+}
+#err-msg-panel{
+    font-weight:normal;
+    color:Red;
+    height:20px;
+    line-height:20px;
+}
+.err-msg {
+    font-weight:normal;
+    color:Red;
+    height:20px;
+    line-height:20px;
+    margin-top:-13px;
+}
+
+
+

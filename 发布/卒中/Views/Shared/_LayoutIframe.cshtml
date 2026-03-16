@@ -1,0 +1,35 @@
+﻿@using DoCare.Framework.Extension
+<!DOCTYPE html>
+@{
+    ViewBag.Title = Resources.AppName;
+    ViewBag.CopyRight = Resources.CopyRight;
+    ViewBag.Version = Resources.AppVersion;
+}
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    <link href=@Url.GetCssJsUrl("~/App_Themes/Default/global.css") rel="stylesheet" />
+    @*<link href=@Url.GetCssJsUrl("~/App_Themes/Default/frame.css") rel="stylesheet" />*@
+    <link href=@Url.GetCssJsUrl("~/App_Themes/Default/control.css") rel="stylesheet" />
+    <link href=@Url.GetCssJsUrl("~/Scripts/showLoading/showLoading.css") rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/moment.js"></script>
+    <script src="~/Scripts/layer/layer.js"></script>
+    <script src="~/Scripts/radialIndicator.min.js"></script>
+    <script src="~/Scripts/echarts/echarts.min.js"></script>
+    <script src="~/Scripts/echarts/macarons.js"></script>
+    <script src="~/Scripts/angular/angular.min.js"></script>
+    <script src="~/Scripts/jquery-ajaxSetup.js"></script>
+    <script src="~/Scripts/filterModule.js"></script>
+    <script src="~/Scripts/directiveModule.js"></script>
+    <script src="~/Scripts/showLoading/showLoading.js"></script>
+</head>
+<body>
+    @RenderBody()
+</body>
+</html>

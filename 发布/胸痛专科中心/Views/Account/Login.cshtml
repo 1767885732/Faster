@@ -1,0 +1,101 @@
+﻿@{
+    ViewBag.Title = "胸痛专科中心系统";
+    Layout = null;
+    var returnurl = ViewBag.ReturnUrl as string;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    @*<link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />*@
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/App_Themes/Default/global.css" rel="stylesheet" type="text/css" />
+    <link href="~/App_Themes/Default/frame.css" rel="stylesheet" type="text/css" />
+    <link href="~/App_Themes/Default/control.css" rel="stylesheet" type="text/css" />
+    <link href="~/App_Themes/Default/page.login.css" rel="stylesheet" type="text/css" />
+    
+
+    <script src="~/Scripts/extension/vue.js"></script>
+    <link href="~/Scripts/extension/el/index.css" rel="stylesheet" />
+    <script src="~/Scripts/extension/el/index.js"></script>
+    <script src="~/Scripts/extension/axios.min.js"></script>
+    <script src="~/Scripts/extension/polyfill.min.js"></script>
+    <script src="~/Scripts/docare/md5.js"></script>
+
+</head>
+<body>
+    <div id="container">
+        <div id="login-panel">
+            <div class="sys-name">
+                @*<h2>@Resources.AppName</h2>*@
+                @*<span>版本号:<i>@(Resources.AppVersion)</i></span>*@
+                <img src="~/App_Themes/Default/imgt/胸痛.png" />
+            </div>
+            <div id="login_form">
+                <el-form label-position="top" :model="loginModel" :rules="rules" ref="ruleForm" :hide-required-asterisk="true">
+                    <el-form-item>
+                        <h1>欢迎登录</h1>
+                    </el-form-item>
+                    <el-form-item label="用户名" prop="userName">
+                        <el-input v-model="loginModel.userName" v-on:keyup.13.native="submitForm('ruleForm')" size="mini"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input type="password" v-model="loginModel.password" autocomplete="off" v-on:keyup.13.native="submitForm('ruleForm')"  size="mini"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" v-on:click="submitForm('ruleForm')" size="small">登录</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <p id="copyright">@Resources.CopyRight</p>
+        </div>
+    </div>
+    <script>
+        new Vue({
+            el: "#login_form",
+            data: function() {
+                return {
+                    loginModel: {
+                        userName: "",
+                        password: ""
+                    },
+                    rules: {
+                        userName: [
+                            { required: true, message: '请输入用户名', trigger: 'blur' },
+                            { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+                        ],
+                        password: [
+                            { required: true, message: '请输入密码', trigger: 'change' },
+                            { min: 1, max: 16, message: '长度在 1 到 16 个字符', trigger: 'blur' }
+                        ],
+                    }
+                }
+            },
+            methods: {
+                submitForm: function (formName) {
+                    var _this = this;
+                    this.$refs[formName].validate(function(valid) {
+                        if (valid) {
+                            _this.loginModel.password = hex_md5(_this.loginModel.password);
+                            axios.post("/Account/LoginValidate", { loginName: _this.loginModel.userName, password: _this.loginModel.password }).then(function (res) {
+                                if (res.data.IsSuccess) {
+                                    window.location.href = res.data.Data.RedirectUrl;
+                                } else {
+                                    _this.$message.error(res.data.Message);
+                                }
+                            }).catch(function (error) {
+                                console.log(error);
+                                _this.$message.error('连接服务器出错');
+                            });
+                        } else {
+                            console.log('error submit!!');
+                            return false;
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

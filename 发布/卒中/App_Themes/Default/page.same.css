@@ -1,0 +1,102 @@
+﻿.same-popup{
+    padding: 10px 10px 0;
+}
+/****  search  ****/
+.same-popup .search{
+    height: 40px;
+}
+.same-popup .search input[type='text'], .same-popup .search select{
+    width: 100px;
+    height: 26px;
+    padding: 0 5px;
+    border: 1px solid #dedede;
+}
+.same-popup .search .datetime{
+    background-position: 99% center;
+}
+.same-popup .search select{
+    width: 60px;
+    height: 28px;
+    padding: 0;
+}
+.same-popup .search input[type='text'].id{
+    width: 181px;
+}
+/*-------- 患者列表 --------*/
+.same-list{
+    width: 100%;
+    overflow: auto;
+    margin-bottom: 10px;
+    padding: 4px 0;
+    border-radius: 3px;
+    box-shadow: 0 0 16px #d7d7d7;
+    -moz-box-shadow: 0 0 16px #d7d7d7;
+    -webkit-box-shadow: 0 0 16px #d7d7d7;
+}
+.same-list:last-child{
+    margin-bottom: 0;
+}
+.same-list:hover{
+    cursor: pointer;
+    box-shadow: 0 0 10px #85c3e6;
+    -moz-box-shadow: 0 0 10px #85c3e6;
+    -webkit-box-shadow: 0 0 10px #85c3e6;
+}
+.same-popup dl.selected{
+    background-color: #e4e8ed;
+}
+.same-list dt{
+    width: 48px;
+    height: 48px;
+    float: left;
+    padding-right: 6px;
+}
+.same-list dt img{
+    width: 36px;
+    height: 36px;
+    margin: 6px;
+    display: inline;
+}
+.same-list dd{
+    width: calc(100% - 60px);
+    width: -moz-calc(100% - 60px);
+    width: -webkit-calc(100% - 60px);
+    float: left;
+    padding-right: 6px;
+}
+.same-list dd h3{
+    font-size: 14px;
+    line-height: 24px;
+    color: #003e5c;
+}
+.same-list dd h3 .name{
+    max-width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    float: left;
+    color: #003e5c;
+}
+.same-list dd h3 span{
+    font-size: 12px;
+    font-weight: normal;
+    padding-left: 10px;
+}
+.same-list dd h3 span:last-child{
+    float: right;
+}
+.same-list dd p{
+    line-height: 20px;
+}
+.same-list dd p label{
+    color: #666;
+}
+.same-list dd p .initial{
+    width: calc(100% - 60px);
+    width: -moz-calc(100% - 60px);
+    width: -webkit-calc(100% - 60px);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    float: right;
+    color: #666;
+}
+

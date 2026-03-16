@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="IQCODE" Title="IQCODE（16项评估）" >
+    <Group>
+      <RadioBox Code="IQCODE001" Title="了解正在发生什么事件及原因" Desc="了解正在发生什么事件及原因">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE002" Title="记得几天前的谈话内容" Desc="记得几天前的谈话内容">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE003" Title="记得最近发生的事情" Desc="记得最近发生的事情">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE004" Title="记得家人和熟人的职业、生日和地址" Desc="记得家人和熟人的职业、生日和地址">
+        <Option Id="01" Text="完全不会" Score="0"/>
+        <Option Id="02" Text="好几天" Score="1"/>
+        <Option Id="03" Text="一半以上的天数" Score="2"/>
+        <Option Id="04" Text="几乎每天" Score="3"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE005" Title="记得自己的住址和电话号码" Desc="记得自己的住址和电话号码">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE006" Title="记得东西未放回原位，仍能找得到" Desc="记得东西未放回原位，仍能找得到">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE007" Title="记得今天是星期几，几月份" Desc="记得今天是星期几，几月份">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE008" Title="记得东西经常是放在什么地方" Desc="记得东西经常是放在什么地方">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE009" Title="使用日常用具的能力（如电视机、铁锤等）" Desc="使用日常用具的能力（如电视机、铁锤等）">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE010" Title="学习使用新的家用工具与电器的能力" Desc="学习使用新的家用工具与电器的能力">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE011" Title="学习新事物的能力" Desc="学习新事物的能力">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE012" Title="看懂电视或书本中讲的故事" Desc="看懂电视或书本中讲的故事">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE013" Title="对日常生活事物自己会做决定" Desc="对日常生活事物自己会做决定">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE014" Title="会用钱买东西" Desc="会用钱买东西">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE015" Title="处理财务的能力（如退休金，到银行）" Desc="处理财务的能力（如退休金，到银行）">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+      <RadioBox Code="IQCODE016" Title="处理日常生活上的计算问题" Desc="处理日常生活上的计算问题">
+        <Option Id="01" Text="好多了" Score="1"/>
+        <Option Id="02" Text="好一点" Score="2"/>
+        <Option Id="03" Text="没变化" Score="3"/>
+        <Option Id="04" Text="差一点" Score="4"/>
+        <Option Id="05" Text="差多了" Score="5"/>
+      </RadioBox>
+    </Group>
+  </Template>
+</Config>

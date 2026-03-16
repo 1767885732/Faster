@@ -1,0 +1,387 @@
+﻿@using DoCare.CVA.Data.Const
+@model DoCare.CVA.Business.Model.RegistModel
+
+@using DoCare.ToolKit
+@{
+    ViewBag.Title = "患者登记";
+    Layout = null;
+}
+<script>
+    var model =  @Html.Raw((JsonKit.Serialize(Model)));
+    var PermissionSave = @Html.Raw((JsonKit.Serialize(ViewBag.PermissionSave)));
+    $(function () {
+        // 所有时间控件，失去焦点后执行校验方法，校验通过后更新时间轴对应节点
+        $("[timeId]").blur(function () {
+            if (validator.validateElement($(this))) {
+                var timeIdElement = $("#" + $(this).attr("timeId"));
+                var dataName = timeIdElement.attr("data-desp");
+                var t = $(this).val();
+                if (t) {
+                    t = t.replace('T', " ");
+                    t = t.substr(0, 10);
+                } else {
+                    t = "";
+                }
+                timeIdElement.attr("title", dataName + ":" + t);
+                timeIdElement.attr("data-value", $(this).val());
+                timeIdElement.find("i").html($(this).val());
+            }
+        });
+
+        // 初始化校验器
+        var validator = new MDEValidator("@ViewBag.RegistId", "Regist", $("#_patient_edit_form"));
+        
+        var app = angular.module('ngAppRegist', ['mdsdFilter', 'mdsdDirective']);
+        app.controller('ngCtrlRegist', function ($scope, $filter, $http) {
+            $scope.hospitalDict = model.OrgDict;
+            $scope.GenderDict = model.GenderDict;
+            $scope.consciousnessDict = model.ConsciousnessDict;
+            $scope.comingTypeDict = model.ComingTypeDict;
+            $scope.Regist = model.Regist;
+            $scope.registId = model.Id;
+            $scope.PermissionSave = PermissionSave;      
+            // 保存事件
+            $scope.save = function () {
+                // 验证后保存
+                //if (!validator.DoValidate()){
+                //    return false;
+                //}
+                // 重要项校验
+                var errorItem = $.validator.errorItem;
+                if (errorItem != undefined && errorItem != null && errorItem.length > 0) {
+                    var message = "<div style='margin-left: 50px;'>";
+                    $(errorItem).each(function (index, item) { message += (item + "<br>") });
+                    $.messager.confirm('警告', message + "</div>", function (r) {
+                        if (r) $scope.doSave();
+                    });
+                }
+                else {
+                    $scope.doSave();
+                }
+            }
+
+            $scope.complete = function(){
+                $scope.doSave(true);
+            }
+
+            $scope.doSave = function (doComplete) {
+                $http({
+                    method: 'POST',
+                    url: '/Regist/SaveRegist',
+                    data: { regist: $scope.Regist }
+                }).then(function successCallback(response) {
+                    if (response.data.IsSuccess) {
+                        if ($scope.Regist.Id == null || $scope.Regist.Id == "") {
+                            layer.alert("保存成功", { icon: 1 }, function () {
+                                window.location.href = "/DataManage/EditPatient?registId=" + response.data.Data;
+                            });
+                        }
+                        else {
+                            if(doComplete){
+                                $.ajax({
+                                    type: 'POST',
+                                    url: AddUrlPrefix('/DataManage/Commit'),
+                                    data: { registId: $scope.Regist.Id},
+                                    dataType: 'json',
+                                    success: function (json) {
+                                        if (json.IsSuccess) {
+                                            $scope.$apply(function () {
+                                                $scope.Regist.IsCompleted = true;
+                                            });
+                                            layer.alert("提交成功", { icon: 1 });
+                                            pageLoading(0);
+                                        } else {
+                                            layer.alert( "提交失败:" + json.Message, { icon: 2 });
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.alert("请求失败！", { icon: 2 });
+                                    }
+                                });
+                            }
+                            else{
+                                layer.alert("保存成功", { icon: 1 });
+                                pageLoading(0);
+                            }
+                        }
+                    }
+                    else {
+                        layer.alert(response.data.Message, { icon: 2 });
+                    }
+                }, function errorCallback(response) {
+                    // 请求失败执行代码
+                    layer.alert("请求失败！", { icon: 2 });
+                });
+            }
+            
+            $scope.SetOrgName = function () {
+                $scope.Regist.OrgName = $("#org").find("option:selected").text();//选中的文本
+            }
+
+            $scope.Init = function() {
+                //如果患者登记信息未空，则
+                debugger;
+                if (registId == null || registId == '') {
+                    if (ehrId == null || ehrId == '') return;
+                    $scope.Create(org, ehrId);
+                    return;
+                }
+                if ($scope.Regist == null) return;
+                //如果存在患者就诊唯一号，则从接口刷新患者信息
+                if($scope.Regist.EhrId == null || $scope.Regist.EhrId == '') return;
+                //$scope.Refresh();
+            }
+
+            $scope.Create = function (orgId, ehrId) {
+                var maskIndex = layer.load();
+
+                $http({
+                    method: 'POST',
+                    url: '/Regist/Create',
+                    data: { orgId: orgId, ehrId: ehrId }
+                }).then(function successCallback(response) {
+                    if (response.data.IsSuccess) {
+                        debugger;
+                        layer.close(maskIndex); // 关闭等待层
+                        $scope.Regist = response.data.Data;
+                        if(source!=null && source=="5")
+                        {
+                            if($scope.Regist.ComingType==null || $scope.Regist.ComingType== '3')
+                            {                    
+                                $scope.Regist.ComingType="4";
+                            }            
+                        }
+                    }
+                    else {
+                        layer.close(maskIndex); // 关闭等待层
+                        layer.alert(response.data.Message, { icon: 2 });
+                    }
+                }, function errorCallback(response) {
+                    layer.close(maskIndex); // 关闭等待层
+                    // 请求失败执行代码
+                    layer.alert("请求失败！", { icon: 2 });
+                });
+            }
+
+            $scope.Refresh = function () {
+                if ($scope.Regist == null) return;
+                if ($scope.Regist.EhrId == null) return;
+                var maskIndex = layer.load();
+                $.post("/Regist/Refresh", $scope.Regist, function (result) {
+                    if (result.IsSuccess) {
+                        $scope.$apply(function () {
+                            $scope.Regist = result.Data;
+                            if(source!=null && source=="5")
+                            {
+                                if($scope.Regist.ComingType==null || $scope.Regist.ComingType== '3')
+                                {                    
+                                    $scope.Regist.ComingType="4";
+                                }            
+                            }
+                        });
+                        $("[timeId]").blur();
+                        layer.close(maskIndex);
+                    }
+                    else
+                    {
+                        layer.close(maskIndex); // 关闭等待层
+                    }
+                });
+            }
+
+            $scope.onRelation = function(source){
+                if (!$scope.Regist.EhrId ) {
+                    layer.alert('您还未绑定患者，请先进行绑定操作！', { icon: 2 });
+                    return;
+                }
+                $("#IsConfirm").val("0");
+                $("#Patient").val("");
+                $.post('/DataManage/CreatePatient', { source: source,type:"RelationClinicNo",name:$scope.Regist.Name }, function (str) {
+                    layer.open({
+                        type: 1,
+                        title: '关联患者',
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1000px', '480px'],
+                        content: str,
+                        end: function (index, layero) {
+                            if($("#IsConfirm").val()=="1"){
+                                if($("#Patient").val()!=""){
+                                    var patient = JSON.parse($("#Patient").val());
+                                    var maskIndex = layer.load();
+                                    $.post("/DataManage/BindPatient", {ehrId:$scope.Regist.EhrId,Patient:patient}, function (result) {
+                                        debugger;
+                                        if (result.IsSuccess) {
+                                            layer.close(maskIndex); // 关闭等待层
+                                            $scope.$apply(function () {
+                                                $scope.Regist.ClinicNo = patient.DisplayNo;
+                                                $scope.Regist.ClinicSn = patient.UniqueNo
+                                            })
+                                        }
+                                        else
+                                        {
+                                            layer.close(maskIndex); // 关闭等待层
+                                        }
+                                    });
+                                }
+                            };
+
+                        }
+                    });
+                });
+                parent.layer.closeAll()
+            }
+
+            $scope.Init();
+        });
+        angular.bootstrap($(".content")[0], ['ngAppRegist']);
+    });
+</script>
+<div class="content" ng-app="ngAppRegist" ng-controller="ngCtrlRegist">
+    <div class="form-tit">
+        <a href="">数据管理</a>&gt;&nbsp;患者登记&nbsp;
+        <span>&#40;注:<b class="bx"></b>必填项&nbsp;<b style='vertical-align: top;color: #F00;'>&#10026;&nbsp;</b>重要项&nbsp;&#41;</span>
+        <div class="op-panel">
+            <input type="hidden" id="IsConfirm" value="0">
+            <input type="hidden" id="Patient">
+            <span style="margin:0px 1px;" />
+            <button type="button" class="btn-primary" ng-click="Refresh()">同步</button>
+            <button type="button" class="btn-primary" ng-if="PermissionSave && !Regist.IsCompleted" ng-click="save()" id="btnSave">保存</button>
+            <button type="button" class="btn-primary" ng-if="PermissionSave && !Regist.IsCompleted && Regist.Id" ng-click="complete()" id="btnComplete">提交</button>
+            <span style="margin:0px 1px;" />
+        </div>
+    </div>
+
+    <form id="_patient_edit_form" class="form-content">
+        <!--病历部分  begin-->
+        <fieldset class="medical-record">
+            <h4 class="tit-block">基本信息</h4>
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="OrgCode"></b>医院:</label>
+                    <select ng-model="Regist.OrgCode" validateName="OrgCode" id="org" name="OrgCode" ng-options="item.Code as item.Name for item in hospitalDict" ng-change="SetOrgName()"></select>
+                </div>
+                <input type="hidden" ng-model="Regist.OrgName" />
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="Name"></b>患者姓名:</label>
+                    <input type="text" ng-model="Regist.Name" id="Name" name="Name" validateName="Name">
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="Age"></b>年龄:</label>
+                    <input type="text" ng-model="Regist.Age" id="Age" name="Age" validateName="Age"><em>岁</em>
+                </div>
+                <div style="width: 25%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="Gender"></b>性别:</label><br />
+                    <label ng-repeat="item in GenderDict | orderBy:'Key'" style="margin-top:5px;">
+                        <input type="radio" name="sex" ng-model="Regist.Gender" value="{{item.Key}}" validateName="{{$index == 0 ? 'Gender' : ''}}"><span>{{item.Value}}</span>
+                    </label><br />
+                </div>
+            </div>
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="RegistDate"></b>登记时间:</label>
+                    <input type="datetime" ng-model="Regist.RegistDate" id="RegistDate" name="RegistDate" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" validateName="RegistDate">
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="IdcardNo"></b>患者身份证号:</label>
+                    <input type="text" ng-model="Regist.IdcardNo" id="IdcardNo" name="IdcardNo" maxlength="18" validateName="IdcardNo">
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="PhoneNo1"></b>联系电话:</label>
+                    <input type="text" ng-model="Regist.PhoneNo1" id="PhoneNo1" name="PhoneNo1" validateName="PhoneNo1">
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="ClinicNo"></b>门诊号:</label>
+                    <input type="text" ng-model="Regist.ClinicNo" id="ClinicNo" name="ClinicNo" validateName="ClinicNo">
+                    <button type="button" class="btn-warning btn-extract" ng-click="onRelation('3')" ng-if="!!Regist.EhrId">关联</button>
+                </div>
+            </div>
+            <div class="row-box">                
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="DiseaseTime"></b>发病时间/末次正常时间:</label>
+                    <input type="datetime" ng-model="Regist.DiseaseTime" name="DiseaseTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" validateName="DiseaseTime" timeId=@TimeLineNodes.D020001>
+                </div>
+            </div>
+            <h4 class="tit-block">来院方式</h4>
+            
+            <div class="row-box">
+                <div style="width: 60%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="ComingType"></b>来院方式:</label><br />
+                    <label ng-repeat="item in comingTypeDict | orderBy:'Key'">
+                        <input type="radio" name="coming" ng-model="Regist.ComingType" validateName="ComingType" value="{{item.Key}}"><span>{{item.Value}}</span>
+                    </label>
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="PatientArrivalTime"></b>患者到达医院时间:</label>
+                    <input type="datetime" ng-model="Regist.PatientArrivalTime" name="PatientArrivalTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" validateName="PatientArrivalTime">
+                </div>
+            </div>
+            
+            <div ng-show="Regist.ComingType=='3' || Regist.ComingType =='4'">
+                <h4 class="tit-block">综合评估</h4>
+                <div class="row-box">
+                    <div style="width: 75%;float:left;margin-bottom:10px;position:relative;">
+                        <label><b validateSnow="Consciousness"></b>意识:</label><br />
+                        <label ng-repeat="item in consciousnessDict | orderBy:'Key'">
+                            <input type="radio" name="consciousness" ng-model="Regist.Consciousness" validateName="Consciousness" value="{{item.Key}}"><span>{{item.Value}}</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row-box">
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="Temperature"></b>体温:</label>
+                        <input type="text" name="Temperature" maxlength="5" validateName="Temperature" ng-model="Regist.T">
+                        <em>℃</em>
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="PulseRate"></b>脉搏:</label>
+                        <input type="text" maxlength="4" name="PulseRate" validateName="PulseRate" ng-model="Regist.P">
+                        <em>次/分钟</em>
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="RespiratoryRate"></b>呼吸:</label>
+                        <input type="text" maxlength="4" name="RespiratoryRate" validateName="RespiratoryRate" ng-model="Regist.R">
+                        <em>次/分钟</em>
+                    </div>
+                    <div class="mr-row-fourth" style="width:248px;">
+                        <label><b validateSnow="Sbp"></b>血压（收缩压/舒张压）:</label>
+                        <input placeholder="收缩压" type="text" name="Sbp" maxlength="4" style="width:30%;border:none;border-bottom:1px solid #dadada;" validateName="Sbp" ng-model="Regist.Sp">/
+                        <input placeholder="舒张压" style="width:30%;border:none;text-align:center;border-bottom:1px solid #dadada;" type="text" maxlength="4" name="Dbp" ng-model="Regist.Dp">
+                        <em>mmHg</em>
+                    </div>
+                </div>
+                <div class="row-box">
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="Spo"></b>血氧:</label>
+                        <input type="text" maxlength="5" name="BloodOxygen" validateName="Spo" ng-model="Regist.Spo">
+                        <em>%</em>
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="Hr"></b>心率:</label>
+                        <input type="text" maxlength="4" name="Hr" validateName="Hr" ng-model="Regist.Hr">
+                        <em>次/分钟</em>
+                    </div>
+                </div>
+
+            </div>
+            
+
+            <div class="clear"></div>
+            <div class="warm-tips m-t-20">
+                <div class="mr-row-half bring">
+                    <h6>患者纳入标准：</h6>
+                    <p>&#9830;&nbsp;临床拟诊为下列疾病之一：缺血性卒中、短暂性脑缺血发作、原发性脑出血、蛛网膜下腔出血；</p>
+                    <p>&#9830;&nbsp;脑卒中事件发生的时间距就诊日期在7天内。</p>
+                </div>
+                <div class="mr-row-half remove">
+                    <h6>患者排除标准：</h6>
+                    <p>&#9830;&nbsp;无症状及体征的静止性脑梗死；</p>
+                    <p>&#9830;&nbsp;外伤性脑出血；</p>
+                    <p>&#9830;&nbsp;非脑血管病事件；</p>
+                    <p>&#9830;&nbsp;发病至就诊时间超过7天。</p>
+                </div>
+            </div>
+        </fieldset>
+        <!--病历部分  end-->
+    </form>
+</div>

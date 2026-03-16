@@ -1,0 +1,306 @@
+﻿@model DoCare.Component.Followup.Data.IFollowup
+@using DoCare.ToolKit
+@using DoCare.Framework.Extension
+@{
+    ViewBag.Title = "卒中评分";
+    Layout = null;
+}
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/page.records.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/global.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/frame.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/control.css") rel="stylesheet" />
+<script src="~/Scripts/JSLINQ.js"></script>
+<script src="~/Scripts/DatePicker/WdatePicker.js"></script>
+<script>
+    var record =  @Html.Raw((JsonKit.Serialize(Model)));
+    var followupCalendar =  @Html.Raw((JsonKit.Serialize(ViewBag.FollowupCalendar)));
+    var registId = @Html.Raw((JsonKit.Serialize(ViewBag.RegistId)));
+    var app = angular.module('ScoreApp', []);
+
+    // 日期控件指令
+    app.directive('wdatePicker', function () {
+        return {
+            restrict: "A",
+            link: function (scope, element, attr) {
+                element.bind('click', function () {
+                    window.WdatePicker({
+                        onpicked: function () { element.change() },
+                        oncleared: function () { element.change() },
+                        dateFmt: 'yyyy-MM-dd HH:mm'
+                    })
+                });
+            }
+        }
+    });
+    // controller
+    app.controller('ScoreController', function ($scope, $filter, $http) {
+        // 评分记录
+        $scope.record = record;
+        $scope.followupCalendar = followupCalendar;
+        $scope.registId = registId;
+        if ($scope.record != null) {
+            // 对时间格式：/Date(1448864369815)/ 的格式化
+            if ($scope.record.Time != null && $scope.record.Time != '') {
+                $scope.record.Time = $filter("date")($scope.record.Time.replace(/\/Date\((\d+)\)\//, "$1"), "yyyy-MM-dd HH:mm");
+            }
+        }
+        // 获取当前时间
+        $scope.getCurrentTime = function()
+        {
+            //类型：HAT = 1, LADS = 2, NIHSS = 3, STAF = 4
+            $scope.record.Time = $filter('date')(new Date(), 'yyyy-MM-dd HH:mm');
+        }
+        // 单选变化
+        $scope.updateSelection = function (key, value, score, oldValue) {
+            if(value!=oldValue){
+                $scope.record.ScoreValue = 0;
+                for (var i = 0; i < $scope.record.ItemCategories[0].Items.length; i++) {
+                    var item = $scope.record.ItemCategories[0].Items[i];
+
+                    if(item.ID==key)
+                    {
+                        item.Score = score;
+                        item.Value = value;
+                    }
+                    $scope.record.ScoreValue += item.Score|0;
+                }
+                var data = {Key:key,Value:value};
+                $scope.saveSingleData(JSON.stringify(data),$scope.record.ScoreValue);
+            }
+        }
+        // 多选变化
+        $scope.multiSelect = function ($event, key, value, score, oldValue) {
+            var checkbox = $event.target;
+            for (var i = 0; i < $scope.record.ItemCategories[0].Items.length; i++) {
+                var item = $scope.record.ItemCategories[0].Items[i];
+
+                if(item.ID==key)
+                {
+                    if(checkbox.checked){
+                        item.Value = addValue(item.Value,value);
+                        value = item.Value;
+                    }
+                    else
+                    {
+                        item.Value = delValue(item.Value,value);
+                        value = item.Value;
+                    }
+                }
+            }
+            var data = {Key:key,Value:value};
+            $scope.saveSingleData(JSON.stringify(data),$scope.record.ScoreValue);
+        }
+        // 文本
+        $scope.selectChanged = function (key, value) {
+            var data = { Key: key, Value: value };
+            $scope.saveSingleData(JSON.stringify(data), $scope.record.ScoreValue);
+        }
+        //评分选中
+        $scope.getScoreInfo = function (key, value, score) {
+            $scope.Record.ScoreValue = 0;
+            for (var i = 0; i < $scope.Record.ItemCategories[0].Items.length; i++) {
+                var item = $scope.Record.ItemCategories[0].Items[i];
+
+                if (item.ID == key) {
+                    item.Score = score;
+                    item.Value = value;
+                }
+                $scope.Record.ScoreValue += item.Score | 0;
+            }
+            var data = { Key: key, Value: value };
+            $scope.ScoreItemData = { ID: $scope.Record.ID, Content: JSON.stringify(data), Value: $scope.Record.ScoreValue };
+        }
+        // 保存（含评分）
+        $scope.saveSingleData = function (itemKeyValue, totalScore)
+        {
+            var isCompleted = $scope.followupCalendar.IsEventCompleted;
+            if (isCompleted == "1") {
+                return false;
+            }
+            $http({
+                method: 'POST',
+                url: '/FollowUpManage/SaveSingleScore',
+                data: {
+                    followupId: $scope.record.ID,
+                    tempId: $scope.record.TemplateId,
+                    itemValue: itemKeyValue,
+                    totalScore: null
+                }
+            }).then(function successCallback(response) {
+                if (response.data.IsSuccess) {
+                }
+                else {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+        // 保存记录（随访时间、随访医生）
+        $scope.saveRecord = function(isCompleted,isComplete)
+        {
+            if (($scope.record.Time == "" || $scope.record.Time == null) || ($scope.record.Doctor == "" || $scope.record.Doctor == null))
+            {
+                layer.alert("实际随访时间或随访医生不能为空！", { icon: 2 });
+            }
+            else
+            {
+                if (isCompleted == "1" && isComplete == true) {
+                    layer.confirm("完成后将无法再次保存，确定完成？", { icon: 7 }, function () {
+                        $scope.save(isCompleted);
+                    });
+                }
+                else {
+                    if (isCompleted != "1") {
+                        $scope.save(isCompleted);
+                    }
+                }
+            }
+            
+        }
+        $scope.save = function (isCompleted)
+        {
+            $http({
+                method: 'POST',
+                url: '/FollowUpManage/SaveRecord',
+                data: {
+                    recordId:$scope.record.ID,
+                    time: $scope.record.Time,
+                    doctor: $scope.record.Doctor,
+                    isEventCompleted: isCompleted || '',
+                    registId: $scope.registId
+                }
+            }).then(function successCallback(response) {
+                if (response.data.IsSuccess)
+                {
+                    if (isCompleted == "1")
+                    {
+                        $scope.followupCalendar.IsEventCompleted = isCompleted;
+                        layer.alert(response.data.Message, { icon: 1 });
+                    }                    
+                }
+                else
+                {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }        
+
+        // 获取所以评分key-value值
+        $scope.getItemKeyValue = function()
+        {
+            $scope.itemKeyValueList = new Array();
+            for (var i = 0; i < $scope.record.ItemCategories[0].Items.length; i++) {
+                var item = $scope.record.ItemCategories[0].Items[i];
+                $scope.itemKeyValueList.push({Key:item.ID,Value:item.Value});
+            }
+        }
+        // 是否选中
+        $scope.isSelected = function (key, value, checkedValue) {
+            return $.inArray(value, checkedValue == null ? null : checkedValue.split(";")) >= 0;
+        }
+    });
+
+    angular.bootstrap($("#popup")[0], ['ScoreApp']);
+</script>
+<script>
+    // 字符中添加值 demo:"1;2;3" 添加"4"
+    function addValue(total, value) {
+        // 判断原有数据是否为null，如果为null直接赋值
+        if (total != null) {
+            // 转换成数组
+            var totalArr = total.split(";");
+            // 没有直接添加，有则忽略
+            if ($.inArray(value, totalArr) == -1) {
+                // 添加
+                totalArr.push(value);
+                // 重新转换成字符串
+                total = totalArr.join(";");
+            }
+        }
+        else {
+            total = value;
+        }
+        return total;
+    }
+
+    // 字符中去除值  demo:"1;2;3" 删除"2"
+    function delValue(total, value) {
+        // 转换成数组
+        var totalArr = total.split(";");
+        // 查找位置
+        var index = $.inArray(value, totalArr);
+        // 存在直接去除
+        if (index > -1) {
+            // 删除
+            totalArr.splice(index, 1);
+            // 重新转换成字符串
+            total = totalArr.join(";");
+        }
+        return total;
+    }
+</script>
+
+<div class="popup1" id="popup" ng-app="ScoreApp" ng-controller="ScoreController">
+    <fieldset class="medical-record" style="width:100%;overflow: hidden;">
+        <div class="score-detail" style="overflow-x: hidden;">
+            <div class="horizontal score-tit m-b-10" style="margin-left:20px;margin-top:10px;">
+                <label>随访医生签名:</label>
+                <input type="text" ng-model="record.Doctor" ng-blur="saveRecord(followupCalendar.IsEventCompleted,false)">
+                &nbsp;
+                <label>实际随访时间:</label>
+                <input type="datetime" ng-model="record.Time" ng-blur="saveRecord(followupCalendar.IsEventCompleted,false)" class="Wdate fixWidth" wdate-picker>
+                <a ng-click="getCurrentTime()">获取当前时间</a>
+                &nbsp;&nbsp;
+                <span class="right" style="margin-right:20px;margin-top:5px;">
+                    <button ng-if="followupCalendar.IsEventCompleted!='1'" class="btn-primary" ng-click="saveRecord(1,true)">完成</button>
+                </span>
+            </div>
+            <div style="height:480px;overflow-x: hidden;">
+                <table class="check-up follow-list" ng-repeat="itemCategorie in record.ItemCategories | orderBy:'Name'">
+                    <tr ng-repeat="item in itemCategorie.Items">
+                        <td style="width:20%;">
+                            <strong>{{item.Title}} <b class="score-value orange" ng-if="item.Title=='发病前mRS评分'">{{record.ScoreValue}}分</b></strong>
+                        </td>
+                        <td ng-if="item.Type=='03'" style="width:80%;">
+                            <label ng-repeat="enumItem in item.Property.EnumItems">
+                                <label><input type="checkbox" name="cbx-{{item.Id}}" ng-checked="isSelected(item.ID,enumItem.Value,item.Value)" ng-click="multiSelect($event,item.ID,enumItem.Value,record.ScoreValue,item.Value)"><span>{{enumItem.Text}}</span></label>&nbsp;&nbsp;
+                            </label>
+                        </td>
+                        <td style="width:80%;" ng-if="item.Type=='04' && item.Title=='发病前mRS评分'">
+                            <label ng-repeat="enumItem in item.Property.EnumItems">
+                                <label><input type="radio" required name="rdo-{{item.ID}}" value="{{enumItem.Value}}" ng-checked="enumItem.Value==item.Value" ng-click="updateSelection(item.ID,enumItem.Value,enumItem.ScoreValue,item.Value)"><span>{{enumItem.Text}}</span></label>&nbsp;&nbsp;
+                            </label>
+                        </td>
+                        <td style="width:80%;" ng-if="item.Type=='04' && item.Title!='发病前mRS评分'">
+                            <label ng-repeat="enumItem in item.Property.EnumItems">
+                                <label><input type="radio" required name="rdo-{{item.ID}}" value="{{enumItem.Value}}" ng-checked="enumItem.Value==item.Value" ng-click="updateSelection(item.ID,enumItem.Value,enumItem.ScoreValue,item.Value)"><span>{{enumItem.Text}}</span></label>&nbsp;&nbsp;
+                            </label>
+                        </td>
+                        <td style="width:80%;" ng-if="item.Type=='05'">
+                            <select ng-model="item.Value" ng-change="selectChanged(item.ID,item.Value)">
+                                <option ng-repeat="enumItem in item.Property.EnumItems" value="{{enumItem.Value}}" ng-selected="item.Value==enumItem.Value">{{enumItem.Text}}</option>
+                            </select>
+                        </td>
+                        <td style="width:80%;" ng-if="item.Type=='06'">
+                            <textarea rows=3 cols=50 style="border:1px solid #808080" ng-model="item.Value" ng-blur="selectChanged(item.ID,item.Value)"></textarea>
+                        </td>
+                        <td style="width:80%;" ng-if="item.Type=='09'">
+                            <input type="text" ng-model="item.Value" ng-blur="selectChanged(item.ID,item.Value)">
+                        </td>
+                        <td style="width:80%;" ng-if="item.Type=='01'">
+                            <input type="text" ng-model="item.Value" ng-blur="selectChanged(item.ID,item.Value)" />
+                        </td>
+                        <td style="width:80%;" ng-if="item.Type=='02'">
+                            <input type="datetime" ng-model="item.Value" class="Wdate fixWidth" wdate-picker ng-blur="selectChanged(item.ID,item.Value)">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </fieldset>
+</div>

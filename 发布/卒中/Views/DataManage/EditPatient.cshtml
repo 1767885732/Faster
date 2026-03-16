@@ -1,0 +1,347 @@
+﻿@using DoCare.Framework.Extension
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/page.records.css") rel="stylesheet" />
+<link href="~/App_Themes/Default/page.integritymenu.css" rel="stylesheet" />
+<link href="~/App_Themes/Default/page.frequently.css" rel="stylesheet" />
+<link href="~/App_Themes/Default/page.filling.css" rel="stylesheet" />
+<link href="~/App_Themes/Default/frame.timeline.css" rel="stylesheet" />
+<script src="~/Scripts/validate/validateExtend.js"></script>
+<script src="~/Scripts/validate/validator.js"></script>
+<script src="~/Scripts/radialIndicator.min.js"></script>
+@*<script src="~/Scripts/MedicalAction/MedicalAction.js"></script>*@
+<script src="~/Scripts/hover.js"></script>
+<style>
+    .layout-container-box {
+        width: calc(100% - 320px);
+        width: -moz-calc(100% - 320px);
+        width: -webkit-calc(100% - 320px);
+        min-width: 960px;
+    }
+</style>
+<script>
+    var registId = "@ViewBag.RegistId";   //当前患者登记ID
+    var org = "@ViewBag.Org";
+    var ehrId = "@ViewBag.EhrId";
+    var source = "@ViewBag.Source";
+    //var medicalAction = new MecicalActionHandle(registId);
+    $(function () {
+        pageLoading();
+    });
+
+    function refreshlog() {
+        if ($("#MedicalActionContainer").length==0) {
+            $("#MedicalActionContainer").remove();
+            $.ajax({
+                url: "/MedicalAction/MedicalActionRecord?eventId=" + registId,
+                type: "get",
+                dataType: "json",
+                async: false,
+                success: function (json) {
+                    var html =
+                    "<div class=\"top-opt\" id=\"MedicalActionContainer\">" +
+                        "<div class=\"top-btn filling\">" +
+                            "<a id=\"actionLog\">" +
+                                "<s class=\"icon-log\"></s>" +
+                            "</a>" +
+                            "<div class=\"top-pop\" id=\"logList\">" +
+                                "<ul>";
+                    if (json.IsSuccess && json.Data != null && json.Data.length > 0) {
+                        for (var i = 0; i < json.Data.length; i++) {
+                            var item = json.Data[i];
+                            // 替换掉所有的 html标签，得到Html标签中的内容
+                            var title = item.ActionDescription.replace(/<\/?.+?>/g, "");
+                            title = title.replace(/ /g, "");
+                            html = html +
+                                "<li>" +
+                                    "<a title=\"" + title + "\">" +
+                                        "<nobr>" + item.ActionDescription + "</nobr>" +
+                                    "</a>" +
+                                "</li>";
+                        }
+
+                    } else {
+                        html = html +
+                        "<li>" +
+                            "<a title=\"当前患者暂无操作记录\">" +
+                                "<nobr>当前患者暂无操作记录！</nobr>" +
+                            "</a>" +
+                        "</li>";
+                    }
+
+                    html = html +
+                                "</ul>" +
+                            "</div>" +
+                         "</div>" +
+                    "</div>";
+
+                    $(".form-tit").append(html);
+                    $(".filling").children("div").stop(true, true).slideDown("fast");
+                    $("#logList").css("display", "block");
+                    $("#logList").mouseleave(function () {
+                        $("#MedicalActionContainer").remove();
+                    });
+                }
+            });
+        }else
+        {
+            $("#MedicalActionContainer").remove();
+        }
+    }
+
+    function pageLoading(param, isBreak) {
+        //medicalAction.Clear();
+        $.post("/DataManage/InitProcess", { registId: registId }, function (response) {
+            if (response.IsSuccess) {
+                $("#navList div").each(function (index) {
+                    if (!response.Data.PermissionRead[index]) {
+                        $(this).hide();
+                    }
+                });
+                InitProcess(param, response.Data.Path);
+            }
+        });
+
+        //时间轴显示
+        $.ajax({
+            type: 'POST',
+            url: "/Regist/GetTimeLine",
+            data: { 'registId': registId },
+            cache: false,
+            async: true,
+            dataType: 'json',
+            success: function (data) {
+                if (data.Data && data.Data.Nodes.length > 0) {
+                    $("#tmlDiv").css("display", "block");
+                    $(".layout-container-box").css("width", "calc(100% - 320px)");
+                    $(".layout-container-box").css("width", "-moz-calc(100% - 320px)");
+                    $(".layout-container-box").css("width", "-webkit-calc(100% - 320px)");
+                    $(".layout-container-box").css("min-width", "960px");
+                    $("#timeLineUl").empty();
+                    var htmlStr = "";
+                    for (var i = 0; i < data.Data.Nodes.length; i++) {
+                        var t = data.Data.Nodes[i].Value;
+                        var n = data.Data.Nodes[i].Name;
+                        var n_desc = n;
+                        var k = data.Data.Nodes[i].Key;
+                        var d = data.Data.Nodes[i].Description;
+                        if (data.Data.Nodes[i].IsKeyNode) {
+                            if (t) {
+                                t = t.replace('T', " ");
+                                t = t.substr(0, 16);
+                            } else {
+                                t = "";
+                            }
+                            if (n) {
+                                if (n.length >= 10) {
+                                    n_desc = n.substr(0, 9) + "...";
+                                }
+                            }
+                            htmlStr += "<li title=" + n + ':' + t + " id='" + k + "' data-value='" + t + "'data-desp='" + n + "'>";
+                            if (t) {
+                                htmlStr += "<span class=\"done\"></span>";
+                                htmlStr += "<h5 style=\"color:#424448\">" + n_desc + "<i style=\"color:#006ebc\">" + t + "</i></h5>";
+                            }
+                            else {
+                                htmlStr += "<span class=\"done_no_time\"></span>";
+                                htmlStr += "<h5 style=\"color:#777c80\">" + n_desc + "<i style=\"color:#006ebc\">" + t + "</i></h5>";
+                            }
+
+                            htmlStr += "</li>";
+
+                            if (d) {
+                                var name = d.split(":")[0];
+                                var value = d.split(":")[1];
+                                var name_desc = name;
+                                if (name.length >= 10) {
+                                    name_desc = name.substr(0, 9) + "...";
+                                }
+                                htmlStr += "<li title=" + d + " id='desc_" + k + "' data-value='" + value + "'data-desp='" + n + "'>";
+                                htmlStr += "<h5 style=\"color:#424448\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + name_desc + "<i style=\"color:#006ebc\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + value + "mins</i></h5>";
+                                htmlStr += "</li>";
+                            }
+                        }
+                        else {
+                            if (t) {
+                                t = t.replace('T', " ");
+                                t = t.substr(0, 16);
+                            } else {
+                                t = "";
+                            }
+                            if (n) {
+                                if (n.length >= 10) {
+                                    n_desc = n.substr(0, 9) + "...";
+                                }
+                            }
+                            htmlStr += "<li style=\"display:none\" + title=" + n + ':' + t + " id='" + k + "' data-value='" + t + "'data-desp='" + n + "'>";
+                            htmlStr += "<span class=\"done\"></span>";
+                            htmlStr += "<h5>" + n_desc + "<i>" + t + "</i></h5>";
+                            htmlStr += "</li>";
+                        }
+                    }
+                    $("#timeLineUl").append(htmlStr);
+                    InitTimeLine();
+                } else {
+                    $("#tmlDiv").css("display", "none");
+                    $(".layout-container-box").css("width", "calc(100% - 120px)");
+                    $(".layout-container-box").css("width", "-moz-calc(100% - 120px)");
+                    $(".layout-container-box").css("width", "-webkit-calc(100% - 120px)");
+                    $(".layout-container-box").css("min-width", "1115px");
+                }
+            }
+        });
+    }
+
+    function InitTimeLine() {
+        // 所有时间控件，再次与时间轴同步
+        $("[timeId]").each(function () {
+            var timeIdElement = $("#" + $(this).attr("timeId"));
+            if (timeIdElement.length > 0 && $(this).val()) {
+                timeIdElement.attr("data-value", $(this).val());
+                timeIdElement.find("i").html($(this).val());
+            }
+        });
+    }
+
+
+    function InitProcess(param, process) {
+        $("#navList").find("canvas").remove();
+        if (process.FirstAid > 0) {
+            $("#mnuFirstAid").attr("url", "/FirstAid/Index");
+            $("#mnuFirstAid").removeClass().css("color", "#333");
+        } else {
+            $("#mnuFirstAid").attr("url", "");
+            $("#mnuFirstAid").addClass("disabled").css("color", "#999");
+        }
+
+        if (process.Emergency > 0) {
+            $("#mnuEmergency").attr("url", "/Emergency/Index");
+            $("#mnuEmergency").removeClass().css("color", "#333");
+        } else {
+            $("#mnuEmergency").attr("url", "");
+            $("#mnuEmergency").addClass("disabled").css("color", "#999");
+        }
+
+        if (process.Treatment > 0) {
+            $("#mnuTreatment").attr("url", "/Treatment/Index");
+            $("#mnuTreatment").removeClass().css("color", "#333");
+        } else {
+            $("#mnuTreatment").attr("url", "");
+            $("#mnuTreatment").addClass("disabled").css("color", "#999");
+        }
+
+        //if (process.Inhospital > 0) {
+        //    $("#mnuInhospital").attr("url", "/Inhospital/Index");
+        //    $("#mnuInhospital").removeClass().css("color", "#333");
+        //} else {
+        //    $("#mnuInhospital").attr("url", "");
+        //    $("#mnuInhospital").addClass("disabled").css("color", "#999");
+        //}
+
+        if (process.Outcome > 0) {
+            $("#mnuOutcome").attr("url", "/Outcome/Index");
+            $("#mnuOutcome").removeClass().css("color", "#333");
+        } else {
+            $("#mnuOutcome").attr("url", "");
+            $("#mnuOutcome").addClass("disabled").css("color", "#999");
+        }
+
+        if (param != null) {
+            $("#navList dl").removeClass("selected");
+            $("#navList dl").eq(param).addClass("selected");
+        }
+        else {
+            if (!registId) {  //禁用除患者登记以外的其他按钮
+                $("#navList dl:not(:first)").hide();
+            }
+            //触发患者登记点击
+            $("#navList dl:first").click();
+        }
+    }
+
+    function openUrl(obj) {
+        var url = $(obj).attr("url");
+        if (url == "" || url == null) { return; }
+        $("#navList dl").removeClass("selected");
+        $(obj).addClass("selected");
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: { 'registId': registId },
+            cache: false,
+            dataType: 'html',
+            success: function (data) {
+                $("#container").html(data);
+
+                //medicalAction.LoadMedicalAction();
+            }
+        });
+        return false;
+    }
+
+    var tempData = { isEdit: true };
+</script>
+
+<div class="integrity-menu left">
+    <div class="stage" id="navList">
+        <div>
+            <dl id="mnuRegist" class="selected" url="/Regist/Index" href="javascript:void(0)" onclick="return openUrl(this)">
+                <dt>
+                    <span class="indicatorSpan"></span><sup></sup><s class="stage-regist"></s>
+                </dt>
+                <dd>患者登记</dd>
+            </dl>
+        </div>
+        <div>
+            <dl id="mnuFirstAid" class="disabled" style="color:#999;" onclick="return openUrl(this)">
+                <dt>
+                    <span class="indicatorSpan"></span><sup></sup><s class="stage-ambulance"></s>
+                </dt>
+                <dd>院前急救</dd>
+            </dl>
+        </div>
+        <div>
+            <dl id="mnuEmergency" class="disabled" style="color:#999;" onclick="return openUrl(this)">
+                <dt>
+                    <span class="indicatorSpan"></span><sup></sup><s class="stage-emergency"></s>
+                </dt>
+                <dd>绿通评估</dd>
+            </dl>
+        </div>
+        <div>
+            <dl id="mnuTreatment" class="disabled" style="color:#999;" onclick="return openUrl(this)">
+                <dt>
+                    <span class="indicatorSpan"></span><sup></sup><s class="stage-cvac"></s>
+                </dt>
+                <dd>绿通救治</dd>
+            </dl>
+        </div>
+        @*<div>
+            <dl id="mnuInhospital" class="disabled" style="color:#999;" onclick="return openUrl(this)">
+                <dt>
+                    <span class="indicatorSpan"></span><sup></sup><s class="stage-hospital"></s>
+                </dt>
+                <dd>住院诊疗</dd>
+            </dl>
+        </div>*@
+        <div>
+            <dl id="mnuOutcome" class="disabled" style="color:#999;" onclick="return openUrl(this)">
+                <dt>
+                    <span class="indicatorSpan"></span><sup></sup><s class="stage-prognosis"></s>
+                </dt>
+                <dd>住院转归</dd>
+            </dl>
+        </div>
+    </div>
+</div>
+<div class="tl-timeline_block left" id="tmlDiv" style="display:none">
+    <div class="tl-stage">
+        <ul class="path" id="timeLineUl"></ul>
+    </div>
+</div>
+
+<div class="layout-container layout-container-box left" id="container">
+
+</div>
+@Html.Partial("../Base/ToolBar")
+
+

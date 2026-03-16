@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="DischargeDrug" ViewName="出院带药">
+    <Member MemberId="Code" MemberName="药品名称">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Name" MemberName="药品名称">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="Dose" MemberName="药品剂量">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Unit" MemberName="药品单位">
+      <Required Required="true" Enabled="0" />
+    </Member>      
+    <Member MemberId="RateTime" MemberName="用药时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RateCount" MemberName="用药频次">
+      <Required Required="true" Enabled="1" />
+    </Member>
+  </View>
+</Config>

@@ -1,0 +1,2 @@
+alter table CVA_REGIST add clinic_sn VARCHAR2(36);
+alter table CVA_INHOSPITAL add inpatient_sn VARCHAR2(36);

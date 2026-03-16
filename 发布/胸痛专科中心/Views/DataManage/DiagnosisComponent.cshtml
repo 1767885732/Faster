@@ -1,0 +1,797 @@
+﻿@{
+    Layout = null;
+}
+<script>
+    @{
+        string template = Html.Partial("~/Views/DataManage/Diagnosis.cshtml").ToString().Replace("\r\n","").Replace("\n","").Replace("'","\\'");
+    }
+    var diagnosis = {
+        template: '@Html.Raw( template )',
+        props: {
+            patient:
+            {
+                Regist: {},
+                Admission: {},
+                Diagnosis: { GraceRiskFactors: [], GraceVhrConditions: [], NacsType: [], NccpType: [] },
+                DiagnosisTest: {
+                    TroponinList: [],
+                    Scr: { Result: null, Unit: "", Category: "" },
+                    Ddimer: { Result: null, Unit: "mg/L", Category: "" },
+                    Bnp: { Result: null, Unit: "", Category: "" },
+                    NtProbnp: { Result: null, Unit: "", Category: "" },
+                    Myo: { Result: null, Unit: "", Category: "" },
+                    Ckmb: { Result: null, Unit: "", Category: "" },
+                },
+                Treatment: {},
+                TreatmentPci: { DelayReason: ['01'], Complication: [], CagPosition: [] },
+                TreatmentPciPart: [{ HandleWay: [] }, { HandleWay: [] }, { HandleWay: [] }],
+                EcgList: [],
+                MaxCategory: 0,
+            },
+        },
+        data: function () {
+            return {
+                space_quarter: 6,
+                space_half: 12,
+                space_three_quater: 18,
+                space_full: 24,
+                gutter: 20,
+                span: 6,
+                STEMI: '1',
+                NSTEMI: '2',
+                UA: '3',
+                AD: '4',
+                PE: '5',
+                NACS: '6',
+                NC: '7',
+                OTHER: '9',
+                ZJPCI: '1',
+                RS: '2',
+                ZQJR: '3',
+                CABG: '4',
+                ZYPCI: '5',
+                JJJR: '21',
+                TFH: '22',
+                BJPCI: '21',
+                RSHJR: '22',
+                GRL_ToSTEMI: '0',
+                GRL_None: '99',
+                YesOrNoDict: model.YesOrNoDict,
+                HaveOrNotDict: model.HaveOrNotDict,
+                DiagnosisDict: model.DiagnosisDict,
+                KillipLevelDict: model.KillipLevelDict,
+                StemiReperfusionStrategyDict: model.StemiReperfusionStrategyDict,
+                NstemiReperfusionStrategyDict: model.NstemiReperfusionStrategyDict,
+                PerfusionMeasureDict: model.PerfusionMeasureDict,
+                GraceEstimateDict: model.GraceEstimateDict,
+                GraceHighriskConditionDict: model.GraceHighriskConditionDict,
+                GraceHighriskLaminationDict: model.GraceHighriskLaminationDict,
+                NyhaDict: model.NyhaDict,
+                InterlayerTypeDict: model.InterlayerTypeDict,
+                TreatmentStrategyDict: model.TreatmentStrategyDict,
+                HighriskLaminationDict: model.HighriskLaminationDict,
+                NacsTypeDict: model.NacsTypeDict,
+                TroponinDict: model.TroponinDict,
+                CtnUnitDict: model.CtnUnitDict,
+                PositiveOrNotDict: model.PositiveOrNotDict,
+                AcsDrugTypeDict: model.AcsDrugTypeDict,
+                AnticoagulationDrugDict: model.AnticoagulationDrugDict,
+                IhThrombolyticPlaceDict: model.IhThrombolyticPlaceDict,
+                ThrombolyticDrugTypeDict: model.ThrombolyticDrugTypeDict,
+                ThrombolyticDrugCodeDict: model.ThrombolyticDrugCodeDict,
+                RemoteEcgtranWayDict: model.RemoteEcgtranWayDict,
+                MyoUnitDict: model.MyoUnitDict,
+                DdimerUnitDict: model.DdimerUnitDict,
+                CkmbUnitDict: model.CkmbUnitDict,
+                ConsultationTypeDict: model.ConsultationTypeDict,
+                GraceRehazardLevelDict: model.GraceRehazardLevelDict,
+                HandleWayDict: model.HandleWayDict,
+                ReperfusionMeasureRsDict: model.ReperfusionMeasureRsDict,
+                ThrombolyticScreeningDict: model.ThrombolyticScreeningDict,
+                PciTransferTypeDict: model.PciTransferTypeDict,
+                TreatmentMeasuresDict: model.TreatmentMeasuresDict,
+                NcHandleWay: model.NcHandleWay,
+                NccpTypeDict: model.NccpTypeDict,
+                RouteDict: model.RouteDict,
+                NarrowLevelDict: model.NarrowLevelDict,
+                TimiLevelDict: model.TimiLevelDict,
+                IntracavityImageDict: model.IntracavityImageDict,
+                FunctionTestDict: model.FunctionTestDict,
+                BracketNumDict: model.BracketNumDict,
+                TreatmentPciComplicationDict: model.TreatmentPciComplicationDict,
+                DelayReasonDict: model.DelayReasonDict,
+                CagPositionDict: model.CagPositionDict,
+                PciHandleWayDict: model.PciHandleWayDict,
+                BracketTypeDict: model.BracketTypeDict,
+                AnticoagulationUnitDict: model.AnticoagulationUnitDict,
+                AspirinDoses: [{ "value": "0" }, { "value": "100" }, { "value": "300" }, { "value": "其他剂量" }],
+                TigrilloDoses: [{ "value": "0" }, { "value": "90" }, { "value": "180" }, { "value": "其他剂量" }],
+                ClopidogrelDoses: [{ "value": "0" }, { "value": "300" }, { "value": "600" }, { "value": "其他剂量" }],
+                rules: {
+                    //'TreatmentPci.FunctionTestValue': [
+                    //    { pattern: /^([1-9]\d*|0)(\.\d{1,2})?$/, message: '请输入正确的数值' }
+                    //],
+                },
+                fileList: [],
+                selectedEcg: {},
+                ecgList: [],
+                ecgSearchModel: {
+                    DateRange:['','']
+                },
+                IsShowSelectEcgView: false,
+                hasData: false,
+                index: 0,
+                value:"",
+            };
+        },
+        methods: {
+            getFile: function () {
+                var _this = this;
+                api.getFile(_this.patient.Regist.Id).then(function (res) {
+                    if (res.data.IsSuccess) {
+                        _this.fileList = res.data.Data;
+                        for (var i = 0; i < _this.fileList.length; i++) {
+                            if (_this.fileList[i].UploadTime) _this.fileList[i].UploadTime = moment(_this.fileList[i].UploadTime).toDate();
+                        }
+                        console.log("fileList", _this.fileList);
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            fileRemove: function (file, fileList) {
+                if (file && file.status === "success") {
+                    var _this = this;
+                    axios.post("/DataManage/RemoveFile", { file: file }).then(function (res) {
+                        if (res.data.IsSuccess) {
+                            _this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                        }
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }
+            },
+            filePreview: function (file) {
+                window.location = "/DataManage/ViewFile?filePath=" + file.FilePath + "&fileType=" + file.FileType + "&fileName=" + file.FileName;
+                console.log(file);
+            },
+            fileChange: function (file, fileList) {
+                var _this = this;
+                var name = "";
+                for (var i = 0; i < fileList.length; i++) {
+                    if (name.indexOf(fileList[i].name) > 0) {
+                        _this.$message.error('上传失败，无法重复上传！');
+                        _this.getFile();
+                        return;
+                    }
+                    name += "&" + fileList[i].name;
+                }
+
+                var d = file.name.split('.').pop();
+                var isMatch = (/^jpg|png|gif|jpeg$/i.test(d));
+                var isLt5M = file.size / 1024 / 1024 < 8;
+                console.log("size:", file.size / 1024 / 1024);
+                if (!isMatch) {
+                    _this.$message.error('上传图片只能是 JPG或PNG 格式!');
+                }
+                if (!isLt5M) {
+                    _this.$message.error('上传图片大小不能超过 8MB!');
+                }
+                if (isMatch && isLt5M) {
+                    _this.fileRead(file.raw);
+                }
+                else {
+                    _this.getFile();
+                }
+            },
+            //beforeUpload: function (file) {
+            //    const isMatch = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/bmp'
+            //    const isLt5M = file.size / 1024 / 1024 < 5;
+
+            //    if (!isMatch) {
+            //        this.$message.error('上传图片只能是 JPG或PNG 格式!');
+            //    }
+            //    if (!isLt5M) {
+            //        this.$message.error('上传图片大小不能超过 5MB!');
+            //    }
+            //    debugger;
+            //    return isMatch && isLt5M;
+            //},
+            fileRead: function (b) {
+                var _this = this;
+                var a = new FileReader();
+                a.onload = (function (c) {
+                    return function (f) {
+                        var d = c.name.split('.').pop();
+                        //if (/^jpg|png|gif|jpeg$/i.test(d)) {
+                        var base64 = f.target.result;
+                        axios.post("/DataManage/Upload", { registId: _this.patient.Regist.Id, fileName: c.name, fileContent: base64.split('base64,').pop() }).then(function (res) {
+                            if (res.data.IsSuccess) {
+                                _this.getFile();
+                                _this.$message.success('上传成功!');
+                            }
+                            else {
+                                _this.$message.error('上传失败!');
+                                _this.getFile();
+                            }
+                        }).catch(function (error) {
+                            console.log(error);
+                            _this.$message.error('上传失败!');
+                            _this.getFile();
+                        });
+                        //} else {
+                        //    _this.$message({
+                        //        message: '只能选择图片上传',
+                        //        type: 'error'
+                        //    });
+                        //    _this.getFile();
+                        //}
+                    }
+                })(b);
+                a.readAsDataURL(b);
+            },
+            handleRemove: function (file, fileList, index) {
+                var _this = this;
+                _this.patient.EcgList[index].FileContent = null;
+                _this.patient.EcgList[index].FileType = null;
+                _this.patient.EcgList[index].FileName = null;
+                _this.patient.EcgList[index].name = null;
+                _this.patient.EcgList[index].contentChanged = true;
+                console.log(file, fileList);
+            },
+            handlePreview: function (file, fileList, index) {
+                window.open("/ExtendView/Ecg?registId=" + this.patient.Regist.Id + "&index=" + index);
+                console.log(file);
+            },
+            handleChange: function (file, fileList, index) {
+                var d = file.name.split('.').pop();
+                var isMatch = (/^jpg|png|gif|jpeg$/i.test(d));
+                var isLt5M = file.size / 1024 / 1024 < 8;
+                console.log("size:", file.size / 1024 / 1024);
+                if (!isMatch) {
+                    this.$message.error('上传图片只能是 JPG或PNG 格式!');
+                }
+                if (!isLt5M) {
+                    this.$message.error('上传图片大小不能超过 8MB!');
+                }
+                if (isMatch && isLt5M) {
+                    this.readDataFile(file.raw, index);
+                }
+                else {
+                }
+            },
+            beforeRemove: function (file, fileList) {
+                return this.$confirm("确定移除" + file.name + "?");
+            },
+            readDataFile: function (b, index) {
+                var _this = this;
+                var a = new FileReader();
+                a.onload = (function (c) {
+                    return function (f) {
+                        var d = c.name.split('.').pop();
+                        //if (/^jpg|png|gif|jpeg$/i.test(d)) {
+                        var base64 = f.target.result;
+                        _this.compress(base64, 800, 1.0).then(function (val) {
+                            _this.patient.EcgList[index].FileContent = val;
+                        });
+                        _this.patient.EcgList[index].FileType = d;
+                        _this.patient.EcgList[index].name = c.name;
+                        _this.patient.EcgList[index].FileName = c.name;
+                        _this.patient.EcgList[index].contentChanged = true;
+                        //} else {
+                        //    _this.$message({
+                        //        message: '只能选择图片上传',
+                        //        type: 'error'
+                        //    })
+                        //}
+                    }
+                })(b);
+                a.readAsDataURL(b);
+            },
+            compress: function (base64String, w, quality) {
+                var getMimeType = function (urlData) {
+                    var arr = urlData.split(',');
+                    var mime = arr[0].match(/:(.*?);/)[1];
+                    // return mime.replace("image/", "");
+                    return mime;
+                };
+                var newImage = new Image();
+                var imgWidth, imgHeight;
+
+                var promise = new Promise(function (resolve) { newImage.onload = resolve });
+                newImage.src = base64String;
+                return promise.then(function () {
+                    imgWidth = newImage.width;
+                    imgHeight = newImage.height;
+                    var canvas = document.createElement("canvas");
+                    var ctx = canvas.getContext("2d");
+                    if (Math.max(imgWidth, imgHeight) > w) {
+                        if (imgWidth > imgHeight) {
+                            canvas.width = w;
+                            canvas.height = w * imgHeight / imgWidth;
+                        } else {
+                            canvas.height = w;
+                            canvas.width = w * imgWidth / imgHeight;
+                        }
+                    } else {
+                        canvas.width = imgWidth;
+                        canvas.height = imgHeight;
+                    }
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(newImage, 0, 0, canvas.width, canvas.height);
+                    var base64 = canvas.toDataURL(getMimeType(base64String), quality);
+                    console.log(base64);
+                    return base64;
+                });
+            },
+            showSelectEcgView: function (index) {
+                this.selectedEcg = {};
+                var _date = moment();
+                if (this.patient.Admission.FmcTime) _date = moment(this.patient.Admission.FmcTime);
+                this.ecgSearchModel.DateRange = [_date.subtract(1, "days").format('YYYY-MM-DD'), _date.subtract(-2, "days").format('YYYY-MM-DD')];
+                this.ecgSearchModel.DateFrom = this.ecgSearchModel.DateRange[0];
+                this.ecgSearchModel.DateTo = this.ecgSearchModel.DateRange[1];
+                this.IsShowSelectEcgView = true;
+            },
+            searchEcgList: function () {
+                var _this = this;
+                api.getEcgList(this.ecgSearchModel).then(function (res) {
+                    if (res.data.IsSuccess) {
+                        if (res.data.Data && res.data.Data.length > 0) {
+                            _this.hasData = true;
+                            _this.ecgList = res.data.Data;
+                        } else {
+                            _this.hasData = false;
+                            _this.$message({ type: 'info', message: '该时间段内没有查询到心电图!' });
+                        }
+                        _this.IsShowSelectEcgView = true;
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            currentEcgChanged: function (index) {
+                this.selectEcg = this.ecgList[index];
+            },
+            doBindEcg: function () {
+                if (!this.ecgList || this.ecgList.length == 0) return false;
+                var param = { EcgId: this.selectEcg.Id, RegistId: this.patient.Regist.Id };
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在绑定心电图信息，请您耐心等待……',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                var _this = this;
+                api.bindEcg(param).then(function (res) {
+                    if (res.data.IsSuccess) {
+                        _this.$message({ type: 'success', message: '绑定成功!' });
+                        _this.IsShowSelectEcgView = false;
+                        _this.patient.EcgList.push(res.data.Data);
+                        loading.close();
+                    } else {
+                        _this.$message.error('绑定心电图失败，请先保存当前患者信息，再绑定心电图!');
+                        loading.close();
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                    loading.close();
+                });
+            },
+            calcGrace: function () {
+                var _this = this;
+                if (!_this.patient.Regist.Age) {
+                    _this.$message({
+                        showClose: true,
+                        message: '请先填写年龄！',
+                        type: 'error'
+                    });
+                    return null;
+                }
+                if (!_this.patient.Admission.HeartRate) {
+                    _this.$message({
+                        showClose: true,
+                        message: '请先填写心率！',
+                        type: 'error'
+                    });
+                    return null;
+                }
+                if (!_this.patient.Admission.BloodPressure) {
+                    _this.$message({
+                        showClose: true,
+                        message: '请先填写血压！',
+                        type: 'error'
+                    });
+                    return null;
+                }
+                if (_this.patient.Diagnosis.IsScr != '1' || !_this.patient.DiagnosisTest.Scr.Result) {
+                    _this.$message({
+                        showClose: true,
+                        message: '请先选择血清肌酐并填写数值！',
+                        type: 'error'
+                    });
+                    return null;
+                }
+                if (!_this.patient.Diagnosis.KillipLevel) {
+                    _this.$message({
+                        showClose: true,
+                        message: 'Killip分级未选择！',
+                        type: 'error'
+                    });
+                    return null;
+                }
+                var score = common.calcGrace(_this.patient.Regist.Age
+                    , _this.patient.Admission.HeartRate
+                    , _this.patient.Admission.BloodPressure
+                    , _this.patient.DiagnosisTest.Scr.Result
+                    , _this.patient.Diagnosis.KillipLevel
+                    , _this.patient.Diagnosis.GraceRiskFactors
+                );
+                if (score != undefined) {
+                    _this.patient.Diagnosis.GraceScore = score;
+                    _this.patient.Diagnosis.GraceHazardLevel =
+                        ((score <= 108 && '4')
+                        || ((score >= 109 && score <= 140) && '3')
+                        || ((score > 140) && '2')
+                    );
+                }
+            },
+            graceVhrConditionsChanged: function () {
+                _this = this;
+                if (_this.patient.Diagnosis.GraceVhrConditions.length > 0) {
+                    _this.patient.Diagnosis.GraceHazardLevel = '1';
+                }
+            },
+            showPosition: function (position) {
+                var _this = this;
+                return JSON.stringify(_this.patient.TreatmentPci.CagPosition).indexOf(position) >= 0;
+            },
+            addTroponin: function () {
+                var _this = this;
+                _this.patient.DiagnosisTest.TroponinList.push({ IsFirst: '0', Category: "TnI", Unit: "ng/mL", Source: "1" });
+            },
+            removeTroponin: function (index) {
+                var _this = this;
+                this.$confirm('确定删除文件（保存后生效）?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    center: true
+                }).then(function () {
+                    _this.patient.DiagnosisTest.TroponinList.splice(index, 1);
+                    _this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                }).catch(function () {
+                    _this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            addEcg: function () {
+                // 控制心电图最多上传3份
+                if (this.patient.EcgList && this.patient.EcgList.length >= 3)
+                {
+                    this.$message({
+                        type: 'info',
+                        message: '最多上传三份心电图!'
+                    });
+                    return false;
+                }
+                var _this = this;
+                _this.patient.MaxCategory = _this.patient.MaxCategory + 1
+                _this.patient.EcgList.push({ Category: _this.patient.MaxCategory });
+            },
+            removeEcg: function (index) {
+                var _this = this;
+                this.$confirm('确定删除心电图（保存后生效）?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    center: true
+                }).then(function () {
+                    _this.patient.EcgList.splice(index, 1);
+                    _this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                }).catch(function () {
+                    _this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            queryAspirinDoses: function (queryString, cb) {
+                var aspirinDoses = this.AspirinDoses;
+                var results = aspirinDoses;
+                if (queryString) {
+                    results = aspirinDoses.filter(function (aspirinDose) {
+                        return (aspirinDose.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                    });
+                };
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            },
+            queryTigrilloDoses: function (queryString, cb) {
+                var tigrilloDoses = this.TigrilloDoses;
+                var results = tigrilloDoses;
+                if (queryString) {
+                    results = tigrilloDoses.filter(function (tigrilloDose) {
+                        return (tigrilloDose.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                    });
+                };
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            },
+            queryClopidogrelDoses: function (queryString, cb) {
+                var clopidogrelDoses = this.ClopidogrelDoses;
+                var results = clopidogrelDoses;
+                if (queryString) {
+                    results = clopidogrelDoses.filter(function (clopidogrelDose) {
+                        return (clopidogrelDose.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                    });
+                };
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            },
+            ComplicationChange: function (val) {
+                var _this = this;
+                var noneCode = "00";
+                var index = _this.NoneIndex(val, noneCode);
+                if (index >= 0 && _this.patient.TreatmentPci.Complication[_this.patient.TreatmentPci.Complication.length - 1] == noneCode) {
+                    _this.patient.TreatmentPci.Complication = [noneCode];
+                }
+                else if (index >= 0) {
+                    _this.patient.TreatmentPci.Complication.splice(index, 1);
+                }
+            },
+            HandleWayChange: function (val, i) {
+                var _this = this;
+                var noneCode = "00";
+                var index = _this.NoneIndex(val, noneCode);
+                if (index >= 0 && _this.patient.TreatmentPciPart[i].HandleWay[_this.patient.TreatmentPciPart[i].HandleWay.length - 1] == noneCode) {
+                    _this.patient.TreatmentPciPart[i].HandleWay = [noneCode];
+                }
+                else if (index >= 0) {
+                    _this.patient.TreatmentPciPart[i].HandleWay.splice(index, 1);
+                }
+            },
+            NoneIndex: function (val, noneCode) {
+                for (var i = 0; i < val.length; i++) {
+                    if (val[i] == noneCode) return i;
+                }
+                return -1;
+            },
+            queryAnticoagulationUnit: function (queryString, cb) {
+                var anticoagulationUnit = this.AnticoagulationUnit;
+                var results = queryString ? anticoagulationUnit.filter(function (data) {
+                    return (data.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                }) : anticoagulationUnit;
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            },
+            onDateSelected: function (val) {
+                formatDateTime(val);
+            }
+        },
+        mounted: function () {
+            var _this = this;
+            _this.getFile();
+        },
+        computed: {
+            AnticoagulationUnit: function () {
+                var anticoagulationUnit = [];
+                if (this.AnticoagulationUnitDict == null) return anticoagulationUnit;
+                this.AnticoagulationUnitDict.forEach(function (n) {
+                    anticoagulationUnit.push({ "value": n.Unit });
+                });
+                return anticoagulationUnit;
+            },
+            showWarning: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.NACS || _this.patient.Diagnosis.DiagnosisCode == _this.NC || _this.patient.Diagnosis.DiagnosisCode == _this.OTHER;
+            },
+            killipLevelClass: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.STEMI || _this.patient.Diagnosis.DiagnosisCode == _this.NSTEMI ? 'input_required' : '';
+            },
+            // 直接PCI
+            showZJPCI: function () {
+                var _this = this;
+                if (!_this.showReperfusion) return false;
+                return _this.patient.Treatment.IsReperfusion == '1' && _this.patient.Treatment.ReperfusionMeasure == _this.ZJPCI;
+            },
+            // 溶栓
+            showRS: function () {
+                var _this = this;
+                if (_this.patient.Diagnosis.DiagnosisCode != _this.STEMI
+                    && _this.patient.Diagnosis.DiagnosisCode != _this.NSTEMI
+                    && _this.patient.Diagnosis.DiagnosisCode != _this.UA
+                    && _this.patient.Diagnosis.DiagnosisCode != _this.PE) return false;
+                var stemiRs = _this.showReperfusion && _this.patient.Treatment.IsReperfusion == '1' && _this.patient.Treatment.ReperfusionMeasure == _this.RS;
+                var peRs = _this.patient.Diagnosis.DiagnosisCode == _this.PE;
+                return stemiRs || peRs;
+            },
+            // 补救PCI
+            showBJPCI: function () {
+                var _this = this;
+                return _this.showRS && _this.patient.Treatment.ReperfusionMeasureRs == _this.BJPCI;
+            },
+            // 溶栓后介入
+            showRSHJR: function () {
+                var _this = this;
+                return _this.showRS && _this.patient.Treatment.ReperfusionMeasureRs == _this.RSHJR;
+            },
+            // 择期介入
+            showZQJR: function () {
+                var _this = this;
+                return _this.showReperfusion && _this.patient.Treatment.IsReperfusion == '1' && _this.patient.Treatment.ReperfusionMeasure == _this.ZQJR;
+            },
+            // CABG
+            showCABG: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.STEMI && _this.patient.Treatment.IsReperfusion == '1' && _this.patient.Treatment.ReperfusionMeasure == _this.CABG;
+            },
+            // 转运PCI
+            showZYPCI: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.STEMI && _this.patient.Treatment.IsReperfusion == '1' && _this.patient.Treatment.ReperfusionMeasure == _this.ZYPCI;
+            },
+            // 紧急介入
+            showJJJR: function () {
+                var _this = this;
+                if (_this.patient.Diagnosis.DiagnosisCode != _this.NSTEMI
+                    && _this.patient.Diagnosis.DiagnosisCode != _this.UA)
+                    return false;
+                if (_this.patient.Diagnosis.GraceRehazardLevel == _this.GRL_ToSTEMI) return false;
+                return _this.patient.Treatment.Strategy == '2' && _this.patient.Treatment.InvasiveStrategy == _this.JJJR;
+            },
+            // 24H内介入治疗
+            show24H: function () {
+                var _this = this;
+                var nstemi24H = _this.patient.Diagnosis.DiagnosisCode == _this.NSTEMI && _this.patient.Treatment.Strategy == '2' && _this.patient.Treatment.InvasiveStrategy == _this.TFH;
+                var ua24H = _this.patient.Diagnosis.DiagnosisCode == _this.UA && _this.patient.Treatment.Strategy == '2' && _this.patient.Treatment.InvasiveStrategy == _this.TFH;
+                return nstemi24H || ua24H;
+            },
+            // 心功能分级
+            showKillip: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.STEMI || _this.patient.Diagnosis.DiagnosisCode == _this.NSTEMI || _this.patient.Diagnosis.DiagnosisCode == _this.UA;
+            },
+            // 绕行急诊 & 绕行CCU
+            showIsBypass: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.STEMI || _this.patient.Diagnosis.DiagnosisCode == _this.NSTEMI || _this.patient.Diagnosis.DiagnosisCode == _this.UA;
+            },
+            // 药物
+            showDrugs: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.STEMI || _this.patient.Diagnosis.DiagnosisCode == _this.NSTEMI || _this.patient.Diagnosis.DiagnosisCode == _this.UA;
+            },
+            // Grace评估
+            showGrace: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.NSTEMI || _this.patient.Diagnosis.DiagnosisCode == _this.UA;
+            },
+            // 再次危险分层
+            showGraceRehazardLevel: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.NSTEMI || _this.patient.Diagnosis.DiagnosisCode == _this.UA;
+            },
+            showReperfusion: function () {
+                var _this = this;
+                if (_this.patient.Diagnosis.DiagnosisCode == _this.STEMI) return true;
+                if (!_this.patient.Diagnosis.GraceRehazardLevel) return false;
+                if (_this.patient.Diagnosis.DiagnosisCode == _this.NSTEMI
+                    || _this.patient.Diagnosis.DiagnosisCode == _this.UA)
+                    return _this.patient.Diagnosis.GraceRehazardLevel == _this.GRL_ToSTEMI;
+                return false;
+            },
+            // 处理策略
+            showStrategy: function () {
+                var _this = this;
+                if (_this.patient.Diagnosis.DiagnosisCode != _this.NSTEMI
+                    && _this.patient.Diagnosis.DiagnosisCode != _this.UA)
+                    return false;
+                return _this.patient.Diagnosis.GraceRehazardLevel != _this.GRL_ToSTEMI;
+            },
+            // 急诊CT
+            showIsEct: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.AD || _this.patient.Diagnosis.DiagnosisCode == _this.PE;
+            },
+            // 急诊CT
+            showEct: function () {
+                var _this = this;
+                return _this.showIsEct && _this.patient.Diagnosis.IsEct == '1';
+            },
+            // 彩超
+            showIsCdu: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.AD;
+            },
+            // 彩超
+            showCdu: function () {
+                var _this = this;
+                return _this.showIsCdu && _this.patient.Diagnosis.IsCdu == '1';
+            },
+            // MRI
+            showIsMri: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.AD;
+            },
+            // 危险分层
+            showRiskLamination: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.PE;
+            },
+            // 非ACS心源性胸痛类型
+            showNacsType: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.NACS;
+            },
+            // 其它非心源性胸痛
+            showNccpType: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.NC;
+            },
+            // 处理措施
+            showHandleWay: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.NACS || _this.patient.Diagnosis.DiagnosisCode == _this.NC || _this.patient.Diagnosis.DiagnosisCode == _this.OTHER;
+            },
+            // 心外科
+            showCsc: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.AD;
+            },
+            showInterlayerType: function () {
+                var _this = this;
+                return _this.patient.Diagnosis.DiagnosisCode == _this.AD;
+            },
+            // 导管室
+            showDGS: function () {
+                var _this = this;
+                return _this.showZJPCI || _this.showBJPCI || _this.showRSHJR || (_this.showZYPCI && _this.patient.Treatment.PciTransferType == '2') || _this.showJJJR;
+            },
+            showJRSS: function () {
+                var _this = this;
+                return _this.showZJPCI || _this.showJJJR;
+            },
+            D2W: function () {
+                var _this = this;
+                var hasValue = false;
+                if (_this.patient.Admission.ArrivedHospitalTime != null && _this.patient.TreatmentPci.CagPosition != null && _this.patient.TreatmentPci.CagPosition.length > 0) {
+                    for (var i = 0; i < _this.patient.TreatmentPciPart.length; i++) {
+                        var part = _this.patient.TreatmentPciPart[i];
+                        if (JSON.stringify(_this.patient.TreatmentPci.CagPosition).indexOf(part.PartId) >= 0) {
+                            if (part.IsPci == "1" && part.GwPassageTime != null) {
+                                hasValue = true;
+                                return moment(part.GwPassageTime).diff(moment(_this.patient.Admission.ArrivedHospitalTime), 'minute');
+                            }
+                        }
+                    }
+                }
+
+                if (!hasValue) {
+                    return null;
+                }
+            }
+        },
+        watch: {
+            ecgSearchModel: {
+                handler: function (val, oldVal) {
+                    this.ecgSearchModel.DateFrom = val.DateRange ? val.DateRange[0] : null;
+                    this.ecgSearchModel.DateTo = val.DateRange ? val.DateRange[1] : null;
+                },
+                deep: true
+            },
+        },
+    };
+</script>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="ASPECTS" Title="ASPECT评分" >
+    <Group>
+      <CheckBox Code="ASPECT001" Title="皮层下结构区域" Desc="皮层下结构区域">
+        <Option Id="01" Text="尾状核 (C)" Score="1"/>
+        <Option Id="02" Text="豆状核 (L)" Score="1"/>
+        <Option Id="03" Text="内囊 (IC)" Score="1"/>
+      </CheckBox>
+      <CheckBox Code="ASPECT002" Title="大脑中动脉皮层" Desc="大脑中动脉皮层">
+        <Option Id="01" Text=">60分钟" Score="1"/>
+        <Option Id="02" Text="10~59分钟" Score="1"/>
+        <Option Id="03" Text=">60分钟" Score="1"/>
+        <Option Id="04" Text="10~59分钟" Score="1"/>
+        <Option Id="05" Text=">60分钟" Score="1"/>
+        <Option Id="06" Text="10~59分钟" Score="1"/>
+        <Option Id="07" Text=">60分钟" Score="1"/>
+        <Option Id="08" Text="10~59分钟" Score="1"/>
+        <Option Id="09" Text=">60分钟" Score="1"/>
+      </CheckBox>
+    </Group>
+  </Template>
+</Config>

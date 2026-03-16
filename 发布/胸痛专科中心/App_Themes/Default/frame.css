@@ -1,0 +1,347 @@
+﻿/*----------  body  ----------*/
+html {
+    height: 100%;
+}
+
+body {
+    min-width: 1028px;
+    height: auto;
+    min-height: 500px;
+    overflow: hidden;
+    font: 400 13.3333px Arial;
+}
+
+label {
+    color:#606266;
+}
+
+/*----------  header  ----------*/
+#main-layout {
+    height: auto;
+    border: 0;
+}
+
+#main-layout .header {
+    width: 100%;
+    min-width: 1028px;
+    height: 60px;
+    position: relative;
+    top: 0;
+}
+
+#main-layout .header h1 {
+    width: 280px;
+    height: 50px;
+    float: left;
+    margin: 5px 0 5px 10px;
+    display: inline;
+    padding-left: 284px;
+    color: #fff;
+    font-weight: normal;
+    /*background: url('imgt/胸痛数据管理云平台 V2.0.png') left center no-repeat;*/
+    font: 20px \9ed1\4f53;
+    line-height: 50px;
+    letter-spacing: 2px;
+    text-align: left;
+}
+
+#main-layout .header h1 em {
+    font-size: 14px;
+}
+
+#main-layout .header .navigator {
+position: absolute;
+right: 0;
+top: 0;
+}
+
+#main-layout .header .navigator ul {
+float: right;
+text-align: center;
+position: relative;
+}
+
+#main-layout .header .navigator ul li {
+width: 80px;
+height: 50px;
+margin-top: 10px;
+float: left;
+cursor: pointer;
+}
+
+#main-layout .header .navigator ul li:hover, #main-layout .header .navigator ul .selected {
+    background: url(img/common/menu-hover-bg.png) center no-repeat;
+}
+
+#main-layout .header .navigator ul li s {
+    width: 24px;
+    height: 24px;
+    display: block;
+    margin: 0 auto 2px;
+    background-position: 0 -24px;
+}
+
+#main-layout .header .navigator ul li:hover s, #main-layout .header .navigator ul .selected s {
+    background-position: -24px 0;
+}
+
+    #main-layout .header .navigator s {
+        font-size: 22px;
+        /*color:#bae7fd;*/
+        color: white;
+        text-decoration: none;
+    }
+
+#main-layout .header .navigator ul li a {
+    width: 100%;
+    float: left;
+    color: #bae7fd;
+    font: 15px \9ed1\4f53;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#main-layout .header .navigator ul li:hover a, #main-layout .header .navigator ul .selected a {
+    color: #fff;
+}
+/*  header 二级菜单 */
+#main-layout .header .navigator ul .module, #main-layout .header .navigator ul .module:hover, #main-layout .header .navigator ul .module-user, #main-layout .header .navigator ul .module-user:hover {
+background: url(img/common/nav-bg.png) left bottom repeat-x;
+}
+
+/*#main-layout .main-content {
+    width: 100%;
+    min-width: 1028px;
+    height: calc(100vh - 90px);
+}*/
+
+#main-layout .module div {
+width: 780px;
+display: none;
+position: absolute;
+top: 60px;
+right: 0;
+z-index: 99999;
+float: right;
+background: 86% 2px url(img/common/point.png) no-repeat;
+padding-top: 8px;
+}
+
+#main-layout .module div dl {
+overflow: hidden;
+display: inline-block;
+float: right;
+padding: 8px 4px 0;
+margin: 0;
+}
+
+#main-layout .module div dl:hover dd {
+    color: #fff;
+}
+
+#main-layout .module div dl dt img {
+    width: 120px;
+    height: 80px;
+    display: block;
+    vertical-align: middle;
+}
+
+#main-layout .module div dl dd {
+    width: 100%;
+    font: 14px \9ed1\4f53;
+    color: #ccc;
+    line-height: 24px;
+    float: left;
+    margin: 0;
+    padding: 0;
+    display: block;
+    text-align: center;
+}
+/*  user  */
+#main-layout .header .navigator ul .module-user a {
+color: #f4c337;
+}
+
+#main-layout .header .navigator ul .module-user:hover a {
+color: #f4ce60;
+}
+
+#main-layout .header .navigator ul .module-user div {
+position: absolute;
+top: 60px;
+right: 0;
+z-index: 99999;
+background: 50% 2px url(img/common/point.png) no-repeat;
+padding-top: 8px;
+display: none;
+}
+
+#main-layout .header .navigator ul .module-user div a {
+background: #007ebc;
+padding: 8px 0;
+border-top: 1px solid #bae7fd;
+}
+
+#main-layout .header .navigator ul .module-user div a:hover {
+    background: #009be7;
+}
+/*  分辨率适配  */
+@media (max-width: 1280px) {
+    #main-layout .header h1 {
+        width: 263px;
+        padding-left: 242px;
+        letter-spacing: 1px;
+        /*background: url(img/common/logo-small.png) left center no-repeat;*/
+    }
+
+    #main-layout .header .navigator ul li {
+        width: 70px;
+    }
+}
+
+@media (min-width: 1281px) and (max-width:1449px ) {
+    #main-layout .header h1 {
+        width: 263px;
+        padding-left: 242px;
+        letter-spacing: 1px;
+        /*background: url(img/common/logo-small.png) left center no-repeat;*/
+    }
+
+    #main-layout .header .navigator ul li {
+        width: 78px;
+    }
+}
+
+@media (min-width: 1450px) {
+    #main-layout .header .navigator ul li {
+        /*width: 80px;*/
+        width:100px;
+    }
+}
+
+@media (min-width: 1920px) {
+    #main-layout .header h1 {
+        width: 340px;
+        font-size: 24px;
+    }
+
+    #main-layout .header .navigator ul li {
+        width: 88px;
+    }
+}
+
+/*----------  footer  ----------*/
+#main-layout .footer {
+    width: 100%;
+    color: #999;
+    background: #ececec;
+    line-height: 30px;
+    position: fixed;
+    bottom: 0;
+}
+
+
+/*----------  二、上-左右-下结构  ----------*/
+#nav_list a {
+    width: 100%;
+    height: 40px;
+    display: block;
+    border-bottom: 1px solid #e5e5e5;
+    text-align: left;
+}
+
+    #nav_list a dt {
+        line-height: 40px;
+        color: #666;
+        font-size: 14px;
+        font-weight: bold;
+        background-color: #f8f8f8;
+    }
+
+    #nav_list a.disabled dt, #nav_list a:hover.disabled dt {
+        color: #ccc;
+        cursor: default;
+        background-color: #f8f8f8;
+    }
+
+    #nav_list a dt i {
+        width: 20px;
+        height: 20px;
+        float: left;
+        margin: 10px 10px 10px 20px;
+        background-repeat: no-repeat;
+        background-position: 0 0;
+    }
+
+    #nav_list a:hover dt i, #nav_list .active dt i {
+        background-position: -20px 0;
+    }
+
+    #nav_list a:hover .disabled dt i, #nav_list .disabled dt i {
+        background-position: -40px 0;
+    }
+
+a .quality {
+    background: url(img/icon/nav_icon_quality.png);
+}
+
+a .deploy {
+    background: url(img/icon/nav_icon_deploy.png);
+}
+
+a .setup {
+    background: url(img/icon/nav_icon_setup.png);
+}
+
+a .analysis {
+    background: url(img/icon/nav_icon_analysis.png);
+}
+
+a .audit {
+    background: url(img/icon/nav_icon_audit.png);
+}
+
+a .history {
+    background: url(img/icon/nav_icon_history.png);
+}
+
+a .data_recycle {
+    background: url(img/icon/nav_icon_data_recycle.png);
+}
+
+a .integrated_state {
+    background: url(img/icon/nav_icon_integrated_state.png);
+}
+
+a .action_log {
+    background: url(img/icon/nav_icon_action_log.png);
+}
+
+a .profile_info {
+    background: url(img/icon/nav_icon_profile_info.png);
+}
+
+a .data_statistics {
+    background: url(img/icon/nav_icon_data_statistics.png);
+}
+
+a .data_validate {
+    background: url(img/icon/nav_icon_data_validate.png);
+}
+
+a .menuicon-setting-general {
+    background-image: url(img/icon/menu_icon_setting_general.png);
+}
+
+/*  分辨率适配  */
+@media (max-width:1449px ) {
+    /*  左侧菜单固定宽度(165)  */
+    .menu_block {
+        width: 164px;
+    }
+    /*  右侧自适应  */
+    #main-layout .right-box {
+        width: calc(100% - 165px);
+        min-width: 1115px;
+    }
+}

@@ -1,0 +1,87 @@
+﻿#reportType ul {
+    margin: 20px 0px;
+}
+
+    #reportType ul li {
+        width: 140px;
+        height: 100px;
+        text-align: center;
+    }
+
+        #reportType ul li .hover {
+            /*background: #0a97e6;*/
+            background: lightgreen;
+        }
+
+        #reportType ul li a {
+            width: 100%;
+            height: 80px;
+            padding-top: 20px;
+            display: block;
+            color: #fff;
+            font-size: 16px;
+            background: #445766;
+            cursor: pointer;
+        }
+            #reportType ul li a img {
+                display: block;
+                margin: 0 auto 5px;
+            }
+
+#reportCondition .el-form {
+    margin-top: 10px;
+}
+
+#reportCondition .el-form-item {
+    margin-bottom: 0;
+}
+
+    #reportCondition .el-form-item .el-form-item__label {
+        height: 36px;
+        line-height: 44px;
+    }
+
+#reportCondition .el-form .title {
+    border-bottom: 1px solid #409EFF;
+}
+
+    #reportCondition .el-form .title .el-tag {
+        border-radius: 0;
+    }
+
+#reportCondition .el-form .el-select,
+#reportCondition .el-form .el-date-editor,
+#reportCondition .el-form .el-cascader {
+    width: 100%;
+}
+
+#reportCondition .el-form .el-input-group {
+    vertical-align: bottom;
+}
+
+.el-select-dropdown__wrap {
+    margin-bottom:0px!important;
+}
+
+/*  视图-列表方式切换  */
+.change a {
+    width: 80px;
+    height: 80px;
+    float: left;
+    position: absolute;
+    top: 70px;
+    right: 10px;
+    cursor: pointer;
+    display: block;
+    z-index: 9999;
+    background: url(img/qc/change-bg.png) center no-repeat;
+}
+
+    .change a:hover {
+        background: url(img/qc/change-bg-hover.png) center no-repeat;
+    }
+
+.change .hover {
+    display: inline;
+    z-index: 99;
+}

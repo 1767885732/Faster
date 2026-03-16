@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="MRS" Title="发病前mRS评分" >
+    <Group>
+      <RadioBox Code="MRS001" Title="发病前mRS评分" Desc="">
+        <Option Id="01" Text="完全无症状" Score="0"/>
+        <Option Id="02" Text="尽管有症状，但无明显功能障碍，能完成所有日常事务" Score="1"/>
+        <Option Id="03" Text="轻度残疾，不能完成病前所有活动，但不需帮助能照料自己的日常事务" Score="2"/>
+        <Option Id="04" Text="中度残疾，需部分帮助，但能独立行走" Score="3"/>
+        <Option Id="05" Text="中重度残疾，不能独立行走，日常生活需别人帮助" Score="4"/>
+        <Option Id="06" Text="重度残疾，卧床，二便失禁，日常生活完全依赖他人" Score="5"/>
+      </RadioBox>
+    </Group>
+  </Template>
+</Config>

@@ -1,0 +1,250 @@
+﻿@{
+    ViewBag.Title = "随访管理";
+    Layout = null;
+}
+@using DoCare.ToolKit
+@model DoCare.CVA.Business.Model.FollowupModel
+<link href="~/Scripts/ui-grid/ui-grid.min.css" rel="stylesheet" />
+<script src="~/Scripts/ui-grid/ui-grid.js"></script>
+<link href="~/Scripts/pagination/tm.pagination.css" rel="stylesheet" />
+<script src="~/Scripts/pagination/tm.pagination.js"></script>
+<style>
+    .grid {
+        height: calc(100% - 41px);
+        height: -moz-calc(100% - 41px);
+        height: -webkit-calc(100% - 41px);
+    }
+
+    table {
+        border-collapse: separate !important;
+    }
+</style>
+
+<script>
+    var treatmentTypArray = @Html.Raw(JsonKit.Serialize(Model.TreatmentTypeDict));
+    var treatmentTypArrayJsonStr = JSON.stringify(treatmentTypArray);
+    var genderArray = @Html.Raw(JsonKit.Serialize(Model.GenderDict));
+    var genderArrayJsonStr = JSON.stringify(genderArray);
+    var clickCount = 0;
+    var searchDate = @Html.Raw(JsonKit.Serialize(Model.SearchDate));
+    var searchFollowupStatus = @Html.Raw(JsonKit.Serialize(Model.SearchFollowupStatus));
+
+    $().ready(function () {
+        var myapp = angular.module('ngAppFollowUpIndex', ['ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'mdsdFilter', 'tm.pagination']);
+
+        myapp.controller('MainController', ['$scope', 'uiGridConstants', function ($scope, uiGridConstants) {
+
+            //分页配置
+            $scope.paginationConf = {
+                currentPage: 1,
+                totalItems: 0,
+                itemsPerPage: 20,
+                pagesLength: 9,
+                showJump:false,
+                perPageOptions: [20, 50, 100],
+                onChange: function(){
+                    $scope.searchParams.page = this.currentPage;
+                    $scope.searchParams.rows = this.itemsPerPage;
+                    $scope.search();
+                }
+            };
+            //查询参数
+            $scope.searchParams = {
+                page:$scope.paginationConf.currentPage,
+                rows:$scope.paginationConf.itemsPerPage,
+                sort: "PlanDate",
+                order: "asc",
+                PhaseStatus: "",
+                AuditStatus:"",
+                Name: "",
+                MrNo: "",
+                OrgCode: "",
+                CreateName: "",
+                CreateDateStart: searchDate,
+                CreateDateEnd: searchDate,
+                OrgCode: "",
+                FollowUpStatus: (searchFollowupStatus!=null && searchFollowupStatus!="")?searchFollowupStatus:"0",
+            };
+
+            //切换选项卡
+            $scope.tabChange = function ($event, followUpStatus) {
+                $scope.paginationConf.currentPage = 1;
+                $scope.searchParams.page = 1;
+                $scope.searchParams.FollowUpStatus = followUpStatus;
+                $scope.search();
+            }
+
+            //点击查询
+            $scope.searchClick = function(){
+                $scope.paginationConf.currentPage = 1;
+                $scope.searchParams.page = 1;
+                $scope.search();
+            }
+
+            //搜索
+            $scope.search = function () {
+                $.ajax({
+                    type: 'POST',
+                    data: $scope.searchParams,
+                    datatype: "json",
+                    url: AddUrlPrefix("/FollowUpManage/GetFollowUpListByPage/"),
+                    success: function (data) {
+                        if (data.IsSuccess) {
+                            $scope.gridOptions.data = data.Data.rows;
+                            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+
+                            $scope.paginationConf.totalItems =  data.Data.total;
+                        } else {
+                            console.log("请求列表数据失败:" + data.Message);
+                        }
+                    }
+                });
+            }
+
+            //创建一次随访
+            $scope.CreateFollowup = function (registId, calendarId, followupId) {
+                if (calendarId == null || calendarId == "") {
+                    layer.alert("随访日历ID不能为空！", { title: '友情提示', icon: 0, closeBtn: 0, move: false });
+                    return;
+                }
+                else
+                {
+                    clickCount = clickCount + 1;
+                    if (clickCount == 1)
+                    {
+                        $.post('/FollowUpManage/CreateFollowup', { registId: registId, calendarId: calendarId, followupId: followupId }, function (str) {
+                            layer.open({
+                                type: 1,
+                                title: '随访单',
+                                maxmin: false,
+                                shadeClose: false, //点击遮罩关闭层
+                                area: ['1000px', '590px'],
+                                content: str,
+                                end: function () {
+                                    clickCount = 0
+                                    $scope.search();
+                                }
+                            });
+                        });
+                    }
+                }
+            }
+
+            $scope.CalendarList = function (registId)
+            {
+                if (registId != null && registId!="")
+                {
+                    clickCount = clickCount + 1;
+                    if (clickCount == 1)
+                    {
+                        layer.open({
+                            type: 2,
+                            title: '随访列表',
+                            maxmin: false,
+                            shadeClose: false, //点击遮罩关闭层
+                            area: ['1250px', '610px'],
+                            content: '/FollowUpManage/CalendarList?registId=' + registId,
+                            end: function () {
+                                clickCount = 0;
+                                $scope.search();
+                            }
+                        });
+                    }
+                }
+            }
+
+            //列表选项
+            $scope.gridOptions = {
+                useExternalSorting: true,
+                enableRowSelection: true,
+                enableColumnResizing: true,
+                enableColumnMenus: false,  //菜单栏不现实下拉菜单
+                columnDefs: [
+                  { field: 'NameCn', displayName: '患者姓名', width: '9%', suppressRemoveSort: true, sortDirectionCycle: [uiGridConstants.ASC, uiGridConstants.DESC]},
+                  { field: 'Age',displayName:'年龄',width:'6%', enableSorting: false  },
+                  { field: 'Gender', displayName: '性别', width: '6%', enableSorting: false, cellFilter: 'getValue:' + genderArrayJsonStr },
+                  { field: 'PhoneNo1', displayName: '联系电话', width: '10%', enableSorting: false },
+                  { field: 'PhoneNo2Name', displayName: '紧急联系人', width: '10%', enableSorting: false },
+                  { field: 'PhoneNo2', displayName: '紧急联系人电话', width: '10%', enableSorting: false },
+                  { field: 'PhoneNo2Relation', displayName: '与紧急联系人关系', width: '12%', enableSorting: false },
+                  { field: 'DiagnosisType', displayName: '诊断结果', width: '15%', enableSorting: false, cellFilter: 'getValue:' + treatmentTypArrayJsonStr },
+                  { field: 'PlanDate', displayName: '下次随访时间', width: '10%', suppressRemoveSort: true, sortDirectionCycle:[uiGridConstants.ASC, uiGridConstants.DESC], cellFilter: 'dateFmt' },
+                  { field: 'CalendarId', displayName: '操作', width: '15%', enableSorting: false, cellTemplate: operatorTemplate(),},
+                ],
+                onRegisterApi: function(gridApi) {
+                    $scope.gridApi = gridApi;
+
+                    $scope.gridApi.core.on.sortChanged( $scope, function ( grid, sortColumns ){//监听排序条件的改变
+                        if (sortColumns.length > 1) {
+                            var column = null;
+                            for (var j = 0; j < grid.columns.length; j++) {
+                                if (grid.columns[j].field === sortColumns[0].field) {
+                                    column = grid.columns[j];
+                                    break;
+                                }
+                            }
+                            if (column) {
+                                sortColumns[1].sort.priority = 1; // have to do this otherwise the priority keeps going up.
+                                column.unsort();
+                            }
+                        }
+                        lastSort = sortColumns[sortColumns.length - 1];
+                        $scope.searchParams.sort = lastSort.field;
+                        $scope.searchParams.order = lastSort.sort.direction;
+                        $scope.search();  //调用搜索
+                    });
+                }
+
+            };
+
+            //操作模板
+            function operatorTemplate(){
+                var html = '<div class="ui-grid-cell-contents">';
+                //html += '<a style="margin-left:10px;" ng-click="grid.appScope.CreateFollowup(row.entity.PatientRegistId,row.entity.CalendarId,row.entity.FollowupId)"><img src="/App_Themes/Default/img/icon/opt-icon-follow.png"/>随访</a>';
+                html += '<a style="margin-left:10px;" ng-click="grid.appScope.CalendarList(row.entity.PatientRegistId)"><img src="/App_Themes/Default/img/icon/opt-icon-calendar.png"/>查看</a>';
+                html += '</div>';
+
+                return html;
+            }
+
+            $scope.GetClass = function (followUpStatus)
+            {
+                if($scope.searchParams.FollowUpStatus==followUpStatus)
+                {
+                    return "hover";
+                }
+                return null;
+            }
+        }]);
+
+        angular.bootstrap($(".content")[0], ['ngAppFollowUpIndex']);
+    });
+
+</script>
+<div class="content" ng-app="ngAppFollowUpIndex" ng-controller="MainController">
+    <div style="width: 99%;position: absolute;top: 0px">
+        <div class="layout-container layout-container-box left" style="min-width:100%">
+            <div class="content content-box">
+                <div class="operating-btn top-15 right-15">
+                    <button class="btn-primary" ng-click="searchClick()">查询</button>
+                </div>
+                <div class="search-block" id="search_block">
+                    下次随访时间：从&nbsp;
+                    <input type="text" id="CreateDateStart" style="height:26px;border:1px solid #ccc" ng-model="searchParams.CreateDateStart" onchange="" class="Wdate fixWidth" wdate-picker onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy/M/d',maxDate:'#F{$dp.$D(\'CreateDateEnd\')}'})" />
+                    &nbsp;到&nbsp;
+                    <input type="text" id="CreateDateEnd" style="height:26px;border:1px solid #ccc" ng-model="searchParams.CreateDateEnd" onchange="" class="Wdate fixWidth" wdate-picker onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy/M/d',minDate:'#F{$dp.$D(\'CreateDateStart\')}'})" />
+                    &nbsp;
+                    患者姓名：<input type="text" maxlength="32" ng-model="searchParams.Name" style="height:26px;border:1px solid #ccc">
+                </div>
+                <div class="tab">
+                    <a id="filing1" ng-class="GetClass('0')" ng-click="tabChange($event,'0')">未完成</a>
+                    <a id="filing2" ng-class="GetClass('1')" ng-click="tabChange($event,'1')">已完成</a>
+                </div>
+                <div id="con-filing-1" class="tab-below" style="overflow-y: hidden;">
+                    <div ui-grid="gridOptions" ui-grid-selection ui-grid-resize-columns class="grid" style="height:82%;"></div>
+                    <tm-pagination conf="paginationConf"></tm-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

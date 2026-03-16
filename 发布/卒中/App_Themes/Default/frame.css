@@ -1,0 +1,516 @@
+﻿html{
+    height:100%;
+}
+body{
+    width:100%;
+    height:100%;
+    min-width:1280px;
+    overflow:auto;
+}
+
+/*----------  header  ----------*/
+#main-layout{
+    border:0;
+    display:block;
+    height:100%;
+}
+#main-layout .header{
+    width:100%;
+    min-width:1280px;
+    height:60px;
+    position:absolute;
+    top:0;
+}
+#main-layout .header h1{
+    width:280px;
+    height:50px;
+    float:left;
+    margin:5px 0 5px 10px;
+    display:inline;
+    padding-left:275px;
+    color:#fff;
+    font-weight: normal;
+    /*background:url(img/common/logo.png) left center no-repeat;*/
+    font:20px \9ed1\4f53;
+    line-height: 50px;
+    letter-spacing:2px;
+    text-align:left;
+}
+#main-layout .header h1 em{
+    font-size:14px;
+}
+#main-layout .header .nav{
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+#main-layout .header .nav ul{
+    float:right;
+    text-align:center;
+    position:relative;
+}
+#main-layout .header .nav ul li{
+    width:80px;
+    height:50px;
+    margin-top:10px;
+    float:left;
+    cursor:pointer;
+}
+#main-layout .header .nav ul li:hover, #main-layout .header .nav ul .selected{
+    background:url(img/common/menu-hover-bg.png) center no-repeat;
+}
+#main-layout .header .nav ul li s{
+    width:24px;
+    height:24px;
+    display:block;
+    margin:0 auto 2px;
+    background-position:0 -24px;
+}
+#main-layout .header .nav ul li:hover s, #main-layout .header .nav ul .selected s{
+    background-position:-24px 0;
+}
+/* header menu-icon  */
+#main-layout .header .nav ul li .menu-icon-index{
+    background-image:url(img/common/menu-icon-index.png);
+}
+#main-layout .header .nav ul li .menu-icon-dm{
+    background-image:url(img/common/menu-icon-dm.png);
+}
+#main-layout .header .nav ul li .menu-icon-report{
+    background-image:url(img/common/menu-icon-report.png);
+}
+#main-layout .header .nav ul li .menu-icon-statistics{
+    background-image:url(img/common/menu-icon-statistics.png);
+}
+#main-layout .header .nav ul li .menu-icon-check{
+    background-image:url(img/common/menu-icon-check.png);
+}
+#main-layout .header .nav ul li .menu-icon-doubt{
+    background-image:url(img/common/menu-icon-doubt.png);
+}
+#main-layout .header .nav ul li .menu-icon-monitor{
+    background-image:url(img/common/menu-icon-monitor.png);
+}
+#main-layout .header .nav ul li .menu-icon-set{
+    background-image:url(img/common/menu-icon-set.png);
+}
+#main-layout .header .nav ul li .menu-icon-change{
+    background-image:url(img/common/menu-icon-change.png);
+}
+    #main-layout .header .nav ul li .menu-icon-user {
+        /*background-image:url(img/common/menu-icon-user.png);*/
+        background-image: url('imgt/user.png');
+    }
+#main-layout .header .nav ul li .menu-icon-usercenter{
+    background-image:url(img/common/menu-icon-usercenter.png);
+}
+#main-layout .header .nav ul li .menu-icon-crf{
+    background-image:url(img/common/menu-icon-crf.png);
+}
+#main-layout .header .nav ul li .menu-icon-question{
+    background-image:url(img/common/menu-icon-question.png);
+}
+#main-layout .header .nav ul li .menu-icon-follow{
+    background-image:url(img/common/menu-icon-follow.png);
+}
+#main-layout .header .nav ul li .top-menu-icon-whole{
+    background-image:url(img/common/top-menu-icon-whole.png);
+}
+#main-layout .header .nav ul li a{
+    width:100%;
+    float:left;
+    color:#bae7fd;
+    font:15px \9ed1\4f53;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+#main-layout .header .nav ul li:hover a, #main-layout .header .nav ul .selected a{
+    color:#fff;
+}
+/*  header 二级菜单 */
+#main-layout .header .nav ul .module, #main-layout .header .nav ul .module:hover,#main-layout .header .nav ul .module-user, #main-layout .header .nav ul .module-user:hover{
+    background: url(img/common/nav-bg.png) left bottom repeat-x;
+}
+#main-layout .module div{
+    width:780px;
+    display:none;
+    position:absolute;
+    top:60px;
+    right:0;
+    z-index:99999;
+    float:right;
+    background: 86% 2px url(img/common/point.png) no-repeat;
+    padding-top:8px;
+}
+#main-layout .module div dl{
+    overflow:hidden;
+    display:inline-block;
+    float:right;
+    padding:8px 4px 0;
+    margin:0;
+}
+#main-layout .module div dl:hover dd{
+    color:#fff;
+}
+#main-layout .module div dl dt img{
+    width:120px;
+    height:80px;
+    display:block;
+    vertical-align: middle;
+}
+#main-layout .module div dl dd{
+    width:100%;
+    font:14px \9ed1\4f53;
+    color:#ccc;
+    line-height:24px;
+    float:left;
+    margin:0;
+    padding:0;
+    display:block;
+    text-align:center;
+}
+/*  user  */
+#main-layout .header .nav ul .module-user a, #main-layout .header .nav ul .module-user:hover a{
+    color:#f4c337;
+}
+#main-layout .header .nav ul .module-user div{
+    position:absolute;
+    top:60px;
+    right:0;
+    z-index:99999;
+    background:50% 2px url(img/common/point.png) no-repeat;
+    padding-top:8px;
+    display:none;
+}
+#main-layout .header .nav ul .module-user div a{
+    padding:8px 0;
+    border-top:1px solid #bae7fd;
+}
+#main-layout .header .nav ul .module-user div a:hover{
+    color:#fff;
+}
+/*  系统消息数字提示  */
+#main-layout .header .nav ul li .menu-icon-user .menu-message{
+    width:14px;
+    height:14px;
+    float:right;
+    padding:3px;
+    color:#fff;
+    border-radius: 10px;
+    background:#ed4e2a;
+    position: absolute;
+    right:20px;
+}
+#main-layout .header .nav ul .module-user div a{
+    position:relative;
+}
+#main-layout .header .nav ul .module-user div a span{
+    background:#ed4e2a;
+    padding:3px;
+    position:absolute;
+    top:7px;
+    right:35px;
+    display:block;
+    border:none;
+    border-radius: 10px;
+    font-size:12px;
+    color:#fff;
+}
+
+/*  分辨率适配  */
+@media (max-width: 1280px) {
+    #main-layout .header h1{
+        width:263px;
+        padding-left:245px;
+        letter-spacing:1px;
+        /*background:url(img/common/logo-small.png) left center no-repeat;*/
+    }
+    #main-layout .header .nav ul li {
+        width: 70px;
+    }
+}
+@media (min-width: 1281px) and (max-width:1449px ){
+    #main-layout .header h1{
+        width:263px;
+        padding-left:242px;
+        letter-spacing:1px;
+        background:url(img/common/logo-small.png) left center no-repeat;
+    }
+    #main-layout .header .nav ul li {
+        width: 78px;
+    }
+}
+@media (min-width: 1450px){
+    #main-layout .header .nav ul li {
+        width: 80px;
+    }
+}
+@media (min-width: 1920px){
+    #main-layout .header h1{
+        width:340px;
+        font-size:24px;
+    }
+    #main-layout .header .nav ul li {
+        width: 88px;
+    }
+}
+
+/*----------  main  ----------*/
+#main-layout .main{
+    width:100%;
+    height:auto;
+    min-width:1280px;
+    min-height:480px;
+    padding:0;
+    position:absolute;
+    top:60px;
+    bottom:30px;
+}
+
+/*----------  footer  ----------*/
+#main-layout .footer{
+    width:100%;
+    color:#999;
+    background:#ececec;
+    line-height:30px;
+    position:fixed;
+    bottom:0;
+    z-index:99;
+}
+#main-layout .footer td{
+    display:block;
+}
+
+
+/*----------  上-左右-下结构  ----------*/
+.layout-sidebar{
+    height:100%;
+    display:inline-block;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+.layout-container{
+    height:100%;
+    overflow:auto;
+}
+
+/*----------  左侧菜单固定宽度(190)  ----------*/
+.layout-sidebar-menu{
+    background:#f7f7f7 ;
+    box-shadow: 1px 1px 1px #e5e5e5;
+    height:100%;
+}
+.menu-block {
+    width: 189px;
+    height: 100%;
+    overflow: auto;
+}
+/*  右侧自适应  */
+.layout-container-box{
+    width: calc(100% - 190px);
+    width: -moz-calc(100% - 190px);
+    width: -webkit-calc(100% - 190px);
+    height:100%;
+    min-width:1090px;
+    position:relative;
+}
+.content {
+    width: calc(100% - 20px);
+    width: -moz-calc(100% - 20px);
+    width: -webkit-calc(100% - 20px);
+    padding:10px;
+    display:inline-block;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+/*  右侧content高度设置  */
+.content-box{
+    height:calc(100vh - 122px);
+    height:-moz-calc(100vh - 122px);
+    height:-webkit-calc(100vh - 122px);
+    overflow:hidden;
+}
+/*  左侧菜单样式  */
+#nav-list a {
+    width:100%;
+    height: 40px;
+    display:block;
+    border-bottom:1px solid #e5e5e5;
+    text-align:left;
+    line-height:40px;
+    color:#666;
+    font-size:16px;
+    font-weight:bold;
+    background-color:#f8f8f8;
+}
+#nav-list .disabled:hover, #nav-list .disabled{
+    color:#ccc;
+    cursor:default;
+    background-color:#f8f8f8;
+}
+#nav-list a i {
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin:10px 10px 10px 20px;
+    background-repeat:no-repeat;
+    background-position:0 0;
+}
+#nav-list a:hover i, #nav-list .active i {
+    background-position:-20px 0;
+}
+#nav-list .disabled:hover  i, #nav-list  .disabled i {
+    background-position:-40px 0;
+}
+#nav-list a .quality {
+    background-image:url(img/icon/nav_icon_quality.png);
+}
+#nav-list a .deploy {
+    background-image: url(img/icon/nav_icon_deploy.png);
+}
+#nav-list a .setup {
+    background-image: url(img/icon/nav_icon_setup.png);
+}
+#nav-list a .analysis {
+    background-image: url(img/icon/nav_icon_analysis.png);
+}
+#nav-list a .audit {
+    background-image: url(img/icon/nav_icon_audit.png);
+}
+#nav-list a .history {
+    background-image: url(img/icon/nav_icon_history.png);
+}
+#nav-list a .data-recycle {
+    background-image: url(img/icon/nav_icon_data_recycle.png);
+}
+#nav-list a .integrated-state {
+    background-image: url(img/icon/nav_icon_integrated_state.png);
+}
+#nav-list a .action-log {
+    background-image: url(img/icon/nav_icon_action_log.png);
+}
+#nav-list a .profile-info {
+    background-image: url(img/icon/nav_icon_profile_info.png);
+}
+#nav-list a .data-statistics {
+    background-image: url(img/icon/nav_icon_data_statistics.png);
+}
+#nav-list a .data-validate, #nav-list a .menu-management{
+    background-image: url(img/icon/nav_icon_data_validate.png);
+}
+a .menuicon-setting-general{
+    background-image: url(img/icon/menu_icon_setting_general.png);
+}
+#nav-list a .check-up {
+    background-image: url(img/icon/nav_icon_check_up.png);
+}
+#nav-list a .check-out {
+    background-image: url(img/icon/nav_icon_check_out.png);
+}
+#nav-list a .medicine {
+    background-image: url(img/icon/nav_icon_medicine.png);
+}
+#nav-list a .user-manage {
+    background-image: url(img/icon/nav_icon_user_manage.png)!important;
+}
+#nav-list a .organization {
+    background-image: url(img/icon/nav_icon_organization.png);
+}
+#nav-list a .emergency {
+    background-image: url(img/icon/nav_icon_emergency.png);
+}
+#nav-list a .ambulance {
+    background-image: url(img/icon/nav_icon_ambulance.png);
+}
+#nav-list a .score {
+    background-image: url(img/icon/nav_icon_score.png);
+}
+#nav-list a .score-list {
+    background-image: url(img/icon/nav_icon_score_list.png);
+}
+#nav-list a .brain {
+    background-image: url(img/icon/nav_icon_brain.png);
+}
+#nav-list a .cross {
+    background-image: url(img/icon/nav_icon_cross.png);
+}
+/*  分辨率适配  */
+@media (max-width:1449px ) {
+    /*  左侧菜单固定宽度(165)  */
+    .menu-block {
+        width: 164px;
+    }
+    /*  右侧自适应  */
+    .layout-container-box{
+        width: calc(100% - 165px);
+        width: -moz-calc(100% - 165px);
+        width: -webkit-calc(100% - 165px);
+        min-width:1115px;
+    }
+}
+
+/*  左侧搜索固定宽度(280)  */
+/*  side-search  */
+.side-search{
+    width:200px;
+    height:calc(100vh - 120px);
+    background:#f7f7f7;
+    padding:15px;
+    overflow:auto;
+}
+
+.side-search2 {
+    /*width: 70px;
+    height: calc(100vh - 120px);
+    background: #f7f7f7;
+    padding: 15px;
+    overflow: auto;*/
+    display: inline-block;
+    width: 70px;
+    height: calc(100vh - 120px);
+    background: #f7f7f7;
+    padding: 15px;
+    overflow: auto;
+    float: left;
+}
+
+.side-search select,.side-search button,.side-search select,.side-search button{
+    width:100%;
+}
+.side-search input{
+    width: calc(100% - 10px);
+    width: -moz-calc(100% - 10px);
+    width: -webkit-calc(100% - 10px);
+}
+/*  右侧自适应  */
+#main-layout .right-container{
+    width: calc(100% - 230px);
+    min-width:980px;
+    overflow-y:auto;
+}
+
+#main-layout .right-container2 {
+    display: inline-block;
+    /*width: calc(100% - 280px);*/
+    width: calc(100% - 135px);
+    min-width: 600px;
+    overflow: auto;
+    float: left;
+}
+#main-layout .center{
+    width: calc(100% - 30px);
+    height:calc(100vh - 120px);
+    overflow:auto;
+    padding: 15px;
+    position:relative;
+}
+
+#main-layout .op-panel {
+    position:fixed;
+    display:inline-block;
+    line-height:28px;
+    height:40px;
+    right:10px;
+    margin-right:10px;
+    z-index: 99;
+}

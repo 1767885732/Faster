@@ -1,0 +1,284 @@
+﻿@model FirstAidModel
+@using DoCare.ToolKit
+@using DoCare.CVA.Business.Model
+@using DoCare.CVA.Data
+@using DoCare.CVA.Data.Const
+@{
+    ViewBag.Title = "院前急救";
+    Layout = null;
+
+}
+<style>
+.view_ecg{
+	width: 16px;
+	height: 16px;
+	background: url(../../App_Themes/Default/img/icon/view-ecg-1.png) no-repeat top;
+	cursor: pointer;
+	margin: 3px 0px -5px 5px;
+	text-align: left;
+	display: inline-block;
+}
+.view_ecg:hover {
+    width: 16px;
+    height: 16px;
+    background: url(../../App_Themes/Default/img/icon/view-ecg-1.png) no-repeat bottom;
+}
+</style>
+<script type="text/javascript">
+
+    var model = @Html.Raw(JsonKit.Serialize(Model));
+    var PermissionSave = @Html.Raw((JsonKit.Serialize(ViewBag.PermissionSave)));
+    $(function () {
+        // 初始化校验器
+        var validator = new MDEValidator('@Model.Regist.Id', "FirstAid", $("#divPreHospital"));
+
+        var app = angular.module('ngPreHospital', ['mdsdFilter', 'mdsdDirective']);
+
+        app.controller('MainController', function ($scope, $filter, $http) {
+            // 院前评估信息
+            $scope.FirstAid = model.FirstAid;
+            //患者信息
+            $scope.Regist = model.Regist;            
+            //Fast
+            $scope.fast = model.FirstAid.Fast;
+            $scope.consciousnessDict = model.ConsciousnessDict;
+            $scope.Refresh = function () {
+                if ($scope.Regist.EhrId == null) return;
+                var maskIndex = layer.load();
+                $.post("/FirstAid/Refresh", model.FirstAid, function (result) {
+                    if (result.IsSuccess) {
+                        $scope.$apply(function () {
+                            $scope.FirstAid = result.Data; // 院前评估信息
+                            $scope.fast = result.Data.Fast;//fast评分
+                        });
+                        $("[timeId]").blur();
+                        layer.close(maskIndex); 
+                    }else{layer.close(maskIndex);}
+                });
+            }
+            //$scope.Refresh();
+            
+            // 日期控件
+            app.directive('wdatePicker',function(){
+                return{
+                    restrict:"A",  
+                    link:function(scope,element,attr){
+                        element.bind('click',function(){
+                            window.WdatePicker({
+                                onpicked:function(){element.change()},  
+                                oncleared:function(){element.change()},
+                                dateFmt:'yyyy-MM-dd HH:mm'
+                            })  
+                        });
+                    }
+                }
+            });
+
+            $scope.PermissionSave = PermissionSave;
+
+            $scope.fastChange = function(index)
+            {
+                $scope.fast[index]=!$scope.fast[index];
+                $scope.FirstAid.Fast = $scope.fast;
+            }
+
+            $http.get('/Base/GetTitleInfo', {
+                params: {
+                    registId: $scope.Regist.Id
+                }
+            }).then(function successCallback(response) {
+                if (response.data.IsSuccess) {
+                    $scope.Regist = response.data.Data.Patient;
+                }
+                else {
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+            });
+
+            // 保存事件
+            $scope.save = function () {
+                // 验证后保存
+                //if (!validator.DoValidate()) {
+                //    return false;
+                //}
+
+                // 重要项校验
+                var errorItem = $.validator.errorItem;
+                if (errorItem != undefined && errorItem != null && errorItem.length > 0) {
+                    var message = "<div style='margin-left: 50px;'>";
+                    $(errorItem).each(function (index, item) { message += (item + "<br>") });
+                    $.messager.confirm('警告', message + "</div>", function (r) {
+                        if (r) $scope.doSave();
+                    });
+                }
+                else {
+                    $scope.doSave();
+                }
+            }
+
+            // 提交
+            $scope.complete = function(){
+                $scope.doSave(true);
+            }
+
+            // 保存
+            $scope.doSave = function (doComplete) {
+                debugger;
+                // 获取填写数据
+                $http.post('/FirstAid/Save', {
+                    model: $scope.FirstAid
+                }).then(function (json) {
+                    if (json.data.IsSuccess) {
+                        if(doComplete){
+                            $.ajax({
+                                type: 'POST',
+                                url: AddUrlPrefix('/DataManage/Commit'),
+                                data: { registId: $scope.Regist.Id},
+                                dataType: 'json',
+                                success: function (json) {
+                                    if (json.IsSuccess) {
+                                        $scope.$apply(function () {
+                                            $scope.Regist.IsCompleted = true;
+                                        });
+                                        pageLoading(1);
+                                        layer.alert("提交成功", { icon: 1 });
+                                    } else {
+                                        layer.alert( "提交失败:" + json.Message, { icon: 2 });
+                                    }
+                                },
+                                error: function () {
+                                    layer.alert("请求失败！", { icon: 2 });
+                                }
+                            });
+                        }
+                        else{
+                            layer.alert("保存成功", { icon: 1 });
+                            pageLoading(1);
+                        }
+                    } else {
+                        layer.alert("保存失败:" + json.data.Message, { icon: 2 });
+                    }
+                }, function (error) {
+                    layer.alert("保存失败:" + error, { icon: 2 });
+                });
+            };
+        });
+        angular.bootstrap($(".content")[0], ["ngPreHospital"]);
+    });
+</script>
+<div class="content" ng-app="ngPreHospital" ng-controller="MainController">
+    <div class="form-tit">
+        <a href="">数据管理</a>&gt;&nbsp;院前急救&nbsp;<span>&#40;注:<b class="bx"></b>必填项&nbsp;<b style='vertical-align: top;color: #F00;'>&#10026;&nbsp;</b>重要项&nbsp;&#41;</span>
+        @Html.Partial("../Base/Patient")
+        <div class="op-panel">
+            <span style="margin:0px 1px;" />
+            <button type="button" class="btn-primary" ng-click="Refresh()" >同步</button>
+            <button type="button" class="btn-primary" ng-if="PermissionSave && !Regist.IsCompleted" ng-click="save()" id="btnSave">保存</button>
+            <button type="button" class="btn-primary" ng-if="PermissionSave && !Regist.IsCompleted && Regist.Id" ng-click="complete()" id="btnComplete">提交</button>
+            <span style="margin:0px 1px;" />
+            @*<button type="button" id="btnLog" onclick="refreshlog()">操作日志</button>*@
+        </div>
+    </div>
+
+    <form id="divPreHospital">
+        <fieldset class="medical-record">
+            <h4 class="tit-block">院前信息</h4>
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="CallTime"></b>患者/家属呼救时间:</label>
+                    <input type="datetime" id="CallTime" name="CallTime" ng-model="FirstAid.CallTime" validateName="CallTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" timeId=@TimeLineNodes.D020100 />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="DispatchTime"></b>120派车时间:</label>
+                    <input type="datetime" id="DispatchTime" name="DispatchTime" ng-model="FirstAid.DispatchTime" validateName="DepartureTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" timeId=@TimeLineNodes.D020101 />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="DepartureTime"></b>120出车时间:</label>
+                    <input type="datetime" id="DepartureTime" name="DepartureTime" ng-model="FirstAid.DepartureTime" validateName="DepartureTime" timeId=@TimeLineNodes.D020102 date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="ArrivePatientSideTime"></b>120到达现场时间:</label>
+                    <input type="datetime" id="ArrivePatientSideTime" name="ArrivePatientSideTime" ng-model="FirstAid.ArrivePatientSideTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" validateName="ArrivePatientSideTime" timeId=@TimeLineNodes.D020103 />
+                </div>
+            </div class="row-box">
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="LiveTime"></b>120离开现场时间:</label>
+                    <input type="datetime" id="LiveTime" name="LiveTime" ng-model="FirstAid.LiveTime" validateName="LiveTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" timeId=@TimeLineNodes.D020104 />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="PatientArrivalTime"></b>患者送达医院时间:</label>
+                    <input type="datetime" id="PatientArrivalTime" name="PatientArrivalTime" ng-model="FirstAid.PatientArrivalTime" validateName="PatientArrivalTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" timeId=@TimeLineNodes.D020105 />
+                </div>
+            </div>
+            <h4 class="tit-block">生命体征</h4>
+            <div class="row-box">
+                <div style="width: 75%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="Consciousness"></b>意识:</label><br />
+                    <label ng-repeat="item in consciousnessDict | orderBy:'Key'">
+                        <input type="radio" name="consciousness" ng-model="FirstAid.Consciousness" validateName="Consciousness" value="{{item.Key}}"><span>{{item.Value}}</span>
+                    </label>
+                </div>
+            </div>
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="T"></b>体温:</label>
+                    <input type="text" name="T" maxlength="5" validateName="T" ng-model="FirstAid.T">
+                    <em>℃</em>
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="P"></b>脉搏:</label>
+                    <input type="text" maxlength="4" name="P" validateName="PulseRate" ng-model="FirstAid.P">
+                    <em>次/分钟</em>
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="R"></b>呼吸:</label>
+                    <input type="text" maxlength="4" name="R" validateName="R" ng-model="FirstAid.R">
+                    <em>次/分钟</em>
+                </div>
+                <div class="mr-row-fourth" style="width:248px;">
+                    <label><b validateSnow="Sp"></b>血压（收缩压/舒张压）:</label>
+                    <input placeholder="收缩压" type="text" name="Sp" maxlength="4" style="width:30%;border:none;border-bottom:1px solid #dadada;" validateName="Sp" ng-model="FirstAid.Sp">/
+                    <input placeholder="舒张压" type="text" name="Dp" maxlength="4" style="width:30%;border:none;text-align:center;border-bottom:1px solid #dadada;" ng-model="FirstAid.Dp">
+                    <em>mmHg</em>
+                </div>
+            </div>
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="Spo"></b>血氧:</label>
+                    <input type="text" maxlength="5" name="Spo" validateName="Spo" ng-model="FirstAid.Spo">
+                    <em>%</em>
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="Hr"></b>心率:</label>
+                    <input type="text" maxlength="4" name="Hr" validateName="Hr" ng-model="FirstAid.Hr">
+                    <em>次/分钟</em>
+                </div>
+            </div>
+            <h4 class="tit-block">FAST评估</h4>
+            <div class="row-row">
+                <div class="mr-row-fourth">
+                    <img style="display:{{fast[0] ? 'none':'block'}};width:98%;" src="~/App_Themes/Default/img/icon/FAST_F.png" ng-click="fastChange(0)" />
+                    <img style="display:{{fast[0] ? 'block':'none'}};width:98%;" src="~/App_Themes/Default/img/icon/FAST_F_SEL.png" ng-click="fastChange(0)" />
+                </div>                                                     
+                <div class="mr-row-fourth">                                
+                    <img style="display:{{fast[1] ? 'none':'block'}};width:98%;" src="~/App_Themes/Default/img/icon/FAST_A.png" ng-click="fastChange(1)" />
+                    <img style="display:{{fast[1] ? 'block':'none'}};width:98%;" src="~/App_Themes/Default/img/icon/FAST_A_SEL.png" ng-click="fastChange(1)" />
+                </div>                                                     
+                <div class="mr-row-fourth">                                
+                    <img style="display:{{fast[2] ? 'none':'block'}};width:98%;" src="~/App_Themes/Default/img/icon/FAST_S.png" ng-click="fastChange(2)" />
+                    <img style="display:{{fast[2] ? 'block':'none'}};width:98%;" src="~/App_Themes/Default/img/icon/FAST_S_SEL.png" ng-click="fastChange(2)" />
+                </div>                                                     
+                <div class="mr-row-fourth">                                
+                    <img style="display:{{fast[3] ? 'none':'block'}};width:98%;" src="~/App_Themes/Default/img/icon/FAST_T.png" ng-click="fastChange(3)" />
+                    <img style="display:{{fast[3] ? 'block':'none'}};width:98%;" src="~/App_Themes/Default/img/icon/FAST_T_SEL.png" ng-click="fastChange(3)" />
+                </div>                          
+            </div>
+            <div class="clear"></div>
+        </fieldset>
+    </form>
+</div>
+
+
+

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FastFrame.MiniProfile</name>
+    </assembly>
+    <members>
+        <member name="T:FastFrame.MiniProfile.MiniProfilerPack">
+            <summary>
+            MiniProfiler模块
+            </summary>
+        </member>
+        <member name="T:FastFrame.MiniProfile.MiniProfilerPackBase">
+            <summary>
+            MiniProfiler模块基类
+            </summary>
+        </member>
+        <member name="P:FastFrame.MiniProfile.MiniProfilerPackBase.Level">
+            <summary>
+            获取 模块级别，级别越小越先启动
+            </summary>
+        </member>
+        <member name="P:FastFrame.MiniProfile.MiniProfilerPackBase.Order">
+            <summary>
+            获取 模块启动顺序，模块启动的顺序先按级别启动，同一级别内部再按此顺序启动，
+            级别默认为0，表示无依赖，需要在同级别有依赖顺序的时候，再重写为>0的顺序值
+            </summary>
+        </member>
+        <member name="M:FastFrame.MiniProfile.MiniProfilerPackBase.AddServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            将模块服务添加到依赖注入服务容器中
+            </summary>
+            <param name="services">依赖注入服务容器</param>
+            <returns></returns>
+        </member>
+        <member name="M:FastFrame.MiniProfile.MiniProfilerPackBase.UsePack(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
+            <summary>
+            应用AspNetCore的服务业务
+            </summary>
+            <param name="app">Asp应用程序构建器</param>
+        </member>
+        <member name="M:FastFrame.MiniProfile.MiniProfilerPackBase.GetMiniProfilerAction(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            获取MiniProfile插件配置
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,34 @@
+﻿@using DoCare.Framework.Extension;
+@model List<DoCare.CRF.Form.Data.Item.MDFormItemType>
+@{
+    Layout = null;
+}
+
+<link href=@Url.GetCssJsUrl("~/Content/xxg_cz.css") rel="stylesheet" />
+<script src=@Url.GetCssJsUrl("~/Scripts/Stroke/itemTypeDialog.js")></script>
+<div id="light1" class="popup_block" style="width:800px;">
+    <div id="selection_frame_block" class="mg_l_20">
+        <ul>
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                <li>
+                    <p class="tit_block">@Model[i].Description</p>
+                    @if (i == 0)
+                    {
+                        <a codeattr="@Model[i].Code" class="active" onclick="selectChange(this)"><img src="~/Images/formitems/@Model[i].Image" /></a>
+                    }
+                    else
+                    {
+                        <a codeattr="@Model[i].Code" onclick="selectChange(this)"><img src="~/Images/formitems/@Model[i].Image" /></a>
+                    }
+                    
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="clearfix"></div>
+    <div class="btn_block">
+        <a id="submitItemType" class="btn blue">提交</a>
+        <a id="close" class="btn orange">取消</a>
+    </div>
+</div>

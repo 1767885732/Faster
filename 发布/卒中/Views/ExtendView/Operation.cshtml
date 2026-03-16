@@ -1,0 +1,106 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutIframe.cshtml";
+}
+@using DoCare.ToolKit;
+<link href="~/App_Themes/Default/page.check.css" rel="stylesheet" />
+<script src="~/Scripts/DoCareMVCComm.js"></script>
+<script>
+    var org = @Html.Raw(JsonKit.Serialize(ViewBag.Org));
+    var patientNo = @Html.Raw(JsonKit.Serialize(ViewBag.PatientNo));
+    var app = angular.module('ngOperation', ['mdsdFilter']);
+
+    app.controller('OperationController', function ($scope, $filter, $http) {
+        $scope.Operations = null;
+        $scope.HasData = false;
+        $scope.IsLoaded = false;
+
+        $scope.Refresh = function () {
+            var index = layer.load(2);
+
+            $.ajax({
+                url: '/ExtendView/RefreshOperation?patientNo='+patientNo+'&org='+org,
+                type: "get",
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        $scope.$apply(function () {
+                            layer.close(index);
+                            //layer.msg("刷新成功！");
+                            console.log(result.Data.Operations);
+                            $scope.Operations = result.Data.Operations;
+                            $scope.HasData = result.Data.Operations && result.Data.Operations.length > 0;
+                            $scope.IsLoaded = true;
+                        });
+                    }
+                }
+            });
+        }
+
+        $scope.Refresh();
+    });
+</script>
+<div ng-app="ngOperation" ng-controller="OperationController" style="margin-bottom: 50px;">
+    <div ng-if="HasData&&IsLoaded" class="event" ng-repeat="op in Operations">
+        <div class="tit">
+            <h1>手术记录单</h1>
+        </div>
+        <div class="event-info">
+            <dl>
+                <dt>姓名</dt>
+                <dd>{{op.Name|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>性别</dt>
+                <dd>{{op.Gender|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>年龄</dt>
+                <dd>{{op.Age|emptyReplace}}岁</dd>
+            </dl>
+            <dl>
+                <dt>住院号</dt>
+                <dd>{{op.MrNo|emptyReplace}}</dd>
+            </dl>
+        </div>
+        <div class="event-con">
+            <table class="basic-table">
+                <tr>
+                    <th>麻醉方式</th>
+                    <th>术前诊断</th>
+                    <th>术后诊断</th>
+                    <th>实施手术</th>
+                    <th>手术医师</th>
+                    <th>麻醉医师</th>
+                </tr>
+                <tr>
+                    <td>{{op.AnesthesiaMethod|emptyReplace}}</td>
+                    <td>{{op.DiagBeforeOperation|emptyReplace}}</td>
+                    <td>{{op.DiagAfterOperation|emptyReplace}}</td>
+                    <td>{{op.OperationName|emptyReplace}}</td>
+                    <td>{{op.Surgeon|emptyReplace}}</td>
+                    <td>{{op.AnesthesiaDoctor|emptyReplace}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="event-foot">
+            <dl>
+                <dt>麻醉开始时间:</dt>
+                <dd>{{op.AnesStartTime|dateFmt:'YYYY-MM-DD HH:mm:ss'|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>麻醉结束时间:</dt>
+                <dd>{{op.AnesEndTime|dateFmt:'YYYY-MM-DD HH:mm:ss'|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>手术开始时间:</dt>
+                <dd>{{op.StartDateTime|dateFmt:'YYYY-MM-DD HH:mm:ss'|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>手术结束时间:</dt>
+                <dd>{{op.EndDateTime|dateFmt:'YYYY-MM-DD HH:mm:ss'|emptyReplace}}</dd>
+            </dl>
+        </div>
+    </div>
+    <div ng-if="!HasData&&IsLoaded">
+        @{ Html.RenderPartial("NoCollect");}
+    </div>
+</div>

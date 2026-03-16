@@ -1,0 +1,46 @@
+-- Create table
+create table MED_PATIENT_REGIST_INFO
+(
+  patient_no    VARCHAR2(40) not null,
+  name          VARCHAR2(40),
+  date_of_birth DATE,
+  age           VARCHAR2(10),
+  sex           VARCHAR2(10),
+  id_no         VARCHAR2(20),
+  pat_job       VARCHAR2(40),
+  citizen_card  VARCHAR2(40),
+  mail_address  VARCHAR2(100),
+  phone_numer   VARCHAR2(40),
+  come_type     VARCHAR2(40),
+  res1          VARCHAR2(100),
+  res2          VARCHAR2(100)
+  
+)
+tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table MED_PATIENT_REGIST_INFO
+  add constraint PK_MED_PATIENT_REGIST_INFO primary key (PATIENT_NO)
+  using index 
+  tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Grant/Revoke object privileges 
+grant select, insert, update, delete on MED_PATIENT_REGIST_INFO to ROLE_DOCARE;

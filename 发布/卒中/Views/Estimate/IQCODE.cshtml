@@ -1,0 +1,115 @@
+﻿@using DoCare.ToolKit
+@{
+    ViewBag.Title = "评估";
+    Layout = null;
+}
+<script>
+    var model = @Html.Raw((JsonKit.Serialize(ViewBag.Model)));
+    var registId = "@ViewBag.RegistId";
+    var recordId = "@ViewBag.RecordId";
+
+    // 初始化校验器
+    var app = angular.module('ngAppEstimate', ['mdsdFilter', 'mdsdDirective']);
+    app.controller('ngCtrlEstimate', function ($scope, $filter, $http) {
+        $scope.model = model;
+        $scope.save = function (item, key, value) {
+            var index = layer.load();
+            $http({
+                method: 'POST',
+                url: '/Estimate/SaveEstimate',
+                data: { sheetId: $scope.model.Id, registId: registId, code: item == null ? '' : item.Code, doctor: $scope.model.Doctor, time: $scope.model.Time, key: key, value: value }
+            }).then(function successCallback(response) {
+                if (response.data.IsSuccess) {
+                    if (!!item) {
+                        var result = response.data.Data;
+                        $scope.model.Score = result.Score;
+                        item.Score = result.ItemScore;
+                        $("#scoreChanged").val("1");
+                        $("#recordId").val(recordId);
+                    }
+                }
+                else {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+                layer.close(index);
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+                layer.close(index);
+            });
+        }
+    });
+    angular.bootstrap($(".score-detail")[0], ['ngAppEstimate']);
+
+    function subNav(obj) {
+        $(obj).toggleClass("currentDd");//.siblings(".subNav").removeClass("currentDd");
+        // 修改数字控制速度， slideUp(0)控制卷起速度
+        $(obj).next(".navContent").slideToggle(100)//.siblings(".navContent").slideUp(100);
+
+        if ($(".currentDd").length == 0) {
+            $("#cbxIsShowAll").prop("checked", false);
+        }
+        else if ($(".currentDd").length == $(".subNav").length) {
+            $("#cbxIsShowAll").prop("checked", true);
+        }
+    }
+
+    function FoldOrUnfold(obj) {
+        if ($(obj).prop("checked")) {
+            var elme = document.querySelectorAll("div[class='subNav ng-scope']");
+            for (var i = 0; i < elme.length; i++) {
+                if (elme[i].className == "subNav ng-scope") {
+                    elme[i].setAttribute('class', 'subNav ng-scope currentDd');
+                }
+            }
+            $(".navContent").slideDown();
+        }
+        else {
+            $(".subNav").removeClass("currentDd");
+            $(".navContent").slideUp();
+        }
+    }
+    $(function () {
+        $(".subNav").click();
+    });
+</script>
+<div id="estimate" class="score-detail" ng-app="ngAppEstimate" ng-controller="ngCtrlEstimate" style="margin-top:10px;margin-left:10px;height:400px;">
+    <fieldset class="medical-record">
+        @*<button type="button" class="operating-btn medical-save-btn" ng-click="save()" id="btnSave"><img src="~/App_Themes/Default/img/icon/save.png"></button>*@
+        <form id="_estimate_edit_form">
+            <div class="horizontal score-tit m-b-10">
+                <label>评估医生:</label>
+                <input type="text" ng-model="model.Doctor" maxlength="10" ng-blur="save()" />
+                &nbsp;
+                <label>评估时间:</label>
+                <input type="datetime" ng-model="model.Time" id="Time" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" ng-change="save()" />
+                &nbsp;
+                <span class="right">
+                    <label class="score-value orange" id="score">{{model.Score}} 分</label>
+                    <input type="hidden" value="0" id="scoreChanged" />
+                </span>
+                &nbsp;&nbsp;
+            </div>
+            <label><input type="checkbox" onclick="FoldOrUnfold(this)" id="cbxIsShowAll" />折叠/展开</label>
+            <input type="hidden" value="0" id="recordId" />
+            <div class="subNav" ng-repeat-start="item in model.items" id="subNav{{item.ID}}" onclick="subNav(this)">
+                <strong><label>{{item.Title}}<a class="info" ng-if="item.Desc!=null && item.Desc!='null' && item.Desc!=''" title="{{item.Desc | emptyReplace}}"></a></label></strong>
+                <span class="text-span">
+                    <!--文本框-->
+                    <input type="text" value="{{item.Score}}" ng-model="item.Score" readonly />
+                    <em>分</em>
+                </span>
+            </div>
+            <div class="navContent" ng-repeat-end id="navContent{{item.Code}}">
+                <label ng-repeat="option in item.Options">
+                    <label ng-if="item.Type=='1'">
+                        <input type="radio" required name="rdo-{{item.Code}}" id="rdo-{{item.Code}}-{{option.Name}}" ng-checked="option.Checked" ng-click="save(item,option.Name,true)"><span>{{option.Desc}}</span>
+                    </label>
+                    <label ng-if="item.Type=='0'">
+                        <input type="checkbox" name="cbx-{{item.Code}}" id="cbx-{{item.Code}}-{{option.Name}}" ng-model="option.Checked" ng-checked="option.Checked" ng-click="save(item,option.Name,option.Checked)"><span>{{option.Desc}}</span>
+                    </label>
+                </label>
+            </div>
+        </form>
+    </fieldset>
+</div>

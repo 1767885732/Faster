@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Organizations>
+    <Organization Code="75505961-7" Name="苏州市相城人民医院" />
+    <Organization Code="71402985x" Name="苏州大学附属第二医院" />
+  </Organizations>
+</Config>

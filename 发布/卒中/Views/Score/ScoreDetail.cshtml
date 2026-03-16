@@ -1,0 +1,429 @@
+﻿@using DoCare.ToolKit
+@using DoCare.Framework.Extension
+@{
+    ViewBag.Title = "卒中评分";
+    Layout = null;
+}
+
+<script>
+    var recordId = "@ViewBag.RecordId";
+    var registId = "@ViewBag.RegistId";
+    var score = @Html.Raw((JsonKit.Serialize(ViewBag.Score)));
+    var template = @Html.Raw((JsonKit.Serialize(ViewBag.Template ?? new { })));
+    var app = angular.module('ScoreDetailApp', []);
+
+    // controller
+    app.controller('ScoreDetailController', function ($scope, $filter, $http) {
+        $scope.registId = registId;
+        $scope.ManualTotalScore = 0;
+        $scope.ShowScoreValue = 0;
+        $scope.score = score;
+        $scope.template = template;
+        $scope.ManualTotalScore = parseInt($scope.score.ScoreValue) | 0;
+        // 获取某一次评分记录
+        $scope.getRecord = function (recordId) {
+            $scope.record = {};
+            $http({
+                method: 'GET',
+                url: '/Score/GetRecord?registerID=' + registId + '&scoreRecordID=' + recordId
+            }).then(function successCallback(response) {
+                if (response.data.IsSuccess) {
+                    $scope.record = response.data.Data;
+                    if ($scope.record != null && $scope.record.ScoringTime != null && $scope.record.ScoringTime != '') {
+                        // 对时间格式：/Date(1448864369815)/ 的格式化
+                        $scope.record.ScoringTime = $filter("date")($scope.record.ScoringTime.replace(/\/Date\((\d+)\)\//, "$1"), "yyyy-MM-dd HH:mm");
+                    }
+                }
+                else {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+        $scope.getRecord(recordId);
+
+        // 保存记录（评分时间、评分医生）
+        $scope.saveRecord = function () {
+            if ($scope.record == null) {
+                return;
+            }
+            $http({
+                method: 'POST',
+                url: '/Score/SaveRecord',
+                data: {
+                    recordType: $scope.record.Type
+                    , recordId: $scope.record.ID
+                    , scoringTime: $scope.record.ScoringTime
+                    , doctor: $scope.record.Doctor
+                }
+            }).then(function successCallback(response) {
+                if (response.data.IsSuccess) {
+                }
+                else {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+
+        // 保存总分
+        $scope.SaveScore = function (tScore) {
+            $scope.ManualTotalScore = parseInt(tScore) | 0;
+            $scope.ShowScoreValue = 0;
+
+            $http({
+                method: 'POST',
+                url: '/Score/SaveScore',
+                data: {
+                    registId: $scope.registId,
+                    recordId: $scope.record.ID,
+                    totalScore: tScore
+                }
+            }).then(function successCallback(response) {
+                if (!response.data.IsSuccess) {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+
+        // 保存评分
+        $scope.saveSingleData = function (itemKeyValue, totalScore) {
+            $http({
+                method: 'POST',
+                url: '/Score/SaveSingleScore',
+                data: { registId: $scope.registId, recordId: $scope.record.ID, itemValue: itemKeyValue, totalScore: totalScore }
+            }).then(function successCallback(response) {
+                if (response.data.IsSuccess) {
+                }
+                else {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+
+        // 保存评分
+        $scope.saveMultiData = function (itemKeyValue, totalScore) {
+            $http({
+                method: 'POST',
+                url: '/Score/SaveMultiScore',
+                data: {registId: $scope.registId, recordId: $scope.record.ID, itemValue: itemKeyValue, totalScore: totalScore }
+            }).then(function successCallback(response) {
+                if (response.data.IsSuccess) {
+                }
+                else {
+                    layer.alert(response.data.Message, { icon: 2 });
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+                layer.alert("请求失败！", { icon: 2 });
+            });
+        }
+
+        // 单选变化
+        $scope.updateSelection = function (key, value, score, oldValue, title) {
+            $scope.ShowScoreValue = 1;
+            //if (value != oldValue) {
+                // 特殊情况如果NiHiss 1a评分为3分，其中1b, 1c默认2分
+                var special = false;
+                if ($scope.recordType == 3 && title.indexOf("1a") > -1 && score == "3") {
+                    special = true;
+                }
+                $scope.itemKeyValueList = new Array();
+                $scope.record.ScoreValue = 0;
+                for (var i = 0; i < $scope.record.ItemCategories[0].Items.length; i++) {
+                    var item = $scope.record.ItemCategories[0].Items[i];
+                    if (special && (item.Title.indexOf("1b") > -1 || item.Title.indexOf("1c") > -1 || item.Title.indexOf("8") > -1 || item.Title.indexOf("10") > -1 || item.Title.indexOf("11") > -1)) {
+                        item.Score = 2;
+                        item.Value = "3";
+                        $scope.itemKeyValueList.push({ Key: item.ID, Value: item.Value });
+                    }
+                    else if (special && (item.Title.indexOf("4") > -1 || item.Title.indexOf("9") > -1)) {
+                        item.Score = 3;
+                        item.Value = "4";
+                        $scope.itemKeyValueList.push({ Key: item.ID, Value: item.Value });
+                    }
+                    else if (special && (item.Title.indexOf("5") > -1 || item.Title.indexOf("6") > -1)) {
+                        item.Score = 4;
+                        item.Value = "5";
+                        $scope.itemKeyValueList.push({ Key: item.ID, Value: item.Value });
+                    }
+                    else if (item.ID == key) {
+                        item.Score = parseInt(score);
+                        item.Value = value;
+                        $scope.itemKeyValueList.push({ Key: item.ID, Value: value });
+                    }
+                    // NHISS评分9分不计总分
+                    if ($scope.record.Type == 3) {
+                        $scope.record.ScoreValue += (item.Score != null && item.Score != 9) ? item.Score : 0;
+                    }
+                    else {
+                        $scope.record.ScoreValue += (item.Score != null) ? item.Score : 0;
+                    }
+                }
+                $scope.saveMultiData(JSON.stringify($scope.itemKeyValueList), $scope.record.ScoreValue);
+            //}
+        }
+
+        // 多选变化
+        $scope.multiSelect = function ($event, key, value, score, oldValue) {
+            $scope.ShowScoreValue = 1;
+            var checkbox = $event.target;
+            for (var i = 0; i < $scope.record.ItemCategories[0].Items.length; i++) {
+                var item = $scope.record.ItemCategories[0].Items[i];
+
+                if (item.ID == key) {
+                    if (checkbox.checked) {
+                        item.Score = item.Score - parseInt(score);
+                        $scope.record.ScoreValue = $scope.record.ScoreValue - parseInt(score);
+                        item.Value = addValue(item.Value, value);
+                        value = item.Value;
+                    }
+                    else {
+                        item.Score = item.Score + parseInt(score);
+                        $scope.record.ScoreValue = $scope.record.ScoreValue + parseInt(score);
+                        item.Value = delValue(item.Value, value);
+                        value = item.Value;
+                    }
+                }
+            }
+            var data = { Key: key, Value: value };
+            $scope.saveSingleData(JSON.stringify(data), $scope.record.ScoreValue);
+        }
+
+        // 是否选中
+        $scope.isSelected = function (key, value, checkedValue) {
+            return $.inArray(value, checkedValue == null ? null : checkedValue.split(";")) >= 0;
+        }
+
+        // 文本框输入
+        $scope.textChanged = function (key, value) {
+            $scope.record.ScoreValue = 0;
+            for (var i = 0; i < $scope.record.ItemCategories[0].Items.length; i++) {
+                var item = $scope.record.ItemCategories[0].Items[i];
+
+                if (item.ID == key) {
+                    item.Score = parseInt(value) | 0;
+                    item.Value = parseInt(value) | 0;
+                }
+                $scope.record.ScoreValue += item.Value | 0;
+            }
+            $scope.ManualTotalScore = $scope.record.ScoreValue;
+            var data = { Key: key, Value: parseInt(value) };
+            $scope.saveSingleData(JSON.stringify(data), $scope.record.ScoreValue);
+        }
+
+        // 多选变化
+        $scope.multiSelectAdd = function ($event, key, value, score, oldValue) {
+            $scope.ShowScoreValue = 1;
+            var checkbox = $event.target;
+            for (var i = 0; i < $scope.record.ItemCategories[0].Items.length; i++) {
+                var item = $scope.record.ItemCategories[0].Items[i];
+
+                if(item.ID==key)
+                {
+                    if(checkbox.checked){
+                        item.Score = item.Score + parseInt(score);
+                        $scope.record.ScoreValue =  $scope.record.ScoreValue + parseInt(score);
+                        item.Value = addValue(item.Value,value);
+                        value = item.Value;
+                    }
+                    else
+                    {
+                        item.Score = item.Score - parseInt(score);
+                        $scope.record.ScoreValue =  $scope.record.ScoreValue - parseInt(score);
+                        item.Value = delValue(item.Value,value);
+                        value = item.Value;
+                    }
+                }
+            }
+            var data = {Key:key,Value:value};
+            $scope.saveSingleData(JSON.stringify(data),$scope.record.ScoreValue);
+        }
+
+        // 下拉框选择
+        $scope.selectChanged = function(key,value,score)
+        {
+            $scope.record.ScoreValue = 0;
+            for (var i = 0; i < $scope.record.ItemCategories[0].Items.length; i++) {
+                var item = $scope.record.ItemCategories[0].Items[i];
+
+                if(item.ID==key)
+                {
+                    item.Score =  score|0;
+                    item.Value = value;
+                }
+                $scope.record.ScoreValue += item.Score|0;
+            }
+
+            var data = {Key:key,Value:value};
+            $scope.saveSingleData(JSON.stringify(data),$scope.record.ScoreValue);
+        }
+
+        // 获取当前时间
+        $scope.getCurrentTime = function()
+        {
+            //类型：HAT = 1, LADS = 2, NIHSS = 3, STAF = 4
+            if($scope.record!=null){
+                $scope.record.ScoringTime = $filter('date')(new Date(),'yyyy-MM-dd HH:mm');
+            }
+            $scope.saveRecord();
+        }
+        // 文本框输入分值
+        $scope.changeScore = function($event,score,key,oldValue,title,enumItems){
+            if($scope.record.Type==6)
+            {
+                return;
+            }
+            var hasScore = false; // 是否有此分值的选项
+            var value;
+            for (var i = 0; i < enumItems.length; i++) {
+                var enumItem = enumItems[i];
+                if(enumItem.ScoreValue == score)
+                {
+                    value = enumItem.Value;
+                    hasScore = true;
+                }
+            }
+            if(hasScore)
+            {
+                $scope.updateSelection(key,value,score,oldValue,title);
+            }
+            else
+            {
+                var msg = "没有"+score+"分值的选项";
+                layer.tips(msg, $event.target, {
+                    tips: [2, '#ed4e2a'],
+                    time: 3000
+                });
+            }
+        }
+
+    });
+
+    // 自定义过滤器
+    app.filter('NoShowNull', function () { //可以注入依赖
+        return function (text) {
+            return text == "null" ? "" : text;
+        }
+    });
+
+    // 日期控件指令
+    app.directive('wdatePicker', function () {
+        return {
+            restrict: "A",
+            link: function (scope, element, attr) {
+                element.bind('click', function () {
+                    window.WdatePicker({
+                        onpicked: function () { element.change() },
+                        oncleared: function () { element.change() },
+                        dateFmt: 'yyyy-MM-dd HH:mm'
+                    })
+                });
+            }
+        }
+    });
+
+    angular.bootstrap($("#scoreDeetail")[0], ['ScoreDetailApp']);
+</script>
+<style>
+    #txtScoringTime {
+        cursor: pointer;
+        background-image: url(../../App_Themes/Default/img/icon/datetime.png);
+        background-position: right center;
+        background-repeat: no-repeat;
+    }
+
+    #txtScoringTime:hover {
+        cursor: pointer;
+        background-image: url(../../App_Themes/Default/img/icon/datetime-hover.png);
+    }
+</style>
+<div class="score-detail" id="scoreDeetail" ng-app="ScoreDetailApp" ng-controller="ScoreDetailController" style="margin-top:10px;margin-left:10px;">
+    <div class="horizontal score-tit m-b-10">
+        <label>评分医生:</label>
+        <input type="text" ng-model="record.Doctor" ng-blur="saveRecord()" maxlength="25" style="border:none;border-bottom:1px solid;">
+        &nbsp;&nbsp;
+        <label>评分时间:</label>
+        <input type="text" wdate-picker style="border:none;border-bottom:1px solid;" ng-model="record.ScoringTime" id="txtScoringTime" ng-blur="saveRecord()">
+        <a ng-click="getCurrentTime()">获取当前时间</a>
+        &nbsp;&nbsp;
+        <span class="right">
+            <label>总分:</label>
+            <label ng-show="ShowScoreValue==0" style="padding:3px 3px;"><input type="text" maxlength="4" name="ManualTotalScore" style="width:42px;text-align:center;font-weight: bold;font-size:20px;" class="score-value orange" id="ManualTotalScore" ng-model="ManualTotalScore" ng-blur="SaveScore(ManualTotalScore)" />  分</label>
+            <label ng-show="ShowScoreValue==1" style="padding:3px 3px;"><input type="text" maxlength="4" name="ScoreValue" style="width:42px;text-align:center;font-weight: bold;font-size:20px;" class="score-value orange" id="ScoreValue" ng-model="record.ScoreValue" ng-blur="SaveScore(record.ScoreValue)" />  分</label>
+        </span>
+    </div>
+    <label><input type="checkbox" onclick="FoldOrUnfold(this)" id="cbxIsShowAll" />折叠/展开</label>
+    <div class="subNav" ng-repeat-start="item in record.ItemCategories[0].Items" id="subNav{{item.ID}}" onclick="subNav(this)">
+        <strong><label>{{item.Title}}<a class="info" ng-if="item.Description!=null && item.Description!='null' && item.Description!=''" title="{{item.Description | NoShowNull}}"></a></label></strong>
+        <span class="text-span">
+            <!--非文本框 ASPECT:ScoreType==6 多选只读-->
+            <input ng-if="item.Type!='01'" ng-readonly="record.Type==6||item.Type=='03'" type="text" ng-model="item.Score" ng-blur="changeScore($event,item.Score,item.ID,item.Value,item.Title,item.Property.EnumItems)" />
+            <!--文本框-->
+            <input ng-if="item.Type=='01'" type="text" value="{{item.Value}}" ng-model="item.Value" ng-blur="textChanged(item.ID,item.Value)" maxlength="3" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^0-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^0-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" />
+            <em>分</em>
+        </span>
+    </div>
+    <div class="navContent" ng-repeat-end id="navContent{{item.ID}}">
+        <label ng-repeat="enumItem in item.Property.EnumItems">
+            <label ng-if="item.Type=='04'">
+                <input type="radio" required name="rdo-{{item.ID}}" id="rdo-{{item.ID}}-{{enumItem.Value}}" ng-checked="enumItem.Value==item.Value" ng-click="updateSelection(item.ID,enumItem.Value,enumItem.ScoreValue,item.Value,item.Title)"><span>{{enumItem.Text}}</span>
+            </label>
+            <label ng-if="item.Type=='03' && template.Math=='sub'">
+                <input type="checkbox" name="cbx-{{item.ID}}" ng-checked="isSelected(item.ID,enumItem.Value,item.Value)" ng-click="multiSelect($event,item.ID,enumItem.Value,enumItem.ScoreValue,item.Value)"><span>{{enumItem.Text}}</span>
+            </label>
+            <label ng-if="item.Type=='03' && template.Math=='add'">
+                <input type="checkbox" name="cbx-{{item.ID}}" ng-checked="isSelected(item.ID,enumItem.Value,item.Value)" ng-click="multiSelectAdd($event,item.ID,enumItem.Value,enumItem.ScoreValue,item.Value)"><span>{{enumItem.Text}}</span>
+            </label>
+        </label>
+        <!--SPAN-100-->
+        <input ng-if="record.Type==12" class="input-box" type="text" value="{{item.Value}}" ng-model="item.Value" ng-blur="textChanged(item.ID,item.Value)" maxlength="3" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^0-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^0-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" />
+        <br />
+    </div>
+</div>
+<script>
+    function subNav(obj) {
+        $(obj).toggleClass("currentDd");//.siblings(".subNav").removeClass("currentDd");
+        // 修改数字控制速度， slideUp(0)控制卷起速度
+        $(obj).next(".navContent").slideToggle(100)//.siblings(".navContent").slideUp(100);
+
+        if($(".currentDd").length==0)
+        {
+            $("#cbxIsShowAll").prop("checked",false);
+        }
+        else if($(".currentDd").length==$(".subNav").length)
+        {
+            $("#cbxIsShowAll").prop("checked",true);
+        }
+    }
+
+    function FoldOrUnfold(obj) {
+        if ($(obj).prop("checked"))
+        {            
+            var elme = document.querySelectorAll("div[class='subNav ng-scope']");
+            for (var i = 0; i < elme.length; i++) 
+            {
+                if(elme[i].className=="subNav ng-scope")
+                {
+                    elme[i].setAttribute('class','subNav ng-scope currentDd');
+                }
+            } 
+            $(".navContent").slideDown();
+        }
+        else
+        {
+            $(".subNav").removeClass("currentDd");
+            $(".navContent").slideUp();
+        }
+    }
+</script>

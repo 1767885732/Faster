@@ -1,0 +1,120 @@
+﻿@using DoCare.Core.Administrator.Entities
+@model List<SidebarMenu>
+<div class="sidebar responsive" id="sidebar">
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <a target="_blank" href="swagger/index.html" class="btn btn-success" style="width:45%">
+                <i class="ace-icon fa fa-file-o"></i>
+                Swagger
+            </a>
+
+            <a target="_blank" href="hangfire" class="btn btn-info" style="width:45%">
+                <i class="ace-icon fa fa-pencil"></i>
+                Hangfire
+            </a>
+        </div>
+    </div>
+
+    <ul class="nav nav-list">
+        @if (Model != null)
+        {
+            foreach (var menu in Model)
+            {
+                if (menu.Children != null && menu.Children.Count > 0)
+                {
+                    <li class="">
+                        <a href="#" class="dropdown-toggle">
+                            <i class="@menu.Icon"></i>
+                            <span class="menu-text">
+                                @menu.Name
+                            </span>
+                            <b class="arrow fa fa-angle-down"></b>
+                        </a>
+                        <b class="arrow"></b>
+                        <ul class="submenu">
+                            @foreach (var child in menu.Children)
+                            {
+                                if (child.Children != null && child.Children.Count > 0)
+                                {
+                                    <li class="">
+                                        <a href="#" class="dropdown-toggle">
+                                            <i class="menu-icon fa fa-caret-right"></i>
+                                            @child.Name
+                                            <b class="arrow fa fa-angle-down"></b>
+                                        </a>
+                                        <b class="arrow"></b>
+                                        <ul class="submenu">
+                                            @foreach (var third in child.Children)
+                                            {
+                                                if (third.Children != null && third.Children.Count > 0)
+                                                {
+                                                    <li class="">
+                                                        <a href="#" class="dropdown-toggle">
+                                                            <i class="@third.Icon"></i>
+                                                            @third.Name
+                                                            <b class="arrow fa fa-angle-down"></b>
+                                                        </a>
+                                                        <b class="arrow"></b>
+                                                        <ul class="submenu">
+                                                            @foreach (var four in third.Children)
+                                                            {
+                                                                <li class="">
+                                                                    <a data-url="@Url.Content(four.Url)" href="#@Url.Content(four.Url)">
+                                                                        <i class="@four.Icon"></i>
+                                                                        @four.Name
+                                                                    </a>
+                                                                    <b class="arrow"></b>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </li>
+                                                }
+                                                else
+                                                {
+                                                    <li class="">
+                                                        <a data-url="@Url.Content(third.Url)" href="#@Url.Content(third.Url)">
+                                                            <i class="@third.Icon"></i>
+                                                            @third.Name
+                                                        </a>
+                                                        <b class="arrow"></b>
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </li>
+
+                                }
+                                else
+                                {
+                                    <li class="">
+                                        <a data-url="@Url.Content(child.Url)" href="#@Url.Content(child.Url)">
+                                            <i class="menu-icon fa fa-caret-right"></i>
+                                            @child.Name
+                                        </a>
+                                        <b class="arrow"></b>
+                                    </li>
+
+                                }
+                            }
+                        </ul>
+                    </li>
+                }
+                else
+                {
+                    <li class="">
+                        <a data-url="@Url.Content(menu.Url)" href="#@Url.Content(menu.Url)">
+                            <i class="@menu.Icon"></i>
+                            <span class="menu-text"> @menu.Name </span>
+                        </a>
+                        <b class="arrow"></b>
+                    </li>
+                }
+
+            }
+        }
+    </ul>
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>

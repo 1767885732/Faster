@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="FirstAid" ViewName="院前评估">
+    <Member MemberId="CallTime" MemberName="患者/家属呼救时间" MemberCode="D020002">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="DispatchTime" MemberName="派车时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="DepartureTime" MemberName="120出车时间" MemberCode="D020105">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ArrivePatientSideTime" MemberName="120到达现场时间" MemberCode="D020100">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="LiveTime" MemberName="120离开现场时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="PatientArrivalTime" MemberName="患者送达医院时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Consciousness" MemberName="意识">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="T" MemberName="体温">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="P" MemberName="脉搏">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="R" MemberName="呼吸">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Sp" MemberName="收缩压">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Dp" MemberName="舒张压">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Spo" MemberName="血氧">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Hr" MemberName="心率">
+      <Required Required="true" Enabled="1" />
+    </Member>
+  </View>
+</Config>
+

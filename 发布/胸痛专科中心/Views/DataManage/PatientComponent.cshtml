@@ -1,0 +1,76 @@
+﻿@{
+    Layout = null;
+}
+<script>
+    @{
+        string template = Html.Partial("~/Views/DataManage/Patient.cshtml").ToString().Replace("\r\n","").Replace("\n","").Replace("'","\\'");
+    }
+    var regist = {
+        template: '@Html.Raw( template )',
+        props: {
+            patient: {
+                Regist: {}
+            },
+        },
+        data: function () {
+            return {
+                space_quarter: 6,
+                space_half: 12,
+                space_three_quater: 18,
+                space_full: 24,
+                gutter: 20,
+                span: 6,
+                GenderDict: model.GenderDict,
+                HospitalDict: model.HospitalDict,
+                IdCardDict: model.IdCardDict,
+                NationalityDict: model.NationalityDict,
+                JobDict: model.JobDict,
+                MarriageDict: model.MarriageDict,
+                CultureDegreeDict: model.CultureDegreeDict,
+                rules: {
+                    //'Regist.Age': [
+                    //    { pattern: /^[1-9]\d*$/, message: '请输入正确的年龄' }
+                    //],
+                    //'Regist.Height': [
+                    //    { pattern: /^([1-9]\d*|0)(\.\d{1,2})?$/, message: '请输入正确的身高' }
+                    //],
+                    //'Regist.Weight': [
+                    //    { pattern: /^([1-9]\d*|0)(\.\d{1,2})?$/, message: '请输入正确的体重' }
+                    //],
+                    'Regist.PhoneNumber': [
+                        { pattern: /(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}/, message: '请输入正确的联系电话' }
+                    ],
+                    'Regist.IdCardNo': [
+                        { pattern: /(^\d{15}$)|(^\d{17}([0-9]|X|x)$)|(^1[45][0-9]{7}|G[0-9]{8}|P[0-9]{7}|S[0-9]{7,8}|D[0-9]+$)/, message: '请输入正确的身份证或者护照' }
+                    ],
+                }
+            };
+        },
+        methods: {
+            submitForm: function () {
+                this.$refs['registForm'].validate(function (valid) {
+                    return valid;
+                });
+            },
+        },
+        mounted: function () {
+        },
+        computed: {
+            IdCardLabel: function () {
+                var idCardLabel = "";
+                switch (this.patient.Regist.IdCard) {
+                    case "1":
+                        idCardLabel = "身份证";
+                        break;
+                    case "2":
+                        idCardLabel = "护照";
+                        break;
+                    default:
+                        idCardLabel = "身份证";
+                        break;
+                }
+                return idCardLabel;
+            },
+        }
+    };
+</script>

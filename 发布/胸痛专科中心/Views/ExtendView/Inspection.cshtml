@@ -1,0 +1,153 @@
+﻿@using DoCare.Framework.Extension;
+@{
+    Layout = "~/Views/Shared/_LayoutExtend.cshtml";
+}
+<link href=@Url.Random("~/App_Themes/Default/page.check.css") rel="stylesheet" />
+<style type="text/css">
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
+<div id="inspection" v-cloak>
+    <el-card v-if="HasData" class="box-card" v-for="(isp,index) in inspections" v-bind:key="index">
+        <div class="event">
+            <div class="tit">
+                <h1>{{isp.Name}}检验单</h1>
+                <span class="right">
+                    申请单号:{{isp.ApplyId|emptyReplace}}
+                    <img src="~/App_Themes/Default/img/icon/refresh.png" style="width:20px; cursor:pointer;" v-on:click="getInspection('true')" />
+                </span>
+            </div>
+            <div class="event-info">
+                <dl>
+                    <dt>姓名</dt>
+                    <dd>{{isp.PatientName|emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>性别</dt>
+                    <dd>{{isp.PatientGender|emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>年龄</dt>
+                    <dd>{{isp.PatientAge|emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>住院号</dt>
+                    <dd>{{isp.VisitId|emptyReplace}}</dd>
+                </dl>
+            </div>
+            <div class="event-con">
+                <table class="basic-table">
+                    <tr>
+                        <th>序号</th>
+                        <th>项目代号</th>
+                        <th>项目名称</th>
+                        <th>结果</th>
+                        <th>标志</th>
+                        <th>单位</th>
+                        <th>参考值</th>
+                    </tr>
+                    <tr v-for="(item,index) in isp.Items" v-bind:key="index">
+                        <td>{{++index}}</td>
+                        <td><b v-bind:class="getItemClass(item.ItemType)"></b>{{item.ItemType|emptyReplace}}</td>
+                        <td>{{item.ItemName|emptyReplace}}</td>
+                        <td>{{item.Result|emptyReplace}}</td>
+                        <td v-bind:class="getFlagClass(item.Flag)"><span v-if="item.Flag=='L'">&#8595;</span><span v-if="item.Flag=='H'">&#8593;</span></td>
+                        <td>{{item.ItemUnit|emptyReplace}}</td>
+                        <td>{{item.ConsultRange|emptyReplace}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="event-foot">
+                <dl>
+                    <dt>送检医生:</dt>
+                    <dd>{{isp.Applicant | emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>采样时间:</dt>
+                    <dd>{{isp.CollectionTime | dateFmt| emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>接收时间:</dt>
+                    <dd>{{isp.SampleAcquisitionTime | dateFmt | emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>报告时间:</dt>
+                    <dd>{{isp.Time | dateFmt | emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>检验员:</dt>
+                    <dd>{{isp.Technician | emptyReplace}}</dd>
+                </dl>
+                <dl>
+                    <dt>复核员:</dt>
+                    <dd>{{isp.AuditDoctor | emptyReplace}}</dd>
+                </dl>
+            </div>
+        </div>
+    </el-card>
+    <div v-if="!HasData">
+        <div id="error">
+            <div class="error-content">
+                <img src="~/App_Themes/Default/img/common/fail.png" />
+                <h2>未查询到患者相关信息！您可以<a href="javascript:;" v-on:click="getInspection('true')">刷新重试</a>。</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Views/ExtendView/ExtendViewMixin.js"></script>
+<script>
+var patientNo = '@ViewBag.PatientNo';
+var org = '@ViewBag.Org';
+
+new Vue({
+    el: "#inspection",
+    mixins: [extendMixin],
+    data: function () {
+        return {
+            patientNo: patientNo,
+            org: org,
+            inspections: [{}]
+        }
+    },
+    methods: {
+        getInspection: function (isRefresh) {
+            var _this = this;
+            axios.get("/ExtendView/GetInspection?patientNo=" + this.patientNo + "&org=" + this.org + "&isRefresh=" + isRefresh, {}).then(function (res) {
+                if (res.data.IsSuccess) {
+                    _this.inspections = res.data.Data;
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+        getFlagClass: function (flag) {
+            if (flag == "H") {
+                return "red";
+            }
+            else if (flag == "L") {
+                return "dark-blue";
+            }
+            else {
+                return "";
+            }
+        },
+        getItemClass: function (type) {
+            if (!!type) {
+                return "bx";
+            }
+            return "";
+        }
+    },
+    mounted: function () {
+        this.getInspection('false');
+    },
+    computed: {
+        HasData: function () {
+            return this.inspections.length > 0
+        }
+    }
+})
+</script>

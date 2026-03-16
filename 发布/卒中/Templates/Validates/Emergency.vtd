@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="Emergency" ViewName="急诊救治">
+    <Member MemberId="ChiefComplaint" MemberName="主诉">
+      <Required Required="true" Enabled="1" />
+      <Length MaxLength="50" Enabled="1" />
+    </Member>
+    <Member MemberId="Symptom" MemberName="症状">
+      <Required Required="true" Enabled="1" />
+      <Length MaxLength="50" Enabled="1" />
+    </Member>
+    <Member MemberId="PreliminaryDiagnosis" MemberName="初步诊断">
+      <Required Required="true" Enabled="1" />
+      <Length MaxLength="50" Enabled="1" />
+    </Member>
+    <Member MemberId="EmergencyDoctor" MemberName="诊断医生">
+      <Required Required="true" Enabled="1" />
+      <Length MaxLength="20" Enabled="1" />
+    </Member>
+    <Member MemberId="EmergencyTime" MemberName="诊断时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="StrokeTeamAdmissionTime" MemberName="急诊护士接诊患者时间" MemberCode="D020102">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="1" />
+    </Member>
+    <Member MemberId="ArrivedStrokeTime" MemberName="卒中医生接诊患者时间" MemberCode="D020212">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="1" />
+    </Member>
+    <Member MemberId="AcceptanceTime" MemberName="接收时间" MemberCode="D020213">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="1" />
+    </Member>
+    <Member MemberId="BloodCollectionTime" MemberName="采血时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="InspectionTime" MemberName="送检时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="BgCompletionTime" MemberName="血糖检测完成时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="EcgDiagnosisTime" MemberName="心电图诊断时间" MemberCode="D020121">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="CtOpenTime" MemberName="头颅影像检查开单时间" MemberCode="D020201">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="1" />
+    </Member>
+    <Member MemberId="PastMedicalHistory" MemberName="既往史">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="OtherMedicalHistory" MemberName="其他病史">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="IsAllergyHistory" MemberName="有无过敏史">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="AllergyHistory" MemberName="过敏史">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="PatientsWhereabouts" MemberName="患者去向">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Aspl" MemberName="阿司匹林">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Lpgl" MemberName="氯吡格雷">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Hfl" MemberName="华法林">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="DbjqOrLfsb" MemberName="达比加群/利伐沙班">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="OtherMedicine" MemberName="其他药物">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="NihssScoreValue" MemberName="NIHSS评分">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="CtStartTime" MemberName="患者到达CT/MRI室时间" MemberCode="D020202">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="1" />
+    </Member>
+    <Member MemberId="CtEndTime" MemberName="离开CT室时间" MemberCode="D020203">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="1" />
+    </Member>
+    <Member MemberId="CtResultTime" MemberName="头颅影像检查报告时间" MemberCode="D020204">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="1" />
+    </Member>
+    <Member MemberId="BloodTestReportTime" MemberName="检验科血液化验报告时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="XcgTime" MemberName="血常规">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="NxcgTime" MemberName="凝血常规">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="SgnjdjzTime" MemberName="肾功能及电解质">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="TriageResults" MemberName="分检诊结果">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Diagnosis" MemberName="诊断">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Reason" MemberName="原因">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="CtIsHemorrhage" MemberName="是否出血">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="DiagnosisType" MemberName="出血部位">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="AdmissionDepartment" MemberName="入院科室">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="AdmissionNo" MemberName="住院号">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="NoThromReasons" MemberName="未进行溶栓治疗原因">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="NoThromOtherReasons" MemberName="未进行溶栓治疗其他原因">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    
+    <Member MemberId="IsAspl" MemberName="是否服用阿司匹林">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsLpgl" MemberName="是否服用氯吡格雷">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsHfl" MemberName="是否服用华法林">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsDbjqOrLfsb" MemberName="是否服用达比加群/利伐沙班">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsOtherMedicine" MemberName="是否服用其他药物">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="EmergencyNurse" MemberName="绿道护士">
+      <Required Required="true" Enabled="1" />
+    </Member>
+  </View>
+</Config>

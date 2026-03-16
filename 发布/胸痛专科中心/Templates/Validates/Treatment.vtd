@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="Treatment" ViewName="患者治疗">
+    <Member MemberId="IsAntiplatelet" MemberName="抗血小板治疗">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="AspirinDose" MemberName="阿司匹林">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="AspirinTime" MemberName="阿司匹林时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ClopidogrelDose" MemberName="氯吡格雷">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="ClopidogrelTime" MemberName="氯吡格雷时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="TigrilloDose" MemberName="替格瑞洛">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="TigrilloTime" MemberName="替格瑞洛时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="IsAnticoagulation" MemberName="抗凝">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="AnticoagulationTime" MemberName="抗凝时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="AnticoagulationDrug" MemberName="抗凝药物">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="AnticoagulationDose" MemberName="抗凝药物剂量">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="AnticoagulationUnit" MemberName="抗凝药物单位">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="IsStatin" MemberName="他汀治疗">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="IsBetaBlocker" MemberName="β受体阻滞剂">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="IsReperfusion" MemberName="是否再灌注">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="NoReperfusionMeasure" MemberName="无再灌注措施">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ReperfusionMeasure" MemberName="再灌注措施">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsDirectToCr" MemberName="直达导管室">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="EcgTransmission" MemberName="远程心电图传输">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="EcgTransmissionTime" MemberName="传输心电图至协作单位时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="EcgTransmissionType" MemberName="传输方式">
+      <Required Required="true" Enabled="0" />
+    </Member>    
+    <Member MemberId="DecisionDoctor" MemberName="决定医生">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="DecisionPciTime" MemberName="决定介入手术时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="PciStartAgreeTime" MemberName="开始知情同意时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="PciSignAgreeTime" MemberName="签署知情同意时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="StartConduitTime" MemberName="启动导管室时间">
+      <Required Required="true" Enabled="1" />
+    </Member>    
+    <Member MemberId="ReperfusionMeasureRs" MemberName="溶栓后再灌注措施">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsScreen" MemberName="是否溶栓筛查">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsRs" MemberName="是否溶栓治疗">
+      <Required Required="true" Enabled="1" />
+    </Member>    
+    <Member MemberId="IsRsTaboo" MemberName="存在禁忌症">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsRsDirect" MemberName="是否直达溶栓场所">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsPlace" MemberName="溶栓场所">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsStartAgreeTime" MemberName="开始知情同意">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsSignAgreeTime" MemberName="签署知情同意书">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsStartTime" MemberName="开始溶栓时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsEndTime" MemberName="溶栓结束时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsDrugType" MemberName="溶栓药物">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsDrugCode" MemberName="溶栓药物剂量">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsRsRecanalization" MemberName="是否溶栓再通 ">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsRsRadiography" MemberName="是否溶栓24H内造影">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="CabgDecisionTime" MemberName="决定CABG时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="CabgStartTime" MemberName="开始CABG时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="PciTransferType" MemberName="转运PCI方式">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Strategy" MemberName="治疗策略措施">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="InvasiveStrategy" MemberName="侵入性策略">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="PciActualTime" MemberName="实际介入治疗时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="InterlayerType" MemberName="夹层类型">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RiskLevel" MemberName="危险分层">
+      <Required Required="true" Enabled="0" />
+    </Member>
+  </View>
+</Config>

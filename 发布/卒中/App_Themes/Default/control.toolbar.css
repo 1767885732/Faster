@@ -1,0 +1,119 @@
+﻿@charset "utf-8";
+
+/*客服样式*/
+#haiiskefu {
+	width: 133px;
+	position: fixed;
+	right: 0px;
+	top: 95px;
+	margin-top: 10px;
+	z-index: 999;
+}
+
+#haiiskefu .kfleft {
+	width: 12px;
+	font-size: 12px;
+	line-height: 16px;
+	border-radius: 4px 0 0 4px;
+	color: #FFF;
+	background-color: #007ebc;
+	padding: 5px;
+	margin-right: 1px;
+	cursor: pointer;
+	float: left;
+}
+
+#haiiskefu ul {
+	float: left;
+	top: 0;
+}
+
+#haiiskefu ul li {
+	clear: both;
+	overflow: hidden;
+	margin-bottom: 1px;
+	height: 28px;
+	line-height: 28px;
+}
+
+#haiiskefu ul li a {
+	width: 110px;
+	color: #fff;
+	background: #007ebc;
+	text-align: left;
+	-moz-opacity: 0.6;
+	filter: alpha(opacity=60);
+	opacity: 0.6;
+	display: inline-block;
+	overflow: hidden;
+	clear: both;
+}
+
+#haiiskefu ul li a:hover {
+	-moz-opacity: 1.0;
+	filter: alpha(opacity=100);
+	opacity: 1.0;
+}
+
+#haiiskefu ul li a b {
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	float: left;
+	margin: 2px 6px 2px 4px;
+	/*background-color: #ffffff;*/
+}
+#haiiskefu .elec_record{
+	background: url(../Default/img/toolbar/tb_1.png) no-repeat;
+}
+#haiiskefu .ecg{
+	background: url(../Default/img/toolbar/tb_2.png) no-repeat;
+}
+#haiiskefu .health_record{
+	background: url(../Default/img/toolbar/tb_3.png) no-repeat;
+}
+#haiiskefu .highrisk_record{
+	background: url(../Default/img/toolbar/tb_4.png) no-repeat;
+}
+#haiiskefu .maternal_child_health{
+	background: url(../Default/img/toolbar/tb_5.png) no-repeat;
+}
+#haiiskefu .sync{
+	background: url(../Default/img/toolbar/tb_6.png) no-repeat;
+}
+#haiiskefu .check{
+	background: url(../Default/img/toolbar/tb_7.png) no-repeat;
+}
+#haiiskefu .inspect{
+	background: url(../Default/img/toolbar/tb_8.png) no-repeat;
+}
+#haiiskefu .medical{
+	background: url(../Default/img/toolbar/tb_9.png) no-repeat;
+}
+#haiiskefu .oper{
+	background: url(../Default/img/toolbar/tb_10.png) no-repeat;
+}
+#haiiskefu .print{
+	background: url(../Default/img/toolbar/tb_11.png) no-repeat;
+}
+#haiiskefu .log{
+	background: url(../Default/img/toolbar/tb_12.png) no-repeat;
+}
+#haiiskefu .score{
+	background: url(../Default/img/toolbar/tb_13.png) no-repeat;
+}
+#haiiskefu .save{
+	background: url(../Default/img/toolbar/tb_14.png) no-repeat;
+}
+#haiiskefu .save{
+	background: url(../Default/img/toolbar/tb_15.png) no-repeat;
+}
+#haiiskefu .submit{
+	background: url(../Default/img/toolbar/tb_16.png) no-repeat;
+}
+#haiiskefu .pass{
+	background: url(../Default/img/toolbar/tb_17.png) no-repeat;
+}
+#haiiskefu .refuse{
+	background: url(../Default/img/toolbar/tb_test.png) no-repeat;
+}

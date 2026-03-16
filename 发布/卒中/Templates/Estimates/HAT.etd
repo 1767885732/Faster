@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="HAT" Title="溶栓后出血评分" >
+    <Group>
+      <RadioBox Code="HAT001" Title="既往糖尿病史或入院基线血糖 ＞ 11.10mmol/L" Desc="">
+        <Option Id="01" Text="否" Score="0"/>
+        <Option Id="02" Text="是" Score="1"/>
+      </RadioBox>
+      <RadioBox Code="HAT002" Title="溶栓前NIHSS评分" Desc="">
+        <Option Id="01" Text="＜15分" Score="0"/>
+        <Option Id="02" Text="15~19分" Score="1"/>
+        <Option Id="03" Text="≥20分" Score="2"/>
+      </RadioBox>
+      <RadioBox Code="HAT003" Title="CT早期梗死征象" Desc="">
+        <Option Id="01" Text="无" Score="0"/>
+        <Option Id="02" Text="＜1/3MCA" Score="1"/>
+        <Option Id="03" Text="≥1/3MCA" Score="2"/>
+      </RadioBox>
+    </Group>
+  </Template>
+</Config>

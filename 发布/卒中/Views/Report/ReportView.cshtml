@@ -1,0 +1,59 @@
+﻿@using DoCare.Framework.Extension;
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html style="background:#ccc;">
+<head>
+    <title>认证中心报表</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href=@Url.GetCssJsUrl("~/App_Themes/Default/global.css")>
+    <link rel="stylesheet" type="text/css" href=@Url.GetCssJsUrl("~/App_Themes/Default/frame.css")>
+    <link rel="stylesheet" type="text/css" href=@Url.GetCssJsUrl("~/App_Themes/Default/control.css")>
+    <link rel="stylesheet" type="text/css" href=@Url.GetCssJsUrl("~/App_Themes/Default/page.qc.css")>
+    <link href="~/Scripts/jquery-easyui/themes/icon.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/echarts/echarts.min.js"></script>
+    <script src="~/Scripts/echarts/macarons.js"></script>
+    <script src=@Url.GetCssJsUrl("~/Scripts/Stroke/Report/ReportView.js")></script>
+    <script src="~/Scripts/layer/layer.js"></script>
+    <script type="text/javascript">
+        var sTime = '@ViewBag.sTime'; // 开始时间
+        var eTime = '@ViewBag.eTime'; // 结束时间
+        var reportType = '@ViewBag.reportType'; // 报表类型（周月报）
+        var reportName = '@ViewBag.reportName'; // 报表名称（用于查找对应报表）
+        var hospitalID = '@ViewBag.hospitalCode'; // 医院编号
+        var hospitalName = '@ViewBag.hospitalName'; // 医院名称
+        var reportTitle = '@ViewBag.reportTitle'; // 报表抬头
+    </script>
+</head>
+<body style="background:#ccc;overflow-y:scroll;">
+    <!--质控报表模态框--begin-->
+    <div style="display: block; width:80%; min-width:1000px; margin:0 auto; background:#fff;">
+        <h2 class="dark-blue" style="line-height: 40px; padding-left:10px; ">认证中心报表</h2>
+        <div id="popup_report">
+            <div class="change-charts">
+                <a onclick="changeTab('charts1', 'charts2', 1)" id="charts1" class="hover">拆线图</a>
+                <a onclick="changeTab('charts2', 'charts1', 2)" id="charts2">柱状图</a>
+            </div>
+            <div id="con-charts-1" class="con-charts m-t-10">
+                <p id="generateTime_Line" class="hospital-info top-0 right-20 absolute"></p>
+                <div id="chart_main" style="z-index: 0; overflow-x: auto; width:calc(100vw - 20%); height:450px;">
+                    <!--折线图-->
+                </div>
+                <div>
+                    <div id="introduce" style="color:red;width:500px;margin:0 auto 5px;text-align:center;"></div>
+                    <div id="report_table" style="z-index: -1; overflow-x: auto; "></div>
+                </div>
+                <div style="margin-top:10px;">
+                    <div id="detail_table" style="z-index: -1; overflow-x: auto; "></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--质控报表模态框--end-->
+</body>
+</html>

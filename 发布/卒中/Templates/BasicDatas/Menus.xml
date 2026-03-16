@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Menus>
+    <Menu Id="M010" Name="数据管理" Url="/DataManage/Index" Icon="menu-icon-dm" PermissionKey="CVA_MNU_DM" />
+    <Menu Id="M030" Name="质控管理" Url="/Report/Index" Icon="menu-icon-statistics" PermissionKey="CVA_MNU_DS" >
+      <Menu Id="M032" Name="认证统计" Url="/Report/ReportList" Icon="data-statistics" PermissionKey="CVA_MNU_DS_STATISTICS" />
+    </Menu>
+    <Menu Id="M040" Name="数据核查" Url="/DataCheck/Index" Icon="menu-icon-check" PermissionKey="CVA_MNU_DC" >
+      <Menu Id="M042" Name="数据回收" Url="/DataCheck/DataRecycle" Icon="audit" PermissionKey="CVA_MNU_DC_DR" />
+    </Menu>
+    <Menu Id="M080" Name="随访管理" Url="/FollowUpManage/Index" Icon="menu-icon-follow" PermissionKey="CVA_MNU_FU" >
+      <Menu Id="M081" Name="随访计划" Url="/FollowUpManage/List" Icon="user-manage" PermissionKey="CVA_MNU_FU_LT" />
+      <Menu Id="M082" Name="随访日历" Url="/FollowUpManage/Calendar" Icon="data-statistics" PermissionKey="CVA_MNU_FU_CR" />
+    </Menu>
+    <Menu Id="M070" Name="系统设置" Url="/Setting/Index" Icon="menu-icon-set" PermissionKey="CVA_MNU_SS" >
+      <Menu Id="M072" Name="通用设定" Url="/Setting/General" Icon="menuicon-setting-general" PermissionKey="CVA_SETTING_GENERAL" />
+      <Menu Id="M073" Name="随访设定" Url="/Setting/FollowUp" Icon="user-manage" PermissionKey="CVA_SETTING_FU" />
+    </Menu>    
+  </Menus>
+</Config>

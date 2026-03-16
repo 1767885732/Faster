@@ -1,0 +1,50 @@
+-- Create table
+create table MED_PAT_RELATION_INFO
+(
+  patient_no     VARCHAR2(40) not null,
+  phep_id        VARCHAR2(60),
+  mission_id     VARCHAR2(40),
+  regist_id      VARCHAR2(40),
+  emergency_id   VARCHAR2(40),
+  clinic_no      VARCHAR2(40),
+  inp_no         VARCHAR2(40),
+  mac_no         VARCHAR2(40),
+  other_no       VARCHAR2(40),
+  patient_source VARCHAR2(10),
+  created_time   DATE not null,
+  update_time    DATE,
+  memo           VARCHAR2(100),
+  res1           VARCHAR2(100),
+  res2           VARCHAR2(100),
+  org_code       VARCHAR2(60),
+  inp_regist_id  VARCHAR2(60),
+  mother_id_card VARCHAR2(60)
+)
+tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table MED_PAT_RELATION_INFO
+  add constraint PK_MED_PAT_RELATION_INFO primary key (PATIENT_NO)
+  using index 
+  tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Grant/Revoke object privileges 
+grant select, insert, update, delete on MED_PAT_RELATION_INFO to ROLE_DOCARE;

@@ -1,0 +1,82 @@
+﻿@using DoCare.Framework.Extension;
+@using DoCare.CRF.Form.Data.Item
+@using DoCare.Component.Validator.Data
+@{
+    Layout = null;
+    string displayName = ViewBag.FormTypeDisplayName;
+    List<MDFormItemCategory> Categories = ViewBag.Categories;
+    MDFormItem Item = ViewBag.FormItem;
+}
+<script src=@Url.GetCssJsUrl("~/Scripts/Stroke/FormItem/Edit.js")></script>
+<style>
+    
+</style>
+
+<div id="container">
+    @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "_content_item_form", @class = "form_block" })) { 
+        @Html.HiddenFor(m => Item.ID);
+        @Html.HiddenFor(m => Item.KeyCode);                       
+        @Html.HiddenFor(m => Item.Name);
+        @Html.HiddenFor(m => Item.Type);
+        @Html.HiddenFor(m => Item.Category);
+        <div class="mg_10" >
+            <fieldset>
+                <p class="tit_block">题目</p>
+                <p>
+                    @Html.TextBoxFor(m => Item.Title, new { @style = "width:98%; height:22px;",@class= "required" })
+                </p>
+                <p class="tit_block">所属类别</p>
+                <div style="padding-top:5px;">
+                    <select id="itemCategory" name="itemCategory" class="easyui-combobox" style="width:200px;">
+                        @if (Categories != null && Categories.Count > 0)
+                        {
+                            foreach (MDFormItemCategory Categorry in Categories)
+                            {
+                                <option value="@Categorry.Code">@Categorry.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="clearfix"></div>
+                <p class="tit_block">选项</p>
+                <div id="ItemOptions"></div>
+                <div class="clearfix"></div>
+                <p class="tit_block">校验</p>
+                <div id="ValidateRules">
+                    @if (Item != null && Item.GetProperty() != null && Item.GetProperty().ValidateRules != null)
+                    {
+                        foreach (IValidateRule Rule in Item.GetProperty().ValidateRules)
+                        {
+                            <p class="rule wp_50">
+                            @Html.HiddenFor(m => Rule.Name)
+                            @Html.HiddenFor(m => Rule.Type)
+                            @Html.HiddenFor(m => Rule.Message)
+                            <label>是否必填</label>
+                            @if( ((RequiredRule)Rule).Required ){
+                                <input type="radio" name="is_required" value="1" checked>
+                                <span>是</span>
+                                <input type="radio" name="is_required" value="0">
+                                <span>否</span>
+                            }
+                            else 
+                            {
+                                <input type="radio" name="is_required" value="1">
+                                <span>是</span>
+                                <input type="radio" name="is_required" value="0" checked>
+                                <span>否</span>
+                            }
+                            
+                        </p>
+                        }
+                    }
+                </div>
+                <div class="clearfix"></div>
+            </fieldset>
+
+            <div class="btn_block">
+                <a id="btn_item_save" data-foward="temporary" href="javaScript:;" class="btn blue">确认</a>
+                <a id="btn_item_cancel" href="javascript:;" class="btn orange">取消</a>
+            </div>
+        </div>
+    }
+</div>

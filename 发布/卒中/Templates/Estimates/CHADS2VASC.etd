@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="CHADS2VASC" Title="CHADS2-VASC评分" >
+    <Group>
+      <RadioBox Code="CHADS2VASC001" Title="是否有充血性心力哀竭/左心功能不全" Desc="是否有充血性心力哀竭/左心功能不全">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="CHADS2VASC002" Title="是否有高血压" Desc="是否有高血压">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="CHADS2VASC003" Title="年龄" Desc="年龄">
+        <Option Id="01" Text="年龄&gt;=75岁" Score="2"/>
+        <Option Id="02" Text="年龄65-74岁" Score="1"/>
+        <Option Id="03" Text="年龄&lt;=65岁" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="CHADS2VASC004" Title="是否有糖尿病" Desc="是否有糖尿病">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="CHADS2VASC005" Title="是否有中风/TIA/血栓史" Desc="是否有中风/TIA/血栓史">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="CHADS2VASC006" Title="是否有血管病变" Desc="是否有血管病变">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="CHADS2VASC007" Title="性别是否是女性" Desc="性别是否是女性">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+    </Group>
+  </Template>
+</Config>

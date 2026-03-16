@@ -1,0 +1,58 @@
+-- Create table
+create table MED_PAT_ORDERS
+(
+  patient_no           VARCHAR2(40) not null,
+  order_no             VARCHAR2(40) not null,
+  order_sub_no         VARCHAR2(40) not null,
+  clinic_no            VARCHAR2(40),
+  inp_no               VARCHAR2(40),
+  repeat_indicator     VARCHAR2(40),
+  order_class          VARCHAR2(40),
+  order_text           VARCHAR2(40),
+  order_code           VARCHAR2(40),
+  dosage               VARCHAR2(40),
+  dosage_units         VARCHAR2(40),
+  administration       VARCHAR2(40),
+  start_date_time      DATE,
+  stop_date_time       DATE,
+  duration             VARCHAR2(40),
+  duration_units       VARCHAR2(40),
+  frequency            VARCHAR2(40),
+  ordering_dept        VARCHAR2(40),
+  doctor               VARCHAR2(40),
+  stop_doctor          VARCHAR2(40),
+  nurse                VARCHAR2(40),
+  stop_nurse           VARCHAR2(40),
+  enter_date_time      DATE,
+  stop_order_date_time DATE,
+  order_status         VARCHAR2(40),
+  current_presc_no     VARCHAR2(40)
+)
+tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table MED_PAT_ORDERS
+  add constraint PK_MED_PAT_ORDERS primary key (PATIENT_NO, ORDER_NO, ORDER_SUB_NO)
+  using index 
+  tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Grant/Revoke object privileges 
+grant select, insert, update, delete on MED_PAT_ORDERS to ROLE_DOCARE;

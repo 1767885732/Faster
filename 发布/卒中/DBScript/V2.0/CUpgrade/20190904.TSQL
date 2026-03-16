@@ -1,0 +1,16 @@
+-- Add/modify columns 
+alter table cva_emergency add SECOND_CT_START_TIME date;
+alter table cva_emergency add SECOND_CT_END_TIME date;
+-- Add comments to the columns 
+comment on column cva_emergency.SECOND_CT_START_TIME
+  is '第二次进CT的时间';
+comment on column cva_emergency.SECOND_CT_END_TIME
+  is '第二次出CT的时间';
+
+alter table cva_treatment add IS_EMBOLECTOMY NVARCHAR2(10);
+comment on column cva_treatment.IS_EMBOLECTOMY
+  is '是否取栓';
+  
+alter table CVA_INHOSPITAL add RESPONSIBLE_VESSEL VARCHAR2(16);
+comment on column CVA_INHOSPITAL.RESPONSIBLE_VESSEL
+  is '责任血管';

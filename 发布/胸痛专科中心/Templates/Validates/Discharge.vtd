@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="Discharge" ViewName="患者转归">
+    <Member MemberId="Diagnosis" MemberName="出院诊断">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="DiagnosisTime" MemberName="确诊时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="COVID19" MemberName="COVID-19">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="NacsType" MemberName="非ACS心源性胸痛">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="NccpType" MemberName="其它非心源性胸痛">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsHeartFailure" MemberName="院内新发心力衰竭">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Complication" MemberName="并发症">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsHypertension" MemberName="高血压">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsHyperlipidemia" MemberName="高脂血症">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsDiabetes" MemberName="糖尿病">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsSmoking" MemberName="吸烟">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="SmokingSituation" MemberName="吸烟状况">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsObesity" MemberName="肥胖">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsCvdHr" MemberName="早发CVD家族史">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsChd" MemberName="冠心病">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsChdHor" MemberName="血运重建史">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsAf" MemberName="心房颤动">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="AfType" MemberName="心房颤动分型">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsChf" MemberName="慢性心力衰竭">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ChfNyha" MemberName="NYHA分级">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsVhd" MemberName="心脏瓣膜病">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsCvd" MemberName="脑血管疾病">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="CvdType" MemberName="脑血管疾病类型">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsPad" MemberName="外周动脉疾病">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsAneurysm" MemberName="主动脉瘤">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsCopd" MemberName="COPD">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsCkd" MemberName="慢性肾病">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsAnemia" MemberName="贫血">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsPepticUlcer" MemberName="消化性溃疡">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsThyroidDysfunction" MemberName="甲状腺功能异常">
+      <Required Required="true" Enabled="1" />
+    </Member>    
+    <Member MemberId="IsMalignantTumor" MemberName="恶性肿瘤">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsTroponin" MemberName="72h内肌钙蛋白">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsBnp" MemberName="脑钠肽">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsTc" MemberName="总胆固醇(TC)">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsTg" MemberName="甘油三酯(TG)">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsHdlC" MemberName="高密度脂蛋白(HDL-C)">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsLdlC" MemberName="低密度脂蛋白(LDL-C)">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsUcc" MemberName="超声心动图">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Lvef" MemberName="LVEF">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="IsVentricularAneurysm" MemberName="室壁瘤">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="IsRwma" MemberName="局部室壁活动异常">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="Hod" MemberName="住院天数">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="TotalCost" MemberName="总费用">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="OutcomeCode" MemberName="患者转归">
+      <Required Required="true" Enabled="1" />
+    </Member>    
+    <Member MemberId="LeaveTime" MemberName="出院/离院时间" >
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="TreatmentResult" MemberName="治疗结果">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsAntiplatelet" MemberName="抗血小板药物">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsAceiOrArb" MemberName="ACEI/ARB">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsLipidRegulation" MemberName="调脂药物">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsBetaBlocker" MemberName="β受体阻滞剂">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsNetHospital" MemberName="是否是网络医院">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="HospitalName" MemberName="医院名称">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="DeptTransferTime" MemberName="转科时间" >
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="AdmissionDept" MemberName="接诊科室">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="DeptTransferReason" MemberName="转科原因描述">
+      <Required Required="false" Enabled="0" />
+    </Member>
+    <Member MemberId="DeathTime" MemberName="死亡时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="DeathCause" MemberName="死亡原因">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="DeathCauseDesc" MemberName="死亡原因描述">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="PatientRemarks" MemberName="患者情况备注">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="IsJTYW" MemberName="降糖药物">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="JTYWName" MemberName="降糖药物名称">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsKNYW" MemberName="口服抗凝药物">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="KNYWName" MemberName="口服抗凝药物名称">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsPCSK9" MemberName="PCSK9">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="PCSK9Name" MemberName="PCSK9药物名称">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="PCSK9Dose" MemberName="PCSK9单次剂量">
+      <Required Required="true" Enabled="1" />
+    </Member>
+
+    <Member MemberId="ARNI" MemberName="ARNI">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ARNIFrequency" MemberName="ARNI服用频次">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ARNIFrequencyRange" MemberName="ARNI服用周期">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ARNIDose" MemberName="ARNI单次剂量">
+      <Required Required="true" Enabled="1" />
+    </Member>
+  </View>
+</Config>

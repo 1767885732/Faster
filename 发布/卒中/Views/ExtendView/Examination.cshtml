@@ -1,0 +1,119 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutIframe.cshtml";
+}
+@using DoCare.ToolKit;
+<link href="~/App_Themes/Default/page.check.css" rel="stylesheet" />
+<script src="~/Scripts/DoCareMVCComm.js"></script>
+<script>
+    var org = @Html.Raw(JsonKit.Serialize(ViewBag.Org));
+    var patientNo = @Html.Raw(JsonKit.Serialize(ViewBag.PatientNo));
+    var app = angular.module('ngExamination', ['mdsdFilter']);
+
+    app.controller('ExaminationController', function ($scope, $filter, $http) {
+        $scope.Examinations = null;
+        $scope.HasData = false;
+        $scope.IsLoaded = false;
+
+        $scope.Refresh = function () {
+            var index = layer.load(2);
+
+            $.ajax({
+                url: '/ExtendView/RefreshExamination?patientNo='+patientNo+'&org='+org,
+                type: "get",
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        $scope.$apply(function () {
+                            layer.close(index);
+                            //layer.msg("刷新成功！");
+                            $scope.Examinations = result.Data.Examinations;
+                            $scope.HasData = result.Data.Examinations && result.Data.Examinations.length > 0;
+                            $scope.IsLoaded = true;
+                        });
+                    }
+                }
+            });
+        }
+
+        $scope.Refresh();
+    });
+</script>
+<div ng-app="ngExamination" ng-controller="ExaminationController" style="margin-bottom: 50px;">
+    <div ng-if="HasData&&IsLoaded" class="event" ng-repeat="em in Examinations">
+        <div class="tit">
+            <h1>检查报告单</h1>
+        </div>
+        <div class="event-head">
+            <dl class="left">
+                <dt>检查项目:</dt>
+                <dd>{{em.SubType|emptyReplace}}</dd>
+            </dl>
+            <dl class="right">
+                <dt>检查号:</dt>
+                <dd>
+                    {{em.Code|emptyReplace}}
+                    <img src="~/App_Themes/Default/img/icon/refresh.png" style="width:29px;cursor:pointer;" ng-click="Refresh()" />
+                </dd>
+            </dl>
+        </div>
+        <div class="event-info">
+            <dl>
+                <dt>姓名</dt>
+                <dd>{{em.PatientName|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>性别</dt>
+                <dd>{{em.PatientGender|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>年龄</dt>
+                <dd>{{em.PatientAge|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>科别</dt>
+                <dd>{{em.VisitOrgName|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>检查类型</dt>
+                <dd>{{em.Type|emptyReplace}}</dd>
+            </dl>
+        </div>
+        <div class="event-con">
+            <div class="check-img" ng-if="em.ImageUrl!=''&&em.ImageUrl!=null">
+                <a><img ng-src="{{em.ImageUrl}}"></a>
+            </div>
+            <div class="check-words">
+                <h3>检查部位</h3>
+                <p>{{em.BodyParts|emptyReplace}}</p>
+            </div>
+            <div class="check-words">
+                <h3>检查方法</h3>
+                <p>{{em.TakeWay|emptyReplace}}</p>
+            </div>
+            <div class="check-words">
+                <h3>影像表现</h3>
+                <p>{{em.SymptomDesc|emptyReplace}}</p>
+            </div>
+            <div class="check-words">
+                <h3>诊断意见</h3>
+                <p>{{em.Conclusion|emptyReplace}}</p>
+            </div>
+        </div>
+        <div class="event-foot">
+            <dl>
+                <dt>报告日期:</dt>
+                <dd>{{em.Time|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>报告医师:</dt>
+                <dd>{{em.Doctor|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>复核医师:</dt>
+                <dd>{{em.AuditDoctor|emptyReplace}}</dd>
+            </dl>
+        </div>
+    </div>
+    <div ng-if="!HasData&&IsLoaded">
+        @{ Html.RenderPartial("NoCollect");}
+    </div>
+</div>

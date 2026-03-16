@@ -1,0 +1,1059 @@
+﻿@model DoCare.CVA.Business.Model.EmergencyModel
+@using DoCare.ToolKit
+@using DoCare.CVA.Data
+@using DoCare.CVA.Data.Const
+
+@{
+    ViewBag.Title = "绿通评估";
+    Layout = null;
+}
+<style>
+    .subtitle {
+        color: #333;
+        font-family: 'Microsoft Yahei', Arial, Helvetica, sans-serif, Tahoma, Geneva;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    .div_right {
+        text-align: center;
+        width: 100px;
+        height: 30px;
+        float: right;
+    }
+
+    .div_left {
+        text-align: left;
+        width: 300px;
+        height: 30px;
+        float: left;
+    }
+
+    .div {
+        width: 50%;
+    }
+
+    .view_ecg {
+        width: 16px;
+        height: 16px;
+        background: url(../../App_Themes/Default/img/icon/view-ecg-1.png) no-repeat top;
+        cursor: pointer;
+        margin: 3px 0px -5px 5px;
+        text-align: left;
+        display: inline-block;
+    }
+
+        .view_ecg:hover {
+            width: 16px;
+            height: 16px;
+            background: url(../../App_Themes/Default/img/icon/view-ecg-1.png) no-repeat bottom;
+        }
+</style>
+<script type="text/javascript">
+    // 初始化用
+    var model = @Html.Raw(JsonKit.Serialize(Model));
+    var PermissionSave = @Html.Raw((JsonKit.Serialize(ViewBag.PermissionSave)));
+    var compare = function (prop) {
+        return function (obj1, obj2) {
+            var val1 = obj1[prop];
+            var val2 = obj2[prop];
+            if (!isNaN(Number(val1)) && !isNaN(Number(val2))) {
+                val1 = Number(val1);
+                val2 = Number(val2);
+            }
+            if (val1 < val2) {
+                return -1;
+            } else if (val1 > val2) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+    $(function () {
+        // 所有时间控件，失去焦点后执行校验方法，校验通过后更新时间轴对应节点
+        $("[timeId]").blur(function () {
+            if (validator.validateElement($(this))) {
+                var timeIdElement = $("#" + $(this).attr("timeId"));
+                var dataName = timeIdElement.attr("data-desp");
+                var t = $(this).val();
+                if (t) {
+                    t = t.replace('T', " ");
+                    t = t.substr(0, 10);
+                } else {
+                    t = "";
+                }
+                timeIdElement.attr("title", dataName + ":" + t);
+                timeIdElement.attr("data-value", $(this).val());
+                timeIdElement.find("i").html($(this).val());
+            }
+        });
+
+        // 初始化校验器
+        var validator = new MDEValidator("@Model.Regist.Id", "Emergency", $("#divEmergency"));
+        var app = angular.module('ngEmergency', ['mdsdFilter','mdsdDirective']);
+        app.controller('EmergencyController', function ($scope, $filter, $http) {
+            //$scope.Record = record;
+            //$scope.CurrentScore = {};
+            //$scope.CurrentScore.Score = $scope.Record.ItemCategories[0].Items[0].Value;
+            $scope.ScoreItemData = {};
+
+            $scope.PermissionSave = PermissionSave;
+            $scope.Regist = model.Regist; // 登记信息
+            $scope.Emergency = model.Emergency; // 院前评估信息
+            $scope.IsCompletionFiling = model.Emergency.IsCompleted
+            // 性别列表
+            $scope.GenderDict = model.GenderDict;
+            $scope.WhereaboutsDict = model.WhereaboutsDict;
+            $scope.SymptomDict = model.SymptomDict;
+            $scope.TriageResultsDict = model.TriageResultsDict;
+            //$scope.PastMedicalHistoryDict = model.PastMedicalHistoryDict; //既往病史
+            $scope.PastMedicalHistoryDict = model.PastMedicalHistoryDict.sort(compare("Key"));
+            $scope.PersonalHistoryDict = model.PersonalHistoryDict;
+            $scope.DiagnosisTypeDict = model.DiagnosisTypeDict;
+            $scope.NoThromReasonsDict = model.NoThromReasonsDict;
+            $scope.IatDestinationAfterPciDict = model.IatDestinationAfterPciDict;
+            //溶栓决策
+            $scope.ThromInclusionCriteriaDict = model.ThromInclusionCriteriaDict;
+            $scope.ThromExclusionCriteriaDict = model.ThromExclusionCriteriaDict;
+            $scope.ThromRelativeExclusionCriteria3HDict = model.ThromRelativeExclusionCriteria3HDict;
+            $scope.ThromRelativeExclusionCriteria4_5HDict = model.ThromRelativeExclusionCriteria4_5HDict;
+            //end
+            // 抗血小板类
+            $scope.AntiplateletDict = model.AntiplateletDict;
+            // 抗凝类
+            $scope.AnticoagulationDict = model.AnticoagulationDict;
+            // 降压类
+            $scope.AntihypertensiveDict = model.AntihypertensiveDict;
+            // 降糖类
+            $scope.HypoglycemicDict = model.HypoglycemicDict;
+            // 调脂类
+            $scope.LipidModulationDict = model.LipidModulationDict;
+
+            $scope.Emergency.StrokeTeamAdmissionTime = $filter('date')($scope.Emergency.StrokeTeamAdmissionTime, 'yyyy-MM-dd HH:mm');
+            $scope.Emergency.ArrivePatientSideTime = $filter('date')($scope.Emergency.ArrivePatientSideTime, 'yyyy-MM-dd HH:mm');
+            $scope.Emergency.DepartureTime = $filter('date')($scope.Emergency.DepartureTime, 'yyyy-MM-dd HH:mm');
+            $scope.Emergency.ArrivedHospitalTime = $filter('date')($scope.Emergency.ArrivedHospitalTime, 'yyyy-MM-dd HH:mm');
+            //是否是发病3h相对排除标准  1=是
+            $scope.is3h = "1";
+            $http.get('/Base/GetTitleInfo', {
+                params: {
+                    registId: $scope.Regist.Id
+                }
+            }).then(function successCallback(response) {
+                if (response.data.IsSuccess) {
+                    $scope.Regist = response.data.Data.Patient;
+                }
+                else {
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+            });
+
+            // 存放键值对象的Array扩展方法 Start
+            Array.prototype.ContainsItem = function (id) {
+                var idArray = [];
+                for (var i = this.length - 1; i >= 0; i--) {
+                    idArray.push(this[i].Key);
+                }
+
+                return idArray.indexOf(id) >= 0;
+            }
+
+            Array.prototype.GetItem = function (id) {
+                var idArray = [];
+                for (var i = 0; i < this.length; i++) {
+                    idArray.push(this[i].Key);
+                }
+
+                if (idArray.indexOf(id) >= 0) {
+                    return this[idArray.indexOf(id)];
+                } else {
+                    return null;
+                }
+            }
+
+            Array.prototype.RemoveItem = function (id) {
+                var idArray = [];
+                for (var i = 0; i < this.length; i++) {
+                    idArray.push(this[i].Key);
+                }
+
+                if (idArray.indexOf(id) >= 0) {
+                    this.splice(idArray.indexOf(id), 1)
+                }
+            }
+
+            function KeyValueItem(key, value) {
+                this.Key = key;
+                this.Value = value;
+            }
+            // 存放键值对象的Array扩展方法 End
+
+            var getItemArray = function (array, name) {
+                var newArray = [];
+                for (var item in array) {
+                    if (array[item].Name == name) {
+                        newArray.push(new KeyValueItem(array[item].Key, array[item].Value));
+                    }
+                }
+                return newArray;
+            };
+
+            //----------------------------------------------------------------------end
+
+            // 是否选中
+            $scope.thrombolysisIsSelected = function (index, data) {
+                if (data != null) {
+                    if (data.length > 0) {
+                        return data[index];
+                    }
+                    else { return false; }
+                }
+                return false;
+            }
+
+            function CheckIs3h(){
+                if($scope.Emergency.RelExclusionCriteria45h.indexOf(true) > -1)
+                {
+                    $scope.is3h="0";
+                }else{$scope.is3h="1";}
+            }
+            CheckIs3h();
+            //溶栓决策
+            $scope.showTreatmentDecision = function (){
+                if($scope.hasLayer) return false;
+
+                $.post('/Treatment/TreatmentDecision', {registId: $scope.Regist.Id }, function (str) {
+                    layer.open({
+                        type: 1,
+                        title: '溶栓决策',
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1000px', '480px'],
+                        content: str,
+                        end:function(){
+                            $scope.hasLayer = false;
+                            debugger;
+                            $.ajax({
+                                type: 'POST',
+                                data:$scope.Emergency,
+                                url: AddUrlPrefix("/Treatment/GetTreatmentDecision/"),
+                                success: function (data) {
+                                    if (data.IsSuccess) {
+                                        $scope.$apply(function () {                                            
+                                            $scope.Emergency.InclusionCriteria = data.Data.InclusionCriteria;
+                                            $scope.Emergency.ExclusionCriteria = data.Data.ExclusionCriteria;
+                                            $scope.Emergency.RelExclusionCriteria3h = data.Data.RelExclusionCriteria3h;
+                                            $scope.Emergency.RelExclusionCriteria45h = data.Data.RelExclusionCriteria45h;
+                                            CheckIs3h();
+                                        });
+                                    } else {
+                                        console.log(data);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    $scope.hasLayer = true;
+                });
+            }
+
+            //呼叫120至120到达患者旁时间
+            $scope.toPatinet = GetMinute($scope.Emergency.ArrivePatientSideTime, $scope.Regist.CallTime);
+            //120转运出发至到达医院时间
+            $scope.toHospital = GetMinute($scope.Emergency.ArrivedHospitalTime, $scope.Emergency.DepartureTime);
+            $scope.GetGenderName = function (id) {
+                return $scope.GenderDict.GetItem(id).Value;
+            }
+            Array.prototype.GetItem = function (id) {
+                var idArray = [];
+                for (var i = 0; i < this.length; i++) {
+                    idArray.push(this[i].Key);
+                }
+
+                if (idArray.indexOf(id) >= 0) {
+                    return this[idArray.indexOf(id)];
+                } else {
+                    return null;
+                }
+            }
+
+            $scope.NotifyStrokeTeam = function () {
+                $scope.Emergency.StrokeTeamAdmissionTime = moment($scope.Emergency.RegistrationTime).add(5, 'minutes').format('YYYY-MM-DD HH:mm');
+            }
+
+            $scope.cancel= function(){
+                $scope.Emergency.PatientsWhereabouts = null;
+            }
+            $scope.GetTime = function (meiosis, minuend, type) {
+                if (type == '1') {
+                    //呼叫120至120到达患者旁时间
+                    $scope.toPatinet = GetMinute(meiosis, minuend);
+                }
+                else if (type == '2')
+                {
+                    //120转运出发至到达医院时间
+                    $scope.toHospital = GetMinute(meiosis, minuend);
+                }
+            }
+
+            // 选择变化
+            $scope.updateSelection = function ($event, index, object) {
+                var checkbox = $event.target;
+                object[index] = checkbox.checked;
+            }
+
+            // 是否选中
+            $scope.isSelected = function (index, object) {
+                if(object != null && object.length > 0){
+                    return object[index];
+                }
+                return false;
+            }
+
+            $scope.updateDrugSelection = function ($event, index, object) {
+                var checkbox = $event.target;
+                object.DrugUsed[index] = checkbox.checked ? true : false;
+                if ($(checkbox).val() == '99'){
+                    object.OtherDrugUsed = checkbox.checked;
+                }
+            }
+
+            // 保存事件
+            $scope.save = function () {
+                // 验证后保存
+                //if (!validator.DoValidate()) {
+                //    return false;
+                //}
+
+                // 重要项校验
+                var errorItem = $.validator.errorItem;
+                if (errorItem != undefined && errorItem != null && errorItem.length > 0) {
+                    var message = "<div style='margin-left: 50px;'>";
+                    $(errorItem).each(function (index, item) { message += (item + "<br>") });
+                    $.messager.confirm('警告', message + "</div>", function (r) {
+                        if (r) $scope.doSave();
+                    });
+                }
+                else {
+                    $scope.doSave();
+                }
+            }
+
+            // 提交
+            $scope.complete = function(){
+                $scope.doSave(true);
+            }
+
+            // 保存
+            $scope.doSave = function (doComplete) {
+                $scope.Emergency.IsCompleted = $scope.IsCompletionFiling;
+                // 获取填写数据
+                $http.post('/Emergency/Save', {
+                    model: $scope.Emergency
+                }).then(function (json) {
+                    if (json.data.IsSuccess) {
+                        if(doComplete){
+                            $.ajax({
+                                type: 'POST',
+                                url: AddUrlPrefix('/DataManage/Commit'),
+                                data: { registId: $scope.Regist.Id},
+                                dataType: 'json',
+                                success: function (json) {
+                                    if (json.IsSuccess) {
+                                        $scope.$apply(function () {
+                                            $scope.Regist.IsCompleted = true;
+                                        });
+                                        layer.alert("提交成功", { icon: 1 });
+                                        //刷新左边菜单
+                                        if ($scope.Emergency.TriageResultsList[2] || $scope.Emergency.TriageResultsList[3])
+                                            pageLoading(2,true);
+                                            //点亮患者救治按钮
+                                        else pageLoading(2);
+                                    } else {
+                                        layer.alert( "提交失败:" + json.Message, { icon: 2 });
+                                    }
+                                },
+                                error: function () {
+                                    layer.alert("请求失败！", { icon: 2 });
+                                }
+                            });
+                        }
+                        else{
+                            layer.alert("保存成功", { icon: 1 });
+                            debugger;
+                            //刷新左边菜单
+                            if ($scope.Emergency.TriageResultsList[2] || $scope.Emergency.TriageResultsList[3])
+                                pageLoading(2,true);
+                                //点亮患者救治按钮
+                            else pageLoading(2);
+                        }
+                    } else {
+                        layer.alert("保存失败:" + json.data.Message, { icon: 2 });
+                    }
+                }, function (error) {
+                    layer.alert("保存失败:" + error, { icon: 2 });
+                });
+            }
+
+            $scope.Refresh = function () {
+                var maskIndex = layer.load();
+                if ($scope.Regist.EhrId == null) return;
+                $.post("/Emergency/Refresh", $scope.Emergency, function (result) {
+                    if (result.IsSuccess) {
+                        $scope.$apply(function () {
+                            $scope.Emergency = result.Data; // 院前评估信息
+                        });
+                        $("[timeId]").blur();
+                        layer.close(maskIndex);
+                    }else{layer.close(maskIndex); }
+                });
+            }
+
+            $scope.showSaveBtn = function(isShow)
+            {
+                if($scope.PermissionSave)
+                {
+                    if(isShow && !$scope.Emergency.IsCompleted)
+                        $("#btnSave").css("display","block");
+                    else if(!isShow && $scope.Emergency.IsCompleted)
+                        $("#btnSave").css("display","block");
+                    else if(!isShow && !$scope.Emergency.IsCompleted)
+                        isShow && !$scope.Emergency.IsCompleted
+                    else  $("#btnSave").css("display","none");
+                }else
+                {
+                    $("#btnSave").css("display","none");
+                }
+            }
+            $scope.showSaveBtn($scope.IsCompletionFiling);
+
+            $scope.EcgTimeChange = function(){
+                if($scope.Emergency.EcgTime!=null)
+                {
+                    $scope.Emergency.EcgDiagnosisTime = moment($scope.Emergency.EcgTime).add(5, 'minutes').format('YYYY-MM-DD HH:mm');
+                }
+            }
+
+            if($scope.Emergency.EcgTime!=null && $scope.Emergency.EcgDiagnosisTime==null){
+                $scope.EcgTimeChange();
+            }
+
+            $scope.showNIHSS = function () {
+                $.post('/Estimate/EstimateNIHSS', { registId: registId, recordId: $scope.Emergency.NihssScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.Emergency.NihssScoreValue = layero.find("#score").html();
+                                    $scope.Emergency.NihssScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            $scope.showMRS = function () {
+                $.post('/Estimate/EstimateMRS', { registId: registId, recordId: $scope.Emergency.MrsScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.Emergency.MrsScoreValue = layero.find("#score").html();
+                                    $scope.Emergency.MrsScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            $scope.showChads2Vasc = function () {
+                $.post('/Estimate/EstimateChads2Vasc', { registId: registId, recordId: $scope.Emergency.Chads2VascScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.Emergency.Chads2VascScoreValue = layero.find("#score").html();
+                                    $scope.Emergency.Chads2VascScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            $scope.showAspect = function () {
+                $.post('/Estimate/EstimateAspect', { registId: registId, recordId: $scope.Emergency.AspectScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.Emergency.AspectScoreValue = layero.find("#score").html();
+                                    $scope.Emergency.AspectScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            $scope.showHat = function () {
+                $.post('/Estimate/EstimateHat', { registId: registId, recordId: $scope.Emergency.HatScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.Emergency.HatScoreValue = layero.find("#score").html();
+                                    $scope.Emergency.HatScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            $scope.showAbcd2 = function () {
+                $.post('/Estimate/EstimateAbcd2', { registId: registId, recordId: $scope.Emergency.Abcd2ScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.Emergency.Abcd2ScoreValue = layero.find("#score").html();
+                                    $scope.Emergency.Abcd2ScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            $scope.showGcs = function () {
+                $.post('/Estimate/EstimateGCS', { registId: registId, recordId: $scope.Emergency.GcsScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.Emergency.GcsScoreValue = layero.find("#score").html();
+                                    $scope.Emergency.GcsScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            $scope.showWst = function () {
+                $.post('/Estimate/EstimateWST', { registId: registId, recordId: $scope.Emergency.WstScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.Emergency.WstScoreValue = layero.find("#score").html();
+                                    $scope.Emergency.WstScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+
+            $scope.showScore = function (scoreType) {
+                $.post('/Estimate/EstimateScore', { registId: registId, recordId: $scope.Emergency.MrsScoreId,scoreType : scoreType}, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.Emergency.MrsScoreValue = layero.find("#score").html();
+                                    $scope.Emergency.MrsScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            $scope.onRelation = function(source){
+                if (!$scope.Regist.EhrId ) {
+                    layer.alert('您还未绑定患者，请先进行绑定操作！', { icon: 2 });
+                    return;
+                }
+                $("#IsConfirm").val("0");
+                $("#Patient").val("");
+                $.post('/DataManage/CreatePatient', { source: source,type:"RelationInpatientNo",name:$scope.Regist.Name }, function (str) {
+                    layer.open({
+                        type: 1,
+                        title: '关联患者',
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1000px', '480px'],
+                        content: str,
+                        end: function (index, layero) {
+                            if($("#IsConfirm").val()=="1"){
+                                if($("#Patient").val()!=""){
+                                    var patient = JSON.parse($("#Patient").val());
+                                    var maskIndex = layer.load();
+                                    $.post("/DataManage/BindPatient", {ehrId:$scope.Regist.EhrId,Patient:patient}, function (result) {
+                                        if (result.IsSuccess) {
+                                            layer.close(maskIndex); // 关闭等待层
+                                            $scope.$apply(function () {
+                                                $scope.Emergency.AdmissionNo = patient.DisplayNo;
+                                            })
+                                        }
+                                        else
+                                        {
+                                            layer.close(maskIndex); // 关闭等待层
+                                        }
+                                    });
+                                }
+                            };
+                        }
+                    });
+                });
+                parent.layer.closeAll()
+            }
+
+        });
+        function GetMinute(meiosis, minuend) {
+            if (meiosis == null || typeof (meiosis) == "undefined" || minuend == null || typeof (minuend) == "undefined") { return 0; }
+            else {
+                meiosis = new Date(Date.parse(meiosis.replace(/\-/g, "/")));
+                minuend = new Date(Date.parse(minuend.replace(/\-/g, "/")));
+                var total = (meiosis.getTime() - minuend.getTime()) / 1000/60;
+                if (total > 0) { return total; }
+                else { return 0; }
+            }
+        }
+
+        angular.bootstrap($(".content")[0], ["ngEmergency"]);
+    });
+
+</script>
+<div class="content" ng-app="ngEmergency" ng-controller="EmergencyController">
+    <div class="form-tit">
+        <a href="">数据管理</a>&gt;&nbsp;绿通评估&nbsp;<span>&#40;注:<b class="bx"></b>必填项&nbsp;<b style='vertical-align: top;color: #F00;'>&#10026;&nbsp;</b>重要项&nbsp;&#41;</span>
+        <input type="hidden" id="IsConfirm" value="0">
+        <input type="hidden" id="Patient">
+        @Html.Partial("../Base/Patient")
+        <div class="op-panel">
+            <span style="margin:0px 1px;" />
+            <button type="button" class="btn-primary" ng-click="Refresh()">同步</button>
+            <button type="button" class="btn-primary" ng-if="PermissionSave && !Regist.IsCompleted" ng-click="save()" id="btnSave">保存</button>
+            <button type="button" class="btn-primary" ng-if="PermissionSave && !Regist.IsCompleted && Regist.Id" ng-click="complete()" id="btnComplete">提交</button>
+            <span style="margin:0px 1px;" />
+            @*<button type="button" id="btnLog" onclick="refreshlog()">操作日志</button>*@
+        </div>
+    </div>
+
+    <form id="divEmergency">
+        <fieldset class="medical-record">
+            <h4 class="tit-block">主诉及症状</h4>
+            <div class="row-box">
+                <div class="mr-row-fourth" style="width:100%">
+                    <label><b validateSnow="ChiefComplaint"></b>主诉:</label>
+                    <input type="text" maxlength="33" name="ChiefComplaint" validateName="ChiefComplaint" ng-model="Emergency.ChiefComplaint">
+                </div>
+            </div>
+            <div class="mr-row">
+                <div style="width: 100%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="Symptom"></b>症状：</label><br />
+                    <label ng-repeat="x in SymptomDict | orderBy:'Key'">
+                        <input name="Symptom" type="checkbox" ng-checked="isSelected($index,Emergency.SymptomList)" ng-click="updateSelection($event,$index,Emergency.SymptomList)" validateName="{{$index == 0 ? 'Symptom' : ''}}">
+                        <span>{{x.Value}}</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="row-box">
+                <div class="mr-row-fourth" style="width:100%">
+                    <label><b validateSnow="PreliminaryDiagnosis"></b>初步诊断:</label>
+                    <input type="text" maxlength="33" name="PreliminaryDiagnosis" validateName="PreliminaryDiagnosis" ng-model="Emergency.PreliminaryDiagnosis">
+                </div>
+            </div>
+
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="EmergencyDoctor"></b>诊断医生:</label>
+                    <input type="text" ng-model="Emergency.EmergencyDoctor" name="EmergencyDoctor" id="EmergencyDoctor" validateName="EmergencyDoctor" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="EmergencyTime"></b>诊断时间:</label>
+                    <input type="text" name="EmergencyTime" class="datetime" validateName="EmergencyTime" ng-model="Emergency.EmergencyTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="EmergencyNurse"></b>绿道护士:</label>
+                    <input type="text" ng-model="Emergency.EmergencyNurse" name="EmergencyNurse" id="EmergencyNurse" validateName="EmergencyNurse" />
+                </div>
+            </div>
+            <h4 class="tit-block">绿通响应</h4>
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="StrokeTeamAdmissionTime"></b>急诊护士接诊患者时间:</label>
+                    <input type="text" name="StrokeTeamAdmissionTime" class="datetime" validateName="StrokeTeamAdmissionTime" timeId=@TimeLineNodes.D020200 ng-model="Emergency.StrokeTeamAdmissionTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="ArrivedStrokeTime"></b>卒中医生接诊患者时间:</label>
+                    <input type="text" name="ArrivedStrokeTime" class="datetime" validateName="ArrivedStrokeTime" timeId=@TimeLineNodes.D020212 ng-model="Emergency.ArrivedStrokeTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="BloodCollectionTime"></b>采血时间:</label>
+                    <input type="text" name="BloodCollectionTime" class="datetime" validateName="BloodCollectionTime" timeId=@TimeLineNodes.D020201 ng-model="Emergency.BloodCollectionTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>   
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="InspectionTime"></b>送检时间:</label>
+                    <input type="text" name="InspectionTime" class="datetime" validateName="InspectionTime" timeId=@TimeLineNodes.D020202 ng-model="Emergency.InspectionTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>          
+            </div>
+            <div class="row-box">  
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="AcceptanceTime"></b>接收时间:</label>
+                    <input type="text" name="AcceptanceTime" class="datetime" validateName="AcceptanceTime" timeId=@TimeLineNodes.D020213 ng-model="Emergency.AcceptanceTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="BgCompletionTime"></b>血糖检测完成时间:</label>
+                    <input type="text" name="BgCompletionTime" class="datetime" validateName="BgCompletionTime" timeId=@TimeLineNodes.D020203 ng-model="Emergency.BgCompletionTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="EcgDiagnosisTime"></b>心电图检测完成时间:</label>
+                    <input type="text" id="EcgDiagnosisTime" name="EcgDiagnosisTime" validateName="EcgDiagnosisTime" timeId=@TimeLineNodes.D020204 ng-model="Emergency.EcgDiagnosisTime" class="input-half left datetime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="CtOpenTime"></b>开具头颅CT单时间:</label>
+                    <input type="text" id="CtOpenTime" name="CtOpenTime" validateName="CtOpenTime" timeId=@TimeLineNodes.D020205 ng-model="Emergency.CtOpenTime" class="input-half left datetime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+
+            </div>
+
+            <div class="mr-row">
+                <div style="width: 100%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="PastMedicalHistory"></b>既往史：</label><br />
+                    <label ng-repeat="x in PastMedicalHistoryDict | orderBy:'Key'">
+                        <input name="PastMedicalHistory" type="checkbox"
+                               ng-checked="isSelected($index,Emergency.PastMedicalHistoryList)" ng-click="updateSelection($event,$index,Emergency.PastMedicalHistoryList)" validateName="{{$index == 0 ? 'PastMedicalHistory' : ''}}">
+                        <span>{{x.Value}}</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="row-box">
+                <div class="mr-row-fourth" style="width:100%" ng-show="Emergency.PastMedicalHistoryList[10]">
+                    <label><b validateSnow="OtherMedicalHistory"></b>其他病史:</label>
+                    <input type="text" id="OtherMedicalHistory" name="OtherMedicalHistory" validateName="OtherMedicalHistory" maxlength="500" ng-model="Emergency.OtherMedicalHistory" />
+                </div>
+            </div>
+            <div class="row-box">
+                <div style="width: 25%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="IsAllergyHistory"></b>有无过敏史:</label><br />
+                    <label>
+                        <input type="radio" id="IsAllergyHistory" name="IsAllergyHistory" value="1" validateName="IsAllergyHistory" ng-model="Emergency.IsAllergyHistory"><span>有</span>
+                    </label>
+                    <label>
+                        <input type="radio" id="IsAllergyHistory" name="IsAllergyHistory" value="0" ng-model="Emergency.IsAllergyHistory"><span>无</span>
+                    </label>
+                </div>
+                <div class="mr-row-fourth" style="width:75%" ng-show="Emergency.IsAllergyHistory=='1'">
+                    <label><b validateSnow="AllergyHistory"></b>过敏史:</label>
+                    <input type="text" id="AllergyHistory" name="AllergyHistory" validateName="AllergyHistory" maxlength="500" ng-model="Emergency.AllergyHistory" />
+                </div>
+            </div>
+            <h4 class="tit-block">近期服药史</h4>
+            <div class="row-box">
+                <div style="width: 25%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="IsAspl"></b>是否服用阿司匹林:</label><br />
+                    <label>
+                        <input type="radio" id="IsAspl" name="IsAspl" value="1" validateName="IsAspl" ng-model="Emergency.IsAspl"><span>是</span>
+                    </label>
+                    <label>
+                        <input type="radio" id="IsAspl" name="IsAspl" value="0" ng-model="Emergency.IsAspl"><span>否</span>
+                    </label>
+                </div>
+                <div class="mr-row-fourth" ng-show="Emergency.IsAspl=='1'">
+                    <label><b validateSnow="Aspl"></b>阿司匹林:</label>
+                    <input type="text" id="Aspl" maxlength="10" name="Aspl" validateName="Aspl" ng-model="Emergency.Aspl" />
+                    <em>mg/日</em>
+                </div>
+                <div style="width: 25%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="IsLpgl"></b>是否服用氯吡格雷:</label><br />
+                    <label>
+                        <input type="radio" id="IsLpgl" name="IsLpgl" value="1" validateName="IsLpgl" ng-model="Emergency.IsLpgl"><span>是</span>
+                    </label>
+                    <label>
+                        <input type="radio" id="IsLpgl" name="IsLpgl" value="0" ng-model="Emergency.IsLpgl"><span>否</span>
+                    </label>
+                </div>
+                <div class="mr-row-fourth" ng-show="Emergency.IsLpgl=='1'">
+                    <label><b validateSnow="Lpgl"></b>氯吡格雷:</label>
+                    <input type="text" id="Lpgl" maxlength="10" name="Lpgl" validateName="Lpgl" ng-model="Emergency.Lpgl" />
+                    <em>mg/日</em>
+                </div>                
+            </div>
+            <div class="row-box">
+                <div style="width: 25%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="IsHfl"></b>是否服用华法林:</label><br />
+                    <label>
+                        <input type="radio" id="IsHfl" name="IsHfl" value="1" validateName="IsHfl" ng-model="Emergency.IsHfl"><span>是</span>
+                    </label>
+                    <label>
+                        <input type="radio" id="IsHfl" name="IsHfl" value="0" ng-model="Emergency.IsHfl"><span>否</span>
+                    </label>
+                </div>
+                <div class="mr-row-fourth" ng-show="Emergency.IsHfl=='1'">
+                    <label><b validateSnow="Hfl"></b>华法林:</label>
+                    <input type="text" id="Hfl" maxlength="10" name="Hfl" validateName="Hfl" ng-model="Emergency.Hfl" />
+                    <em>mg/日</em>
+                </div>
+                <div style="width: 25%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="IsDbjqOrLfsb"></b>是否服用达比加群/利伐沙班:</label><br />
+                    <label>
+                        <input type="radio" id="IsDbjqOrLfsb" name="IsDbjqOrLfsb" value="1" validateName="IsDbjqOrLfsb" ng-model="Emergency.IsDbjqOrLfsb"><span>是</span>
+                    </label>
+                    <label>
+                        <input type="radio" id="IsDbjqOrLfsb" name="IsDbjqOrLfsb" value="0" ng-model="Emergency.IsDbjqOrLfsb"><span>否</span>
+                    </label>
+                </div>
+                <div class="mr-row-fourth" ng-show="Emergency.IsDbjqOrLfsb=='1'">
+                    <label><b validateSnow="DbjqOrLfsb"></b>达比加群/利伐沙班:</label>
+                    <input type="text" id="DbjqOrLfsb" maxlength="10" name="DbjqOrLfsb" validateName="DbjqOrLfsb" ng-model="Emergency.DbjqOrLfsb" />
+                    <em>mg/日</em>
+                </div>
+            </div>
+            <div class="row-box">
+                <div style="width: 25%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="IsOtherMedicine"></b>是否服用其他药物:</label><br />
+                    <label>
+                        <input type="radio" id="IsOtherMedicine" name="IsOtherMedicine" value="1" validateName="IsOtherMedicine" ng-model="Emergency.IsOtherMedicine"><span>是</span>
+                    </label>
+                    <label>
+                        <input type="radio" id="IsOtherMedicine" name="IsOtherMedicine" value="0" ng-model="Emergency.IsOtherMedicine"><span>否</span>
+                    </label>
+                </div>
+                <div class="mr-row-fourth" ng-show="Emergency.IsOtherMedicine=='1'">
+                    <label><b validateSnow="OtherMedicine"></b>其他药物:</label>
+                    <input type="text" id="OtherMedicine" maxlength="200" name="Aspl" validateName="OtherMedicine" ng-model="Emergency.OtherMedicine" />
+                </div>
+            </div>
+            <h4 class="tit-block" style="margin-top:20px;">评分</h4>
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label class="label-tit">
+                        <b validateSnow="NihssScoreValue"></b>NIHSS评分:
+                    </label>
+                    <input style="width:100px;text-align:center;" ng-model="Emergency.NihssScoreValue" />
+                    <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-click="showNIHSS()">评分</button>
+                </div>
+            </div>
+
+            <h4 class="tit-block">影像学检查</h4>
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="CtStartTime"></b>患者到达CT/MRI室时间:</label>
+                    <input type="text" id="CtStartTime" name="CtStartTime" validateName="CtStartTime" timeId=@TimeLineNodes.D020206 ng-model="Emergency.CtStartTime" class="input-half left datetime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="CtEndTime"></b>CT/MRI检查结束时间:</label>
+                    <input type="text" id="CtEndTime" name="CtEndTime" validateName="CtEndTime" timeId=@TimeLineNodes.D020207 ng-model="Emergency.CtEndTime" class="input-half left datetime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="CtResultTime"></b>CT/MRI报告时间:</label>
+                    <input type="text" id="CtResultTime" name="CtResultTime" validateName="CtResultTime" timeId=@TimeLineNodes.D020208 ng-model="Emergency.CtResultTime" class="input-half left datetime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="BloodTestReportTime"></b>检验科血液化验报告时间:</label>
+                    <input type="text" id="BloodTestReportTime" name="BloodTestReportTime" validateName="BloodTestReportTime" ng-model="Emergency.BloodTestReportTime" class="input-half left datetime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+            </div>
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="XcgTime"></b>血常规:</label>
+                    <input type="text" id="XcgTime" name="XcgTime" validateName="XcgTime" timeId=@TimeLineNodes.D020209 ng-model="Emergency.XcgTime" class="input-half left datetime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="NxcgTime"></b>凝血常规:</label>
+                    <input type="text" id="NxcgTime" name="NxcgTime" validateName="NxcgTime" timeId=@TimeLineNodes.D020210 ng-model="Emergency.NxcgTime" class="input-half left datetime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="SgnjdjzTime"></b>肾功能及电解质:</label>
+                    <input type="text" id="SgnjdjzTime" name="SgnjdjzTime" validateName="SgnjdjzTime" timeId=@TimeLineNodes.D020211 ng-model="Emergency.SgnjdjzTime" class="input-half left datetime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+            </div>
+
+            <div class="row-box">
+                <div style="width: 25%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="TriageResults"></b>分检诊结果:<button type="button" class="popup-score-ti btn-warning" ng-click="showTreatmentDecision()">溶栓决策</button></label><br />
+                    <label ng-repeat="item in TriageResultsDict | orderBy:'Key'">
+                        <input type="checkbox" name="TriageResults" ng-checked="isSelected($index,Emergency.TriageResultsList)" ng-click="updateSelection($event,$index,Emergency.TriageResultsList)" validateName="{{$index == 0 ? 'TriageResults' : ''}}" />
+                        <span>{{item.Value}}</span>
+                    </label>
+                </div>
+            </div>
+            <div class="row-box">
+                <div class="mr-row-fourth" style="width:50%">
+                    <label><b validateSnow="Diagnosis"></b>诊断:</label>
+                    <input type="text" id="Diagnosis" name="Diagnosis" validateName="Diagnosis" ng-model="Emergency.Diagnosis" />
+                </div>
+                <div class="mr-row-fourth" style="width:50%" ng-show="!Emergency.TriageResultsList[0] || !Emergency.TriageResultsList[1]">
+                    <label><b validateSnow="Diagnosis"></b>若未能实施静脉溶栓，动脉取栓，请注明原因（包括禁忌症）:</label>
+                    <input type="text" id="Reason" name="Reason" validateName="Reason" ng-model="Emergency.Reason" />
+                </div>
+            </div>
+
+            <div class="row-box">
+                <div class="mr-row-fourth" ng-show="is3h=='1'" style="width:50%">
+                    <label>发病3h相对排除标准:</label>
+                    <label ng-repeat="x in ThromRelativeExclusionCriteria3HDict" ng-show="isSelected($index,Emergency.RelExclusionCriteria3h,x.Value)" ng-class="isSelected($index,Emergency.RelExclusionCriteria3h,x.Value) ? 'imp-hist':''">
+                        <span>{{x.Value}}</span><br />
+                    </label>
+                </div>
+                <div class="mr-row-fourth" ng-show="is3h!='1'" style="width:50%">
+                    <label>发病4.5h相对排除标准:</label>
+                    <label ng-repeat="x in ThromRelativeExclusionCriteria4_5HDict" ng-show="isSelected($index,Emergency.RelExclusionCriteria45h,x.Value)" ng-class="isSelected($index,Emergency.RelExclusionCriteria45h,x.Value) ? 'imp-hist':''">
+                        <span>{{x.Value}}</span><br />
+                    </label>
+                </div>
+                <div class="mr-row-fourth" style="width:50%">
+                    <label>入选标准:</label>
+                    <label ng-repeat="x in ThromInclusionCriteriaDict" ng-show="isSelected($index,Emergency.InclusionCriteria,x.Value)" ng-class="isSelected($index,Emergency.InclusionCriteria,x.Value)?'imp-hist':''">
+                        <span>{{x.Value}}</span><br />
+                    </label>
+                </div>
+            </div>
+            <div class="row-box">
+                <div class="mr-row-fourth" style="width:100%">
+                    <label>排除标准:</label>
+                    <label ng-repeat="x in ThromExclusionCriteriaDict" ng-show="isSelected($index,Emergency.ExclusionCriteria,x.Value)" ng-class="isSelected($index,Emergency.ExclusionCriteria,x.Value)?'imp-hist':''">
+                        <span>{{x.Value}}</span><br />
+                    </label>
+                </div>
+            </div>
+
+            <div class="row-box" ng-show="Emergency.TriageResultsList[2]">
+                <div style="width: 25%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="CtIsHemorrhage"></b>是否出血:</label><br />
+                    <label>
+                        <input type="radio" id="CtIsHemorrhage" name="CtIsHemorrhage" value="1" validateName="CtIsHemorrhage" ng-model="Emergency.CtIsHemorrhage" ng-disabled="Emergency.IsCompleted"><span>是</span>
+                    </label>
+                    <label>
+                        <input type="radio" id="CtNoHemorrhage" name="CtIsHemorrhage" value="0" ng-model="Emergency.CtIsHemorrhage" ng-disabled="Emergency.IsCompleted"><span>否</span>
+                    </label>
+                </div>
+                <div style="width: 25%;float:left;margin-bottom:10px;position:relative;" ng-show="Emergency.CtIsHemorrhage=='1'">
+                    <label><b validateSnow="DiagnosisType"></b>出血部位:</label><br />
+                    <label ng-repeat="item in DiagnosisTypeDict | orderBy:'Key'" ng-show="item.Key!='1'" style="width:{{item.Key == '2' ? '75px;' : '130px;'}}">
+                        <input type="radio" id="DiagnosisType" name="DiagnosisType" value="{{item.Key}}" validateName="{{$index == 1 ? 'DiagnosisType' : ''}}" ng-model="Emergency.DiagnosisType" />
+                        <span>{{item.Value}}</span>
+                    </label>
+                </div>
+            </div>
+            <div class="row-box" ng-show="Emergency.TriageResultsList[2] || Emergency.TriageResultsList[3]">
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="AdmissionDepartment"></b>入院科室:</label>
+                    <input type="text" id="AdmissionDepartment" name="AdmissionDepartment" validateName="AdmissionDepartment" ng-model="Emergency.AdmissionDepartment" />
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="AdmissionNo"></b>住院号:</label>
+                    <input type="text" id="AdmissionNo" name="AdmissionNo" validateName="AdmissionNo" ng-model="Emergency.AdmissionNo" />
+                    <button type="button" class="btn-warning btn-extract" ng-click="onRelation('5')">关联</button>
+                </div>
+            </div>
+            <div class="mr-row" ng-show="Emergency.TriageResultsList[2] || Emergency.TriageResultsList[3]">
+                <div style="width: 75%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="NoThromReasons"></b>未进行溶栓治疗原因：</label><br />
+                    <label ng-repeat="x in NoThromReasonsDict">
+                        <input name="NoThromReasons" type="checkbox" ng-checked="isSelected($index,Emergency.NoThromReasonsList)" ng-click="updateSelection($event,$index,Emergency.NoThromReasonsList)" validateName="{{$index == 0 ? 'NoThromReasonsList' : ''}}">
+                        <span>{{x.Value}}</span>
+                    </label>
+                </div>
+                <div class="mr-row-fourth" ng-show="Emergency.NoThromReasonsList[6]">
+                    <label><b validateSnow="NoThromOtherReasons"></b>其他原因:</label>
+                    <input type="text" id="noThromReasons" name="noThromReasons"
+                           ng-show="Emergency.NoThromReasonsList[6]"
+                           ng-model="Emergency.NoThromOtherReasons" />
+                </div>
+            </div>
+
+            <div class="mr-row" ng-show="Emergency.TriageResultsList[2] || Emergency.TriageResultsList[3]">
+                <div style="width:50%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="PatientsWhereabouts"></b>患者去向：</label><br />
+                    <label ng-dblclick="cancel()" ng-repeat="item in IatDestinationAfterPciDict | orderBy:'Key'">
+                        <input type="radio" name="PatientsWhereabouts" value="{{item.Key}}" ng-model="Emergency.PatientsWhereabouts" validateName="{{$index == 0 ? 'PatientsWhereabouts' : ''}}">
+                        <span>{{item.Value}}</span>
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

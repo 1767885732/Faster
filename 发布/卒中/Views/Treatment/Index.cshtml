@@ -1,0 +1,561 @@
+﻿@model DoCare.CVA.Business.Model.TreatmentModel
+@using DoCare.ToolKit
+@using DoCare.CVA.Data
+@using DoCare.CVA.Data.Const
+@{
+    ViewBag.Title = "绿通救治";
+    Layout = null;
+}
+<style>
+    .input-after-radio {
+        width: calc(100% - 113px) !important;
+        width: -moz-calc(100% - 113px) !important;
+        width: -webkit-calc(100% - 113px) !important;
+    }
+
+    .input-after-radio-ArteryIsUrokinase {
+        width: calc(100% - 314px) !important;
+        width: -moz-calc(100% - 314px) !important;
+        width: -webkit-calc(100% - 314px) !important;
+    }
+</style>
+<script>
+    var model = @Html.Raw((JsonKit.Serialize(Model)));
+    var PermissionSave = @Html.Raw((JsonKit.Serialize(ViewBag.PermissionSave)));
+
+    $(function () {
+        // 所有时间控件，失去焦点后执行校验方法，校验通过后更新时间轴对应节点
+        $("[timeId]").blur(function () {
+            if (validator.validateElement($(this))) {
+                var timeIdElement = $("#" + $(this).attr("timeId"));
+                var dataName = timeIdElement.attr("data-desp");
+                var t = $(this).val();
+                if (t) {
+                    t = t.replace('T', " ");
+                    t = t.substr(0, 10);
+                } else {
+                    t = "";
+                }
+                timeIdElement.attr("title", dataName + ":" + t);
+                timeIdElement.attr("data-value", $(this).val());
+                timeIdElement.find("i").html($(this).val());
+            }
+        });
+        // 初始化校验器
+        var validator = new MDEValidator("@Model.Regist.Id", "Treatment", $("#divTreatment"));
+        var app = angular.module('ngAppTreatment', [ 'mdsdFilter', 'mdsdDirective']);
+        // 日期控件
+        app.directive('wdatePicker',function(){
+            return{
+                restrict:"A",  
+                link:function(scope,element,attr){
+                    element.bind('click',function(){
+                        window.WdatePicker({
+                            onpicked:function(){element.change()},  
+                            oncleared:function(){element.change()},
+                            dateFmt:'yyyy-MM-dd HH:mm'
+                        })  
+                    });
+                }
+            }
+        });
+
+        app.controller('ngCtrlTreatment', function ($scope, $filter, $http, $interval) {
+            // 患者救治信息
+            $scope.Regist = model.Regist;
+            $scope.Treatment = model.Treatment;
+            $scope.consciousnessDict = model.ConsciousnessDict;
+            $scope.DiagnosisTypeDict = model.DiagnosisTypeDict;
+            $scope.IatDestinationAfterPciDict = model.IatDestinationAfterPciDict;
+            $scope.Emergency  = model.Emergency;
+            console.log($scope.Emergency);
+            $scope.dnt="--";
+            $scope.ont="--";
+            $scope.dpt="--";
+            $scope.drt="--";
+            $scope.PermissionSave = PermissionSave;
+            $scope.showCtBtn = true;
+
+            $http.get('/Base/GetTitleInfo', {
+                params: {
+                    registId: $scope.Regist.Id
+                }
+            }).then(function successCallback(response) {
+                if (response.data.IsSuccess) {
+                    debugger;
+                    $scope.Regist = response.data.Data.Patient;
+                }
+                else {
+                }
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+            });
+            //患者送达医院时间 - 首次给药时间分钟
+            $scope.getDnt = function(){
+                debugger;
+                if($scope.Regist!=null && $scope.Regist.PatientArrivalTime!=null && $scope.Treatment.FirstAdministrationTime)
+                {
+                    var b =new Date($scope.Treatment.FirstAdministrationTime.replace('T'," "))-new Date($scope.Regist.PatientArrivalTime.replace('T'," "));
+                    $scope.dnt = parseInt(Math.abs(b)/1000/60);
+                }
+            }
+            //发病时间（或末次正常时间）- 首剂给药时间分诊
+            $scope.getOnt = function(){
+                debugger;
+                if($scope.Regist!=null && $scope.Regist.DiseaseTime!=null && $scope.Treatment.FirstAdministrationTime)
+                {
+                    var b =new Date($scope.Treatment.FirstAdministrationTime.replace('T'," "))-new Date($scope.Regist.DiseaseTime.replace('T'," "));
+                    $scope.ont =parseInt(Math.abs(b)/1000/60);
+                }
+            }
+            //患者送达医院时间-完成动脉穿刺时间分钟
+            $scope.getDpt = function(){
+                if($scope.Regist!=null && $scope.Regist.PatientArrivalTime!=null && $scope.Treatment.IatSuccessPunctureTime)
+                {
+                    var b =new Date($scope.Treatment.IatSuccessPunctureTime.replace('T'," "))-new Date($scope.Regist.PatientArrivalTime.replace('T'," "));
+                    $scope.dpt =parseInt(Math.abs(b)/1000/60);
+                }
+            }
+            //患者送达医院时间-首次血管再通时间分诊
+            $scope.getDrt = function(){
+                if($scope.Regist!=null && $scope.Regist.PatientArrivalTime!=null && $scope.Treatment.IatItrTime)
+                {
+                    var b =new Date($scope.Treatment.IatItrTime.replace('T'," "))-new Date($scope.Regist.PatientArrivalTime.replace('T'," "));
+                    $scope.drt =parseInt(Math.abs(b)/1000/60);
+                }
+            }
+            $scope.getDnt();
+            $scope.getOnt();
+            $scope.getDpt();
+            $scope.getDrt();
+            $scope.hasLayer = false;
+            $scope.cancel= function(){
+                $scope.Treatment.IatDestinationAfterPci = null;
+            }
+            // 保存事件
+            $scope.save = function () {
+                // 验证后保存
+                //if (!validator.DoValidate()) {
+                //    return false;
+                //}
+
+                // 重要项校验
+                var errorItem = $.validator.errorItem;
+                if (errorItem != undefined && errorItem != null && errorItem.length > 0) {
+                    var message = "<div style='margin-left: 50px;'>";
+                    $(errorItem).each(function (index, item) { message += (item + "<br>") });
+                    $.messager.confirm('警告', message + "</div>", function (r) {
+                        if (r) $scope.doSave();
+                    });
+                }
+                else {
+                    $scope.doSave();
+                }
+            }
+
+            // 提交
+            $scope.complete = function(){
+                $scope.doSave(true);
+            }
+
+            // 保存患者诊疗方式
+            $scope.doSave = function(doComplete)
+            {
+                //$scope.Treatment.MticiScoreItemData = $scope.MticiScoreItemData;
+                //$scope.Treatment.AsitnScoreItemData = $scope.AsitnScoreItemData;
+                //$scope.Treatment.AgainMticiScoreItemData = $scope.AgainMticiScoreItemData;
+                //$scope.Treatment.AgainAsitnScoreItemData = $scope.AgainAsitnScoreItemData;
+                console.log($scope.Treatment);
+                $http({
+                    method: 'POST',
+                    url: '/Treatment/Save',
+                    data: $scope.Treatment
+                }).then(function successCallback(response) {
+                    debugger;
+                    if(response.data.IsSuccess)
+                    {
+                        $scope.Treatment.Id = response.data.Data;
+
+                        if ($scope.Treatment.TreatmentDecision == "1")
+                        {
+                            $scope.getTargetTime("1");
+                        }
+                        else if ($scope.Treatment.TreatmentDecision == "3")
+                        {
+                            $scope.getTargetTime("3");
+                        }
+                        else if ($scope.Treatment.TreatmentDecision == "2")
+                        {
+                            $scope.getTargetTime("1");
+                            $scope.getTargetTime("3");
+                        }
+                        if(doComplete){
+                            $.ajax({
+                                type: 'POST',
+                                url: AddUrlPrefix('/DataManage/Commit'),
+                                data: { registId: $scope.Regist.Id},
+                                dataType: 'json',
+                                success: function (json) {
+                                    if (json.IsSuccess) {
+                                        $scope.$apply(function () {
+                                            $scope.Regist.IsCompleted = true;
+                                        });
+                                        layer.alert("提交成功", { icon: 1 });
+                                        pageLoading(3);
+                                    } else {
+                                        layer.alert( "提交失败:" + json.Message, { icon: 2 });
+                                    }
+                                },
+                                error: function () {
+                                    layer.alert("请求失败！", { icon: 2 });
+                                }
+                            });
+                        }
+                        else{
+                            // 保存成功
+                            layer.alert("保存成功", { icon: 1 });
+                            pageLoading(3);
+                        }
+                    };
+
+                    // TODO
+                }, function errorCallback(response) {
+                    // 请求失败执行代码
+                    layer.alert("请求失败！" , { icon: 2 });
+                });
+            }
+
+            // 是否选中
+            $scope.isSelected = function(index,object,value){
+                if(object!=null&&object.length>0){
+                    return object[index];
+                }
+                return false;
+            }
+
+            // 选择变化
+            $scope.updateSelection = function ($event, index, object) {
+
+                var checkbox = $event.target;
+
+                object[index] = checkbox.checked;
+
+            }
+
+            $scope.Refresh = function () {
+                var maskIndex = layer.load();
+                if (model.Regist.EhrId == null) return;
+                $.post("/Treatment/Refresh", model.Treatment, function (result) {
+                    if (result.IsSuccess) {
+                        $scope.$apply(function () {
+                            $scope.Treatment = result.Data;
+                        });
+                        $("[timeId]").blur();
+                        layer.close(maskIndex);
+                    }else{layer.close(maskIndex);}
+                });
+            }
+
+            $scope.showNIHSS = function () {
+                $.post('/Estimate/EstimateNIHSS', { registId: registId, recordId: $scope.Treatment.NihssScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.Treatment.NihssScoreValue = layero.find("#score").html();
+                                    $scope.Treatment.NihssScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            $scope.showJrNIHSS = function () {
+                $.post('/Estimate/EstimateNIHSS', { registId: registId, recordId: $scope.Treatment.JrNihssScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.Treatment.JrNihssScoreValue = layero.find("#score").html();
+                                    $scope.Treatment.JrNihssScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+        });
+        angular.bootstrap($(".content")[0], ['ngAppTreatment']);
+    });
+
+    function clickRadio(name, init, target) {
+        if (init) {
+            $("input:radio[value=" + init + "]").attr('checked', 'true');
+        }
+        $("input[name='" + name + "']").click(function (e) {
+            target.forEach(function (data) {
+                $("#" + data).hide();
+            });
+            $("#" + this.value).show();
+            myChart.resize();
+            myChart2.resize();
+        });
+    }
+    clickRadio("drug", '', ['drug-yes']);
+    clickRadio("drug1", '', ['drug1-yes']);
+    clickRadio("drug2", '', ['drug2-yes']);
+    clickRadio("drug3", '', ['drug3-yes']);
+    clickRadio("anti-drug", '', ['anti-drug-yes']);
+    clickRadio("anti-drug2", '', ['anti-drug2-yes']);
+    function setTab(name, cursel, n) {
+        for (i = 1; i <= n; i++) {
+            var menu = document.getElementById(name + i);
+            var con = document.getElementById("con-" + name + "-" + i);
+            menu.className = i == cursel ? "hover" : "";
+            con.style.display = i == cursel ? "block" : "none";
+        }
+    }
+</script>
+<div class="content" id="main_content" ng-app="ngAppTreatment" ng-controller="ngCtrlTreatment" style="overflow-y: hidden">
+    <div class="form-tit" id="divTit">
+        <a href="">数据管理</a>&gt;&nbsp;绿通救治&nbsp;<span>&#40;注:<b class="bx"></b>必填项&nbsp;<b style='vertical-align: top;color: #F00;'>&#10026;&nbsp;</b>重要项&nbsp;&#41;</span>
+        @Html.Partial("../Base/Patient")
+        <div class="op-panel">
+            <span style="margin:0px 1px;" />
+            <button type="button" class="btn-primary" ng-click="Refresh()">同步</button>
+            <button type="button" class="btn-primary" ng-if="PermissionSave && !Regist.IsCompleted" ng-click="save()" id="btnSave">保存</button>
+            <button type="button" class="btn-primary" ng-if="PermissionSave && !Regist.IsCompleted && Regist.Id" ng-click="complete()" id="btnComplete">提交</button>
+            <span style="margin:0px 1px;" />
+        </div>
+    </div>
+    <fieldset class="medical-record">
+        <form id="divTreatment">
+            <div class="row-box">
+                <div>
+                    <label><b validateSnow="DiagnosisType"></b>卒中诊断:</label>
+                    <br />
+                    <label ng-repeat="item in DiagnosisTypeDict | orderBy:'Key'">
+                        <input type="radio" id="DiagnosisType" name="DiagnosisType" value="{{item.Key}}" validateName="{{$index == 1 ? 'DiagnosisType' : ''}}" ng-model="Treatment.DiagnosisType" />
+                        <span>{{item.Value}}</span>
+                    </label>
+                </div>
+            </div>
+            <h4 class="tit-block">综合评估</h4>
+            <div class="row-box">
+                <div style="width: 50%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="Consciousness"></b>意识:</label><br />
+                    <label ng-repeat="item in consciousnessDict | orderBy:'Key'">
+                        <input type="radio" name="consciousness" ng-model="Treatment.Consciousness" validateName="Consciousness" value="{{item.Key}}"><span>{{item.Value}}</span>
+                    </label>
+                </div>
+                <div class="mr-row-fourth" style="width:248px;">
+                    <label><b validateSnow="Sbp"></b>血压（收缩压/舒张压）:</label>
+                    <input placeholder="收缩压" type="text" name="Sbp" maxlength="4" style="width:30%;border:none;border-bottom:1px solid #dadada;" validateName="Sbp" ng-model="Treatment.Sp">/
+                    <input placeholder="舒张压" style="width:30%;border:none;text-align:center;border-bottom:1px solid #dadada;" type="text" maxlength="4" name="Dbp" ng-model="Treatment.Dp">
+                    <em>mmHg</em>
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="HeartRate"></b>心率:</label>
+                    <input type="text" maxlength="4" name="HeartRate" validateName="HeartRate" ng-model="Treatment.Hr">
+                    <em>次/分钟</em>
+                </div>
+            </div>
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="RespiratoryRate"></b>呼吸:</label>
+                    <input type="text" maxlength="4" name="RespiratoryRate" validateName="RespiratoryRate" ng-model="Treatment.R">
+                    <em>次/分钟</em>
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="BloodOxygen"></b>血氧:</label>
+                    <input type="text" maxlength="5" name="BloodOxygen" validateName="BloodOxygen" ng-model="Treatment.Spo">
+                    <em>%</em>
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="Weight"></b>体重:</label>
+                    <input type="text" name="Weight" maxlength="6" validateName="Weight" ng-model="Treatment.Weight">
+                    <em>kg</em>
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="Height"></b>身高:</label>
+                    <input type="text" name="Height" maxlength="6" validateName="Height" ng-model="Treatment.Height">
+                    <em>cm</em>
+                </div>
+            </div>
+            <div ng-show="Emergency.TriageResultsList[0]">
+                <h4 class="tit-block">溶栓治疗   DNT: {{dnt}} min; ONT:{{ont}} min.</h4>
+                
+                <div class="mr-box">
+                    <div class="mr-row-fourth">
+                        <label class="label-tit"><b validateSnow="NihssScoreValue"></b>NIHSS评分:</label>
+                        <input style="width:100px;text-align:center;" ng-model="Treatment.NihssScoreValue" />
+                        <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-click="showNIHSS()">评分</button>
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="ThromDoc"></b>溶栓医生:</label>
+                        <input type="text" ng-model="Treatment.ThromDoc" id="ThromDoc" name="ThromDoc" validateName="ThromDoc"/>
+                    </div>
+                </div>
+
+                <div class="mr-row">
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="RtPaDose"></b>rt-PA：</label>
+                        <label><input type="text" ng-model="Treatment.RtPaDose" validateName="RtPaDose"><em>mg/kg</em></label>
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="ArteryUrokinaseDose"></b>总剂量：</label>
+                        <label>
+                            <input type="text" name="ArteryUrokinaseDose" ng-model="Treatment.ArteryUrokinaseDose" validateName="ArteryUrokinaseDose"><em style="right: 28px">mg</em>
+                        </label>
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="NjmDose"></b>尿激酶：</label>
+                        <label><input type="text" ng-model="Treatment.NjmDose" validateName="NjmDose"></label>
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="TotalNjmDose"></b>总剂量：</label>
+                        <label>
+                            <input type="text" name="TotalNjmDose" ng-model="Treatment.TotalNjmDose" validateName="TotalNjmDose"><em style="right: 28px">万单位</em>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="mr-row">
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="ThromDocVisitTime"></b>溶栓医生接诊患者时间:</label>
+                        <input type="datetime" ng-model="Treatment.ThromDocVisitTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" id="ThromDocVisitTime" name="ThromDocVisitTime" validateName="ThromDocVisitTime" timeId=@TimeLineNodes.D020300>
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="ThromConversationTime"></b>（溶栓医生）静脉溶栓开始谈话时间:</label>
+                        <input type="datetime" ng-model="Treatment.ThromConversationTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" id="ThromConversationTime" name="ThromConversationTime" validateName="ThromConversationTime" timeId=@TimeLineNodes.D020301>
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="ThromAgreeSignTime"></b>静脉溶栓患者/家属签字时间:</label>
+                        <input type="datetime" ng-model="Treatment.ThromAgreeSignTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" id="ThromAgreeSignTime" name="ThromAgreeSignTime" validateName="ThromAgreeSignTime" timeId=@TimeLineNodes.D020302>
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="ThromVeinTime"></b>患者到达溶栓室（病房）时间:</label>
+                        <input type="datetime" ng-model="Treatment.ThromVeinTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" id="ThromVeinTime" name="ThromVeinTime" validateName="ThromVeinTime" timeId=@TimeLineNodes.D020303>
+                    </div>
+                </div>
+                
+                <div class="mr-row">
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="FirstAdministrationTime"></b>首次给药时间:</label>
+                        <input type="datetime" ng-model="Treatment.FirstAdministrationTime" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm'} | json }}" id="FirstAdministrationTime" name="FirstAdministrationTime" validateName="FirstAdministrationTime" timeId=@TimeLineNodes.D020304>
+                    </div>
+                    <div style="width: 25%;float:left;margin-bottom:10px;position:relative;">
+                        <label><b validateSnow="IsEmbolectomy"></b>溶栓后介入:</label><br />
+                        <label><input type="radio" name="IsEmbolectomy" ng-checked="Treatment.IsEmbolectomy=='1'" value="1" ng-model="Treatment.IsEmbolectomy" validateName="IsEmbolectomy"><span>是</span></label>
+                        <label><input type="radio" name="IsEmbolectomy" ng-checked="Treatment.IsEmbolectomy=='0'" value="0" ng-model="Treatment.IsEmbolectomy"><span>否</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-show="Treatment.IsEmbolectomy=='1' || Emergency.TriageResultsList[1]">                
+                <h4 class="tit-block">介入治疗 DPT: {{dpt}} min; ORT: {{drt}} min.</h4>
+                <div class="row-box">
+                    <div class="mr-row-fourth">
+                        <label class="label-tit">
+                            <b validateSnow="JrNihssScoreValue"></b>NIHSS评分:
+                        </label>
+                        <input style="width:100px;text-align:center;" ng-model="Treatment.JrNihssScoreValue" />
+                        <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-click="showJrNIHSS()">评分</button>
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="InterventionDoc"></b>介入医生:</label>
+                        <input type="text" ng-model="Treatment.InterventionDoc" id="InterventionDoc" name="InterventionDoc" validateName="InterventionDoc" />
+                    </div>
+                </div>
+                <div class="row-box">
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="JrConversationTime"></b>介入治疗开始谈话时间:</label>
+                        <input type="datetime" ng-model="Treatment.JrConversationTime"
+                               date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}"
+                               timeId=@TimeLineNodes.D020305
+                               id="JrConversationTime" name="JrConversationTime" validateName="JrConversationTime">
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="JrAgreeSignTime"></b>介入治疗家属签字时间:</label>
+                        <input type="datetime" ng-model="Treatment.JrAgreeSignTime"
+                               date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}"
+                               timeId=@TimeLineNodes.D020306
+                               id="JrAgreeSignTime" name="JrAgreeSignTime" validateName="JrAgreeSignTime">
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="IatReachCrTime"></b>患者到达导管室时间：</label>
+                        <input type="datetime" ng-model="Treatment.IatReachCrTime"
+                               date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}"
+                               timeId=@TimeLineNodes.D020307
+                               id="IatReachCrTime" name="IatReachCrTime" validateName="IatReachCrTime">
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="IatSuccessPunctureTime"></b>完成动脉穿刺时间：</label>
+                        <input type="datetime" ng-model="Treatment.IatSuccessPunctureTime"
+                               date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}"
+                               timeId=@TimeLineNodes.D020308
+                               id="IatSuccessPunctureTime" name="IatSuccessPunctureTime" validateName="IatSuccessPunctureTime">
+                    </div>
+                </div>
+
+                <div class="row-box">
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="IatArchtographicTime"></b>完成造影评估时间：</label>
+                        <input type="datetime" ng-model="Treatment.IatArchtographicTime"
+                               date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}"
+                               timeId=@TimeLineNodes.D020309
+                               id="IatArchtographicTime" name="IatArchtographicTime" validateName="IatArchtographicTime">
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="CompletionTime"></b>完成造影时间：</label>
+                        <input type="datetime" ng-model="Treatment.CompletionTime"
+                               date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}"
+                               timeId=@TimeLineNodes.D020312
+                               id="CompletionTime" name="CompletionTime" validateName="CompletionTime">
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="IatItrTime"></b>首次血管再通时间：</label>
+                        <input type="datetime" ng-model="Treatment.IatItrTime"
+                               date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}"
+                               timeId=@TimeLineNodes.D020310
+                               id="IatItrTime" name="IatItrTime" validateName="IatItrTime">
+                    </div>
+                    <div class="mr-row-fourth">
+                        <label><b validateSnow="IatThromEndTime"></b>患者离开导管室时间：</label>
+                        <input type="datetime" ng-model="Treatment.IatThromEndTime"
+                               date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}"
+                               timeId=@TimeLineNodes.D020311
+                               id="IatThromEndTime" name="IatThromEndTime" validateName="IatThromEndTime">
+                    </div>
+                </div>
+                
+                <div class="mr-row">
+                    <div style="width:50%;float:left;margin-bottom:10px;position:relative;">
+                        <label><b validateSnow="IatDestinationAfterPci"></b>患者溶栓/介入后去向：</label><br />
+                        <label ng-dblclick="cancel()" ng-repeat="item in IatDestinationAfterPciDict | orderBy:'Key'">
+                            <input type="radio" name="IatDestinationAfterPci" value="{{item.Key}}" ng-model="Treatment.IatDestinationAfterPci" validateName="{{$index == 0 ? 'IatDestinationAfterPci' : ''}}">
+                            <span>{{item.Value}}</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </fieldset>
+
+</div>

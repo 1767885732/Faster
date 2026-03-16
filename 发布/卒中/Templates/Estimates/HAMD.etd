@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="HAMD" Title="HAMD" >
+    <Group>
+      <RadioBox Code="HAMD001" Title="抑郁心境" Desc="抑郁心境">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="只在问到时才诉述" Score="1"/>
+        <Option Id="03" Text="在谈话中自发地表达" Score="2"/>
+        <Option Id="04" Text="不用言语也可以从表情、姿势、声音或欲哭中流露出这种表情" Score="3"/>
+        <Option Id="05" Text="病人的自发言语和非言语表达（表情、动作），几乎完全表达为这种情绪" Score="4"/>
+      </RadioBox>
+      <RadioBox Code="HAMD002" Title="全身症状" Desc="全身症状">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="四肢、背部或颈部有沉重感，背痛、头痛、肌肉疼痛，全身乏力或疲倦" Score="1"/>
+        <Option Id="03" Text="症状明显" Score="2"/>
+      </RadioBox>
+      <RadioBox Code="HAMD003" Title="性症状" Desc="性症状">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="轻度" Score="1"/>
+        <Option Id="03" Text="重度" Score="2"/>
+        <Option Id="04" Text="不能肯定，或该项对被评者不适合（不计入总分）" Score="3"/>
+      </RadioBox>
+      <RadioBox Code="HAMD004" Title="疑病" Desc="疑病">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="对身体过分关注" Score="1"/>
+        <Option Id="03" Text="反复思考健康问题" Score="2"/>
+        <Option Id="04" Text="有疑病妄想" Score="3"/>
+        <Option Id="04" Text="伴幻觉的疑病妄想" Score="4"/>
+      </RadioBox>
+      <RadioBox Code="HAMD005" Title="体重减轻" Desc="体重减轻">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="一周内体重减轻1斤以上" Score="1"/>
+        <Option Id="03" Text="一周内体重减轻二斤以上" Score="2"/>
+      </RadioBox>
+      <RadioBox Code="HAMD006" Title="自知力" Desc="自知力">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="知道自己有病，表现为抑郁" Score="1"/>
+        <Option Id="03" Text="知道自己有病，但归于伙食太差、环境问题、工作太忙、病毒感染或需要休息等" Score="2"/>
+        <Option Id="04" Text="完全否认有病" Score="3"/>
+      </RadioBox>
+      <RadioBox Code="HAMD007" Title="有罪感" Desc="有罪感">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="责备自己，感到自己连累他人" Score="1"/>
+        <Option Id="03" Text="认为自己犯了罪，或反复思考以往的过失和错误" Score="2"/>
+        <Option Id="04" Text="认为目前的疾病是对自己错误的惩罚，或有罪恶妄想" Score="3"/>
+        <Option Id="04" Text="罪恶妄想伴有指责或威胁性幻觉1" Score="4"/>
+      </RadioBox>
+      <RadioBox Code="HAMD008" Title="自杀" Desc="自杀">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="觉得活着没有意思" Score="1"/>
+        <Option Id="03" Text="希望自己已经死去，或常想到与死有关的事" Score="2"/>
+        <Option Id="04" Text="消极观念（自杀观念）" Score="3"/>
+        <Option Id="04" Text="有严重自杀行为" Score="4"/>
+      </RadioBox>
+      <RadioBox Code="HAMD009" Title="入睡困难" Desc="入睡困难">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="主诉有时有入睡困难，即上床后半小时仍不能入睡" Score="1"/>
+        <Option Id="03" Text="主诉每晚均入睡困难" Score="2"/>
+      </RadioBox>
+      <RadioBox Code="HAMD010" Title="睡眠不深" Desc="睡眠不深">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="睡眠浅多恶梦" Score="1"/>
+        <Option Id="03" Text="半夜（晚12点以前）曾醒来（不包括上厕所）" Score="2"/>
+      </RadioBox>
+      <RadioBox Code="HAMD011" Title="早醒" Desc="早醒">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="有早醒，比平时早醒1小时，但能重新入睡" Score="1"/>
+        <Option Id="03" Text="早醒后无法重新入睡" Score="2"/>
+      </RadioBox>
+      <RadioBox Code="HAMD012" Title="工作和兴趣" Desc="工作和兴趣">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="提问时才诉述" Score="1"/>
+        <Option Id="03" Text="自发地直接或间接表达对活动、工作或学习失去兴趣，如感到无精打采，犹豫不决，不能坚持或需强迫才能工作或活动" Score="2"/>
+        <Option Id="04" Text="病室劳动或娱乐不满3小时" Score="3"/>
+        <Option Id="04" Text="因目前的疾病而停止工作，住院者不参加任何活动或者没有他人帮助便不能完成病室日常事务" Score="4"/>
+      </RadioBox>
+      <RadioBox Code="HAMD013" Title="迟缓" Desc="迟缓">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="精神检查中发现轻度迟缓" Score="1"/>
+        <Option Id="03" Text="精神检查中发现明显迟缓" Score="2"/>
+        <Option Id="04" Text="精神检查困难" Score="3"/>
+        <Option Id="04" Text="完全不能回答问题（木僵）" Score="4"/>
+      </RadioBox>
+      <RadioBox Code="HAMD014" Title="激越" Desc="激越">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="检查时有些心神不定" Score="1"/>
+        <Option Id="03" Text="明显的心神不定或小动作多" Score="2"/>
+        <Option Id="04" Text="不能静坐，检查中曾起立" Score="3"/>
+        <Option Id="04" Text="搓手、咬手指、扯头发、咬嘴唇" Score="4"/>
+      </RadioBox>
+      <RadioBox Code="HAMD015" Title="精神性焦虑" Desc="精神性焦虑">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="问及时诉述" Score="1"/>
+        <Option Id="03" Text="表情和言谈流露出明显的忧虑" Score="2"/>
+        <Option Id="04" Text="明显惊恐" Score="3"/>
+      </RadioBox>
+      <RadioBox Code="HAMD016" Title="躯体性焦虑" Desc="躯体性焦虑">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="轻度" Score="1"/>
+        <Option Id="03" Text="中度，有肯定的躯体性焦虑症状" Score="2"/>
+        <Option Id="04" Text="重度，躯体性焦虑症状严重，影响生活或需加处理" Score="3"/>
+        <Option Id="04" Text="严重影响生活和活动" Score="4"/>
+      </RadioBox>
+      <RadioBox Code="HAMD017" Title="胃肠道症状" Desc="胃肠道症状">
+        <Option Id="01" Text="无症状" Score="0"/>
+        <Option Id="02" Text="食欲减退，但不需他人鼓励便自行进食" Score="1"/>
+        <Option Id="03" Text="进食需他人催促或请求和需要应用泻药或助消化药" Score="2"/>
+      </RadioBox>
+    </Group>
+  </Template>
+</Config>

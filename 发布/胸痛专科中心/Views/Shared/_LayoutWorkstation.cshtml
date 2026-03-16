@@ -1,0 +1,46 @@
+﻿@using DoCare.Framework.Extension;
+@using DoCare.CPC;
+@using DoCare.CPC.Util;
+@{
+    ViewBag.Title = Resources.EwsName;
+    ViewBag.CopyRight = Resources.CopyRight;
+    var url = "/" + ViewContext.RouteData.Values["controller"] + "/" + ViewContext.RouteData.Values["action"];
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @*<link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />*@
+    <meta name="viewport" content="width=device-width" />
+    <link href=@Url.Random("~/App_Themes/Default/global.css") rel="stylesheet" />
+    <link href=@Url.Random("~/App_Themes/Default/frame.css") rel="stylesheet" />
+    <link href=@Url.Random("~/App_Themes/Default/control.css") rel="stylesheet" />
+    <link href="~/App_Themes/Default/fonts/iconfont.css" rel="stylesheet" />
+    <script src="~/Scripts/docare/moment.js"></script>
+    <script src="~/Scripts/docare/toolkits.js"></script>
+    <script src="~/Scripts/extension/vue.js"></script>
+    <link href="~/Scripts/extension/el/index.css" rel="stylesheet" />
+    <script src="~/Scripts/extension/el/index.js"></script>
+    <script src="~/Scripts/extension/axios.min.js"></script>
+    <script src="~/Scripts/extension/polyfill.min.js"></script>
+
+    @RenderSection("Head", false)
+</head>
+<body style="min-width:900px!important;">
+    <div style="width:100%" id="main-layout">
+        @*<div class="header" >
+            <h1>@ViewBag.EwsName</h1>            
+        </div>*@
+        <div class="main-content">
+            @RenderBody()
+        </div>
+        @*<div class="footer">
+            <div height="30" colspan="2" align="center" valign="middle">
+                @ViewBag.CopyRight
+            </div>
+        </div>*@
+    </div>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

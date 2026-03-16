@@ -1,0 +1,660 @@
+﻿@using DoCare.ToolKit
+@using DoCare.CVA.Data.Const
+@model DoCare.CVA.Business.Model.InhospitalModel
+@using DoCare.Framework.Extension
+@{
+    ViewBag.Title = "住院诊疗";
+    Layout = null;
+}
+<script src=@Url.GetCssJsUrl("~/Scripts/hover.js")></script>
+<script src=@Url.GetCssJsUrl("~/Scripts/JSLINQ.js")></script>
+<script>
+    var PermissionSave = @Html.Raw((JsonKit.Serialize(ViewBag.PermissionSave)));
+    var model =  @Html.Raw((JsonKit.Serialize(Model)));
+
+    $(function () {
+        // 初始化校验器
+        var validator = new MDEValidator("@Model.Regist.Id", "Inhospital", $("#DivInHospital"));
+        // 所有时间控件，失去焦点后执行校验方法，校验通过后更新时间轴对应节点
+        $("[timeId]").blur(function () {
+            if (validator.validateElement($(this))) {
+                var timeIdElement = $("#" + $(this).attr("timeId"));
+                var dataName = timeIdElement.attr("data-desp");
+                var t = $(this).val();
+                if (t) {
+                    t = t.replace('T', " ");
+                    t = t.substr(0, 10);
+                } else {
+                    t = "";
+                }
+                timeIdElement.attr("title", dataName + ":" + t);
+                timeIdElement.attr("data-value", $(this).val());
+                timeIdElement.find("i").html($(this).val());
+            }
+        });
+
+        var app = angular.module('treatmentApp', ['mdsdFilter','mdsdDirective']);
+        app.controller('treatmentController', function ($scope, $rootScope, $http) {
+            $scope.PermissionSave=PermissionSave;
+            // 患者信息
+            $scope.Regist = model.Regist;
+            // 住院信息
+            $scope.inhos = model.Inhospital;
+
+            $scope.OtherSymptomDict = model.OtherSymptomDict;
+            // OCSP分型
+            $scope.OcspTypeDict = model.OcspTypeDict;
+            // TOAST分型
+            $scope.ToastTypeDict = model.ToastTypeDict;
+            // CISS分型
+            $scope.CissTypeDict = model.CissTypeDict;
+
+            // 抗血小板类
+            $scope.AntiplateletDict = model.AntiplateletDict;
+            // 抗凝类
+            $scope.AntiCoagulationDict = model.AntiCoagulationDict;
+            // 调脂他汀类
+            $scope.LipidModulationDict = model.LipidModulationStatinsDict;
+            // 调脂非他汀类
+            $scope.LipidModulationNonDict = model.LipidModulationNonStatinsDict;
+            // 改善侧枝循环
+            $scope.CollatCcircDict = model.CollatCcircDict;
+
+            $scope.check = function (all, selected) {
+                if (all == null || typeof(all) == "undefined") {
+                    return false;
+                }
+                for (var i = 0; i < all.length; i++) {
+                    if (all[i] == selected) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            // 是否选中
+            $scope.isSelected = function (index, object) {
+                if(object != null && object.length > 0){
+                    return object[index];
+                }
+                return false;
+            }
+
+            // 选择变化
+            $scope.updateSelection = function ($event, index, object) {
+                var checkbox = $event.target;
+                object[index] = checkbox.checked ? true : false;
+            }
+
+            $scope.updateDrugSelection = function ($event, index, object) {
+                var checkbox = $event.target;
+                object.DrugUsed[index] = checkbox.checked ? true : false;
+                if ($(checkbox).val() == '99'){
+                    object.OtherDrugUsed = checkbox.checked;
+                }
+            }
+
+            $scope.Extract = function () {
+                var inpatientId = $scope.inhos.InpatientNo;
+                var registId = $scope.Regist.Id;
+                if (!inpatientId) {
+                    layer.alert("请填写住院号！", { icon: 0 });
+                    return;
+                }
+                var loadIndex = layer.load();
+                $http.get('/Inhospital/Extract?inpatientId=' + inpatientId + '&registId=' + registId + '&_=' + new Date().getTime())
+                    .then(function (resp) {
+                        debugger;
+                        if (resp.data.IsSuccess) {
+                            if (resp.data.Data) {
+                                layer.alert("提取成功", { icon: 1 });
+                                $scope.Regist.EhrId == resp.data.Data;
+                                $scope.Refresh();
+                            } else {
+                                layer.alert("提取失败", { icon: 1 });
+                            }
+                        } else {
+                            layer.alert(resp.data.Message,
+                                { icon: 2 });
+                        }
+                    },
+                    function () {
+                        layer.alert("请求失败！", { icon: 2 });
+                    })
+                    .finally(function () {
+                        layer.close(loadIndex);
+                    });
+            }
+
+            // 保存事件
+            $scope.save = function () {
+                // 验证后保存
+                //if (!validator.DoValidate()) {
+                //    return false;
+                //}
+
+                // 重要项校验
+                var errorItem = $.validator.errorItem;
+                if (errorItem != undefined && errorItem != null && errorItem.length > 0) {
+                    var message = "<div style='margin-left: 50px;'>";
+                    $(errorItem).each(function (index, item) { message += (item + "<br>") });
+                    $.messager.confirm('警告', message + "</div>", function (r) {
+                        if (r) $scope.doSave();
+                    });
+                }
+                else {
+                    $scope.doSave();
+                }
+            }
+            
+            // 提交
+            $scope.complete = function(){
+                $scope.doSave(true);
+            }
+
+            // 保存事件
+            $scope.doSave = function (doComplete) {
+
+                // 通信协议
+                $.ajax({
+                    type: 'POST',
+                    url: AddUrlPrefix('/Inhospital/Save'),
+                    data: {inHos:$scope.inhos},
+                    dataType: 'json',
+                    success: function (json) {
+                        if (json.IsSuccess) {
+                            $scope.$apply(function () {
+                                $scope.inhos.Id = json.Data;
+                            });
+                            if(doComplete){
+                                $.ajax({
+                                    type: 'POST',
+                                    url: AddUrlPrefix('/DataManage/Commit'),
+                                    data: { registId: $scope.Regist.Id},
+                                    dataType: 'json',
+                                    success: function (json) {
+                                        if (json.IsSuccess) {
+                                            $scope.$apply(function () {
+                                                $scope.Regist.IsCompleted = true;
+                                            });
+                                            layer.alert("提交成功", { icon: 1 });
+                                            pageLoading(4);
+                                        } else {
+                                            layer.alert( "提交失败:" + json.Message, { icon: 2 });
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.alert("请求失败！", { icon: 2 });
+                                    }
+                                });
+                            }
+                            else{
+                                layer.alert("保存成功", { icon: 1 });
+                                pageLoading(4);
+                            }
+                        } else {
+                            layer.alert("保存失败:" + json.Message, { icon: 2 });
+                        }
+                    },
+                    error: function () {
+                        layer.alert("请求失败！", { icon: 2 });
+                    }
+                });
+            }
+
+            $scope.Refresh = function () {
+                var maskIndex = layer.load();
+                if($scope.Regist.EhrId == null) return;
+                $.post("/Inhospital/Refresh",  $scope.inhos , function (result) {
+                    if (result.IsSuccess) {
+                        $scope.$apply(function () {
+                            $scope.inhos = result.Data;
+                        });
+                        $("[timeId]").blur();
+                        layer.close(maskIndex); 
+                    }else{layer.close(maskIndex);}
+                });
+            }
+
+            $scope.showAbcd2 = function () {
+                $.post('/Estimate/EstimateAbcd2', { registId: registId, recordId: $scope.inhos.Abcd2ScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.inhos.Abcd2ScoreValue = layero.find("#score").html();
+                                    $scope.inhos.Abcd2ScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }            
+
+            $scope.showGcs = function () {
+                $.post('/Estimate/EstimateGCS', { registId: registId, recordId: $scope.inhos.GcsScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.inhos.GcsScoreValue = layero.find("#score").html();
+                                    $scope.inhos.GcsScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            } 
+
+            $scope.showChads2Vasc = function () {
+                $.post('/Estimate/EstimateChads2Vasc', { registId: registId, recordId: $scope.inhos.Chads2VascScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.inhos.Chads2VascScoreValue = layero.find("#score").html();
+                                    $scope.inhos.Chads2VascScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            $scope.showNIHSS = function () {
+                $.post('/Estimate/EstimateNIHSS', { registId: registId, recordId: $scope.inhos.NihssScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.inhos.NihssScoreValue = layero.find("#score").html();
+                                    $scope.inhos.NihssScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            $scope.showMrs = function () {
+                $.post('/Estimate/EstimateMRS', { registId: registId, recordId: $scope.inhos.MrsScoreId }, function (str) {
+                    layer.open({
+                        id: 'insert-form',
+                        type: 1,
+                        title: "评分明细",
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1100px', '560px'],
+                        content: str,
+                        cancel: function (index, layero) {
+                            $scope.$apply(function () {
+                                if (layero.find("#scoreChanged").val() == "1") {
+                                    // 更新分值
+                                    $scope.inhos.MrsScoreValue = layero.find("#score").html();
+                                    $scope.inhos.MrsScoreId = layero.find("#recordId").val();
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            
+            $scope.onRelation = function(source){
+                if (!$scope.Regist.EhrId ) {
+                    layer.alert('您还未绑定患者，请先进行绑定操作！', { icon: 2 });
+                    return;
+                }
+                $("#IsConfirm").val("0");
+                $("#Patient").val("");
+                $.post('/DataManage/CreatePatient', { source: source,type:"RelationInpatientNo",name: $scope.Regist.Name}, function (str) {
+                    layer.open({
+                        type: 1,
+                        title: '关联患者',
+                        maxmin: false,
+                        shadeClose: false, //点击遮罩关闭层
+                        area: ['1000px', '480px'],
+                        content: str,
+                        end: function (index, layero) {
+                            debugger;
+                            if($("#IsConfirm").val()=="1"){
+                                if($("#Patient").val()!=""){
+                                    var patient = JSON.parse($("#Patient").val());
+                                    var maskIndex = layer.load();
+                                    $.post("/DataManage/BindPatient", {ehrId:$scope.Regist.EhrId,Patient:patient}, function (result) {
+                                        if (result.IsSuccess) {
+                                            layer.close(maskIndex); // 关闭等待层
+                                            $scope.$apply(function () {
+                                                $scope.inhos.InpatientNo = patient.DisplayNo;
+                                                $scope.inhos.InpatientSn = patient.UniqueNo
+                                            })
+                                        }
+                                        else
+                                        {
+                                            layer.close(maskIndex); // 关闭等待层
+                                        }
+                                    });
+                                }
+                            };
+
+                        }
+                    });
+                });
+                parent.layer.closeAll()
+            }
+        });
+
+        angular.bootstrap($(".content")[0], ['treatmentApp']);
+    });
+</script>
+<div class="content" ng-app="treatmentApp" ng-controller="treatmentController">
+    <div class="form-tit">
+        <a href="">数据管理</a>&gt;&nbsp;住院诊疗&nbsp;<span>&#40;注:<b class="bx"></b>必填项&nbsp;<b style='vertical-align: top;color: #F00;'>&#10026;&nbsp;</b>重要项&nbsp;&#41;</span>
+        @Html.Partial("../Base/Patient")
+        <div class="op-panel">
+            <input type="hidden" id="IsConfirm" value="0">
+            <input type="hidden" id="Patient">
+            <span style="margin:0px 1px;" />
+            <button type="button" class="btn-primary" ng-click="Refresh()">同步</button>
+            <button type="button" class="btn-primary" ng-if="PermissionSave && !Regist.IsCompleted" ng-click="save()" id="btnSave">保存</button>
+            <button type="button" class="btn-primary" ng-if="PermissionSave && !Regist.IsCompleted && Regist.Id" ng-click="complete()" id="btnComplete">提交</button>
+            <span style="margin:0px 1px;" />
+            @*<button type="button" id="btnLog" onclick="refreshlog()">操作日志</button>*@
+        </div>
+    </div>
+    <form id="DivInHospital">
+        <fieldset class="medical-record">
+            <h4 class="tit-block">入院</h4>
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="InpatientNo"></b>住院号:</label>
+                    <input type="text" id="InpatientNo" validateName="InpatientNo" name="InpatientNo" ng-model="inhos.InpatientNo">
+                    @*<button type="button" class="btn-warning btn-extract" ng-click="Extract()">提取</button>*@
+                    <button type="button" class="btn-warning btn-extract" ng-click="onRelation('5')" ng-if="!!Regist.EhrId">关联</button>
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="InhosState"></b>入院情况:</label>
+                    <input type="text" id="InhosState" validateName="InhosState" name="InhosState" ng-model="inhos.InhosState">
+                </div>
+                <div class="mr-row-fourth">
+                    <label><b validateSnow="InhosDate"></b>入院时间:</label>
+                    <input type="text" class="datetime" id="InhosDate" validateName="InhosDate" name="InhosDate" ng-model="inhos.InhosDate" date-picker="{{ {dateFmt:'yyyy-MM-dd HH:mm',startDate:'@ViewBag.ReferenceDate'} | json }}" />
+                </div>
+            </div>
+            <h4 class="tit-block">病因及发病机制诊断</h4>
+            <div style="width: 40%;float:left;margin-bottom:10px;position:relative;">
+                <label><b validateSnow="OcspType"></b>OCSP分型:</label><br />
+                <label ng-repeat="item in OcspTypeDict">
+                    <input type="radio" name="OcspType" validateName="OcspType" ng-model="inhos.OcspType" ng-checked="check(inhos.OcspType,item.Key)" value="{{item.Key}}">
+                    <span>{{item.Value}}</span>
+                </label>
+            </div>
+
+            <div style="width: 60%;float:left;margin-bottom:10px;position:relative;">
+                <label><b validateSnow="ToastType"></b>TOAST分型:</label><br />
+                <label ng-repeat="item in ToastTypeDict">
+                    <input type="radio" ng-model="inhos.ToastType" validateName="ToastType" ng-checked="check(inhos.ToastType,item.Key)" name="ToastType" value="{{item.Key}}">
+                    <span>{{item.Value}}</span>
+                </label>
+            </div>
+            <div style="width: 100%;float:left;margin-bottom:10px;position:relative;">
+                <label><b validateSnow="CissType"></b>CISS分型:</label><br />
+                <label ng-repeat="item in CissTypeDict">
+                    <input type="radio" ng-model="inhos.CissType" validateName="CissType" ng-checked="check(inhos.CissType,item.Key)" name="CissType" value="{{item.Key}}">
+                    <span>{{item.Value}}</span>
+                </label>
+            </div>
+            <div class="row-box">
+                <div style="width: 25%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="ResponsibleVessel"></b>责任血管:</label><br />
+                    <label><input type="radio" name="ResponsibleVessel" ng-checked="inhos.ResponsibleVessel" value="1" ng-model="inhos.ResponsibleVessel" validateName="ResponsibleVessel"><span>前循环</span></label>
+                    <label><input type="radio" name="ResponsibleVessel" ng-checked="inhos.ResponsibleVessel" value="0" ng-model="inhos.ResponsibleVessel"><span>后循环</span></label>
+                </div>
+            </div>
+            <h4 class="tit-block">住院用药</h4>
+            @*抗血小板药物*@
+            <div class="row-box">
+                <div style="width: 15%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="AntiplateletUsed"></b>是否用抗血小板药物:</label><br />
+                    <label><input type="radio" name="IsAntiplatelet" ng-model="inhos.Antiplatelet.Used" value="1" validateName="AntiplateletUsed"><span>是</span></label>
+                    <label><input type="radio" name="IsAntiplatelet" ng-model="inhos.Antiplatelet.Used" value="0"><span>否</span></label>
+                </div>
+                <div style="width: 85%;float:left;margin-bottom:10px;position:relative;" ng-if="inhos.Antiplatelet.Used == '1'">
+                    <label><b validateSnow="Antiplatelet"></b>抗血小板药物:</label><br />
+                    <label ng-repeat="item in AntiplateletDict" style="{{$index==0 ? '':'margin-left:-5px'}}">
+                        <input type="checkbox" name="Antiplatelet{{item.Key}}"
+                               ng-checked="isSelected($index, inhos.Antiplatelet.DrugUsed)"
+                               ng-click="updateDrugSelection($event, $index, inhos.Antiplatelet)"
+                               value="{{item.Key}}" validateName="{{$index == 0 ? 'Antiplatelet' : ''}}">
+                        <span>{{item.Value}}</span>
+                    </label>
+                    <input style="width:130px;margin-left:5px" type="text" ng-if="inhos.Antiplatelet.OtherDrugUsed"
+                           ng-model="inhos.Antiplatelet.Other" name="AntiplateletOther" validateName="AntiplateletOther" />
+                </div>
+                <div class="mr-row-fourth" ng-if="inhos.Antiplatelet.Used == '0'" style="width:85%">
+                    <label><b validateSnow="AntiplateletNoUseReason"></b>未用药原因:</label>
+                    <input type="text" validateName="AntiplateletNoUseReason" name="AntiplateletNoUseReason" ng-model="inhos.Antiplatelet.NoUseReason" maxlength="100">
+                </div>
+            </div>
+            @*抗凝药物*@
+            <div class="row-box">
+                <div style="width: 15%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="AnticoagulantUsed"></b>是否用抗凝药物:</label><br />
+                    <label><input type="radio" validateName="AnticoagulantUsed" name="AnticoagulantUsed" ng-model="inhos.Anticoagulant.Used" value="1"><span>是</span></label>
+                    <label><input type="radio" name="AnticoagulantUsed" ng-model="inhos.Anticoagulant.Used" value="0"><span>否</span></label>
+                </div>
+                <div style="width: 85%;float:left;margin-bottom:10px;position:relative;" ng-if="inhos.Anticoagulant.Used == '1'">
+                    <label><b validateSnow="Anticoagulant"></b>抗凝药物:</label><br />
+                    <label ng-repeat="item in AntiCoagulationDict" style="{{$index==0 ? '':'margin-left:-5px'}}">
+                        <input type="checkbox" name="Anticoagulant{{item.Key}}"
+                               ng-checked="isSelected($index, inhos.Anticoagulant.DrugUsed)"
+                               ng-click="updateDrugSelection($event, $index, inhos.Anticoagulant)"
+                               value="{{item.Key}}" validateName="{{$index == 0 ? 'Anticoagulant' : ''}}">
+                        <span>{{item.Value}}</span>
+                    </label>
+                    <input style="width:130px;margin-left:5px" type="text" ng-if="inhos.Anticoagulant.OtherDrugUsed"
+                           ng-model="inhos.Anticoagulant.Other" name="AnticoagulantOther" validateName="AnticoagulantOther" />
+                </div>
+                <div class="mr-row-fourth" ng-if="inhos.Anticoagulant.Used == '0'" style="width:85%">
+                    <label><b validateSnow="AnticoagulantNoUseReason"></b>未用药原因:</label>
+                    <input type="text" validateName="AnticoagulantNoUseReason" name="AnticoagulantNoUseReason"
+                           ng-model="inhos.Anticoagulant.NoUseReason" maxlength="100">
+                </div>
+            </div>
+            @*调脂他汀药物*@
+            <div class="row-box">
+                <div style="width: 15%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="LipidModulationStatinsUsed"></b>是否用调脂他汀药物:</label><br />
+                    <label><input type="radio" validateName="LipidModulationStatinsUsed" name="LipidModulationStatinsUsed" ng-model="inhos.LipidModulationStatins.Used" value="1"><span>是</span></label>
+                    <label><input type="radio" name="LipidModulationStatinsUsed" ng-model="inhos.LipidModulationStatins.Used" value="0"><span>否</span></label>
+                </div>
+                <div style="width: 85%;float:left;margin-bottom:10px;position:relative;" ng-if="inhos.LipidModulationStatins.Used == '1'">
+                    <label><b validateSnow="LipidModulationStatins"></b>调脂他汀药物:</label><br />
+                    <label ng-repeat="item in LipidModulationDict" style="{{$index==0 ? '':'margin-left:-5px'}}">
+                        <input type="checkbox" name="LipidModulationStatins{{item.Key}}"
+                               ng-checked="isSelected($index, inhos.LipidModulationStatins.DrugUsed)"
+                               ng-click="updateDrugSelection($event, $index, inhos.LipidModulationStatins)"
+                               value="{{item.Key}}" validateName="{{$index == 0 ? 'LipidModulationStatins' : ''}}">
+                        <span>{{item.Value}}</span>
+                    </label>
+                    <input style="width:130px;margin-left:5px" type="text"
+                           ng-if="inhos.LipidModulationStatins.OtherDrugUsed"
+                           ng-model="inhos.LipidModulationStatins.Other"
+                           name="LipidModulationStatinsOther" validateName="LipidModulationStatinsOther" />
+                </div>
+                <div class="mr-row-fourth" ng-if="inhos.LipidModulationStatins.Used == '0'" style="width:85%">
+                    <label><b validateSnow="LipidModulationStatinsNoUseReason"></b>未用药原因:</label>
+                    <input type="text" validateName="LipidModulationStatinsNoUseReason" name="LipidModulationStatinsNoUseReason"
+                           ng-model="inhos.LipidModulationStatins.NoUseReason" maxlength="100">
+                </div>
+            </div>
+            @*调脂非他汀药物*@
+            <div class="row-box">
+                <div style="width: 15%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="LipidModulationNonStatinsUsed"></b>是否用调脂非他汀药物:</label><br />
+                    <label><input type="radio" validateName="LipidModulationNonStatinsUsed" name="LipidModulationNonStatinsUsed" ng-model="inhos.LipidModulationNonStatins.Used" value="1"><span>是</span></label>
+                    <label><input type="radio" name="LipidModulationNon" ng-model="inhos.LipidModulationNonStatins.Used" value="0"><span>否</span></label>
+                </div>
+                <div style="width: 85%;float:left;margin-bottom:10px;position:relative;" ng-if="inhos.LipidModulationNonStatins.Used == '1'">
+                    <label><b validateSnow="LipidModulationNonStatins"></b>调脂非他汀药物:</label><br />
+                    <label ng-repeat="item in LipidModulationNonDict" style="{{$index==0 ? '':'margin-left:-5px'}}">
+                        <input type="checkbox" name="LipidModulationNonStatins{{item.Key}}"
+                               ng-checked="isSelected($index, inhos.LipidModulationNonStatins.DrugUsed)"
+                               ng-click="updateDrugSelection($event, $index, inhos.LipidModulationNonStatins)"
+                               value="{{item.Key}}" validateName="{{$index == 0 ? 'LipidModulationNonStatins' : ''}}">
+                        <span>{{item.Value}}</span>
+                    </label>
+                    <input style="width:130px;margin-left:5px" type="text"
+                           ng-if="inhos.LipidModulationNonStatins.OtherDrugUsed"
+                           ng-model="inhos.LipidModulationNonStatins.Other" name="LipidModulationNonStatinsOther"
+                           validateName="LipidModulationNonStatinsOther" />
+                </div>
+                <div class="mr-row-fourth" ng-if="inhos.LipidModulationNonStatins.Used == '0'" style="width:85%">
+                    <label><b validateSnow="LipidModulationNonStatinsNoUseReason"></b>未用药原因:</label>
+                    <input type="text" validateName="LipidModulationNonStatinsNoUseReason"
+                           name="LipidModulationNonStatinsNoUseReason" ng-model="inhos.LipidModulationNonStatins.NoUseReason" maxlength="100">
+                </div>
+            </div>
+            @*改善侧枝循环药物*@
+            <div class="row-box">
+                <div style="width: 15%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="CollatCcircUsed"></b>是否用改善侧枝循环药物:</label><br />
+                    <label><input type="radio" validateName="CollatCcircUsed" name="CollatCcircUsed" ng-model="inhos.CollatCcirc.Used" value="1"><span>是</span></label>
+                    <label><input type="radio" name="CollatCcircUsed" ng-model="inhos.CollatCcirc.Used" value="0"><span>否</span></label>
+                </div>
+                <div style="width: 85%;float:left;margin-bottom:10px;position:relative;" ng-if="inhos.CollatCcirc.Used == '1'">
+                    <label><b validateSnow="CollatCcirc"></b>改善侧枝循环药物:</label><br />
+                    <label ng-repeat="item in CollatCcircDict" style="{{$index==0 ? '':'margin-left:-5px'}}">
+                        <input type="checkbox" name="CollatCcirc{{item.Key}}"
+                               ng-checked="isSelected($index, inhos.CollatCcirc.DrugUsed)"
+                               ng-click="updateDrugSelection($event, $index, inhos.CollatCcirc)"
+                               value="{{item.Key}}" validateName="{{$index == 0 ? 'CollatCcirc' : ''}}">
+                        <span>{{item.Value}}</span>
+                    </label>
+                    <input style="width:130px;margin-left:5px" type="text"
+                           ng-if="inhos.CollatCcirc.OtherDrugUsed" ng-model="inhos.CollatCcirc.Other"
+                           name="CollatCcircOther"
+                           validateName="CollatCcircOther" />
+                </div>
+                <div class="mr-row-fourth" ng-if="inhos.CollatCcirc.Used == '0'" style="width:85%">
+                    <label><b validateSnow="CollatCcircNoUseReason"></b>未用药原因:</label>
+                    <input type="text" validateName="CollatCcircNoUseReason" id="CollatCcircNoUseReason" name="CollatCcircNoUseReason" ng-model="inhos.CollatCcirc.NoUseReason" maxlength="100">
+                </div>
+            </div>
+
+            <h4 class="tit-block">患者其他症状</h4>
+            <div class="mr-row">
+                <div style="width: 75%;float:left;margin-bottom:10px;position:relative;">
+                    <label><b validateSnow="OtherSymptom"></b>患者其他症状：</label><br />
+                    <label ng-repeat="x in OtherSymptomDict | orderBy:'Key'">
+                        <input name="OtherSymptom" type="checkbox"
+                               ng-checked="isSelected($index,inhos.OtherSymptom)"
+                               ng-click="updateSelection($event,$index,inhos.OtherSymptom)" validateName="{{$index == 0 ? 'OtherSymptom' : ''}}">
+                        <span>{{x.Value}}</span>
+                    </label>
+                </div>
+            </div>
+
+            <h4 class="tit-block">评分</h4>
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label class="label-tit">
+                        <b validateSnow="NihssScoreValue"></b>NIHSS评分:
+                    </label>
+                    <input style="width:100px;text-align:center;" ng-model="inhos.NihssScoreValue"/>
+                    <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-click="showNIHSS()">评分</button>
+                </div>
+                <div class="mr-row-fourth">
+                    <label>
+                        <b validateSnow="GcsScoreId"></b>GCS评分:
+                    </label>
+                    <input style="width:100px;text-align:center;" ng-model="inhos.GcsScoreValue" />
+                    <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-click="showGcs()">评分</button>
+                </div>
+                <div class="mr-row-fourth">
+                    <label>
+                        <b validateSnow="MrsScoreId"></b>ABCD2评分:
+                    </label>
+                    <input style="width:100px;text-align:center;" ng-model="inhos.Abcd2ScoreValue" />
+                    <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-click="showAbcd2()">评分</button>
+                </div>
+                <div class="mr-row-fourth">
+                    <label>
+                        <b validateSnow="Chads2VascScoreId"></b>CHADS2-VASC评分:
+                    </label>
+                    <input style="width:100px;text-align:center;" ng-model="inhos.Chads2VascScoreValue" />
+                    <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-click="showChads2Vasc()">评分</button>
+                </div>
+            </div>
+            <div class="row-box">
+                <div class="mr-row-fourth">
+                    <label class="label-tit">
+                        <b validateSnow="MrsScoreValue"></b>入院时mRs评分:
+                    </label>
+                    <input style="width:100px;text-align:center;" ng-model="inhos.MrsScoreValue" />
+                    <button style="height:18px; padding: 0; vertical-align:middle;" type="button" class="btn-warning" ng-click="showMrs()">评分</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+<script>
+    $("input[name='call']").click(function (e) {
+        if ($("input[name='call']").is(":checked")) {
+            $("#call").show();
+        }
+        else {
+            $("#call").hide();
+        }
+    });
+</script>
+<script>
+    function clickRadio(name, init, target) {
+        if (init) {
+            $("input:radio[value=" + init + "]").attr('checked', 'true');
+        }
+        $("input[name='" + name + "']").click(function (e) {
+            target.forEach(function (data) {
+                $("#" + data).hide();
+            });
+            $("#" + this.value).show();
+
+        });
+    }
+    clickRadio("spasm", '', ['spasm-vein', 'spasm-oral']);
+    clickRadio("aneurysm", '', ['aneurysm-1', 'aneurysm-2']);
+    clickRadio("shunt", '', ['shunt-1', 'shunt-2']);
+</script>
+

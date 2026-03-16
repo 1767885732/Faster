@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+@{
+    ViewBag.Title = Resources.AppName;
+    ViewBag.CopyRight = Resources.CopyRight;
+    ViewBag.Version = Resources.AppVersion;
+}
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    <script src="~/Scripts/extension/vue.js"></script>
+    <link href="~/Scripts/extension/el/index.css" rel="stylesheet" />
+    <script src="~/Scripts/extension/el/index.js"></script>
+    <script src="~/Scripts/extension/axios.min.js"></script>
+    <script src="~/Scripts/extension/polyfill.min.js"></script>
+    <script src="~/Scripts/docare/moment.js"></script>
+</head>
+<body>
+    @RenderBody()
+</body>
+</html>

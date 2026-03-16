@@ -1,0 +1,71 @@
+﻿@page
+@model DoCare.Admin.Areas.CodeGeneration.Pages.EntitiesModel
+
+<title>实体生成器</title>
+
+<div class="row">
+    <div class="col-xs-12">
+        <table id="simple-table" class="table table-bordered table-hover dataTable ">
+            <thead>
+                <tr>
+                    <th>实体描述</th>
+                    <th>实体类型</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="datapage">
+                @foreach (var item in Model.EntityTypes)
+                {
+                <tr>
+                    <td>@item.Display</td>
+                    <td>@item.FullName</td>
+                    <td>
+                        <div class="btn-group">
+                            <a  href="#admin/codegeneration/entityconfiguration?name=@item.FullName"  class="btn btn-xs btn-info tooltip-info" data-rel="tooltip" data-placement="top" title="" data-original-title="查看">
+                                <i class="ace-icon fa fa-pencil bigger-120"></i>
+                            </a>
+                            &nbsp;&nbsp;&nbsp;
+                        </div>
+                    </td>
+                </tr>
+                    @*<tr class="detail-row">
+                        <td colspan="100">
+                            <div class="table-detail">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="profile-info-row">
+                                            <a onclick="oracleEFCodeGen('@item.FullName');" class="btn btn-xs btn-info">
+                                                <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                                Oracle EFConfiguration
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>*@
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //var oracleEFCodeGen = function (entityFullName) {
+    //    var option = {
+    //        data: { name: entityFullName },
+    //        url: "api/codegeneration/entityconfiguration",
+    //    };
+
+    //    ajaxUtil.promiseAjax(option).then(function (data) {
+    //        if (data && data.status_code && data.status_code == 200) {
+    //            adminPlugin.successMessage(data.status_message, 3000);
+    //        } else {
+    //            adminPlugin.warningMessage(data.status_message, 3000);
+    //        }
+    //        adminPlugin.GoToPage(this, 'datapage', callback);
+    //    }).catch(function (err) {
+    //        adminPlugin.RedirctError();
+    //    });
+    //}
+</script>

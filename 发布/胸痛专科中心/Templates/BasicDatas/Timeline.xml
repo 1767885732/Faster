@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TimeNode Id="AttackTime" Name="发病" NameEn="AttackTime" Desc="" IsKey="1" />
+  <TimeNode Id="HelpTime" Name="呼救" NameEn="HelpTime" Desc="" IsKey="1" />
+  <TimeNode Id="ArrivedHospitalTime" Name="到达医院" NameEn="ArrivedHospitalTime" Desc="" IsKey="1" />
+  <TimeNode Id="FmcTime" Name="首次医疗接触" NameEn="FmcTime" Desc="" IsKey="1" />
+  <TimeNode Id="AdmissionTime" Name="院内接诊" NameEn="AdmissionTime" Desc="" IsKey="1" />
+  <TimeNode Id="ZcyyVisitTime" Name="转出医院入门" NameEn="ZcyyVisitTime" Desc="" IsKey="1" />
+  <TimeNode Id="ZcyyDecisionTime" Name="决定转院" NameEn="ZcyyDecisionTime" Desc="" IsKey="1" />
+  <TimeNode Id="ZcyyLeaveTime" Name="离开转出医院" NameEn="ZcyyLeaveTime" Desc="" IsKey="1" />
+  <!--<TimeNode Id="CwysContactTime" Name="床位医生接触" NameEn="CwysContactTime" Desc="" IsKey="1" />-->
+  <TimeNode Id="YqRsStartAgreeTime" Name="院前开始溶栓知情同意" NameEn="YqRsStartAgreeTime" Desc="" IsKey="1" />
+  <TimeNode Id="YqRsSignAgreeTime" Name="院前签署溶栓知情同意书" NameEn="YqRsSignAgreeTime" Desc="" IsKey="1" />
+  <TimeNode Id="YqRsStartTime" Name="院前溶栓开始" NameEn="YqRsStartTime" Desc="" IsKey="1" />
+  <TimeNode Id="YqRsEndTime" Name="院前溶栓结束" NameEn="YqRsEndTime" Desc="" IsKey="1" />
+
+  <TimeNode Id="EcgTime" Name="首份心电图" NameEn="EcgTime" Desc="" IsKey="1" />
+  <TimeNode Id="EcgDiagnosisTime" Name="首份心电图诊断" NameEn="EcgDiagnosisTime" Desc="" IsKey="1" />
+  <TimeNode Id="PrimaryCtnSamplingTime" Name="肌钙蛋白抽血" NameEn="PrimaryCtnSamplingTime" Desc="" IsKey="1" />
+  <TimeNode Id="PrimaryCtnReportTime" Name="肌钙蛋白报告" NameEn="PrimaryCtnReportTime" Desc="" IsKey="1" />
+  <TimeNode Id="ConsultationNotifyTime" Name="通知心内科会诊" NameEn="ConsultationNotifyTime" Desc="" IsKey="1" />
+  <TimeNode Id="ConsultationTime" Name="心内科会诊" NameEn="ConsultationTime" Desc="" IsKey="1" />
+  <TimeNode Id="PrimaryDiagnosisTime" Name="初步诊断" NameEn="PrimaryDiagnosisTime" Desc="" IsKey="1" />
+  <TimeNode Id="GraceRehazardTime" Name="再次危险分层" NameEn="GraceRehazardTime" Desc="" IsKey="1" />
+  <TimeNode Id="CtNoticeTime" Name="通知CT室" NameEn="CtNoticeTime" Desc="" IsKey="1" />
+  <TimeNode Id="CtFinishTime" Name="CT室完成准备" NameEn="CtFinishTime" Desc="" IsKey="1" />
+  <TimeNode Id="AspirinTime" Name="阿司匹林给药" NameEn="AspirinTime" Desc="" IsKey="1" />
+  <TimeNode Id="DecisionPciTime" Name="决定介入手术" NameEn="DecisionPciTime" Desc="" IsKey="1" />
+  <TimeNode Id="PciStartAgreeTime" Name="开始知情同意" NameEn="PciStartAgreeTime" Desc="" IsKey="1" />
+  <TimeNode Id="PciSignAgreeTime" Name="签署知情同意" NameEn="PciSignAgreeTime" Desc="" IsKey="1" />
+  <TimeNode Id="PciActualTime" Name="实际介入治疗" NameEn="PciActualTime" Desc="" IsKey="1" />
+  <TimeNode Id="CabgDecisionTime" Name="决定CABG" NameEn="CabgDecisionTime" Desc="" IsKey="1" />
+  <TimeNode Id="CabgStartTime" Name="CABG开始" NameEn="CabgStartTime" Desc="" IsKey="1" />
+  <TimeNode Id="RsStartAgreeTime" Name="开始溶栓知情同意" NameEn="RsStartAgreeTime" Desc="" IsKey="1" />
+  <TimeNode Id="RsSignAgreeTime" Name="签署溶栓知情同意书" NameEn="RsSignAgreeTime" Desc="" IsKey="1" />
+  <TimeNode Id="RsStartTime" Name="溶栓开始" NameEn="RsStartTime" Desc="" IsKey="1" />
+  <TimeNode Id="RsEndTime" Name="溶栓结束" NameEn="RsEndTime" Desc="" IsKey="1" />
+
+  <TimeNode Id="StartConduitTime" Name="启动导管室" NameEn="StartConduitTime" Desc="" IsKey="1" />
+  <TimeNode Id="ActivateConduitTime" Name="激活导管室" NameEn="ActivateConduitTime" Desc="" IsKey="1" />
+  <TimeNode Id="StartRadiographyTime" Name="造影开始" NameEn="StartRadiographyTime" Desc="" IsKey="1" />
+  <TimeNode Id="GwPassageTime" Name="导丝通过" NameEn="GwPassageTime" Desc="" IsKey="1" />
+  <TimeNode Id="EndOperationTime" Name="手术结束" NameEn="EndOperationTime" Desc="" IsKey="1" />
+
+  <TimeNode Id="DiagnosisTime" Name="确诊" NameEn="DiagnosisTime" Desc="" IsKey="1" />
+  <TimeNode Id="LeaveTime" Name="出院/离院" NameEn="LeaveTime" Desc="" IsKey="1" />
+  <TimeNode Id="EcgTransOutTime" Name="心电图传至协作单位" NameEn="EcgTransOutTime" Desc="" IsKey="1" />
+  <TimeNode Id="DeathTime" Name="死亡" NameEn="DeathTime" Desc="" IsKey="1" />
+</Config>

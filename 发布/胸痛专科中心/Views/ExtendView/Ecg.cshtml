@@ -1,0 +1,91 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>心电图报告</title>
+
+    <script src="~/Scripts/extension/vue.js"></script>
+    <link href="~/Scripts/extension/el/index.css" rel="stylesheet" />
+    <script src="~/Scripts/extension/el/index.js"></script>
+    <script src="~/Scripts/extension/axios.min.js"></script>
+    <script src="~/Scripts/extension/polyfill.min.js"></script>
+
+    <style>
+        .el-image {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div v-if="hasData" align="center" style="width:90%;margin:20px auto;">
+            <el-carousel height="90vh" indicator-position="outside" trigger="click" v-bind:autoplay="false"  v-bind:initial-index="index">
+                <el-carousel-item v-for="(ecg,index) in ecgs"  v-bind:key="index" v-bind:label="ecg.Name"  v-on:click="test">
+                    <el-image v-bind:src="ecg.Url" fit="contain" v-bind:alt="ecg.Name">
+                        <div slot="error" class="image-slot">
+                            <i class="el-icon-picture-outline"></i>
+                        </div>
+                        <div slot="placeholder" class="image-slot">
+                            加载中<span class="dot">...</span>
+                        </div>
+                    </el-image>
+                </el-carousel-item>
+            </el-carousel>
+        </div>
+        <div v-if="!hasData" style="overflow:hidden;">
+            <el-image src="~/App_Themes/Default/img/ecg.jpg" />
+        </div>
+    </div>
+
+    <script>
+        var registId = '@ViewBag.RegistId';
+        var index = @ViewBag.Index;
+        new Vue({
+            el: "#container",
+            data: function () {
+                return {
+                    registId: registId,
+                    index:index,
+                    ecgs: [],
+                }
+            },
+            created: function () {
+                this.getEcgs();
+            },
+            methods: {
+                getEcgs: function () {
+                    const loading = this.$loading({
+                        lock: true,
+                        text: '正在加载心电图列表',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.7)'
+                    });
+                    var _this = this;
+                    axios.get("/ExtendView/GetEcgList?registId=" + this.registId, {}).then(function (res) {
+                        if (res.data.IsSuccess) {
+                            _this.ecgs = res.data.Data;
+                            console.log(_this.ecgs);
+                            loading.close();
+                        }
+                    }).catch(function (error) {
+                        loading.close();
+                        console.log(error);
+                    });
+                },
+                test: function () {
+                    debugger;
+                }
+            },
+            computed: {
+                hasData: function () {
+                    return this.ecgs.length > 0
+                }
+            }
+        })
+    </script>
+</body>
+</html>

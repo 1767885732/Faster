@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="Diagnosis" ViewName="患者诊断">
+    <Member MemberId="IsEcg" MemberName="心电图">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="NoEcgReason" MemberName="未获得心电图原因">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="EcgTransmission" MemberName="是否接收120/网络医院心电图">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="EcgTransmissionTime" MemberName="心电图接收时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="EcgTransmissionType" MemberName="心电图接收方式">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsTroponin" MemberName="肌钙蛋白">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsScr" MemberName="血清肌酐">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsDdimer" MemberName="D-二聚体">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsBnp" MemberName="BNP">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsNtProbnp" MemberName="NT-proBNP">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsMyo" MemberName="Myo">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsCkmb" MemberName="CKMB">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsConsultation" MemberName="心内科会诊">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ConsultationType" MemberName="会诊类型">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ConsultationNotifyTime" MemberName="通知会诊时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ConsultationTime" MemberName="会诊时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="DiagnosisCode" MemberName="初步诊断">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="DiagnosisTime" MemberName="诊断时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="DiagnosisDoctor" MemberName="诊断医生">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="IsGiveupTreatment" MemberName="患者自愿放弃后续治疗">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="KillipLevel" MemberName="心功能分级">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsBypassEmergency" MemberName="绕行急诊">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsBypassCcu" MemberName="绕行CCU">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsBypassCcu" MemberName="抗血小板治疗">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="GraceScore" MemberName="Grace分值">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="GraceHazardLevel" MemberName="危险分层">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="GraceRehazardLevel" MemberName="再次危险分层">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="GraceRehazardTime" MemberName="再次危险分层时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsEct" MemberName="是否CT">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="CtNoticeTime" MemberName="通知CT室时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="CtFinishTime" MemberName="CT室完成准备">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="CtScanTime" MemberName="CT扫描开始时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="CtReportTime" MemberName="CT报告时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="IsCdu" MemberName="是否彩超">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="NoticeCduTime" MemberName="通知彩超室时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="CduCheckTime" MemberName="彩超检查时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="CheckResultTime" MemberName="彩超出结果时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="IsMri" MemberName="是否MRI">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="NacsType" MemberName="非ACS心源性胸痛类型">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="NccpType" MemberName="其它非心源性胸痛类型">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="HandleWay" MemberName="处理措施">
+      <Required Required="true" Enabled="1" />
+    </Member>
+  </View>
+</Config>

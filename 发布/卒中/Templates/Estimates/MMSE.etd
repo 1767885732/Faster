@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="MMSE" Title="MMSE（6项）" >
+    <Group>
+      <CheckBox Code="MMSE001" Title="时间定向力" Desc="时间定向力">
+        <Option Id="01" Text="星期几" Score="1"/>
+        <Option Id="02" Text="几号" Score="1"/>
+        <Option Id="03" Text="几月" Score="1"/>
+        <Option Id="04" Text="什么季节" Score="1"/>
+        <Option Id="05" Text="哪一年" Score="1"/>
+      </CheckBox>
+      <CheckBox Code="MMSE002" Title="地点定向力" Desc="地点定向力">
+        <Option Id="01" Text="省市" Score="1"/>
+        <Option Id="02" Text="区县" Score="1"/>
+        <Option Id="03" Text="街道或乡" Score="1"/>
+        <Option Id="04" Text="什么地方" Score="1"/>
+        <Option Id="05" Text="第几层楼" Score="1"/>
+      </CheckBox>
+      <CheckBox Code="MMSE003" Title="即刻记忆" Desc="即刻记忆">
+        <Option Id="01" Text="皮球" Score="1"/>
+        <Option Id="02" Text="国旗" Score="1"/>
+        <Option Id="03" Text="树木" Score="1"/>
+      </CheckBox>
+      <CheckBox Code="MMSE004" Title="注意力及计算力" Desc="注意力及计算力">
+        <Option Id="01" Text="100-7" Score="1"/>
+        <Option Id="02" Text="93-7" Score="1"/>
+        <Option Id="03" Text="86-7" Score="1"/>
+        <Option Id="04" Text="72-7" Score="1"/>
+      </CheckBox>
+      <CheckBox Code="MMSE005" Title="延迟记忆" Desc="延迟记忆">
+        <Option Id="01" Text="皮球" Score="1"/>
+        <Option Id="02" Text="国旗" Score="1"/>
+        <Option Id="03" Text="树木" Score="1"/>
+      </CheckBox>
+      <CheckBox Code="MMSE006" Title="语言" Desc="语言">
+        <Option Id="01" Text="命名" Score="2"/>
+        <Option Id="02" Text="复述" Score="1"/>
+        <Option Id="03" Text="阅读" Score="1"/>
+        <Option Id="04" Text="书写" Score="1"/>
+        <Option Id="05" Text="三步命令" Score="3"/>
+        <Option Id="06" Text="结构能力" Score="1"/>
+      </CheckBox>
+     </Group>
+  </Template>
+</Config>

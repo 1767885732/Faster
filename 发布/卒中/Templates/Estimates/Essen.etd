@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="Essen" Title="Essen卒中风险评分" >
+    <Group>
+      <RadioBox Code="Essen001" Title="年龄" Desc="Essen">
+        <Option Id="01" Text="＜65岁" Score="0"/>
+        <Option Id="02" Text="65～75岁" Score="1"/>
+        <Option Id="03" Text="＞75岁" Score="2"/>
+      </RadioBox>
+      <RadioBox Code="Essen002" Title="是否高血压" Desc="高血压">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="Essen003" Title="是否糖尿病" Desc="糖尿病">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="Essen004" Title="是否有既往心肌梗死" Desc="既往心肌梗死">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="Essen005" Title="是否有其他心血管疾病" Desc="其他心血管疾病？ （除外心房颤动和心肌梗死）">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="Essen006" Title="是否有外周动脉疾病" Desc="外周动脉疾病">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="Essen007" Title="是否吸烟" Desc="吸烟">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="Essen008" Title="是否有既往缺血性脑卒中/TIA史" Desc="既往缺血性脑卒中/TIA史">
+        <Option Id="01" Text="是" Score="1"/>
+        <Option Id="02" Text="否" Score="0"/>
+      </RadioBox>
+    </Group>
+  </Template>
+</Config>

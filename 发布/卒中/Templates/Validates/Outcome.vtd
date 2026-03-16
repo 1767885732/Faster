@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="Outcome" ViewName="患者转归">
+    <Member MemberId="AdmissionDepartment" MemberName="入院科室">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="AdmissionNo" MemberName="住院号">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ComplicationsDt" MemberName="治疗过程中出现的并发症">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="OtherComplicationsDt" MemberName="治疗过程中出现的其他并发症">
+      <Required Required="false" Enabled="0" />
+    </Member>
+    <Member MemberId="Consciousness" MemberName="意识">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Temperature" MemberName="体温">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="PulseRate" MemberName="脉搏">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="RespiratoryRate" MemberName="呼吸">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="Sbp" MemberName="血压（收缩压/舒张压）">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="BloodOxygen" MemberName="血氧">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="HeartRate" MemberName="心率">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="AfterThromNihssValue" MemberName="溶栓后即可NIHSS评分">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="AfterThrom24HNihssValue" MemberName="溶栓后24小时NIHSS评分">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="JrNihssValue" MemberName="血管内介入治疗后即刻NIHSS评分">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Jr24HNihssValue" MemberName="血管内介入治疗后24小时NIHSS评分">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsRsHh" MemberName="静脉溶栓24小时内是否发生颅内出血">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsOccurrenceTime" MemberName="发生时间">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="IsJrHh" MemberName="血管介入治疗24小时内是否发生颅内出血">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="JrOccurrenceTime" MemberName="发生时间">
+      <Required Required="false" Enabled="1" />
+    </Member>
+  </View>
+</Config>

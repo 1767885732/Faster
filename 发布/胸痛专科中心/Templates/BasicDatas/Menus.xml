@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Menus>
+    <!-- <Menu Id="M001" Name="首页" Url="/Home/Index" Icon="menu-icon-0" PermissionKey="CPC_MNU_HI"/> -->
+    <Menu Id="M010" Name="数据管理" Url="/Patient/List" Icon="menu-icon-1" PermissionKey="CPC_MNU_DM" >
+      <Menu Id="M011" Name="患者登记" Url="/Patient/Edit" Icon="menu_pr.png" PermissionKey="CPC_MNU_DM_PR" />
+      <Menu Id="M012" Name="院前诊断" Url="/Emergency/AddPrehospital" Icon="menu_ph.png" PermissionKey="CPC_MNU_DM_PH" />
+      <Menu Id="M013" Name="院内诊断" Url="/Emergency/AddInhospital" Icon="menu_ih.png" PermissionKey="CPC_MNU_DM_IH" />
+      <Menu Id="M014" Name="胸痛诊疗" Url="/Treatment/Edit" Icon="menu_dt.png" PermissionKey="CPC_MNU_DM_DT" />
+      <Menu Id="M015" Name="患者转归" Url="/Outcome/Outcome" Icon="menu_po.png" PermissionKey="CPC_MNU_DM_PO" />
+    </Menu>
+    <Menu Id="M030" Name="统计分析" Url="/Statistics/Index" Icon="menu-icon-3" PermissionKey="CPC_MNU_SA" >
+      <Menu Id="M031" Name="概要信息" Url="/Statistics/Summary" Icon="profile_info" PermissionKey="CPC_MNU_SA_SM" />
+      <Menu Id="M032" Name="认证统计" Url="/Report/ReportList" Icon="data_statistics" PermissionKey="CPC_MNU_SA_CR" />
+    </Menu>
+    <Menu Id="M040" Name="数据核查" Url="/DataCheck/Index" Icon="menu-icon-4" PermissionKey="CPC_MNU_DC" >
+      <Menu Id="M042" Name="数据回收" Url="/Moniter/Patient" Icon="data_recycle" PermissionKey="CPC_MNU_MM_DR" />
+    </Menu>
+    <Menu Id="M070" Name="系统设置" Url="/Admin/Index" Icon="menu-icon-7" PermissionKey="CPC_MNU_SS" >
+      <Menu Id="M072" Name="通用设定" Url="/Setting/Index" Icon="menuicon-setting-general" PermissionKey="CPC_MNU_SS_COM" />
+    </Menu>
+  </Menus>
+</Config>

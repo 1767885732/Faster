@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="DiagnosisEcg" ViewName="心电图检查">
+    <Member MemberId="CheckTime" MemberName="心电图时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="DiagnosisTime" MemberName="心电图诊断时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="FileName" MemberName="心电图文件">
+      <Required Required="true" Enabled="1" />
+    </Member>
+  </View>
+</Config>

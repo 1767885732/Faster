@@ -1,0 +1,123 @@
+﻿@using DoCare.ToolKit;
+@using DoCare.Framework.Extension;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/extension/echarts/echarts.min.js"></script>
+<script src="~/Scripts/extension/echarts/macarons.js"></script>
+<script src="~/Views/DataStatistics/StatisticCard.js"></script>
+<link href=@Url.Random("~/App_Themes/Default/page.ds.index.css") rel="stylesheet" />
+<script>
+    var Model =  @Html.Raw(JsonKit.Serialize(ViewBag.Model));
+</script>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+    .el-scrollbar__wrap {
+        overflow-x: hidden;
+    }
+</style>
+<div id="Statistic" v-cloak>
+    <el-container>
+        <el-aside width="300px" style="padding:0px 10px;">
+            <div id="reportType">
+                <ul>
+                    <li style="width:100%;"><a class="hover"><img src="~/App_Themes/Default/img/qc/pci.png" width="36" height="36"><span>{{statisticalType=='pci' ? 'PCI版' : '基层版'}}</span></a></li>
+                </ul>
+            </div>
+            <div id="reportCondition" >
+                <el-form label-position="top" label-width="80px" v-bind:model="statisticalParams" >
+                    <el-form-item label="医院名称">
+                        <el-select v-model="statisticalParams.OrgCode"
+                                   placeholder="请选择医院"
+                                   size="small">
+                            <el-option v-for="item in HospitalDict"
+                                       v-bind:key="item.Key"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="时间范围">
+                        <div style="display: flex;">
+                            <el-date-picker v-model="statisticalParams.StartDate"
+                                            style="flex-grow:1"
+                                            size="small"
+                                            type="month"
+                                            placeholder="开始日期">
+                            </el-date-picker>
+                            <span style="margin:0 3px;color:gray;">-</span>
+                            <el-date-picker v-model="statisticalParams.EndDate"
+                                            size="small"
+                                            style="flex-grow:1"
+                                            type="month"
+                                            placeholder="结束日期">
+                            </el-date-picker>
+                        </div>
+                        <div style="display: flex;">
+                            <el-button v-on:click="setDateRange(6)" size="small" style="flex-grow:1">近6个月</el-button>
+                            <el-button v-on:click="setDateRange(3)" size="small" style="flex-grow:1">近3个月</el-button>
+                            <el-button v-on:click="setDateRange(1)" size="small" style="flex-grow:1">近1个月</el-button>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="数据类型">
+                        <el-select v-model="statisticalParams.StatusType"
+                                   placeholder="请选择数据类型"
+                                   size="small">
+                            <el-option label="全部" key="1" value="1"></el-option>
+                            <el-option label="已归档" key="2" value="2"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="报表类型">
+                        <el-select v-model="statisticalParams.ReportType"
+                                   placeholder="请选择报表类型"
+                                   size="small">
+                            <el-option label="月报表" key="1" value="1"></el-option>
+                            <el-option label="周报表" key="2" value="2"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="再灌注措施" v-if="statisticalType == 'basic'">
+                        <el-checkbox-group v-model="reportShow.Measure" v-on:change="showChang" size="small">
+                            <el-checkbox-button label="1">溶栓</el-checkbox-button>
+                            <el-checkbox-button label="2">转动PPCI</el-checkbox-button>
+                            <el-checkbox-button label="3">本院PPCI</el-checkbox-button>
+                        </el-checkbox-group>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </el-aside>
+        <el-container>
+            <el-main>
+                <div class="change">
+                    <a v-on:click="changeView" class="hover"><img v-bind:src="'/App_Themes/Default/img/qc/' + viewType + '.png'" width="80" height="80"></a>
+                </div>
+                <el-carousel indicator-position="none" height="calc(100vh - 110px)" v-bind:autoplay="false" arrow="always" ref="carousel" v-on:change="change" v-show="viewType=='list'">
+                    <el-carousel-item v-for="i in reportList" v-bind:key="i.index">
+                        <el-row>
+                            <el-col v-bind:id="'card'+r.statisticName" :span="12" v-for="r in i.list" v-bind:key="r.order + r.statisticName">
+                                <statistic-card  v-on:click.native="showDetail(r)" v-bind:chart-order="r.order" v-bind:chart-title="r.title" v-bind:chart-subtitle="r.chartTitle" v-bind:chart-unit="r.statisticUnit" v-bind:chart-data="r.data" v-bind:report-type="statisticalParams.ReportType"></statistic-card>
+                            </el-col>
+                        </el-row>
+                    </el-carousel-item>
+                </el-carousel>
+                <div v-if="viewType=='chart'" style="height:calc(100vh - 130px);">
+                    <el-scrollbar style="height:100%;">
+                        <el-card  shadow="hover" v-for="(item, index) in viewList" 
+                                 v-bind:key="item.statisticName" 
+                                 v-on:click.native="showDetail(item)"
+                                 v-bind:style="rowsStyle(index)">
+                            {{item.order}} {{item.title}}
+                        </el-card>
+                    </el-scrollbar>
+                </div>
+            </el-main>
+        </el-container>
+    </el-container>
+</div>
+
+
+<script src="@Url.Random("~/Views/DataStatistics/ApiService.js")"></script>
+<script src="@Url.Random("~/Views/DataStatistics/ReportList.js")"></script>
+<script src="@Url.Random("~/Views/DataStatistics/Index.js")"></script>

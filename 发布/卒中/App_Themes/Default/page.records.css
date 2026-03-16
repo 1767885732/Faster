@@ -1,0 +1,1079 @@
+﻿/*--------禁止用户选中页面--------*/
+body{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+/*--------整行--------*/
+.mr-row{
+    width:100%;
+    display:block;
+    float:left;
+    margin-bottom: 10px;
+}
+.mr-row textarea{
+    width:99%;
+    padding:4px 0.5%;
+}
+/*--------1/4 行--------*/
+.mr-row-fourth{
+    width:25%;
+    float:left;
+    margin-bottom:10px;
+    position:relative;
+}
+/*--------1/2 行--------*/
+.mr-row-half{
+    width:50%;
+    float:left;
+    margin-bottom:10px;
+    position:relative;
+}
+.half{
+    width:50%;
+}
+/*--------3/4 行--------*/
+.mr-row-threefourth{
+    width:75%;
+    float:left;
+    margin-bottom:10px;
+    position:relative;
+}
+/*--------4/4 行--------*/
+.mr-row-full{
+    width:100%;
+    float:left;
+    margin-bottom:10px;
+    position:relative;
+}
+/*--------每行--------*/
+.row-box{
+    width:100%;
+    display:block;
+    clear:both;
+}
+/*--------病历具体字段--------*/
+.medical-record .tit-block{
+    width:100%;
+    font-size:14px;
+    font-weight:normal;
+    color:#007ebc;
+    margin:10px 0;
+    padding-left:8px;
+    float:left;
+    border-left:3px solid #007ebc;
+    clear:both;
+}
+.medical-record .vital{
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #CCC;
+}
+.medical-record .vital label:first-child{
+    font-weight: bold;
+    padding-right: 10px;
+}
+.medical-record label{
+    color:#666;
+    font-size:12px;
+    height:16px;
+    /*line-height:16px;*/
+}
+.medical-record label .info{
+    width:16px;
+    height:16px;
+    display:inline-block;
+    vertical-align: middle;
+    margin:0 4px;
+    background-image:url(img/icon/info_question.png);
+    background-position: 0 0;
+    background-repeat: no-repeat;
+}
+.medical-record .mr-row-half label, .medical-record .mr-row-fourth label, .medical-record .mr-row-threefourth label, .medical-record .mr-row-full label{
+    width:100%;
+    display:block;
+}
+.medical-record label .check{
+    background-image:url(img/icon/view-ecg-1.png);
+}
+.medical-record label .check:hover{
+    background-position: 0 -16px;
+}
+.medical-record .error-label, .medical-record .error_label{
+    height:auto;
+    color:#f00;
+    clear:both;
+}
+.medical-record .mr-row .label-tit{
+    min-width:160px;
+    height:24px;
+    line-height: 24px;
+    float:left;
+    margin-right:10px;
+    text-align:right;
+    color:#333;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+.medical-record .side-pop .label-tit{
+    line-height: 31px;
+}
+.medical-record span{
+    padding:0 10px 0 4px;
+    line-height: 24px;
+    color:#333;
+}
+.medical-record input, .medical-record select{
+    margin-bottom:2px;
+    font-size:14px;
+    color:#000;
+    border:none;
+    border-bottom:1px solid #dadada;
+}
+.medical-record select{
+    cursor:pointer;
+    background:url(img/icon/select.png) right center no-repeat;
+}
+.mr-row-half input, .mr-row-half select, .mr-row-fourth input, .mr-row-fourth select, .mr-row-threefourth input, .mr-row-threefourth select, .mr-row-full input, .mr-row-full select{
+    width:calc(100% - 20px);
+    width: -moz-calc(100% - 20px);
+    width: -webkit-calc(100% - 20px);
+    height:28px;
+}
+.medical-record input[type='radio'], input[type='checkbox']{
+    width:13px;
+    margin-bottom:0;
+    border: none;
+    height: 30px;
+}
+.medical-record input[type="datetime"], .datetime{
+    cursor:pointer;
+    background-image:url(img/icon/datetime.png);
+    background-position: right center;
+    background-repeat: no-repeat;
+}
+input[type="datetime"]:hover, .datetime:hover{
+    cursor:pointer;
+    background-image:url(img/icon/datetime-hover.png);
+}
+/*--------有框输入框--------*/
+.medical-record .input-box{
+    width:100px;
+    height:28px;
+    border:1px solid #dadada;
+    padding:0 10px;
+    margin-right:5px;
+    display:inline;
+}
+.medical-record em{
+    position: absolute;
+    top:25px;
+    right:28px;
+    color:#999;
+}
+.medical-record .have-value{
+    background-color:#f0f0f0;
+    height:25px;
+    margin-top:5px;
+    color:#999;
+    font-weight: bold;
+}
+/*--------用药史-选择抗血小板类和抗凝类之后增加样式--------*/
+.medical-record .imp-hist span{
+    color:#f00;
+    font-weight: bold;
+}
+/*--------选项过多--------*/
+.medical-record .mr-row .more-option{
+    width:calc(100% - 170px);
+    float:left;
+}
+.medical-record .mr-row .more-option label{
+    height:20px;
+    line-height:20px;
+    display:inline-block;
+}
+/*--------选项之后附加内容--------*/
+.medical-record .mr-add{
+    width:calc(100% - 32px);
+    width: -moz-calc(100% - 32px);
+    width: -webkit-calc(100% - 32px);
+    display:block;
+    float:left;
+    border:1px solid #e5e5e5;
+    background-color:#fafafa;
+    padding:10px;
+}
+.medical-record .mr-add input[type="text"], .medical-record .mr-add input[type="datetime"]{
+    height:24px;
+    line-height:24px;
+}
+.medical-record .mr-add h4{
+    color:#007ebc;
+    line-height:30px;
+}
+
+.medical-record .btn-extract {    
+    position: absolute;
+    top: 15px;
+    padding:0 10px;
+    right: 20px;
+    height: 28px;
+}
+
+.warm-tips{
+    clear:both;
+    display:block;
+    color:#666;
+    line-height: 18px;
+}
+.warm-tips .mr-row-half{
+    width:calc(50% - 60px);
+    width: -moz-calc(50% - 60px);
+    width: -webkit-calc(50% - 60px);
+    padding:0 20px 0 40px;
+}
+.warm-tips .mr-row{
+    width:calc(100% - 60px);
+    width: -moz-calc(100% - 60px);
+    width: -webkit-calc(100% - 60px);
+    padding:0 20px 0 40px;
+    margin-top:0;
+}
+.warm-tips .bring{
+    background:url(img/icon/reached.png) 0 10px no-repeat;
+}
+.warm-tips .remove{
+    background:url(img/icon/no-reached.png) 0 10px no-repeat;
+}
+
+/*--------保存按扭--------*/
+.medical-record .medical-save-btn{
+    width:60px;
+    height:60px;
+    right:30px;
+    bottom:40px;
+    background:#3baceb;
+    border:none;
+    border-radius: 100%;
+    box-shadow: 3px 3px 3px #ccc;
+    position: fixed;
+    z-index: 99;
+}
+.medical-record .medical-save-btn:hover{
+    background:#0a97e6;
+}
+.medical-record .goto-whole{
+    right:100px;
+    background:#f0ad4e;
+}
+.medical-record .goto-whole:hover{
+    background:#ec971f;
+}
+
+/*-------- 脑梗死路径时间轴 --------*/
+.tit-bg{
+    height:30px;
+    line-height: 30px;
+    padding-left:10px;
+    color:#007ebc;
+    background: #f1f1f1;
+}
+.path{
+    width: 180px;
+    float: left;
+}
+.path li{
+    width:100%;
+    height: 50px;
+    background: url(img/record/line.png) 18px 0 repeat-y;
+}
+.path li span{
+    width:16px;
+    height:16px;
+    float:left;
+    margin:10px;
+    display: inline;
+    padding:0;
+    border:2px solid #e5e5e5;
+    border-radius: 20px;
+    background:#fff;
+}
+    .path li span:hover {
+        border: 2px solid #007ebc;
+        cursor: pointer;
+    }
+    .path li .done {
+        border: 2px solid #007ebc;
+        background: #007ebc url(img/icon/time_line_has_time.png) center no-repeat;
+        background-size: cover;
+        /*background: #0a97e6 url(img/icon/time_line_has_time.png) center no-repeat;*/
+    }
+    .path li .done_no_time {
+        background: #e7e7e7 url(img/icon/time_line_no_time.png) center no-repeat;
+        background-size: cover;
+    }
+.path li .done:hover{
+    cursor: default;
+}
+.path li h5{
+    color: #666;
+    font-size: 13px;
+    padding-top: 10px;
+}
+.path li h5 i{
+    color: #999;
+    font-size: 12px;
+    display: block;
+    margin-top: 5px;
+    font-weight: normal;
+}
+.treat-detail{
+    float: left;
+    width: calc(100%);
+    width: -moz-calc(100%);
+    width: -webkit-calc(100%);
+}
+/*-------- 溶栓决策 --------*/
+.thrombolysis{
+    border:1px solid #dcdcdc;
+    clear:both;
+}
+.step{
+    height:40px;
+    line-height: 40px;
+    border-bottom:1px solid #dcdcdc;
+}
+.step li{
+    width:120px;
+    float:left;
+    padding-left:10px;
+    font-size:14px;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+    color:#666;
+    background: #f5f5f5;
+    position: relative;
+}
+.step li .step-number{
+    width:20px;
+    height:20px;
+    line-height: 20px;
+    margin:9px 10px;
+    padding:0;
+    float:left;
+    text-align: center;
+    border:1px solid #e5e5e5;
+    border-radius: 20px;
+}
+.step li .step-bg{
+    width:15px;
+    height:40px;
+    float:right;
+    position: absolute;
+    z-index: 10;
+    right:-15px;
+    background:url("img/record/step-bg.png") right no-repeat;
+}
+.step li:hover{
+    cursor: pointer;
+}
+.step .hover{
+    color:#0a97e6;
+    background:#fff;
+}
+.step .hover .step-number{
+    border:1px solid #0a97e6;
+    color:#0a97e6;
+}
+.step .hover .step-bg{
+    background-image:url("img/record/step-selected-bg.png");
+}
+.con-step{
+    padding:10px;
+    height:auto;
+}
+.taboo .mr-row-half label{
+    height:auto;
+}
+.fl-none{
+    float:none;
+}
+/*-------- 溶栓治疗前后 --------*/
+.thrombolysis-before{
+    width: 60%;
+    float: left;
+}
+.thrombolysis-after{
+    width: 39%;
+    float: right;
+}
+/*-------- 检验 --------*/
+.con-step .body-date label{
+    width:200px;
+    height:24px;
+    line-height: 24px;
+    float:left;
+    display:inline;
+    margin-right:4px;
+    text-align: center;
+    background: #dedede;
+}
+.check-up{
+    width:100%;
+    font-size:12px;
+}
+.check-up tr td{
+    border:1px solid #ddd;
+    padding:2px 10px;
+    height:24px;
+    line-height:24px;
+}
+.check-up tr td:nth-child(2n+1){
+    text-align:right;
+}
+.check-up tr td:nth-child(2n):hover{
+    background-color:#dbf0ff;
+}
+.check-up tr td:nth-child(1){
+    width:55%;
+}
+.check-up tr td:nth-child(2){
+    width:35%;
+}
+.check-up tr td:nth-child(3){
+    width:10%;
+}
+.check-up tr td:nth-child(2) select, .check-up tr td:nth-child(3) select{
+    width:100%;
+}
+.con-step .con-step-btn{
+    text-align: center;
+    clear: both;
+}
+.aequilate tr td:first-child{
+    width:25%;
+}
+/*-------- 溶栓后NIHSS评分及血压监测 --------*/
+.monitor{
+    width:100%;
+}
+.monitor .basic-table{
+    width:430px;
+    height:360px;
+    overflow: auto;
+    margin-top:10px;
+    display:inline-block;
+}
+.monitor .basic-table tr th{
+    text-align: center;
+}
+.monitor .basic-table tr td:first-child{
+   text-align: center;
+}
+.monitor .basic-table .warn{
+    background:#c23531;
+}
+.monitor .basic-table tr td input{
+    width:136px;
+    border:none;
+    background:none;
+}
+.monitor .chart-box{
+    width:calc(100% - 430px);
+    width:-moz-calc(100% - 430px);
+    width:-webkit-calc(100% - 430px);
+    height:370px;
+    float:right;
+}
+
+.monitor .score-chart-box{
+    width:calc(100% - 120px);
+    width:-moz-calc(100% - 120px);
+    width:-webkit-calc(100% - 120px);
+    height:370px;
+    float:right;
+}
+
+.monitor .chart{
+    height:175px;
+    margin-top:10px;
+}
+/*--------溶栓决策/脑病变 --------*/
+.brain-lesions .body-date label{
+    width:135px;
+}
+.con-step .rt-PA{
+    padding:4px 10px;
+    background: #dedede;
+}
+.con-step .body-date input[type="datetime"]{
+    width:auto;
+}
+/*--------住院期间检查--------*/
+.medical-record .hospitalized-check tr{
+    background: none;
+}
+.medical-record .hospitalized-check tr td:first-child, .medical-record .hospitalized-check tr th{
+    background: #f1f1f1;
+    text-align: center;
+    position: static;
+}
+.hospitalized-check tr td:nth-child(2n){
+    text-align:right;
+    /*background:#f7f7f7;*/
+}
+.hospitalized-check tr td:nth-child(2n+3){
+    /*background-color: #fff;*/
+}
+.hospitalized-check tr td:nth-child(2n+3):hover{
+    background-color:#dbf0ff;
+}
+.hospitalized-check tr td{
+    position: relative;
+    color:#333;
+    min-width:60px;
+}
+.hospitalized-check tr td input{
+    width:calc(100% - 84px);
+    width: -moz-calc(100% - 84px);
+    width: -webkit-calc(100% - 84px);
+    padding:0 80px 0 4px;
+    background: none;
+}
+.hospitalized-check tr td em{
+    top:0;
+}
+.even tr td:nth-child(2n+1){
+    /*background-color: #f7f7f7;*/
+}
+.even tr td:nth-child(2n), .hospitalized-check tr td:last-child{
+    /*background-color: #fff;*/
+}
+.hospitalized-check tr td:nth-child(3){
+    text-align: left;
+}
+.side-pop input, .side-pop span, .side-pop div, .side-pop label, .side-pop sub {
+    float:left;
+    line-height: 31px;
+}
+.side-pop input[type='text']{
+    height: 31px;
+}
+.side-pop input[type='datetime']{
+    width:170px;
+    height:28px;
+    margin-right:10px;
+    display:inline;
+}
+.side-pop input[type='radio']{
+     margin-top:10px;
+ }
+.medical-record .side-pop label{
+    width:auto;
+    height:31px;
+    display:inline;
+}
+/*--------  住院期间检查-Tab  --------*/
+.medical-record .tab-inspect-box{
+    height: calc(100vh - 208px);
+    height: -webkit-calc(100vh - 208px);
+    height: -moz-calc(100vh - 208px);
+    overflow:hidden;
+}
+.medical-record  .tab-inspect{
+    width:14.5%;
+    height:100%;
+    float:left;
+    background: #f7f7f7;
+
+    border-right:1px solid #f4c337;
+}
+.medical-record  .tab-inspect a {
+    display: block;
+    padding-left: 10px;
+    line-height: 30px;
+    font-size:14px;
+    color: #333;
+    font-weight: normal;
+}
+.medical-record  .tab-inspect a:hover{
+    background:#dedede;
+}
+.medical-record  .tab-inspect .hover{
+    font-weight: bold;
+    color:#007ebc;
+}
+.medical-record .con-inspect{
+    width:calc(85% - 10px);
+    width:-webkit-calc(85% - 10px);
+    width:-moz-calc(85% - 10px);
+    height: calc(100% - 30px);
+    height: -webkit-calc(100% - 30px);
+    height: -moz-calc(100% - 30px);
+    float:right;
+    position: relative;
+}
+.medical-record .score-box{
+    height: 100%;
+    overflow:auto;
+}
+/*--------  住院治疗用药  --------*/
+.medical-record .table-only-text{
+    width: 100%;
+    border: none;
+    background: none;
+}
+
+.special label
+{
+    display:inline!important;
+}
+
+.medical-record .reason{
+    width: 100%;
+    height: 28px;
+    position: relative;
+    clear: both;
+}
+.medical-record .reason label{
+    line-height: 28px;
+    position: absolute;
+    left: 0;
+    color: #666;
+    font-size: 13px;
+}
+.medical-record .reason input{
+    width: 100%;
+    height: 28px;
+    line-height: 28px;
+    text-indent: 5.5em;
+}
+/*--------无检查内容--------*/
+ .location{
+    width: 100%;
+    height: 240px;
+    position: absolute;
+    top: 20%;
+    text-align: center;
+    color: #999;
+    line-height: 40px;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+    font-size: 16px;
+}
+.location p a{
+    padding: 4px;
+}
+
+/*--------  手风琴效果  --------*/
+.subNav {
+    border: solid 1px #e5e3da;
+    cursor: pointer;
+    font:normal 14px/30px 'microsoft YaHei', Arial, Helvetica, sans-serif;
+    color: #333;
+    padding-left: 26px;
+    background: url(img/icon/slideup.png) 5px 50% no-repeat;
+    margin-top:5px;
+    box-shadow: 3px 3px 3px #eee;
+}
+.subNav:hover {
+    color: #007ebc;
+    background-color:#f5f5f5;
+}
+.subNav strong .level, .target-time dl dd .standard, .target-time dl dd .inconformity{
+    font-size: 12px;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+    margin-left: 6px;
+    display:inline;
+    padding: 2px 4px;
+    color: #fff;
+    background: #00abff;
+    border-radius: 3px;
+    letter-spacing: 2px;
+}
+.subNav strong .null{
+    background: #dedede;
+}
+.target-time dl dd .inconformity{
+    background: #de3610;
+}
+.subNav span{
+    font-size:12px;
+    float:right;
+    padding-right:0;
+}
+.subNav span button{
+    margin:1px 0 0 10px;
+    display:inline;
+}
+.subNav .text-span{
+    width: 80px;
+    height: 30px;
+    line-height: 30px;
+    margin: 0;
+    padding: 0 10px;
+    display: block;
+    background: #ddd;
+    position: relative;
+}
+.subNav .text-span input[type='text']{
+    width:100%;
+    background: none;
+    border: none;
+    font-weight: bold;
+    color:#000;
+    text-align: center;
+}
+.subNav .text-span em{
+    color:#333;
+    position: absolute;
+    top:0;
+    right:10px;
+}
+.currentDd {
+    color: #007ebc;
+    background-image:url(img/icon/slidedown.png);
+}
+.navContent {
+    max-height:200px;
+    overflow-y:auto;
+    display: none;
+    border: solid 1px #ddd;
+    border-top: none;
+    background-color:#f5f5f5;
+    padding:10px;
+}
+.navContent h3{
+    line-height:30px;
+    color:#666;
+}
+.navContent h3 span{
+    padding-left:10px;
+    font-weight: normal;
+    font-size: 12px;
+    color:#999;
+}
+.navContent table{
+    width:100%;
+}
+.navContent p{
+    line-height:18px;
+}
+.navContent label{
+    display:block;
+    margin-bottom:10px;
+}
+
+/*--------评分分类颜色区分--------*/
+.score-sign span{
+    padding:5px;
+    margin:auto 4px auto 10px;
+    display: inline-block;
+}
+.score-sign .bg-blue{
+    background: #52cbf8;
+}
+.score-sign .bg-orange{
+    background: #f4b400;
+}
+.score-sign .bg-olivine{
+    background: #a5cf3d;
+}
+.tab li{
+    float:left;
+    height:28px;
+}
+.tab li .hover{
+    border-bottom:none;
+}
+.tab .border-blue{
+    border-bottom:2px solid #52cbf8;
+}
+.tab .border-orange{
+    border-bottom:2px solid #f4b400;
+}
+.tab .border-olivine{
+    border-bottom:2px solid #a5cf3d;
+}
+.tab .space{
+    margin-right:15px;
+    display:inline;
+}
+/*--------评分--------*/
+.score-tit .right{
+    padding:0;
+}
+.score-value{
+    padding:3px 20px;
+    margin-left:8px;
+    display:inline;
+    font-size:13px;
+    color:#fff;
+    font-weight: normal;
+    letter-spacing:1px;
+    border-radius: 3px;
+}
+.score-detail table tr td:first-child{
+    text-align: left;
+    color:#999;
+}
+.score-detail table tr td:first-child strong{
+    color:#333;
+    display:block;
+}
+.score-detail table tr td:nth-child(2){
+    border-left:1px solid #ddd;
+    border-right:1px solid #ddd;
+}
+.score-detail table tr td:nth-child(3){
+    width:30px;
+    text-align:center;
+}
+.horizontal input{
+    height:28px;
+}
+.inline-text{
+    position: relative;
+}
+.inline-text em{
+    top: 0;
+    right: 20px;
+}
+.pharmacy tr td .inline-text{
+    padding: 0;
+}
+.pharmacy tr td .inline-text input{
+    background: none;
+}
+.pharmacy tr td .inline-text em{
+    right: 10px;
+}
+/*--------随访单--------*/
+.score-detail .follow-list tr td{
+    padding-top:5px;
+    padding-bottom:5px;
+}
+.score-detail .follow-list tr td:first-child{
+   width:142px;
+}
+.score-detail .follow-list tr td:first-child strong{
+    color:#666;
+    text-align: center;
+}
+.score-detail .follow-list tr td label{
+    padding-right:5px;
+}
+.score-detail .follow-list tr td input[type='text']{
+    width:100%;
+    background: none;
+}
+/*--------第几次评分-TAB--------*/
+.tab-with-btn{
+    width:100%;
+    height:30px;
+    border-bottom: 1px solid #445766;
+}
+.tab-with-btn a{
+    float: left;
+    position: relative;
+    padding: 0 20px;
+    height: 0;
+    line-height: 30px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #fff;
+    border-right: 30px solid transparent;
+    border-bottom: 30px solid #445766;
+    opacity: 0.5;
+    margin-left: -20px;
+    display: inline;
+}
+.tab-with-btn a:hover{
+    border-bottom: 30px solid #f4b400;
+    opacity: 1;
+}
+.tab-with-btn a:first-child{
+    margin-left:0;
+}
+.tab-with-btn .hover,.tab-with-btn .hover:hover{
+    border-bottom: 30px solid #445766;
+    opacity: 1;
+}
+.tab-with-btn a .score-del{
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    right:0;
+    top:8px;
+    background-image: url('img/record/del.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+}
+.tab-with-btn a .score-del:hover{
+    background-position: -16px 0;
+}
+.tab-with-btn .score-add{
+    width: 24px;
+    height: 24px;
+    float:left;
+    padding:0;
+    margin:3px;
+    display:inline;
+    cursor:pointer;
+    background-image: url('img/record/add.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+}
+.tab-with-btn .score-add:hover{
+    background-position: -24px 0;
+}
+/* 向左向右 */
+.tab-with-btn .tab-center{
+    width: calc(100% - 30px);
+    width: -moz-calc(100% - 30px);
+    width: -webkit-calc(100% - 30px);
+    height: 30px;
+    overflow: hidden;
+    float: left;
+}
+.tab-with-btn .tab-left, .tab-with-btn .tab-right{
+    width: 15px;
+    height: 20px;
+    margin-top: 4px;
+    text-align: center;
+    display: block;
+    cursor: pointer;
+    padding:0;
+    float: left;
+}
+.tab-with-btn .tab-left:hover, .tab-with-btn .tab-right:hover{
+    color:#f4b400;
+}
+
+/*--------评分弹出页--------*/
+.popup{
+    width:calc(100% - 20px);
+    width:-moz-calc(100% - 20px);
+    width:-webkit-calc(100% - 20px);
+    height:calc(100% - 20px);
+    height:-moz-calc(100% - 20px);
+    height:-webkit-calc(100% - 20px);
+    margin:10px;
+    position:absolute;
+}
+.popup .type-menu{
+    width:120px;
+}
+.popup .medical-record{
+    width:calc(100% - 120px);
+    width:-moz-calc(100% - 120px);
+    width:-webkit-calc(100% - 120px);
+    height:100%;
+    overflow:auto;
+}
+.popup .type-menu li{
+    width:120px;
+}
+.popup .type-menu li dl{
+    line-height: 20px;
+}
+.popup .type-menu li dl dt{
+    font-size: 14px;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+    border-left:3px solid #009be7;
+    padding-left:10px;
+    margin:10px 0;
+}
+.popup .type-menu li dl dd{
+    padding-left:20px;
+    cursor: pointer;
+}
+.popup .type-menu li dl dd span{
+    padding-left: 3px;
+    font-family: Arial, Verdana, sans-serif;
+    color:#999;
+}
+.popup .type-menu li dl dd:hover, .popup .type-menu li dl .selected, .popup .type-menu li dl dd:hover span, .popup .type-menu li dl .selected span{
+    color:#009be7;
+}
+
+/*--------评分弹出页-血压输入--------*/
+.popup .type-menu li label{
+    font-size: 14px;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+}
+.popup .type-menu li input{
+    width:80px;
+    height:24px;
+    padding:0 10px;
+    margin:5px auto 10px;
+    border-bottom: 1px solid #dadada;
+}
+.popup .type-menu li label a{
+    float:right;
+    font-size:12px;
+    font-family: "宋体", Arial, Helvetica, sans-serif;
+    padding-right:10px;
+}
+
+/*--------病历-左右布局--------*/
+.medical-record .record-left{
+    width:61%;
+    padding:10px 1.5%;
+    float:left;
+}
+.medical-record .record-right{
+    width:30%;
+    border-left:1px dashed #CCC;
+    padding:10px 2%;
+    line-height:20px;
+    color:#999;
+    float:left;
+    position: absolute;
+    top: 60px;
+    bottom: 10px;
+    right: 0;
+}
+/*--------分隔线--------*/
+.line{
+    margin: 10px auto;
+    border-bottom: 1px solid #ddd;
+    clear: both;
+}
+/*--------目标时间--------*/
+.target-time dl{
+    width:12%;
+    margin: 10px auto;
+    padding:0 0.25%;
+    float:left;
+}
+.target-time dl dt{
+    width:100%;
+    line-height: 16px;
+    height:34px;
+}
+.target-time dl dd{
+    width:100%;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+.target-time dl dd i{
+    padding-left: 6px;
+    font-size: 12px;
+    color: #999;
+}
+.dl-seven dl{
+    width:13.78%;
+}
+@media (max-width: 1380px) {
+    .target-time dl dd i {
+        padding-left: 1px;
+    }
+    .target-time dl dd .standard, .target-time dl dd .inconformity{
+        margin-left: 3px;
+        padding: 2px 2px;
+        letter-spacing: 0;
+    }
+}
+

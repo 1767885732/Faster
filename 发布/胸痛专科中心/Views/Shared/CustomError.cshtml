@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "错误";
+}
+
+<h2 class="error">处理请求时发生如下错误。</h2>
+<br />
+@{
+    Exception ex = ViewData["Exception"] as Exception;
+    Exception innerEx = ex.InnerException;
+}
+<h3>错误信息：@ex.Message
+<br />
+@if (innerEx != null)
+{
+    <h4>详细错误信息：@innerEx.Message</h4>
+}

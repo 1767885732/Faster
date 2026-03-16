@@ -1,0 +1,182 @@
+﻿@using DoCare.ToolKit
+@using DoCare.Framework.Extension
+@{
+    Layout = null;
+}
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/page.records.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/global.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/frame.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/control.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/page.fullcalendar.css") rel="stylesheet" />
+<link href=@Url.GetCssJsUrl("~/App_Themes/Default/page.frequently.css") rel="stylesheet" />
+
+<div class="content">
+    <div id='wrap'>
+        <div id='calendar'></div>
+        <div class="clear"></div>
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src=@Url.GetCssJsUrl("~/Scripts/hover.js")></script>
+<script src="~/Scripts/jquery-ui.custom.min.js"></script>
+<script src=@Url.GetCssJsUrl("~/Scripts/calendar/fullcalendar.js")></script>
+<script src="~/Scripts/layer/layer.js"></script>
+<script src="~/Scripts/angular/angular.min.js"></script>
+<script>
+    var eventsData = new Array();
+    $(document).ready(function () {
+        var date = new Date();
+        var d = date.getDate();
+        var m = date.getMonth();
+        var y = date.getFullYear();
+        var calendarData =  @Html.Raw((JsonKit.Serialize(ViewBag.Calendar)));
+        if(calendarData!=null && calendarData.length>0)
+        {
+            for (var i = 0; i < calendarData.length; i++) {
+                var data = calendarData[i];
+                eventsData.push({
+                    id: data.Id,
+                    title: data.Title,//标题
+                    start: new Date(data.StartDate),//开始时间
+                    end: new Date(data.EndDate),//结束时间
+                    url: data.Url,//跳转地址url
+                    className: data.Class, //显示的颜色 success,important,info
+                    allDay: data.AllDay//全天
+                });
+            }
+        }
+        var calendar = $('#calendar').fullCalendar({
+            buttonText: {
+                today: '今天',
+                month: '月视图',
+                week: '周视图',
+                day: '日视图'
+            },
+            allDayText: "全天",
+            timeFormat: {
+                '': 'H:mm{-H:mm}'
+            },
+            header: {
+                left: 'title',
+                center: '',
+                right: 'prev,next today'
+            },
+            editable: false,
+            firstDay: 1, //  1(Monday) this can be changed to 0(Sunday) for the USA system
+            selectable: false,
+            defaultView: 'month',
+            height: $(document.body).height()-115,
+            width:$(document.body).width(),
+            axisFormat: 'h:mm',
+            columnFormat: {
+                month: 'dddd',
+                week: 'dddd M-d',
+                day: 'dddd M-d'
+            },
+            titleFormat: {
+                month: 'yyyy年 MMMM月',
+                week: "[yyyy年] MMMM月d日 { '&#8212;' [yyyy年] MMMM月d日}",
+                day: 'yyyy年 MMMM月d日 dddd'
+            },
+            monthNames: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+            dayNames: ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"],
+            events: eventsData,
+        });
+    });
+
+    $(window).resize(function () {
+        if($('#calendar').length>0){
+            $('#calendar').fullCalendar('option', 'height', $(document.body).height() - 115);
+        }
+    });
+</script>
+<script type="text/javascript">
+
+    function urlParse(url){
+        var obj = {};
+        var reg = /[?&][^?&]+=[^?&]+/g;
+        var arr = url.match(reg);
+
+        if (arr) {
+            arr.forEach(function (item) {
+                var tempArr = item.substring(1).split('=');
+                var key = decodeURIComponent(tempArr[0]);
+                var val = decodeURIComponent(tempArr[1]);
+                obj[key] = val;
+            });
+        }
+        return obj;
+    }
+
+    function pop(url)
+    {
+        if(url==null || url=="")
+        {
+            return false;
+        }
+        layer.closeAll();
+        var para = urlParse(url);
+        $.post('/FollowUpManage/CreateFollowup', { patientRegistId: para.patientRegistId,calendarId: para.calendarId, followupId: para.followupId }, function (str) {
+            layer.open({
+                type: 1,
+                title: '随访单',
+                maxmin: true,
+                shadeClose: false, //点击遮罩关闭层
+                area: ['1000px', '550px'],
+                content: str,
+                end: function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/FollowUpManage/GetCalendar',
+                        data: { registId: para.patientRegistId },
+                        dataType: 'json',
+                        success: function (json) {
+                            if (json.IsSuccess) {
+                                eventsData = new Array();
+                                if(json.Data!=null && json.Data.length>0)
+                                {
+                                    for (var i = 0; i < json.Data.length; i++) {
+                                        var data = json.Data[i];
+                                        eventsData.push({
+                                            id: data.Id,
+                                            title: data.Title,//标题
+                                            start: new Date(data.StartDate),//开始时间
+                                            end: new Date(data.EndDate),//结束时间
+                                            url: data.Url,//跳转地址url
+                                            className: data.Class, //显示的颜色 success,important,info
+                                            allDay: data.AllDay//全天
+                                        });
+                                    }
+                                    $('#calendar').fullCalendar('removeEvents');
+
+                                    $.each(eventsData,function(index,schdata2){
+                                        $('#calendar').fullCalendar('renderEvent', schdata2, true);
+                                    })
+                                }
+                            } else {
+                                layer.alert(json.Message, { icon: 2 });
+                            }
+                        },
+                    });
+                }
+            });
+        });
+    }
+
+    function openUrl(url)
+    {
+        if(url==null || url=="")
+        {
+            return false;
+        }
+
+        $("#nav-list").find("a").first().siblings().removeClass("active");
+        $("#nav-list").find("a").first().addClass("active");
+
+        $.post(url, {}, function (viewHtml) {
+            $('#container').html();
+            $('#container').html(viewHtml);
+        });
+    }
+</script>

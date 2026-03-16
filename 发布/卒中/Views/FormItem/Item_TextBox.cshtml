@@ -1,0 +1,18 @@
+﻿@model DoCare.CRF.Form.Data.Item.MDTextBoxItem
+@using DoCare.Framework.Extension;
+@using DoCare.CRF.Form.Data.Item
+@{
+    string _default = Model.HasDefaultValue ? ((string[])Model.DefaultValue)[0] : string.Empty;
+    string _checked = Model.Property.ScoreEnabled ? "checked" : "";
+}
+<script src=@Url.GetCssJsUrl("~/Scripts/Stroke/FormItem/ItemPropertyComm.js")></script>
+<script src=@Url.GetCssJsUrl("~/Scripts/Stroke/FormItem/ItemTextBox.js")></script>
+    <div class="topic_add_block">
+        <div class="topic_add_btn_top">
+            <div class="score"><input id="chkScore" type="checkbox" style="height: 24px; vertical-align:middle" @_checked /><span class="mg_l_5">评分</span><input name="txtScore" type="text" class="mg_l_5" style="width: 80px; display: none;" placeholder="题目评分" value="@Model.Property.ScoreValue" /></div>
+        </div>
+        <div class="clearfix"></div>
+        <p class="option">
+            <input type="text" value="@_default" style="width:98%">
+        </p>
+    </div>

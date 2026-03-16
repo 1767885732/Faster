@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="Regist" ViewName="患者登记">
+    <Member MemberId="ClinicNo" MemberName="门诊ID">
+      <Required Required="false" Enabled="1" />
+      <Length MaxLength="20" Enabled="1" />
+    </Member>
+    <Member MemberId="Name" MemberName="患者姓名">
+      <Required Required="true" Enabled="1" />
+      <Length MaxLength="20" Enabled="1" />
+    </Member>
+    <Member MemberId="IdcardNo" MemberName="身份证">
+      <Required Required="true" Enabled="1" />
+      <Specials Enabled="1">
+        <Special Text="身份证" Value="IdCard" Message="身份证号填写错误" />
+      </Specials>
+    </Member>
+    <Member MemberId="DiseaseTime" MemberName="发病时间" MemberCode="D020001">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="1" />
+    </Member>
+    <Member MemberId="Age" MemberName="患者年龄">
+      <Required Required="true" Enabled="1" />
+      <Length MaxLength="10" Enabled="1" />
+    </Member>
+    <Member MemberId="RegistDate" MemberName="登记时间">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="1" />
+    </Member>
+    <Member MemberId="PhoneNo1" MemberName="联系电话">
+      <Required Required="false" Enabled="1" />
+      <Length MaxLength="20" Enabled="1" />
+      <Regexs Enabled="1">
+        <Regex Text="手机" Value="^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$" />
+      </Regexs>
+    </Member>
+    <Member MemberId="Gender" MemberName="患者性别">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ComingType" MemberName="来院方式">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="OrgCode" MemberName="医院">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="PatientArrivalTime" MemberName="患者到达医院时间">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="1" />
+    </Member>
+    <Member MemberId="Consciousness" MemberName="意识">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Temperature" MemberName="体温">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="PulseRate" MemberName="脉搏">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="RespiratoryRate" MemberName="呼吸">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="Sbp" MemberName="收缩压">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="Dbp" MemberName="舒张压">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="Spo" MemberName="血氧">
+      <Required Required="false" Enabled="1" />
+    </Member>
+    <Member MemberId="Hr" MemberName="心率">
+      <Required Required="false" Enabled="1" />
+    </Member>
+  </View>
+</Config>

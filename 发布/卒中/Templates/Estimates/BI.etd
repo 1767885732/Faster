@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="BI" Title="Barthel指数" >
+    <Group>
+      <RadioBox Code="BI001" Title="吃饭" Desc="吃饭">
+        <Option Id="01" Text="独立，能应用任何必要的工具，在合理的时间进食" Score="10"/>
+        <Option Id="02" Text="需要部分帮助（如夹菜、盛饭、搅拌、切割食物等）" Score="5"/>
+        <Option Id="03" Text="完全依赖他人" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="BI002" Title="洗浴" Desc="洗浴">
+        <Option Id="01" Text="无帮助下可以进行" Score="5"/>
+        <Option Id="02" Text="需要他人帮助" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="BI003" Title="梳洗" Desc="梳洗">
+        <Option Id="01" Text="自主洗脸、梳头、刷牙、剃须（如果是电动剃须刀可以用插座）" Score="5"/>
+        <Option Id="02" Text="需要他人帮助" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="BI004" Title="穿衣" Desc="穿衣">
+        <Option Id="01" Text="独立，系鞋带、扣扣件、应用支具" Score="10"/>
+        <Option Id="02" Text="部分需要帮助，但至少有一半的任务在合理时间做" Score="5"/>
+        <Option Id="03" Text="部分他人帮助" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="BI005" Title="大便" Desc="大便">
+        <Option Id="01" Text="无意外，如果需要可以应用灌肠和栓剂" Score="10"/>
+        <Option Id="02" Text="偶尔有意外，或需要帮助灌肠和栓剂" Score="5"/>
+        <Option Id="03" Text="经常失禁或昏迷" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="BI006" Title="小便" Desc="小便">
+        <Option Id="01" Text="无意外，如果应用器具可以自己护理收拾" Score="10"/>
+        <Option Id="02" Text="偶尔意外，或需要帮助应用器具" Score="5"/>
+        <Option Id="03" Text="经常失禁或昏迷" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="BI007" Title="如厕" Desc="如厕">
+        <Option Id="01" Text="独立到卫生间或应用便盆、完成脱穿衣服或卫生清洁" Score="10"/>
+        <Option Id="02" Text="需要帮助平衡、完成脱穿衣服或卫生清洁" Score="5"/>
+        <Option Id="03" Text="依赖他人" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="BI008" Title="椅子/床转换" Desc="椅子/床转换">
+        <Option Id="01" Text="独立，包括锁轮椅和升脚踏板" Score="15"/>
+        <Option Id="02" Text="最小帮助或监护" Score="10"/>
+        <Option Id="03" Text="能做，但需要最大的帮助转换" Score="5"/>
+        <Option Id="04" Text="完全不能" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="BI009" Title="行走" Desc="行走">
+        <Option Id="01" Text="独立行走50米，也许应用辅助装置，除了滚动的行走器械" Score="15"/>
+        <Option Id="02" Text="帮助可行走50米" Score="10"/>
+        <Option Id="03" Text="如果不能行走，独立使用轮椅行走50米" Score="5"/>
+        <Option Id="04" Text="完全不能，用轮椅也不能单独行走" Score="0"/>
+      </RadioBox>
+      <RadioBox Code="BI010" Title="上楼" Desc="上楼">
+        <Option Id="01" Text="独立，也许使用辅助装置" Score="10"/>
+        <Option Id="02" Text="需要部分帮助（如搀扶等）或监管" Score="5"/>
+        <Option Id="03" Text="在帮助（搀扶等）下也不能完成" Score="0"/>
+      </RadioBox>
+    </Group>
+  </Template>
+</Config>

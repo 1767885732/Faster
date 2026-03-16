@@ -1,0 +1,81 @@
+﻿@using DoCare.Component.Trackers.Data
+@using System.Text.RegularExpressions;
+
+
+@model List<MedicalAction>
+
+@{
+    var htmlRex = new Regex(@"<.*?>");
+    var hasPermission = ViewBag.HasPermission != null ? (bool)ViewBag.HasPermission : false;
+}
+
+@if (hasPermission)
+{
+    <div class="top-opt" id="MedicalActionContainer">
+        <div class="top-btn filling">
+            <a id="actionLog">
+                <s class="icon-log"></s>
+            </a>
+            <div class="top-pop" id="logList">
+                <ul>
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            var htmlStr = Html.Raw(item.ActionDescription).ToString();
+
+                            var str = htmlRex.Replace(htmlStr, "");
+
+                            <li>
+                                <a title="@str">
+                                    <nobr>@Html.Raw(item.ActionDescription)</nobr>
+                                </a>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li>
+                            <a title="当前患者暂无操作记录">
+                                <nobr>当前患者暂无操作记录！</nobr>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $("#actionLog").click(function () {
+        if ($("#logList").css("display") == "none") {
+            $.ajax({
+                url: "/MedicalAction/MedicalAction?eventId=" + registId,
+                type: "get",
+                dataType: "html",
+                async: false,
+                success: function (html) {
+                    if (html.trim() != "") {
+                        $("#MedicalActionContainer").replaceWith(html);
+                        this.medicalAction = html;
+                        if ($("#logList").css("display") == "none") {
+                            $(".filling").children("div").stop(true, true).slideDown("fast");
+                            $("#logList").css("display", "block");
+                        }
+                    }
+                }
+            })
+        }
+        else
+        {
+            $("#logList").css("display", "none");
+            $(".filling").children("div").stop(true, true).slideUp("fast");
+        }
+    });
+
+    $("#logList").mouseleave(function () {
+        $("#logList").css("display", "none");
+        $(".filling").children("div").stop(true, true).slideUp("fast");
+    });
+</script>

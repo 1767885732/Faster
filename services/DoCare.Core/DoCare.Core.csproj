@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Administrator\Events\**" />
+    <Compile Remove="EcgMonitor\**" />
+    <Compile Remove="Patients\**" />
+    <Compile Remove="Process\**" />
+    <Compile Remove="Tests\**" />
+    <EmbeddedResource Remove="Administrator\Events\**" />
+    <EmbeddedResource Remove="EcgMonitor\**" />
+    <EmbeddedResource Remove="Patients\**" />
+    <EmbeddedResource Remove="Process\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="Administrator\Events\**" />
+    <None Remove="EcgMonitor\**" />
+    <None Remove="Patients\**" />
+    <None Remove="Process\**" />
+    <None Remove="Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Common\Notify\ApiClients.cs" />
+    <Compile Remove="Patient\Events\SyncPatientEventData.cs" />
+    <Compile Remove="Patient\Events\SyncPatientEventHandler.cs" />
+    <Compile Remove="Patient\Events\SyncPatientEventHandler_1.cs" />
+    <Compile Remove="Patient\MedPatRelationService_1.cs" />
+    <Compile Remove="Patient\PatientNoService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Administrator\Dtos\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.18.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FastFrame">
+      <HintPath>..\..\src\FastFrame.dll</HintPath>
+      <Private></Private>
+    </Reference>
+    <Reference Include="FastFrame.AutoMapper">
+      <HintPath>..\..\src\FastFrame.AutoMapper.dll</HintPath>
+      <Private></Private>
+    </Reference>
+    <Reference Include="FastFrame.CodeGeneration">
+      <HintPath>..\..\src\FastFrame.CodeGeneration.dll</HintPath>
+      <Private></Private>
+    </Reference>
+    <Reference Include="FastFrame.EFCore">
+      <HintPath>..\..\src\FastFrame.EFCore.dll</HintPath>
+      <Private></Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

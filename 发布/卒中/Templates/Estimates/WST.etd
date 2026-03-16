@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="WST" Title="洼田饮水试验" >
+    <Group>
+      <RadioBox Code="WST001" Title="患者端坐，喝下30毫升温开水，观察所需时间和呛咳情况。" Desc="">
+        <Option Id="01" Text="1级（优）能顺利地1次将水咽下" Score="1"/>
+        <Option Id="02" Text="2级（良）分2次以上，能不呛咳地咽下" Score="2"/>
+        <Option Id="03" Text="3级（中）能1次咽下，但有呛咳" Score="3"/>
+        <Option Id="04" Text="4级（可）分2次以上咽下，但有呛咳" Score="4"/>
+        <Option Id="05" Text="5级（差）频繁呛咳，不能全部咽下" Score="5"/>
+      </RadioBox>
+    </Group>
+  </Template>
+</Config>

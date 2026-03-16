@@ -1,0 +1,54 @@
+﻿@using DoCare.Framework.Extension;
+@{
+    Layout = null;
+    List<string> templateCatarogyIds = ViewBag.TemplateCatarogyIds as List<string>;
+}
+
+<link href=@Url.GetCssJsUrl("~/Content/xxg_cz.css") rel="stylesheet" />
+<script>
+    $().ready(function () {
+        window.returnCategorys = [];
+        //保存
+        $("#btn_saveSelect").click(function () {
+            var categorys = [];
+            $(".category:not(':disabled')").each(function (index, element) {
+                if ($(element).prop('checked')) {
+                    var category = {};
+                    category.Code = $(element).val();
+                    category.Name = $(element).prop("name");
+
+                    categorys.push(category);
+                }
+            });
+            window.returnCategorys = categorys;
+            $('#divSelectCategorys').dialog('close');
+        });
+
+        //关闭
+        $("#btn_cancel").click(function () {
+            window.returnCategorys = [];
+            $('#divSelectCategorys').dialog('close');
+        });
+    });
+</script>
+
+
+
+<div class="checkbox_selection_block">
+    @foreach (var category in ViewBag.AllCatagorys)
+    {
+        if (templateCatarogyIds.Contains(category.Code))
+        {
+            <p><input type='checkbox' class="category" value="@category.Code" name="@category.Name" disabled checked>@category.Name</p>
+        }
+        else
+        {
+            <p><input type='checkbox' class="category" value="@category.Code" name="@category.Name">@category.Name</p>
+        }
+    }
+    
+</div>
+<div class="btn_block">
+    <a id="btn_saveSelect" class="btn blue">确认</a>
+    <a id="btn_cancel" class="btn orange">取消</a>
+</div>

@@ -1,0 +1,450 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Config>
+  <Application ID="DoCareCVAC" ValidateLevel="10">
+    <View ID="Regist" Name="患者登记">
+      <Member ID="ClinicNo" Name="门诊ID">
+        <Required Required="false" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+        <Optional Enabled="1">
+          <Member Text="住院号" Value="MrNo" />
+        </Optional>
+      </Member>
+      <Member ID="MrNo" Name="住院ID">
+        <Required Required="false" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+        <Optional Enabled="1">
+          <Member Text="门诊号" Value="ClinicNo" />
+        </Optional>
+      </Member>
+      <Member ID="Name" Name="患者姓名" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="50" Enabled="1" />
+      </Member>
+      <Member ID="Age" Name="患者年龄" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="10" Enabled="1" />
+      </Member>
+      <Member ID="IdcardNo" Name="身份证" >
+        <Required Required="true" Enabled="1" />
+        <Specials Enabled="1">
+          <Special Text="身份证" Value="IdCard" Message="身份证号填写错误" Enabled="1"/>
+        </Specials>
+      </Member>
+      <Member ID="DiseaseTime" Name="发病时间">
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="PhoneNo1" Name="联系电话1（手机）">
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+        <Regexs Enabled="1" >
+          <Regex Text="手机" Value="^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$" />
+        </Regexs>
+      </Member>
+      <Member ID="PhoneNo2" Name="联系电话2（手机）">
+        <Required Required="false" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+        <Regexs Enabled="1" >
+          <Regex Text="手机" Value="^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$" />
+        </Regexs>
+      </Member>
+      <Member ID="TelNo" Name="联系电话1（固话）">
+        <Required Required="false" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+        <Regexs Enabled="1" >
+          <Regex Text="电话" Value="^((0\d{2,3})-)?(\d{7,8})(-(\d{3,5}))?$" />
+        </Regexs>
+      </Member>
+      <Member ID="Gender" Name="患者性别" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="ComingType" Name="来院方式" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="RegistDate" Name="登记时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+    </View>
+
+
+    <View ID="PreHospital" Name="院前评估">
+      <Member ID="Smoking" Name="吸烟史" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="Drinking" Name="饮酒史" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="Score" Name="发病前mRS评分" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+    </View>
+
+
+    <View ID="Emergency" Name="急诊救治">
+      <Member ID="ArrivePatientSideTime" Name="120到达患者身旁时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="DepartureTime" Name="转院出发时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="ArrivedHospitalTime" Name="到院时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="StrokeTeamAdmissionTime" Name="卒中团队接诊时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="RegistrationTime" Name="就诊(挂号)时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="SalvageTime" Name="进入抢救室时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="EcgTime" Name="心电图检查时间" >
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="CtOpenTime" Name="影像学开单时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="CtStartTime" Name="影像学开始检查时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="CtEndTime" Name="影像学完成时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="CtResultTime" Name="影像学完成结果报告时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="ExamineOpenTime" Name="检验开单时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="ExamineResultTime" Name="血常规结果报告时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="BloodClottingResultTime" Name="血凝结果报告时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="CtResult" Name="影像学结果描述" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="100" Enabled="1" />
+      </Member>
+      <Member ID="EcgResult" Name="心电图诊断描述" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="100" Enabled="1" />
+      </Member>
+      <Member ID="ChiefComplaint" Name="主诉" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="100" Enabled="1" />
+      </Member>
+      <Member ID="HistoryPresentIllness" Name="现病史" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="100" Enabled="1" />
+      </Member>
+      <Member ID="FingertipBloodSugar" Name="指尖血糖（mmol/L）" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="10" Enabled="1" />
+      </Member>
+      <Member ID="OpenVeinTime" Name="开通静脉时间" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="CtIsHemorrhage" Name="是否脑出血" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="PlateletCount" Name="血小板计数" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+      </Member>
+      <Member ID="PtResult" Name="PT" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+      </Member>
+      <Member ID="ApttResult" Name="APTT" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+      </Member>
+      <Member ID="InrResult" Name="INR" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+      </Member>
+      <Member ID="Temperature" Name="体温" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+      </Member>
+      <Member ID="PulseRate" Name="脉搏" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+      </Member>
+      <Member ID="RespiratoryRate" Name="呼吸" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+      </Member>
+      <Member ID="Sbp" Name="收缩压" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+      </Member>
+      <Member ID="Dbp" Name="舒张压" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+      </Member>
+      <Member ID="BloodOxygen" Name="血氧" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+      </Member>
+      <Member ID="HeartRate" Name="心率" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+      </Member>
+    </View>
+
+    <View ID="PatientTreatment" Name="绿通救治">
+      <Member ID="DiagnosisDoctor" Name="初步诊断医生">
+        <Required Required="false" Enabled="1" />
+        <Length MaxLength="10" Enabled="1" />
+      </Member>
+      <Member ID="DiagnosisTime" Name="初步诊断时间">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="DiagnosisType" Name="患者初步诊断">
+        <Required Required="false" Enabled="1" />
+      </Member>
+
+      <Member ID="InclusionCriteria" Name="入选标准">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="RelExclusionCriteria3h" Name="发病3h相对排除标准">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="RelExclusionCriteria45h" Name="发病4.5h相对排除标准">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="ExclusionCriteria" Name="排除标准">
+        <Required Required="false" Enabled="1" />
+      </Member>
+
+      <Member ID="TreatmentDecision" Name="治疗决策">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IsThrom" Name="是否溶栓">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="NoThromReasons" Name="未进行溶栓治疗原因">
+        <Required Required="false" Enabled="1" />
+        <Length MaxLength="20" Enabled="1" />
+      </Member>
+      <Member ID="ThromAgreeSignTime" Name="溶栓知情同意谈话并签字">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="RtPaOpenTime" Name="开立rt-PA">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="ThromVeinTime" Name="静脉溶栓时间">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="Weight" Name="体重">
+        <Required Required="false" Enabled="1" />
+        <Regexs Enabled="1" >
+          <Regex Text="正整数" Value="^[1-9]\d*$" />
+        </Regexs>
+      </Member>
+      <Member ID="RtPaDosageUnit" Name="溶栓剂量">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IllnessStateIn24h" Name="24小时内患者病情">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IsOtherDrug" Name="是否合用其他抗栓药物">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IsUrokinase" Name="尿激酶">
+        <Required Required="false" Enabled="1" />
+      </Member>      
+      <Member ID="ConservativeTreatment" Name="内科保守治疗">
+        <Required Required="false" Enabled="1" />
+      </Member>
+
+      <Member ID="OuthosMethod" Name="患者去向">
+        <Required Required="false" Enabled="1" />
+      </Member>
+
+      <Member ID="EnterOperatingRoomTime" Name="进入手术室时间">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="LeaveOperatingRoomTime" Name="离开手术室时间">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="CerebralAngiographyTime" Name="脑血管造影术">
+        <Required Required="false" Enabled="1" />
+      </Member>
+
+      <Member ID="NimodipineCureType" Name="尼莫地平预防血管痉挛治疗">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="NimodipineDose" Name="每小时剂量">
+        <Required Required="false" Enabled="1" />
+        <Regexs Enabled="1" >
+          <Regex Text="正整数" Value="^[1-9]\d*$" />
+        </Regexs>
+      </Member>
+      <Member ID="NimodipineFrequency" Name="频次">
+        <Required Required="false" Enabled="1" />
+        <Regexs Enabled="1" >
+          <Regex Text="正整数" Value="^[1-9]\d*$" />
+        </Regexs>
+      </Member>
+      <Member ID="NimodipineUsageDays" Name="天">
+        <Required Required="false" Enabled="1" />
+        <Regexs Enabled="1" >
+          <Regex Text="正整数" Value="^[1-9]\d*$" />
+        </Regexs>
+      </Member>
+
+      <Member ID="SahEtiology" Name="蛛网膜下腔出血致病原因">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="SahEtiologyOther" Name="蛛网膜下腔出血致病其它原因">
+        <Required Required="false" Enabled="1" />
+        <Length MaxLength="50" Enabled="1" />
+      </Member>
+      <Member ID="AneurysmCureType" Name="动脉瘤治疗方式">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="AneurysmCureTime" Name="动脉瘤治疗时间">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="CsfShuntType" Name="脑脊液分流">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="CsfShuntTime" Name="脑脊液分流时间">
+        <Required Required="false" Enabled="1" />
+      </Member>
+
+      <Member ID="IatTreatment" Name="治疗方式">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatEmbolectomyDevice" Name="取栓器械类型">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatIsStenting" Name="是否行支架置入术">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatIsMc" Name="多模式检查">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatIsMcCta" Name="CTA">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatIsMcCtp" Name="CTP">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatIsMcMriMra" Name="MRI+MRA">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatIsMcPwi" Name="PWI">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatIsMcVep" Name="血管病变部位">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatDestinationAfterPci" Name="患者介入术后去向">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="OtherDrug" Name="其他抗栓药物">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IsUrokinase" Name="尿激酶">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatMcStartTime" Name="多模式检查开始时间">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatMcEndTime" Name="多模式检查结束时间">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatReachCrTime" Name="到达导管室时间">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatFasEndTime" Name="股动脉置鞘完成时间">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatArchtographicTime" Name="弓上造影时间">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatItrTime" Name="血管内治疗再通时间">
+        <Required Required="false" Enabled="1" />
+      </Member>
+      <Member ID="IatThromEndTime" Name="取栓完成时间">
+        <Required Required="false" Enabled="1" />
+      </Member>
+    </View>
+
+    <View ID="Outcome" Name="出院信息">
+      <Member ID="InhosDate" Name="入院情况">
+        <Required Required="false" Enabled="1" />
+        <Length MaxLength="100" Enabled="1" />>
+      </Member>
+      <Member ID="InhosDate" Name="入院时间">
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="OutHospitalTime" Name="出院时间">
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="OutHospitalDiagnosis" Name="出院诊断">
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="100" Enabled="1" />
+      </Member>
+      <Member ID="Hod" Name="住院天数" >
+        <Required Required="true" Enabled="1" />
+        <Length MaxLength="10" Enabled="1" />
+        <Regexs Enabled="1" >
+          <Regex Text="住院天数" Value="^[1-9]\d*$" />
+        </Regexs>
+      </Member>
+      <Member ID="IsCe" Name="是否是心源性脑梗死" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="OcspType" Name="OCSP分型" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="ToastType" Name="TOAST分型" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="CissType" Name="CISS分型" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="OuthosMethod" Name="患者去向" >
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="AdmissionTotalAmount" Name="住院总费用" >
+        <Required Required="true" Enabled="1" />
+        <Regexs Enabled="1" >
+          <Regex Text="总费用" Value="^(([1-9]\d*|[1-9]\d*\.\d{1,2}|0\.(((?![0]{1})\d{1})|((?![0]{2})\d{2})))|0)$"/>
+        </Regexs>
+      </Member>
+      <Member ID="DrugExpense" Name="药物费用" >
+        <Required Required="true" Enabled="1" />
+        <Regexs Enabled="1" >
+          <Regex Text="药物费用" Value="^(([1-9]\d*|[1-9]\d*\.\d{1,2}|0\.(((?![0]{1})\d{1})|((?![0]{2})\d{2})))|0)$"/>
+        </Regexs>
+      </Member>
+      <Member ID="ExamineExpense" Name="检查费用" >
+        <Required Required="true" Enabled="1" />
+        <Regexs Enabled="1" >
+          <Regex Text="检查费用" Value="^(([1-9]\d*|[1-9]\d*\.\d{1,2}|0\.(((?![0]{1})\d{1})|((?![0]{2})\d{2})))|0)$"/>
+        </Regexs>
+      </Member>
+    </View>
+
+    <View ID="FollowUp" Name="随访配置">
+      <Member ID="DaysAfterPoint" Name="出院后天数">
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="Interval" Name="间隔天数">
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="Times" Name="随访次数">
+        <Required Required="true" Enabled="1" />
+      </Member>
+      <Member ID="TemplateID" Name="模板ID">
+        <Required Required="true" Enabled="1" />
+      </Member>
+    </View>
+  </Application>
+</Config>

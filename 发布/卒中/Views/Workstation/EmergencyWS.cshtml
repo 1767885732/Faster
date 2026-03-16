@@ -1,0 +1,157 @@
+﻿@using DoCare.Framework.Extension
+@using DoCare.ToolKit
+@using DoCare.Component.Basic.Wordbook.Data
+@using DoCare.ToolKit.Timelines.Data
+@using DoCare.CVA.Data
+@using DoCare.CVA.Data.Const
+@model DoCare.CVA.Business.Model.EmergencyWS
+@{
+    Layout = null;
+    List<DictionaryItem> DiagnosisDict = ViewBag.DiagnosisDict as List<DictionaryItem>;
+}
+
+<!DOCTYPE html>
+
+<html style="background:#999;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>急诊工作站</title>
+    <link href="~/Scripts/jquery-easyui/themes/icon.css" rel="stylesheet" />
+    <link href="~/Scripts/jquery-easyui/themes/default/easyui.css" rel="stylesheet" />
+    <link href=@Url.GetCssJsUrl("~/App_Themes/Default/global.css") rel="stylesheet" />
+    <link href=@Url.GetCssJsUrl("~/App_Themes/Default/control.css") rel="stylesheet" />
+    <link href=@Url.GetCssJsUrl("~/App_Themes/Default/page.workstation.css") rel="stylesheet" />
+    <link href="~/App_Themes/Default/frame.timeline.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery-easyui/jquery.easyui.min.js"></script>
+    <script src="~/Scripts/DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/moment.js"></script>
+    <script src="~/Scripts/workstation/EmergencyWS.js"></script>
+
+    <script>
+        var detail = @Html.Raw(JsonKit.Serialize(Model));
+    </script>
+
+    <style>
+        .layout-container-box {
+            width: calc(100% - 320px);
+            width: -moz-calc(100% - 320px);
+            width: -webkit-calc(100% - 320px);
+            min-width: 960px;
+        }
+    </style>
+</head>
+<body>
+    <div class="popup">
+        <div class="emergency">
+            <form>
+                <fieldset>
+                    <input type="hidden" id="RegistId" value="@Model.RegistId" />
+                    <input type="hidden" id="EHRId" value="@Model.EHRId" />
+                    <input type="hidden" id="UserId" value="@ViewBag.User" />
+                    <legend>患者基本信息</legend>
+                    <p>
+                        <label>姓名：</label>
+                        <input type="text" class="have-value" value="@Model.Name">
+                        <label>性别：</label>
+                        <input type="text" class="have-value" value="@(Model.Gender == " 1" ? "男" : Model.Gender=="2" ? "女" : "" )">
+                    </p>
+                    <p>
+                        <label>年龄：</label>
+                        <input type="text" class="have-value" value="@Model.Age">
+                        <label>联系电话：</label>
+                        <input type="text" class="have-value" value="@Model.PhoneNumber">
+                    </p>
+                    <p>
+                        <label>登记时间：</label>
+                        <input type="text" class="have-value" value="@DateKit.Format(Model.EHRTime, " yyyy-MM-dd HH:mm")">
+                        <label>身份证：</label>
+                        <input type="text" class="have-value" value="@Model.IdCardNo">
+                    </p>
+                    <p>
+                        <label>门诊ID：</label>
+                        <input type="text" class="have-value" value="@Model.ClinicNo">
+                        <label>住院ID：</label>
+                        <input type="text" class="have-value" value="@Model.MrNo">
+                    </p>
+                </fieldset>
+                <fieldset>
+                    <legend>患者卒中信息</legend>
+                    <p>
+                        <label><b validateSnow="AttackTime"></b>发病时间：</label>
+                        <input timeId=@TimeLineNodes.D020001 class="datetime" id="AttackTime" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" onchange="" value="@DateKit.Format(Model.AttackTime, "yyyy-MM-dd HH:mm")">
+                    </p>
+                    <p>
+                        <label><b validateSnow="AttackTime"></b>发病地址：</label>
+                        <input type="text" id="AttackAddress" style="width:494px;" value="@Model.AttackAddress">
+                    </p>
+                    <p>
+                        <label><b validateSnow="ArrivedHospitalTime"></b>到达本院大门时间：</label>
+                        <input timeId=@TimeLineNodes.D020101 class="datetime" id="ArrivedHospitalTime" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" onchange="" value="@DateKit.Format(Model.ArrivedHospitalTime, "yyyy-MM-dd HH:mm")">
+                        <label><b validateSnow="AdmissionTime"></b>卒中团队接诊时间：</label>
+                        <input timeId=@TimeLineNodes.D020102 class="datetime" id="AdmissionTime" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" onchange="" value="@DateKit.Format(Model.AdmissionTime, "yyyy-MM-dd HH:mm")">
+                    </p>
+                    <p>
+                        <label><b validateSnow="EcgTime"></b>院内首份心电图：</label>
+                        <input timeId=@TimeLineNodes.D020120 class="datetime" id="EcgTime" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" onchange="" value="@DateKit.Format(Model.EcgTime, "yyyy-MM-dd HH:mm")">
+                        <label><b validateSnow="EcgDiagnoseTime"></b>心电图诊断时间：</label>
+                        <input timeId=@TimeLineNodes.D020121 class="datetime" id="EcgDiagnoseTime" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" onchange="" value="@DateKit.Format(Model.EcgDiagnoseTime, "yyyy-MM-dd HH:mm")">
+                    </p>
+                    <p>
+                        <label><b validateSnow="OpenVeinTime"></b>开通静脉时间：</label>
+                        <input timeId=@TimeLineNodes.D020300 class="datetime" id="OpenVeinTime" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" onchange="" value="@DateKit.Format(Model.OpenVeinTime, "yyyy-MM-dd HH:mm")">
+                    </p>
+                    <p>
+                        <label><b validateSnow="MainComplaint"></b>主诉：</label>
+                        <input type="text" id="MainComplaint" style="width:494px;" value="@Model.MainComplaint">
+                    </p>
+                    <p>
+                        <label><b validateSnow="PresentIllness"></b>现病史：</label>
+                        <input type="text" id="PresentIllness" style="width:494px;" value="@Model.PresentIllness">
+                    </p>
+                   
+                    <p>
+                        <label><b validateSnow="DiagnosisDoctor"></b>诊断医生：</label>
+                        <input type="text" id="DiagnosisDoctor" value="@Model.DiagnosisDoctor">
+                        <label>初步诊断时间：</label>
+                        <input timeId=@TimeLineNodes.D020301 class="datetime" id="DiagnosisTime" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" onchange="" value="@DateKit.Format(Model.DiagnosisTime, "yyyy-MM-dd HH:mm")">
+                     </p>
+                    <p>
+                        <label><b validateSnow="Diagnosis"></b>初步诊断：</label>
+                        @foreach (DictionaryItem item in DiagnosisDict)
+                        {
+                            <label class="medical">
+                                @Html.RadioButtonFor(m => m.Diagnosis, item.Key, new { id = "Diagnosis" + item.Key })<span>@item.Value</span>
+                            </label>
+                        }
+                    </p>
+                </fieldset>
+            </form>
+            <ul class="path">
+                <div class="tl-timeline_block left" id="tmlDiv" style="display:none;background:none;">
+                    <div class="tl-stage">
+                        <ul class="path" id="timeLineUl"></ul>
+                    </div>
+                </div>
+            </ul>
+        </div>
+        <div class="clear"></div>
+        @if (Model.CanTriage)
+        {
+            <div class="opt-area">
+                <a id="save">
+                    <img src="~/App_Themes/Default/img/icon/plt_save.png">
+                    保存&#40;<u>S</u>&#41;
+                </a>
+            </div>
+        }
+        else
+        {
+            <p class="tips-error"><img src="~/App_Themes/Default/img/icon/info_alert_s.png">该患者病历在专科系统中目前处于无法修改的状态</p>
+        }
+    </div>
+</body>
+</html>

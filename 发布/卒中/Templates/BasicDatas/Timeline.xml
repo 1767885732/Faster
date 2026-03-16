@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TimeNode Id="D020001" Name="发病时间" NameEn="DiseaseTime" Desc="" IsKey="1" />
+  
+  <TimeNode Id="D020100" Name="呼救时间" NameEn="CallTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020101" Name="120派车时间" NameEn="DispatchTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020102" Name="120出车时间" NameEn="DepartureTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020103" Name="120到达现场时间" NameEn="ArrivePatientSideTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020104" Name="120离开现场时间" NameEn="LiveTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020105" Name="患者送达医院时间" NameEn="PatientArrivalTime" Desc="" IsKey="1" />
+  
+  <TimeNode Id="D020200" Name="急诊护士接诊时间" NameEn="StrokeTeamAdmissionTime" Desc="" IsKey="1" />  
+  <TimeNode Id="D020201" Name="采血时间" NameEn="BloodCollectionTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020202" Name="送检时间" NameEn="InspectionTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020203" Name="血糖检测完成时间" NameEn="BgCompletionTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020204" Name="院内心电图时间" NameEn="EcgDiagnosisTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020205" Name="开具头颅CT单时间" NameEn="CtOpenTime" Desc="" IsKey="1" />  
+  <TimeNode Id="D020206" Name="患者到达CT/MRI室时间" NameEn="CtStartTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020207" Name="CT/MRI检查结束时间" NameEn="CtEndTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020208" Name="CT/MRI报告时间" NameEn="CtResultTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020209" Name="血常规报告时间" NameEn="XcgTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020210" Name="凝血常规报告时间" NameEn="NxcgTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020211" Name="肾功能及电解质报告时间" NameEn="SgnjdjzTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020212" Name="卒中医生接诊患者时间" NameEn="ArrivedStrokeTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020213" Name="接收时间" NameEn="AcceptanceTime" Desc="" IsKey="1" />
+
+  <TimeNode Id="D020300" Name="溶栓医生接诊患者时间" NameEn="ThromDocVisitTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020301" Name="（溶栓医生）静脉溶栓开始谈话时间" NameEn="ThromConversationTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020302" Name="静脉溶栓患者/家属签字时间" NameEn="ThromAgreeSignTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020303" Name="患者到达溶栓室时间" NameEn="ThromVeinTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020304" Name="首剂给药时间" NameEn="FirstAdministrationTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020305" Name="介入治疗开始谈话时间" NameEn="JrConversationTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020306" Name="介入治疗家属签字时间" NameEn="JrAgreeSignTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020307" Name="患者到达导管室时间" NameEn="IatReachCrTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020308" Name="完成动脉穿刺时间" NameEn="IatSuccessPunctureTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020309" Name="完成造影评估时间" NameEn="IatArchtographicTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020310" Name="首次血管再通时间" NameEn="IatItrTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020311" Name="患者离开导管室时间" NameEn="IatThromEndTime" Desc="" IsKey="1" />
+  <TimeNode Id="D020312" Name="完成造影时间" NameEn="CompletionTime" Desc="" IsKey="1" />
+  
+</Config>

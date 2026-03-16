@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="GCS" Title="颅脑外伤GCS评分" >
+    <Group>
+      <RadioBox Code="GCS001" Title="睁眼反应（E）" Desc="睁眼反应（E）">
+        <Option Id="01" Text="自然睁眼" Score="4"/>
+        <Option Id="02" Text="呼唤睁眼" Score="3"/>
+        <Option Id="03" Text="刺痛睁眼" Score="2"/>
+        <Option Id="04" Text="刺激无反应" Score="1"/>
+      </RadioBox>
+      <RadioBox Code="GCS002" Title="语言反应（V）" Desc="语言反应（V）">
+        <Option Id="01" Text="回答正确" Score="5"/>
+        <Option Id="02" Text="回答错误" Score="4"/>
+        <Option Id="03" Text="可说出单字" Score="3"/>
+        <Option Id="04" Text="可发出声音" Score="2"/>
+        <Option Id="05" Text="无任何反应" Score="1"/>
+      </RadioBox>
+      <RadioBox Code="GCS003" Title="肢体运动（M）" Desc="肢体运动（M）">
+        <Option Id="01" Text="遵嘱动作" Score="6"/>
+        <Option Id="02" Text="定位动作" Score="5"/>
+        <Option Id="03" Text="刺激回缩" Score="4"/>
+        <Option Id="04" Text="疼痛屈曲" Score="3"/>
+        <Option Id="05" Text="刺激伸直" Score="2"/>
+        <Option Id="06" Text="无任何反应" Score="1"/>
+      </RadioBox>
+    </Group>
+  </Template>
+</Config>

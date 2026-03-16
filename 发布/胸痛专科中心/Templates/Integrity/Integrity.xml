@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View Id="EmrView" Name="登记信息">
+    <!-- 基本信息 -->
+    <Member Id="Name" MemberName="姓名"/>
+    <Member Id="Gender" MemberName="性别"/>
+    <Member Id="Age" MemberName="年龄" />
+    <Member Id="Birthday" MemberName="出生日期" Enabled="0"/>
+    <Member Id="Job" MemberName="职业" Enabled="0"/>
+    <Member Id="Nationality" MemberName="民族"  Enabled="0"/>
+    <Member Id="Marriage" MemberName="婚姻" Enabled="0" />
+    <Member Id="CultureDegree" MemberName="文化程度" Enabled="0"/>
+    <Member Id="IdCard" MemberName="证件类别" Enabled="1" />
+    <Member Id="Marriage" MemberName="婚姻"  Enabled="0"/>
+    <Member Id="IdCardNo" MemberName="身份证" Enabled="1"/>
+    <Member Id="PhoneNumber" MemberName="联系电话" Enabled="0"/>
+    <Member Id="HospitalId" MemberName="医疗机构" Enabled="1"/>
+    <!-- 接诊信息 -->
+    <Member Id="OutpatientNo" MemberName="门诊号" Enabled="0"/>
+    <Member Id="InpatientNo" MemberName="住院号" Enabled="0" />
+    <Member Id="AttackTime" MemberName="发病时间"/>
+    <Member Id="DistressCase" MemberName="病情评估" />
+    <Member Id="ComingType" MemberName="来院方式"/>
+    <Member Id="ConsciousnessType" MemberName="意识" />
+    <Member Id="RespirationRate" MemberName="呼吸" />
+    <Member Id="PulseRate" MemberName="脉搏" />
+    <Member Id="HeartRate" MemberName="心率" />
+    <Member Id="BloodPressure" MemberName="血压" />
+    <Member Id="Temperature" MemberName="体温" Enabled="0"/>
+    <Member Id="AttackZone" MemberName="发病区间"/>
+    <Member Id="IsTransHospital" MemberName="直接转送其他医院"/>
+    <Member Id="AmbulanceDepartment" MemberName="出车单位"/>
+    <Member Id="HelpTime" MemberName="呼救时间"/>
+    <Member Id="ArrivedHospitalTime" MemberName="到达本院大门时间"/>
+    <Member Id="FmcTime" MemberName="首次医疗接触时间"/>
+    <Member Id="AdmissionTime" MemberName="院内接诊时间"/>
+    <Member Id="ZcyyType" MemberName="转院类型"/>
+    <Member Id="ZcyyVisitTime" MemberName="转出医院入门时间"/>
+    <Member Id="ZcyyDecisionTime" MemberName="决定转院时间"/>
+    <Member Id="ZcyyLeaveTime" MemberName="离开转出医院时间"/>
+    <Member Id="AttackDept" MemberName="发病科室"/>
+    <!--<Member Id="CwysContactTime" MemberName="床位医生接触时间"/>-->    
+    <Member Id="YqRsScreen" MemberName="溶栓筛查"/>       
+    <Member Id="YqIsRs" MemberName="是否溶栓"/>
+    <Member Id="YqIsRsTaboo" MemberName="存在禁忌症"/>
+    <Member Id="YqIsRsDirect" MemberName="是否溶栓直达"/>    
+    <Member Id="YqRsPlace" MemberName="溶栓场所"/>
+    <Member Id="YqRsStartAgreeTime" MemberName="溶栓知情同意时间"/>
+    <Member Id="YqRsSignAgreeTime" MemberName="签署溶栓知情同意时间" />
+    <Member Id="YqRsStartTime" MemberName="溶栓开始时间"/>
+    <Member Id="YqRsEndTime" MemberName="溶栓结束时间" />
+    <Member Id="YqRsDrugType" MemberName="溶栓药物" />
+    <Member Id="YqRsDrugCode" MemberName="溶栓药物剂量" />
+    <Member Id="YqRsRadiographyTime" MemberName="溶栓后造影时间" />
+    <Member Id="YqIsRsRecanalization" MemberName="是否溶栓再通" />
+    <Member Id="YqIsRemedyPci" MemberName="是否补救PCI"/>
+    <!-- 诊断信息 -->
+    <Member Id="IsEcg" MemberName="是否心电图" />
+    <Member Id="NoEcgReason" MemberName="未获得原因" />
+    <Member Id="EcgTime" MemberName="首份心电图时间" />
+    <Member Id="EcgDiagnosisTime" MemberName="心电图诊断时间" />
+    <Member Id="EcgTransIn" MemberName="接收心电图" />
+    <Member Id="EcgTransInTime" MemberName="接收心电图时间" />
+    <Member Id="EcgTransInType" MemberName="接收心电图方式" />
+    <Member Id="IsPrimaryCtn" MemberName="是否肌钙蛋白"/>
+    <Member Id="PrimaryCtnType" MemberName="首次肌钙蛋白"/>
+    <Member Id="PrimaryCtnValue" MemberName="首次肌钙蛋白"/>
+    <Member Id="PrimaryCtnSamplingTime" MemberName="抽血完成时间"/>
+    <Member Id="PrimaryCtnReportTime" MemberName="获得报告时间" />    
+    <Member Id="IsPrimaryScr" MemberName="是否血清肌酐检验"/>
+    <Member Id="PrimaryScrValue" MemberName="血清肌酐" />
+    <Member Id="IsPrimaryDdimer" MemberName="是否D-二聚体检验"/>
+    <Member Id="PrimaryDdimerValue" MemberName="D-二聚体" />
+    <Member Id="IsPrimaryBnp" MemberName="是否BNP检验"/>
+    <Member Id="PrimaryBnpValue" MemberName="BNP" />
+    <Member Id="IsPrimaryNtProbnp" MemberName="是否NT-proBNP检验"/>
+    <Member Id="PrimaryNtProbnpValue" MemberName="NT-proBNP" />
+    <Member Id="IsPrimaryMyo" MemberName="是否Myo检验"/>
+    <Member Id="PrimaryMyoValue" MemberName="Myo" />
+    <Member Id="IsPrimaryCkmb" MemberName="是否CKMB检验"/>
+    <Member Id="PrimaryCkmbValue" MemberName="CKMB" />
+    <Member Id="IsConsultation" MemberName="心内科会诊"/>
+    <Member Id="ConsultationType" MemberName="会诊方式" />
+    <Member Id="ConsultationNotifyTime" MemberName="通知会诊时间" />
+    <Member Id="ConsultationTime" MemberName="会诊时间"/>
+    <Member Id="PrimaryDiagnosis" MemberName="初步诊断" />
+    <Member Id="PrimaryDiagnosisTime" MemberName="初步诊断时间" Enabled="0"/>
+    <Member Id="IsGiveupTreatment" MemberName="患者自愿放弃后续治疗" />   
+    <Member Id="KillipLevel" MemberName="心功能分级"/>
+    <Member Id="IsBypassEmergency" MemberName="绕行急诊" />
+    <Member Id="IsBypassCcu" MemberName="绕行CCU" />    
+    <!--<Member Id="GraceScore" MemberName="Grace分值" />-->
+    <Member Id="GraceRehazardTime" MemberName="再次危险分层时间" />
+    <Member Id="IsEct" MemberName="CT" />
+    <Member Id="CtNoticeTime" MemberName="通知CT室时间" />
+    <Member Id="CtFinishTime" MemberName="CT室完成准备" />
+    <Member Id="IsCdu" MemberName="彩超" />
+    <Member Id="IsMri" MemberName="MRI" />
+    <Member Id="PrimaryNacsType" MemberName="非ACS心源性胸痛类型" />
+    <Member Id="PrimaryNccpType" MemberName="其它非心源性胸痛类型" />
+    <Member Id="HandleWay" MemberName="处理措施" />
+    <!-- 治疗信息 -->
+    <Member Id="IsPrimaryAntiplatelet" MemberName="抗血小板治疗"/>
+    <Member Id="AspirinDose" MemberName="阿司匹林剂量"/>
+    <Member Id="AspirinTime" MemberName="阿司匹林给药时间"/>
+    <Member Id="IsPrimaryAnticoagulation" MemberName="抗凝治疗" />
+    <Member Id="AnticoagulationTime" MemberName="抗凝时间" Enabled="0"/>
+    <Member Id="AnticoagulationDrug" MemberName="抗凝药物" Enabled="0"/>
+    <Member Id="AnticoagulationDose" MemberName="抗凝药物剂量" Enabled="0"/>
+    <Member Id="IsReperfusion" MemberName="是否再灌注" />
+    <Member Id="NoReperfusionMeasure" MemberName="无再灌注措施"/>
+    <Member Id="ReperfusionMeasure" MemberName="再灌注措施"/>
+    <Member Id="Strategy" MemberName="治疗策略" />
+    <Member Id="InvasiveStrategy" MemberName="侵入性治疗策略" />
+    <Member Id="InterlayerType" MemberName="夹层类型" />
+    <Member Id="CabgDecisionTime" MemberName="决定CABG时间" />
+    <Member Id="CabgStartTime" MemberName="开始CABG时间" />
+    <Member Id="PciTransferType" MemberName="转运PCI方式" />    
+    <Member Id="DecisionPciTime" MemberName="决定介入手术时间" />
+    <Member Id="PciStartAgreeTime" MemberName="开始知情同意时间"/>
+    <Member Id="PciSignAgreeTime" MemberName="签署知情同意时间" />
+    <Member Id="StartConduitTime" MemberName="启动导管室时间" />
+    <Member Id="StartRadiographyTime" MemberName="开始造影时间" />
+    <Member Id="ActivateConduitTime" MemberName="导管室激活时间"/>
+    <Member Id="GwPassageTime" MemberName="导丝通过时间" Enabled="0"/>
+    <Member Id="PciActualTime" MemberName="实际介入手术时间" />
+    <Member Id="EndOperationTime" MemberName="手术结束时间" />
+    <Member Id="IsDelay" MemberName="是否延误" />
+    <Member Id="ReperfusionMeasureRs" MemberName="溶栓后措施"/>
+    <Member Id="EcgTransOut" MemberName="发送心电图"/>
+    <Member Id="EcgTransOutTime" MemberName="发送心电图时间" />
+    <Member Id="EcgTransOutType" MemberName="发送心电图方式" />
+    <Member Id="RsScreen" MemberName="溶栓筛查"/>
+    <Member Id="IsRs" MemberName="是否溶栓"/>
+    <Member Id="IsRsTaboo" MemberName="存在禁忌症"/>
+    <Member Id="IsRsDirect" MemberName="是否溶栓直达"/>
+    <Member Id="RsPlace" MemberName="溶栓场所"/>
+    <Member Id="RsStartAgreeTime" MemberName="溶栓知情同意时间"/>
+    <Member Id="RsSignAgreeTime" MemberName="签署溶栓知情同意时间" />
+    <Member Id="RsStartTime" MemberName="溶栓开始时间"/>
+    <Member Id="RsEndTime" MemberName="溶栓结束时间" />
+    <Member Id="RsDrugType" MemberName="溶栓药物" />
+    <Member Id="RsDrugCode" MemberName="溶栓药物剂量" />
+    <Member Id="IsRsRadiography" MemberName="是否溶栓24H内造影" />
+    <Member Id="IsRsRecanalization" MemberName="是否溶栓再通" />
+    <Member Id="Approach" MemberName="入路" />
+    <Member Id="IntracavityImage" MemberName="腔内影像" />
+    <Member Id="FunctionTest" MemberName="功能检测" />
+    <Member Id="FunctionTestValue" MemberName="功能检测" />
+    <Member Id="IsIabp" MemberName="IABP" />
+    <Member Id="IsPacemaker" MemberName="临时起搏器" />
+    <Member Id="IsEcmo" MemberName="ECMO" />
+    <Member Id="IsAuxiliaryDevice" MemberName="左心室辅助装置" />
+    <Member Id="PciComplication" MemberName="术中并发症" />
+    <!-- 转归信息 -->
+    <Member Id="Diagnosis" MemberName="出院诊断"/>
+    <Member Id="DiagnosisTime" MemberName="确诊时间"/>
+    <Member Id="NacsType" MemberName="非ACS心源性胸痛" />
+    <Member Id="NccpType" MemberName="其它非心源性胸痛类型" />
+    <Member Id="IsHeartFailure" MemberName="院内新发心力衰竭"/>
+    <Member Id="Complication" MemberName="并发症"/>
+    <Member Id="IsHypertension" MemberName="高血压"/>
+    <Member Id="IsHyperlipidemia" MemberName="高脂血症"/>
+    <Member Id="IsDiabetes" MemberName="糖尿病"/>
+    <Member Id="IsSmoking" MemberName="吸烟" />
+    <Member Id="SmokingSituation" MemberName="吸烟状况"/>
+    <Member Id="IsObesity" MemberName="肥胖"/>
+    <Member Id="IsCvdHr" MemberName="早发CVD家族史"/>
+    <Member Id="IsChd" MemberName="冠心病"/>
+    <Member Id="IsChdHor" MemberName="血运重建史"/>
+    <Member Id="IsAf" MemberName="心房颤动"/>
+    <Member Id="AfType" MemberName="心房颤动分型"/>
+    <Member Id="IsChf" MemberName="慢性心力衰竭"/>
+    <Member Id="ChfNyha" MemberName="NYHA分级"/>
+    <Member Id="IsVhd" MemberName="心脏瓣膜病"/>
+    <Member Id="IsCvd" MemberName="脑血管疾病"/>
+    <Member Id="CvdType" MemberName="脑血管疾病类型"/>
+    <Member Id="IsPad" MemberName="外周动脉疾病"/>
+    <Member Id="IsAneurysm" MemberName="主动脉瘤"/>
+    <Member Id="IsCopd" MemberName="COPD"/>
+    <Member Id="IsCkd" MemberName="慢性肾病"/>
+    <Member Id="IsAnemia" MemberName="贫血"/>
+    <Member Id="IsPepticUlcer" MemberName="消化性溃疡"/>
+    <Member Id="IsThyroidDysfunction" MemberName="甲状腺功能异常"/>    
+    <Member Id="IsMalignantTumor" MemberName="恶性肿瘤"/>
+    <Member Id="IsTroponin" MemberName="72h内肌钙蛋白"/>
+    <Member Id="IsBnp" MemberName="脑钠肽"/>
+    <Member Id="IsTc" MemberName="总胆固醇"/>
+    <Member Id="IsTg" MemberName="甘油三酯"/>
+    <Member Id="IsHdlC" MemberName="高密度脂蛋白"/>
+    <Member Id="IsLdlC" MemberName="低密度脂蛋白"/>
+    <Member Id="IsUcc" MemberName="超声心动图"/>
+    <Member Id="Hod" MemberName="住院天数"/>
+    <Member Id="TotalCost" MemberName="总费用"/>
+    <Member Id="OutcomeCode" MemberName="转归方式"/>
+    <Member Id="LeaveTime" MemberName="出院时间" />
+    <Member Id="TreatmentResult" MemberName="治疗结果"/>
+    <Member Id="LeaveEducation" MemberName="离院宣教" Enabled="0"/>
+    <Member Id="IsAntiplatelet" MemberName="是否带抗血小板药物"/>
+    <Member Id="IsAceiOrArb" MemberName="是否带ACEI/ARB"/>
+    <Member Id="IsLipidRegulation" MemberName="是否调脂药物"/>
+    <Member Id="IsBetaBlocker" MemberName="是否带β受体阻滞剂"/>
+    <Member Id="DeathTime" MemberName="死亡时间"/>
+    <Member Id="DeathCause" MemberName="死亡原因"/>
+  </View>
+</Config>

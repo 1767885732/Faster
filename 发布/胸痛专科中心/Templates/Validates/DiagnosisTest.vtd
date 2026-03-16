@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="DiagnosisTest" ViewName="实验室检查">
+    <Member MemberId="SamplingTime" MemberName="抽血时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ReportTime" MemberName="报告时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Result" MemberName="检验结果">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Unit" MemberName="检验单位">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Conclusion" MemberName="检验结论">
+      <Required Required="true" Enabled="1" />
+    </Member>
+  </View>
+</Config>

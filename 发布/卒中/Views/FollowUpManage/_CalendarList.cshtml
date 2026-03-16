@@ -1,0 +1,140 @@
+﻿@using DoCare.ToolKit
+@using DoCare.Framework.Extension
+@model DoCare.CVA.Business.Model.CalendarListModel
+@{
+    ViewBag.Title = "_CalendarList";
+    Layout = null;
+}
+<link href="~/App_Themes/Default/global.css" rel="stylesheet" />
+<link href="~/App_Themes/Default/frame.css" rel="stylesheet" />
+<link href="~/App_Themes/Default/page.records.css" rel="stylesheet" />
+<link href="~/App_Themes/Default/page.frequently.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/angular/angular.min.js"></script>
+<script src="~/Scripts/layer/layer.js"></script>
+<script>
+    var model =  @Html.Raw((JsonKit.Serialize(Model)));
+    var docFollowupList =  @Html.Raw((JsonKit.Serialize(Model.DocFollowupList)));
+    var nugFollowupList =  @Html.Raw((JsonKit.Serialize(Model.NugFollowupList)));
+    var registId = @Html.Raw((JsonKit.Serialize(Model.NugFollowupList)));
+
+    var clickCount = 0;
+    var app = angular.module('CalendarListApp', []);
+    app.controller('CalendarListController', function ($scope, $filter, $http) {
+        $scope.model = model;
+        $scope.docFollowupList = docFollowupList;
+        $scope.nugFollowupList = nugFollowupList;
+        $scope.registId = registId;
+        //搜索
+        $scope.search = function () {
+            $.ajax({
+                type: 'POST',
+                url: "/FollowUpManage/GetCalendarList/",
+                data: { registId: $scope.registId },
+                dataType: 'json',
+                success: function (json) {
+                    if (json.IsSuccess) {
+                        $scope.$apply(function () {
+                            if (json.Data != null && json.Data.length > 0) {
+                                $scope.calendarList = json.Data;
+                            }
+                        });
+                    } else {
+                        layer.alert(json.Message, { icon: 2 });
+                    }
+                },
+            });
+        }
+
+        $scope.pop = function (url) {
+            //debugger;
+            if (url == null || url == "") {
+                return false;
+            }
+            else
+            {
+                window.open(url);
+                //clickCount = clickCount + 1;
+                //if (clickCount == 1)
+                //{
+                    //var para = urlParse(url);
+                    //$.post('/FollowUpManage/CreateFollowup', { registId: para.registId, calendarId: para.calendarId, followupId: para.followupId }, function (str) {
+                    //    layer.open({
+                    //        type: 1,
+                    //        title: '随访单',
+                    //        maxmin: false,
+                    //        shadeClose: false, //点击遮罩关闭层
+                    //        area: ['1200px', '550px'],
+                    //        content: str,
+                    //        end: function () {
+                    //            clickCount = 0;
+                    //            $scope.search();
+                    //        }
+                    //    });
+                    //});
+                //}
+            }
+        }
+    });
+    function urlParse(url) {
+        var obj = {};
+        var reg = /[?&][^?&]+=[^?&]+/g;
+        var arr = url.match(reg);
+
+        if (arr) {
+            arr.forEach(function (item) {
+                var tempArr = item.substring(1).split('=');
+                var key = decodeURIComponent(tempArr[0]);
+                var val = decodeURIComponent(tempArr[1]);
+                obj[key] = val;
+            });
+        }
+        return obj;
+    }
+    angular.bootstrap($(".popup")[0], ['CalendarListApp']);
+</script>
+
+<div class="popup" ng-app="CalendarListApp" ng-controller="CalendarListController">
+    <table style="width:100%; " class="basic-table hospitalized-check even check-up aequilate">
+        <tr style="border:1px solid #ddd;height:29px;">
+            <th style="border:1px solid #ddd;height:29px;">随访事件描述</th>
+            <th style="border:1px solid #ddd;height:29px;">随访时间</th>
+            <th style="border:1px solid #ddd;height:29px;">是否完成</th>
+            <th style="border:1px solid #ddd;height:29px;">随访</th>
+        </tr>
+        <tr>
+            <td colspan="4" style="text-align:left"><h3>医疗&nbsp;&nbsp;<span style="font-weight:normal;font-size:10px;" ng-style="{color: model.IsDocCompleted=='1'?'#3baceb':'#f0ad4e'}" >{{model.IsDocCompleted=="1"?"已完成":"未完成"}}</span></h3></td>
+        </tr>
+        <tr ng-repeat="item in docFollowupList">
+            <td style="text-align:left;width:35%;">
+                {{item.Title}}
+            </td>
+            <td style="text-align:left;width:25%;">
+                {{item.PlanDate}}
+            </td>
+            <td style="text-align:left;width:20%;">
+                {{item.IsEventCompleted}}
+            </td>
+            <td style="text-align:left;width:20%;">
+                <a ng-click="pop(item.Url)">{{item.IsEventCompleted=="已完成"?"查看":"随访"}}</a>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4" style="text-align:left"><h3>护理&nbsp;&nbsp;<span style="font-weight:normal;font-size:10px;" ng-style="{color: model.IsNurCompleted=='1'?'#3baceb':'#f0ad4e'}" >{{model.IsNurCompleted=="1"?"已完成":"未完成"}}</span></h3></td>
+        </tr>
+        <tr ng-repeat="item in nugFollowupList">
+            <td style="text-align:left;width:35%;">
+                {{item.Title}}
+            </td>
+            <td style="text-align:left;width:25%;">
+                {{item.PlanDate}}
+            </td>
+            <td style="text-align:left;width:20%;">
+                {{item.IsEventCompleted}}
+            </td>
+            <td style="text-align:left;width:20%;">
+                <a ng-click="pop(item.Url)">{{item.IsEventCompleted=="已完成"?"查看":"随访"}}</a>
+            </td>
+        </tr>
+    </table>
+</div>

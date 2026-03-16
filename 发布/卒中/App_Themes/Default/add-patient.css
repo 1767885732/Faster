@@ -1,0 +1,99 @@
+.add-dialog {
+    background: #f5f5f5;
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 85%;
+    height: 600px;
+}
+
+.add-nav {
+    background: #fff;
+    height: 50px;
+}
+
+.block-item {
+    cursor: pointer;
+}
+
+.add-nav img {
+    width: 25px;
+}
+
+.add-nav a {
+    color: #007ebc;
+}
+
+.nav-back {
+    padding-left: 15px;
+    font-size: 20px;
+    top: 10px;
+    position: relative;
+}
+
+.nav-text {
+    font-size: 22px;
+    color: #484848;
+}
+
+.nav-close {
+    float: right;
+    padding-right: 20px;
+    padding-top: 15px;
+    font-size: 20px;
+}
+
+.add-blocks {
+    padding: 100px 50px;
+    overflow: hidden;
+    text-align: center;
+}
+
+    .add-blocks > div {
+    }
+
+    .add-blocks a {
+        background: #f5f5f5;
+        position: relative;
+        float: none;
+        display: inline-block;
+        padding: 0px 10px;
+        width: 19%;
+        height: 200px;
+        box-sizing: border-box;
+    }
+
+.block-item {
+    background: #f0f0f0;
+    color: #007ebc;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+    .block-item:hover {
+        background: #007ebc;
+        color: #fff;
+    }
+
+.block-icon {
+    clear: both;
+    display: block;
+    margin: auto;
+    font-size: 50px;
+    text-align: center;
+}
+
+.block-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 19px;
+}
+
+.block-content {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}

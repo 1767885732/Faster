@@ -1,0 +1,127 @@
+﻿@using DoCare.ToolKit
+@{
+    ViewBag.Title = "评分设置";
+    Layout = null;
+}
+<script src="~/Scripts/JSLINQ.js"></script>
+<script>
+    String.prototype.padLeft = function(totalWidth, paddingChar) {
+        if (this.length >= totalWidth || (paddingChar == undefined || paddingChar.length == 0))
+            return this;
+        else {
+            left = "";
+            while (left.length < (totalWidth - this.length))
+                left += paddingChar.toString();
+            return left.toString() + this;
+        }
+    };
+    String.prototype.padRight = function(totalWidth, paddingChar) {
+        if (this.length >= totalWidth || (paddingChar == undefined || paddingChar.length == 0))
+            return this;
+        else {
+            right = "";
+            while (right.length < (totalWidth - this.length))
+                right += paddingChar.toString();
+            return this + right.toString();
+        }
+    };
+</script>
+<script>
+    var setting =  @Html.Raw((JsonKit.Serialize(ViewBag.Setting)));
+    var tempData = { isEdit: true };
+    var PermissionSave = @Html.Raw((JsonKit.Serialize(ViewBag.PermissionSave)));
+    $(function () {
+        // 初始化校验器
+        var validator = new MDEValidator("", "Score", $("#_follow_up_setting"));
+
+        var app = angular.module('ngAppScore', []);
+
+        app.controller('ngCtrlScore', function ($scope,$http) {
+            $scope.setting = setting;
+            $scope.templateList = setting.DetailList;
+            var RootList = JSLINQ($scope.templateList).Distinct(function(item){ return item.Root; }).items;
+            var typeMenu = new Array();
+            for (var i = 0; i < RootList.length; i++) {
+                var menuList = JSLINQ($scope.templateList).Where(function(item){return item.Root==RootList[i]}).Select(function(item){ return item; });
+                typeMenu.push({
+                    Root:RootList[i],
+                    BC:menuList.FirstOrDefault().BC,
+                    menuList:menuList.items,
+                });
+            }
+            $scope.typeMenu = typeMenu;
+
+            $scope.save = function()
+            {
+                // 验证后保存
+                if (!validator.DoValidate()){
+                    return false;
+                }
+                var templateArray = new Array();
+                for (var i = 0; i < $scope.typeMenu.length; i++) {
+                    var menuList = $scope.typeMenu[i].menuList;
+                    for (var j = 0; j < menuList.length; j++) {
+                        templateArray.push(menuList[j]);
+                    }
+                }
+                $scope.setting.DetailList = templateArray;
+                $http({
+                    method: 'POST',
+                    url: '/Setting/SaveScore',
+                    data: {model:$scope.setting}
+                }).then(function successCallback(response) {
+                    if(response.data.IsSuccess){
+                        layer.alert("保存成功", { icon: 1 });
+                    }
+                    else
+                    {
+                        layer.alert(response.data.Message, { icon: 2 });
+                    }
+                }, function errorCallback(response) {
+                    // 请求失败执行代码
+                    layer.alert("请求失败！", { icon: 2 });
+                });
+            }
+        });
+        angular.bootstrap($(".content")[0], ['ngAppScore']);
+    });
+</script>
+<div class="content" ng-app="ngAppScore" ng-controller="ngCtrlScore">
+    <form id="_follow_up_setting">
+        <fieldset class="medical-record">
+            <button class="operating-btn medical-save-btn" ng-click="save()" id="btnSave"><img src="~/App_Themes/Default/img/icon/save.png"></button>
+            <div class="score-box">
+                <div class="score-detail">
+                    <table class="check-up">
+                        <tr ng-repeat="x in typeMenu">
+                            <td style="width:30%">
+                                <span class="score-sign">
+                                    <span ng-class="x.BC"></span>
+                                    <strong>{{x.Root}}</strong>
+                                </span>
+                            </td>
+                            <td style="width:70%">
+                                <table style="width:100%;">
+                                    <tr ng-repeat="m in x.menuList">
+                                        <td style="width:30%">
+                                            <label>
+                                                <input type="checkbox" name="g" ng-model="m.Checked" /> <span>{{m.Name}}</span>
+                                            </label>
+                                        </td>
+                                        <td style="width:70%">
+                                            <label>
+                                                <span>轻度或正常范围</span>
+                                                <input type="text" value="{{m.Min}}" ng-model="m.Min" />~
+                                                <input type="text" value="{{m.Max}}" ng-model="m.Max" /><br />
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

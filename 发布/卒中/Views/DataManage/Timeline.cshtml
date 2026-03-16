@@ -1,0 +1,206 @@
+﻿@model DoCare.CVA.Data.TimelineModel
+@using DoCare.ToolKit
+@{
+    Layout = null;
+}
+
+<link href="~/App_Themes/Default/page.timeline.css" rel="stylesheet" />
+<style>
+.toolbar {
+    top: 40px;
+    right: 10px;
+    position: fixed;
+    z-index:999;
+}
+.toolbar .print {
+    background-image: url(../../App_Themes/Default/img/icon/print.png);
+}
+
+.toolbar a {
+    width: 60px;
+    height: 60px;
+    margin-left: 10px;
+    display: inline-block;
+    border-radius: 4px;
+    background: #000;
+    filter: Alpha(opacity=20);
+    background-color: rgba(0,0,0,0.2);
+    background-position: center;
+    background-repeat: no-repeat;
+    text-align: center;
+}
+
+    /*.buttonA {
+        height: 40px;
+        padding: 0 15px;
+        border: 1px solid #dedede;
+        background-color: #fff;
+        color: #333;
+        border-radius: 2px;
+        font-weight: 400;
+        cursor: pointer;    
+    }*/
+
+</style>
+<script type="text/javascript">
+    debugger;
+    var model = @Html.Raw((JsonKit.Serialize(Model)));
+    function printView() {
+        $(".toolbar").hide();
+        $(".notForPrint").hide();
+        $(".forPrint").show();
+        print("#case");
+        $(".toolbar").show();
+        $(".notForPrint").show();
+        $(".forPrint").hide();
+    }
+    function OpenUrl(url, type) {
+        //registId
+        debugger;
+        url = "/DataManage/ChargeView?registId="+model.RegistId+"&type="+type;
+        window.open(url, '_blank')
+    }
+</script>
+<div class="time-record" id="case">
+    <div class="toolbar">
+        <a class="print" title="打印" onclick="return printView();"></a>
+    </div>
+    <table border="0" style="width:100%">
+        <tr>
+            <td><label>患者：</label>@Model.Name</td>
+            <td><label>登记时间：</label>@(Model.RegistTime == null ? "" : Model.RegistTime.Value.ToString("yyyy-MM-dd HH:mm"))</td>
+            <td><label>门诊号：</label>@Model.ClinicNo</td>
+        </tr>
+        <tr>
+            <td><label>诊断：</label>@Model.Diagnosis</td>
+        </tr>
+    </table>
+    <div class="horizon-line"></div>
+    <div class="time">
+        <ul class="notForPrint">
+            <li>时间节点</li>
+            <li>发生时间</li>
+            <li>实际时长</li>
+        </ul>
+        <div class="time-lines">
+            <div class="time-details notForPrint">
+                @for (int i = 0; i < Model.timeline.Nodes.Count; i++)
+                {
+                    var node = Model.timeline.Nodes[i];
+                    var node_pre = i == 0 ? null : Model.timeline.Nodes[i - 1];
+                    bool isNewDay = (node_pre == null) || (node.Value == null) || (node_pre.Value == null) || (node.Value.Value.Year != node_pre.Value.Value.Year || node.Value.Value.Month != node_pre.Value.Value.Month || node.Value.Value.Day != node_pre.Value.Value.Day);
+                    <dl class="@(node.IsKeyNode ? "material-time" : "")">
+                        <dt>@node.Name</dt>
+                        @if (string.IsNullOrWhiteSpace(@node.GetTime()))
+                        {
+                            <dd style=" background-image: url('../../App_Themes/Default/img/timeline/time_bg.png')"></dd>
+                        }
+                        else
+                        {
+                            <dd>@node.GetTime()</dd>
+                        }
+                        @if (i != 0)
+                        {
+                            if (node.Value != null)
+                            {
+                                <dd>@Math.Round(Model.timeline.BackwardOffset(node.Key).Value.TotalMinutes, 0)</dd>
+                            }
+                        }
+                        @if (isNewDay)
+                        {
+                            if (node.Value != null)
+                            {
+                                <dd class="date">@node.GetDayOfMonth()</dd>
+                            }
+                        }
+                    </dl>
+                }
+            </div>
+            <div class="forPrint" style="display:none;">
+                <table style="width:100%;" border="1" cellspacing="0">
+                    <tr>
+                        <td>事件</td>
+                        <td>时间</td>
+                        <td>时间间隔</td>
+                        <td>目标时间（min）</td>
+                        <td>实际时间（min）</td>
+                        <td>备注</td>
+                    </tr>
+                    @foreach (var tes in Model.TimeEvents.TimeEventList.OrderBy(p=>p.Order))
+                    {
+                        <tr>
+                            <td>@tes.Name</td>
+                            <td>@tes.EventTime</td>
+                            <td>@tes.EventDesc</td>
+                            <td>@tes.TargetValue</td>
+                            @if (@tes.Sign == "1")
+                            {
+                                <td style="color:red;">@tes.ActualValue</td>
+                            }
+                            else
+                            {
+                                <td>@tes.ActualValue</td>
+                            }
+                            
+                            <td>@tes.Remarks</td>
+                        </tr>
+                    }
+
+
+                    @*@for (int i = 0; i < Model.timeline.Nodes.Count; i++)
+                    {
+                        var node = Model.timeline.Nodes[i];
+                        var node_pre = i == 0 ? null : Model.timeline.Nodes[i - 1];
+                        bool isNewDay = (node_pre == null) || (node.Value == null) || (node_pre.Value == null) || (node.Value.Value.Year != node_pre.Value.Value.Year || node.Value.Value.Month != node_pre.Value.Value.Month || node.Value.Value.Day != node_pre.Value.Value.Day);
+                        <tr>
+                            <td>@node.Name</td>
+                            @if (string.IsNullOrWhiteSpace(@node.GetTime()))
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td>@node.Value</td>
+                            }
+                            @if (i != 0 && node.Value != null)
+                            {
+                                <td>@Math.Round(Model.timeline.BackwardOffset(node.Key).Value.TotalMinutes, 0)</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        </tr>
+                    }*@
+            </table>
+                <p>
+                    <span>接诊医师：@Model.Doctor</span>
+                    <span style="margin-left:200px">绿通护士：@Model.Nurse</span>
+                </p>
+            </div>
+        </div>
+        @*<div class="check-time">
+            <span>门-急诊医生接诊：<strong>@Model.D2EAT</strong>mins</span>
+            <span>门-CT开始：<strong>@Model.D2CTS</strong>mins</span>
+            <span>门-CT结果：<strong>@Model.D2CTR</strong>mins</span>
+            <span>DNT时间：<strong>@Model.DNT</strong>mins</span>
+            <span>OTT时间：<strong>@Model.OTT</strong>mins</span>
+        </div>*@
+        <div class="check-time notForPrint">
+            <button><a onclick="return OpenUrl('/DataManage/ChargeView','1')">溶栓质控</a></button>
+            &nbsp;&nbsp;&nbsp;&nbsp;<button><a onclick="return OpenUrl('/DataManage/ChargeView','2')">溶栓+介入桥接质控</a></button>
+            &nbsp;&nbsp;&nbsp;&nbsp;<button><a onclick="return OpenUrl('/DataManage/ChargeView','3')">介入质控</a></button>
+        </div>
+    </div>
+    <div class="horizon-line"></div>
+    
+    @*<p style="display:none;">
+        <span>医生签名：</span>
+        <span style="margin-left:200px">护士签名：</span>
+        @*<strong>说明</strong>
+        1.时间节点：实际救治过程中的具体事件的时间定义描述；<br>
+        2.发生时间：对应时间节点的时间，只显示小时和分钟，若日期发生变化，则会以一个日历图标标注日期；<br>
+        3.实际时长：当前这个时间节点发生的时间距离上一个时间节点之间的时长，上一个时间是相对的，不确定是哪个时间，就是时间轴上显示的前一个时间节点；<br>
+        4.背景橘色：关键时间节点，可能是需要考核的关键点。
+    </p>*@
+</div>

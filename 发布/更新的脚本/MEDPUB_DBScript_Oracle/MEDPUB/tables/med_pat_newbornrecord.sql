@@ -1,0 +1,105 @@
+-- Create table
+create table MED_PAT_NEWBORNRECORD
+(
+  patient_no                     VARCHAR2(40) not null,
+  mother_name                    VARCHAR2(40),
+  phone_number                   VARCHAR2(40),
+  person_say                     VARCHAR2(200),
+  birth_parity                   VARCHAR2(10),
+  delivery_times                 VARCHAR2(10),
+  gestational_age                VARCHAR2(10),
+  birth_way                      VARCHAR2(40),
+  birth_weight                   NUMBER(10),
+  birth_defect                   VARCHAR2(40),
+  amniotic_fluid                 VARCHAR2(20),
+  amniotic_fluid_amount          NUMBER(20),
+  placenta                       VARCHAR2(10),
+  umbilical_cord                 VARCHAR2(10),
+  prenatal_steroid_hormones      VARCHAR2(10),
+  apgar_one_minute               VARCHAR2(10),
+  apgar_five_minute              VARCHAR2(10),
+  apgar_ten_minute               VARCHAR2(10),
+  critical_points                VARCHAR2(10),
+  in_hos_time                    DATE,
+  in_hos_desc                    VARCHAR2(1000),
+  mother_blood_type              VARCHAR2(10),
+  mother_rh_blood_type           VARCHAR2(10),
+  mother_whether_smoke           VARCHAR2(10),
+  mother_infection_history       VARCHAR2(200),
+  mother_medication_history      VARCHAR2(200),
+  mother_allergies_history       VARCHAR2(200),
+  asphyxia_resuscitation_history VARCHAR2(200),
+  mother_age                     VARCHAR2(10),
+  mother_id_card                 VARCHAR2(50),
+  family_address                 VARCHAR2(200),
+  born_hospital                  VARCHAR2(100)
+)
+tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 1
+  maxtrans 255;
+-- Add comments to the columns 
+comment on column MED_PAT_NEWBORNRECORD.patient_no
+  is '患者编号';
+comment on column MED_PAT_NEWBORNRECORD.mother_name
+  is '母亲姓名';
+comment on column MED_PAT_NEWBORNRECORD.phone_number
+  is '联系电话';
+comment on column MED_PAT_NEWBORNRECORD.person_say
+  is '主诉';
+comment on column MED_PAT_NEWBORNRECORD.birth_parity
+  is '出生胎次';
+comment on column MED_PAT_NEWBORNRECORD.delivery_times
+  is '产次';
+comment on column MED_PAT_NEWBORNRECORD.gestational_age
+  is '胎龄（周）';
+comment on column MED_PAT_NEWBORNRECORD.birth_way
+  is '出生方式';
+comment on column MED_PAT_NEWBORNRECORD.birth_weight
+  is '出生体重';
+comment on column MED_PAT_NEWBORNRECORD.birth_defect
+  is '出生缺陷';
+comment on column MED_PAT_NEWBORNRECORD.amniotic_fluid
+  is '羊水';
+comment on column MED_PAT_NEWBORNRECORD.amniotic_fluid_amount
+  is '羊水量';
+comment on column MED_PAT_NEWBORNRECORD.placenta
+  is '胎盘';
+comment on column MED_PAT_NEWBORNRECORD.umbilical_cord
+  is '脐带';
+comment on column MED_PAT_NEWBORNRECORD.prenatal_steroid_hormones
+  is '产前类固醇激素';
+comment on column MED_PAT_NEWBORNRECORD.apgar_one_minute
+  is 'Apgar评分1分钟';
+comment on column MED_PAT_NEWBORNRECORD.apgar_five_minute
+  is 'Apgar评分5分钟';
+comment on column MED_PAT_NEWBORNRECORD.apgar_ten_minute
+  is 'Apgar评分10分钟';
+comment on column MED_PAT_NEWBORNRECORD.critical_points
+  is '危重评分';
+comment on column MED_PAT_NEWBORNRECORD.in_hos_time
+  is '入院时间';
+comment on column MED_PAT_NEWBORNRECORD.in_hos_desc
+  is '入院诊断';
+comment on column MED_PAT_NEWBORNRECORD.mother_blood_type
+  is '母亲血型';
+comment on column MED_PAT_NEWBORNRECORD.mother_rh_blood_type
+  is '母亲rh血型';
+comment on column MED_PAT_NEWBORNRECORD.mother_whether_smoke
+  is '是否吸烟';
+comment on column MED_PAT_NEWBORNRECORD.mother_infection_history
+  is '感染史';
+comment on column MED_PAT_NEWBORNRECORD.mother_medication_history
+  is '用药史';
+comment on column MED_PAT_NEWBORNRECORD.mother_allergies_history
+  is '过敏史';
+comment on column MED_PAT_NEWBORNRECORD.asphyxia_resuscitation_history
+  is '窒息复苏史';
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table MED_PAT_NEWBORNRECORD
+  add constraint PK_NEWBORNRECORD primary key (PATIENT_NO)
+  using index 
+  tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 2
+  maxtrans 255;

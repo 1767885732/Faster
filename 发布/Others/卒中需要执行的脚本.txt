@@ -1,0 +1,6 @@
+update CM_MENUS set name='卒中数据'  where id='M010';
+update  CM_MENUS set name='数据质控'  where id='M030';
+
+update  CM_MENUS set name='数据检查'  where id='M040';
+
+update CM_MENUS set name='患者随访'  where id='M080';

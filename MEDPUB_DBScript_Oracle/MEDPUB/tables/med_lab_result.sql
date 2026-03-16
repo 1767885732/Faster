@@ -1,0 +1,41 @@
+-- Create table
+create table MED_LAB_RESULT
+(
+  test_no            VARCHAR2(40) not null,
+  item_no            VARCHAR2(40) not null,
+  report_item_name   VARCHAR2(40),
+  report_item_code   VARCHAR2(40),
+  abnormal_indicator VARCHAR2(40),
+  result             VARCHAR2(40),
+  units              VARCHAR2(40),
+  result_date_time   DATE,
+  reference_result   VARCHAR2(40)
+)
+tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table MED_LAB_RESULT
+  add constraint PK_MED_LAB_RESULT primary key (TEST_NO, ITEM_NO)
+  using index 
+  tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Grant/Revoke object privileges 
+grant select, insert, update, delete on MED_LAB_RESULT to ROLE_DOCARE;

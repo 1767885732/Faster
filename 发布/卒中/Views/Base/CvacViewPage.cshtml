@@ -1,0 +1,1182 @@
+﻿@{
+    Layout = null;
+}
+@using DoCare.Framework.Extension
+@using DoCare.ToolKit
+@*@model DoCare.CVA.Data.CvacElectronicMedicalRecord*@
+<title>患者病案信息</title>
+
+<link href="~/App_Themes/Default/global.css" rel="stylesheet" />
+<link href="~/App_Themes/Default/control.css" rel="stylesheet" />
+<link href="~/App_Themes/Default/frame.css" rel="stylesheet" />
+<link href="~/App_Themes/Default/page.timeline.css" rel="stylesheet" />
+<link href="~/App_Themes/Default/page.history.css" rel="stylesheet" />
+
+<script src="~/Scripts/angular/angular.min.js"></script>
+<script src="~/Scripts/filterModule.js"></script>
+<script src="~/Scripts/directiveModule.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/hover.js"></script>
+
+<script>
+    var Model =  @Html.Raw(JsonKit.Serialize(Model));
+    $(function () {
+        var app = angular.module('ngAppCvac', ['mdsdFilter', 'mdsdDirective']);
+        app.controller('ngCvacCtrl', function ($scope) {
+            $scope.model = Model;
+            $scope.patientRegist = Model.PatientRegist;
+            $scope.preHospital = Model.PreHospital;
+            $scope.emergency = Model.Emergency;
+            $scope.treatment = Model.Treatment;
+            $scope.inhospitalTreatment = Model.InhospitalTreatment;
+            $scope.Outcome = Model.Outcome;
+            $scope.examinations = Model.Examinations;
+            $scope.inspections = Model.Inspections;
+            $scope.medications = Model.Medications;
+            $scope.operations = Model.Operations;
+
+            $scope.GetIatTreatmentDesc = function () {
+                var desc = "";
+                if ($scope.treatment.PatientTreatment.IatTreatment[0]) {
+                    desc += "[支架取栓]";
+                }
+                if ($scope.treatment.PatientTreatment.IatTreatment[1]) {
+                    desc += "[动脉溶栓]";
+                }
+                if ($scope.treatment.PatientTreatment.IatTreatment[2]) {
+                    desc += "[动脉碎栓]";
+                }
+                if ($scope.treatment.PatientTreatment.IatTreatment[3]) {
+                    desc += "[抽吸导管]";
+                }
+                return desc;
+            }
+
+            $scope.GetOtherDrugDesc = function () {
+                var desc = "";
+                if ($scope.treatment.PatientTreatment.OtherDrug[0]) {
+                    desc += "[替罗非班]";
+                }
+                if ($scope.treatment.PatientTreatment.OtherDrug[1]) {
+                    desc += "[抗凝药]";
+                }
+                if ($scope.treatment.PatientTreatment.OtherDrug[2]) {
+                    desc += "[抗血小板药物]";
+                }
+                return desc;
+            }
+        });
+        angular.bootstrap($("#case")[0], ['ngAppCvac']);
+    });
+</script>
+
+<body>
+    <div id="case" class="case" ngAppCvac" ng-controller="ngCvacCtrl">
+        <div class="toolbar">
+            <a class="print" title="打印" onclick="return printView();"></a>
+            @*<a class="update" title="上报"></a>
+                <a class="examine" title="审核"></a>*@
+        </div>
+        @*患者登记*@
+        <div class="column">
+            <div class="tit subNav">
+                <h3>患者登记信息</h3>
+            </div>
+            <div class="content navContent">
+                <dl>
+                    <dt>医院</dt>
+                    <dd>{{patientRegist.OrgName}}</dd>
+                </dl>
+                <dl>
+                    <dt>患者姓名</dt>
+                    <dd>{{patientRegist.Name}}</dd>
+                </dl>
+                <dl>
+                    <dt>患者年龄</dt>
+                    <dd>{{patientRegist.Age}}</dd>
+                </dl>
+                <dl>
+                    <dt>性别</dt>
+                    <dd>{{patientRegist.Gender}}</dd>
+                </dl>
+                <dl>
+                    <dt>登记日期</dt>
+                    <dd>{{patientRegist.RegistDate | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl>
+                    <dt>患者身份证号</dt>
+                    <dd>{{patientRegist.IdcardNo}}</dd>
+                </dl>
+                <dl>
+                    <dt>市民卡号</dt>
+                    <dd>{{patientRegist.CitizenCardNo}}</dd>
+                </dl>
+                <dl>
+                    <dt>联系电话</dt>
+                    <dd>{{patientRegist.Phone}}</dd>
+                </dl>
+                <dl>
+                    <dt>门诊号</dt>
+                    <dd>{{patientRegist.ClinicNo}}</dd>
+                </dl>
+                <dl>
+                    <dt>住院号</dt>
+                    <dd>{{patientRegist.MrNo}}</dd>
+                </dl>
+                <dl>
+                    <dt>发病时间/末次正常时间</dt>
+                    <dd>{{patientRegist.DiseaseTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl>
+                    <dt>发病地址</dt>
+                    <dd>{{patientRegist.AttackAddress}}</dd>
+                </dl>
+                <dl>
+                    <dt>来院方式</dt>
+                    <dd>{{patientRegist.ComingType}}</dd>
+                </dl>
+            </div>
+        </div>
+        @*时间轴*@
+        <div class="column">
+            <div class="tit subNav">
+                <h3>患者就诊活动时间数据集</h3>
+            </div>
+            <div class="time navContent">
+                <ul>
+                    <li>时间节点</li>
+                    <li>发生时间</li>
+                    <li>实际时长</li>
+                </ul>
+                <div class="time-lines">
+                    <div class="time-details">
+                        @for (int i = 0; i < Model.timelineModel.timeline.Nodes.Count; i++)
+                        {
+                            var node = Model.timelineModel.timeline.Nodes[i];
+                            var node_pre = i == 0 ? null : Model.timelineModel.timeline.Nodes[i - 1];
+                            bool isNewDay = (node_pre == null) || (node.Value == null) || (node_pre.Value == null) || (node.Value.Value.Year != node_pre.Value.Value.Year || node.Value.Value.Month != node_pre.Value.Value.Month || node.Value.Value.Day != node_pre.Value.Value.Day);
+                            <dl class="@(node.IsKeyNode ? "material-time" : "")">
+                                <dt>@node.Name</dt>
+                                <dd>@node.GetTime()</dd>
+                                @if (i != 0)
+                                {
+                                    <dd>@Math.Round(Model.timelineModel.timeline.BackwardOffset(node.Key).TotalMinutes, 0)</dd>
+                                }
+                                @if (isNewDay)
+                                {
+                                    <dd class="date">@node.GetDayOfMonth()</dd>
+                                }
+                            </dl>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*院前急救*@
+        <div class="column" ng-show="preHospital != null">
+            <div class="tit subNav">
+                <h3>院前急救</h3>
+            </div>
+            <div class="content navContent">
+                <dl>
+                    <dt>呼救时间</dt>
+                    <dd>{{preHospital.PreHospitalAssessment.CallTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="patientRegist.ComingType=='2'">
+                    <dt>转院出发时间</dt>
+                    <dd>{{preHospital.PreHospitalAssessment.DepartureTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl>
+                    <dt>医生到达现场时间</dt>
+                    <dd>{{preHospital.PreHospitalAssessment.ArrivePatientSideTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl>
+                    <dt>120首诊医生</dt>
+                    <dd>{{preHospital.PreHospitalAssessment.FmcDoctor}}</dd>
+                </dl>
+                <dl>
+                    <dt>首次医疗接触时间</dt>
+                    <dd>{{preHospital.PreHospitalAssessment.FmcTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl>
+                    <dt>院前心电图时间</dt>
+                    <dd>{{preHospital.PreHospitalAssessment.FmcPhepECGTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl>
+                    <dt>心电图诊断时间</dt>
+                    <dd>{{preHospital.PreHospitalAssessment.FmcECGDiagnosisTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl>
+                    <dt>体温</dt>
+                    <dd>{{preHospital.VitalSign.Temperature}}<em>℃</em></dd>
+                </dl>
+                <dl>
+                    <dt>脉搏</dt>
+                    <dd>{{preHospital.VitalSign.PulseRate}}<em>次/分钟</em></dd>
+                </dl>
+                <dl>
+                    <dt>呼吸</dt>
+                    <dd>{{preHospital.VitalSign.RespiratoryRate}}<em>次/分钟</em></dd>
+                </dl>
+                <dl>
+                    <dt>收缩压</dt>
+                    <dd>{{preHospital.VitalSign.Sbp}}<em>mmHg</em></dd>
+                </dl>
+                <dl>
+                    <dt>舒张压</dt>
+                    <dd>{{preHospital.VitalSign.Dbp}}<em>mmHg</em></dd>
+                </dl>
+                <dl>
+                    <dt>血氧</dt>
+                    <dd>{{preHospital.VitalSign.BloodOxygen}}<em>%</em></dd>
+                </dl>
+                <dl>
+                    <dt>心率</dt>
+                    <dd>{{preHospital.VitalSign.HeartRate}}<em>次/分钟</em></dd>
+                </dl>
+                <dl>
+                    <dt>FAST评估</dt>
+                    <dd>{{preHospital.Fast}}</dd>
+                </dl>
+            </div>
+        </div>
+        @*急诊救治*@
+        <div class="column" ng-show="emergency != null">
+            <div class="tit subNav">
+                <h3>绿通评估</h3>
+            </div>
+            <div class="content navContent">
+                <div class="parent">
+                    <div class="level-one">
+                        <dl ng-show="patientRegist.ComingType!='4'">
+                            <dt>到院时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.ArrivedHospitalTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>就诊(挂号)时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.RegistrationTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>诊断医生</dt>
+                            <dd>{{emergency.EmergencyTreatment.EmergencyDoctor}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>卒中救治专科团队接诊时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.StrokeTeamAdmissionTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>进入抢救室时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.SalvageTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>开通静脉时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.OpenVeinTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>院内首份心电图时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.FmcInhospitalECGTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>心电图诊断时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.FmcECGDiagnosisTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>心电图诊断描述</dt>
+                            <dd>{{emergency.EmergencyTreatment.EcgResult}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>是否通知CT室{{emergency.EmergencyTreatment.BoolNoticeCT}}</dt>
+                            <dd>{{emergency.EmergencyTreatment.BoolNoticeCT ? '是' : '否'}}</dd>
+                        </dl>
+                        <dl style="display:none">
+                            <dt>分诊时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.DiagnosisTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl style="display:none">
+                            <dt>急诊医生到达时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.EmergencyDoctorArrivalTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl style="display:none">
+                            <dt>通知影像学检查时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.StrokeTeamAdmissionTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>影像学开单时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.CtOpenTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>进入CT室时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.CtStartTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>离开CT室时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.CtEndTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>影像学报告时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.CtResultTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>是否出血</dt>
+                            <dd>{{emergency.EmergencyTreatment.CtIsHemorrhage == '1' ? '是' : '否'}}</dd>
+                        </dl>
+                        <dl ng-show="emergency.EmergencyTreatment.TriageResultsList[2] || emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>出血部位</dt>
+                            <dd>{{emergency.EmergencyTreatment.DiagnosisType}}</dd>
+                        </dl>
+                        <dl ng-show="emergency.EmergencyTreatment.TriageResultsList[2] || emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>患者去向</dt>
+                            <dd>{{emergency.EmergencyTreatment.OuthosMethod}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>是否通知神经内科</dt>
+                            <dd>{{emergency.EmergencyTreatment.BoolNoticeNeurology  ? '是' : '否'}}</dd>
+                        </dl>
+                        <dl style="display:none">
+                            <dt>进入手术室时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.EnterOperatingRoomTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl style="display:none">
+                            <dt>离开手术室时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.LeaveOperatingRoomTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl style="display:none">
+                            <dt>脑血管造影术</dt>
+                            <dd>{{emergency.EmergencyTreatment.CerebralAngiographyTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl style="display:none">
+                            <dt>尼莫地平预防血管痉挛治疗</dt>
+                            <dd>{{emergency.EmergencyTreatment.NimodipineCureType}}</dd>
+                        </dl>
+                        <dl style="display:none" ng-show="emergency.EmergencyTreatment.NimodipineCureType=='1'">
+                            <dt>使用</dt>
+                            <dd>每次给药剂量 {{emergency.EmergencyTreatment.NimodipineDose}}<sub>mg，</sub>使用 {{emergency.EmergencyTreatment.NimodipineUsageDays}}<sub>天</sub></dd>
+                        </dl>
+                        <dl style="display:none" ng-show="emergency.EmergencyTreatment.NimodipineCureType=='2'">
+                            <dt>使用</dt>
+                            <dd>每次给药剂量{{emergency.EmergencyTreatment.NimodipineDose}}<sub>mg，</sub>频次 {{emergency.EmergencyTreatment.NimodipineFrequency}} 使用 {{emergency.EmergencyTreatment.NimodipineUsageDays}}<sub>天</sub>
+                        </dl>
+                        <dl style="display:none">
+                            <dt>蛛网膜下腔出血致病原因</dt>
+                            <dd ng-show="!emergency.EmergencyTreatment.SahEtiology[3]">{{emergency.EmergencyTreatment.SahEtiology}}</dd>
+                            <dd ng-show="emergency.EmergencyTreatment.SahEtiology[3]">{{emergency.EmergencyTreatment.SahEtiologyOther}}</dd>
+                        </dl>
+                        <dl style="display:none">
+                            <dt>动脉瘤治疗方式</dt>
+                            <dd>{{emergency.EmergencyTreatment.AneurysmCureType}} {{emergency.EmergencyTreatment.AneurysmCureTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl style="display:none">
+                            <dt>脑脊液分流</dt>
+                            <dd>{{emergency.EmergencyTreatment.CsfShuntType}} {{emergency.EmergencyTreatment.CsfShuntTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>血常规开单时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.ExamineOpenTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>血常规结果报告时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.ExamineResultTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>血凝常规开单时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.BloodClotOpenTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>血凝结果报告时间</dt>
+                            <dd>{{emergency.EmergencyTreatment.BloodClottingResultTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl style="height:52px;max-height:54px;" ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>血小板计数</dt>
+                            <dd>{{emergency.EmergencyTreatment.PlateletCount}}<em>*10<sup>9</sup>/L</em></dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>PT</dt>
+                            <dd>{{emergency.EmergencyTreatment.PtResult}}<em>s</em></dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>APTT</dt>
+                            <dd>{{emergency.EmergencyTreatment.ApttResult}}<em>s</em></dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>INR</dt>
+                            <dd>{{emergency.EmergencyTreatment.InrResult}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>血糖</dt>
+                            <dd>{{emergency.EmergencyTreatment.FingertipBloodSugar}}<em>mmol/L</em></dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>主诉</dt>
+                            <dd>{{emergency.EmergencyTreatment.ChiefComplaint}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>现病史</dt>
+                            <dd>{{emergency.EmergencyTreatment.HistoryPresentIllness}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>个人史</dt>
+                            <dd>{{emergency.EmergencyTreatment.PersonalHistories}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]" style="width:100%">
+                            <dt>既往史</dt>
+                            <dd>{{emergency.EmergencyTreatment.PastMedicalHistories}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>是否使用抗血小板药物</dt>
+                            <dd>{{emergency.EmergencyTreatment.IsAntiplatelet=='1'?'是':'否'}}</dd>
+                        </dl>
+                        <dl style="width:75%" ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3] && emergency.EmergencyTreatment.IsAntiplatelet=='1'">
+                            <dt>抗血小板药物</dt>
+                            <dd>{{emergency.Antiplatelet}}</dd>
+                        </dl>
+                        <dl style="width:75%" ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3] && emergency.EmergencyTreatment.IsAntiplatelet=='0'">
+                            <dt>未用药原因</dt>
+                            <dd>{{emergency.EmergencyTreatment.NotUseReasonAntiplatelet}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>是否使用抗凝药物</dt>
+                            <dd>{{emergency.EmergencyTreatment.IsAnticoagulation=='1'?'是':'否'}}</dd>
+                        </dl>
+                        <dl style="width:75%" ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3] && emergency.EmergencyTreatment.IsAnticoagulation=='1'">
+                            <dt>抗凝药物</dt>
+                            <dd>{{emergency.Anticoagulant}}</dd>
+                        </dl>
+                        <dl style="width:75%" ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3] && emergency.EmergencyTreatment.IsAnticoagulation=='0'">
+                            <dt>未用药原因</dt>
+                            <dd>{{emergency.EmergencyTreatment.NotUseReasonAnticoagulation}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>是否使用降压药物</dt>
+                            <dd>{{emergency.EmergencyTreatment.IsAntihypertensive=='1'?'是':'否'}}</dd>
+                        </dl>
+                        <dl style="width:75%" ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3] && emergency.EmergencyTreatment.IsAntihypertensive=='1'">
+                            <dt>降压药物</dt>
+                            <dd>{{emergency.Hypotensive}}</dd>
+                        </dl>
+                        <dl style="width:75%" ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3] && emergency.EmergencyTreatment.IsAntihypertensive=='0'">
+                            <dt>未用药原因</dt>
+                            <dd>{{emergency.EmergencyTreatment.NotUseReasonAntihyperten}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>是否使用降糖药物</dt>
+                            <dd>{{emergency.EmergencyTreatment.IsHypoglycemic=='1'?'是':'否'}}</dd>
+                        </dl>
+                        <dl style="width:75%" ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3] && emergency.EmergencyTreatment.IsHypoglycemic=='1'">
+                            <dt>降糖药物</dt>
+                            <dd>{{emergency.Hypoglycemic}}</dd>
+                        </dl>
+                        <dl style="width:75%" ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3] && emergency.EmergencyTreatment.IsHypoglycemic=='0'">
+                            <dt>未用药原因</dt>
+                            <dd>{{emergency.EmergencyTreatment.NotUseReasonHypoglycemic}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>是否使用调脂药物</dt>
+                            <dd>{{emergency.EmergencyTreatment.IsLipidmodulation=='1'?'是':'否'}}</dd>
+                        </dl>
+                        <dl style="width:75%" ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3] && emergency.EmergencyTreatment.IsLipidmodulation=='1'">
+                            <dt>调脂药物</dt>
+                            <dd>{{emergency.LipidRegulating}}</dd>
+                        </dl>
+                        <dl style="width:75%" ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3] && emergency.EmergencyTreatment.IsLipidmodulation=='0'">
+                            <dt>未用药原因</dt>
+                            <dd>{{emergency.EmergencyTreatment.NotUseReasonLipidmodulation}}</dd>
+                        </dl>
+                        <dl ng-show="!emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+                            <dt>发病前mRs评分</dt>
+                            <dd>{{emergency.MRSScours}}<em>分</em></dd>
+                        </dl>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        @*检查*@
+        <div class="column" ng-if="examinations != null && examinations.length > 0">
+            <div class="tit subNav">
+                <h3>检查</h3>
+            </div>
+            <div class="content navContent">
+                <div class="once" ng-repeat="exam in examinations">
+                    <dl>
+                        <dt>检查单号</dt>
+                        <dd>{{exam.Code}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>检查医生</dt>
+                        <dd>{{exam.Doctor}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>检查时间</dt>
+                        <dd>{{exam.Time | date:'yyyy-MM-dd HH:mm'}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>检查项目名</dt>
+                        <dd>{{exam.Name}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>检查部位</dt>
+                        <dd>{{exam.BodyParts}}</dd>
+                    </dl>
+                    <br />
+                    <dl class="full">
+                        <dt>症状描述</dt>
+                        <dd>{{exam.SymptomDesc}}</dd>
+                    </dl>
+                    <dl class="full">
+                        <dt>检查结论</dt>
+                        <dd>{{exam.Conclusion}}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        @*检验*@
+        <div class="column" ng-if="inspections != null && inspections.length > 0">
+            <div class="tit subNav">
+                <h3>检验</h3>
+            </div>
+            <div class="content navContent">
+                <div class="event" ng-repeat="ins in inspections">
+                    <div class="event-head">
+                        <dl>
+                            <dt>检验单号</dt>
+                            <dd>{{ins.Code}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>检验医生</dt>
+                            <dd>{{ins.Doctor}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>检验时间</dt>
+                            <dd>{{ins.Time | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>检验项目</dt>
+                            <dd>{{ins.Name}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>检查类别</dt>
+                            <dd>{{ins.Type}}</dd>
+                        </dl>
+                    </div>
+
+                    <div class="event-con">
+                        <table class="basic-table">
+                            <tr>
+                                <th>项目</th>
+                                <th>中文名</th>
+                                <th>检验结果</th>
+                                <th>单位</th>
+                                <th>参考范围</th>
+                            </tr>
+                            <tr ng-repeat="item in ins.Items">
+                                <td>{{item.ItemType}}</td>
+                                <td>{{item.ItemName}}</td>
+                                <td>{{item.Result}}</td>
+                                <td>{{item.ItemUnit}}</td>
+                                <td>{{item.Rrs}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*用药*@
+        <div class="column" ng-if="medications != null && medications.length > 0">
+            <div class="tit subNav">
+                <h3>用药</h3>
+            </div>
+            <div class="content navContent">
+                <div class="event" ng-repeat="med in medications">
+                    <div class="event-head">
+                        <dl>
+                            <dt>处方/医嘱号</dt>
+                            <dd>{{med.Code}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>处方医生</dt>
+                            <dd>{{med.Doctor}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>处方时间</dt>
+                            <dd>{{med.Time | date:'yyyy-MM-dd HH:mm'}}</dd>
+                        </dl>
+                        <dl>
+                            <dt>处方描述</dt>
+                            <dd>{{med.Description}}</dd>
+                        </dl>
+                    </div>
+                    <div class="event-con">
+                        <table class="basic-table">
+                            <tr>
+                                <th style="font: 12px/1 Tahoma,Helvetica,Arial,'\5b8b\4f53',sans-serif;">药品</th>
+                                <th style="font: 12px/1 Tahoma,Helvetica,Arial,'\5b8b\4f53',sans-serif;">药品剂型</th>
+                                <th style="font: 12px/1 Tahoma,Helvetica,Arial,'\5b8b\4f53',sans-serif;">用药天数</th>
+                                <th style="font: 12px/1 Tahoma,Helvetica,Arial,'\5b8b\4f53',sans-serif;">每天用药剂量</th>
+                                <th style="font: 12px/1 Tahoma,Helvetica,Arial,'\5b8b\4f53',sans-serif;">用药总剂量</th>
+                                <th style="font: 12px/1 Tahoma,Helvetica,Arial,'\5b8b\4f53',sans-serif;">用药频率</th>
+                            </tr>
+                            <tr ng-repeat="item in med.Items">
+                                <td style="font: 12px/1 Tahoma,Helvetica,Arial,'\5b8b\4f53',sans-serif;">{{item.DrugName}}</td>
+                                <td style="font: 12px/1 Tahoma,Helvetica,Arial,'\5b8b\4f53',sans-serif;">{{item.DrugDosage}}</td>
+                                <td style="font: 12px/1 Tahoma,Helvetica,Arial,'\5b8b\4f53',sans-serif;">{{item.GrdgDays}}</td>
+                                <td style="font: 12px/1 Tahoma,Helvetica,Arial,'\5b8b\4f53',sans-serif;">{{item.DailyDose}}</td>
+                                <td style="font: 12px/1 Tahoma,Helvetica,Arial,'\5b8b\4f53',sans-serif;">{{item.TotalDose}}</td>
+                                <td style="font: 12px/1 Tahoma,Helvetica,Arial,'\5b8b\4f53',sans-serif;">{{item.Ddds}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*患者救治*@
+        <div class="column" ng-show="treatment != null && !emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+            <div class="tit subNav">
+                <h3>绿通救治</h3>
+            </div>
+            <div class="content navContent">
+                <dl>
+                    <dt>诊断医生</dt>
+                    <dd>{{treatment.PatientTreatment.DiagnosisDoctor}}</dd>
+                </dl>
+                <dl>
+                    <dt>诊断时间</dt>
+                    <dd>{{treatment.PatientTreatment.DiagnosisTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl>
+                    <dt>卒中诊断</dt>
+                    <dd>{{treatment.PatientTreatment.DiagnosisType}}</dd>
+                </dl>
+                <dl style="width:100%">
+                    <dt>发病3h相对排除标准</dt>
+                    <dd>{{treatment.RelExclusionCriteria3hStr}}</dd>
+                </dl>
+                <dl style="width:100%">
+                    <dt>发病4.5h相对排除标准</dt>
+                    <dd>{{treatment.RelExclusionCriteria45hStr}}</dd>
+                </dl>
+                <dl style="width:100%">
+                    <dt>排除标准</dt>
+                    <dd>{{treatment.ExclusionCriteriaStr}}</dd>
+                </dl>
+                <dl style="width:100%">
+                    <dt>入选标准</dt>
+                    <dd>{{treatment.InclusionCriteriaStr}}</dd>
+                </dl>
+                <dl>
+                    <dt>是否溶栓</dt>
+                    <dd>{{treatment.PatientTreatment.IsThrom=='1'?'是':'否'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>溶栓知情同意谈话并签字</dt>
+                    <dd>{{treatment.PatientTreatment.ThromAgreeSignTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>医嘱时间</dt>
+                    <dd>{{treatment.PatientTreatment.RtPaOpenTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>静脉溶栓时间</dt>
+                    <dd>{{treatment.PatientTreatment.ThromVeinTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>体重</dt>
+                    <dd>{{treatment.PatientTreatment.Weight}}<em>kg</em></dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>rt-PA剂量</dt>
+                    <dd>{{treatment.PatientTreatment.RtPaDose}}<em>mg</em></dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>rt-PA实际剂量</dt>
+                    <dd>{{treatment.PatientTreatment.ArteryUrokinaseDose}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>溶栓结束时间</dt>
+                    <dd>{{treatment.PatientTreatment.ThrombolyticEndTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>溶栓药物</dt>
+                    <dd>{{treatment.IsUrokinaseStr}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IsUrokinase=='99'">
+                    <dt>其他溶栓药物</dt>
+                    <dd>{{treatment.PatientTreatment.OtherUrokinase}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>用药是否过敏</dt>
+                    <dd>{{treatment.PatientTreatment.IsAllergy == '1' ? '是':'否'}}</dd>
+                </dl>
+
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>是否溶栓不良反应</dt>
+                    <dd>{{treatment.PatientTreatment.ThrombolyticReaction == '1' ? '是':'否'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>溶栓终止时间</dt>
+                    <dd>{{treatment.PatientTreatment.ThrombolyticTerminationTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>多模式检查</dt>
+                    <dd>{{treatment.PatientTreatment.IatIsMc == '1' ? '是':'否'}}</dd>
+                </dl>
+
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatIsMc == '1'">
+                    <dt>CTA</dt>
+                    <dd>{{treatment.PatientTreatment.IatIsMcCta == '1' ? '是':'否'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatIsMc == '1'">
+                    <dt>CTP</dt>
+                    <dd>{{treatment.PatientTreatment.IatIsMcCtp == '1' ? '是':'否'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatIsMc == '1'">
+                    <dt>MRI+MRA</dt>
+                    <dd>{{treatment.PatientTreatment.IatIsMcMriMra == '1' ? '是':'否'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatIsMc == '1'">
+                    <dt>PWI</dt>
+                    <dd>{{treatment.PatientTreatment.IatIsMcPwi == '1' ? '是':'否'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatIsMc == '1'">
+                    <dt>血管病变部位</dt>
+                    <dd>{{treatment.IatIsMcVepStr}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatIsMc == '1'">
+                    <dt>mTICI分</dt>
+                    <dd>{{treatment.MticiScore}}<em>分</em></dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatIsMc == '1'">
+                    <dt>mTICI级</dt>
+                    <dd>{{treatment.MticiLevel}}<em>级</em></dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatIsMc == '1'">
+                    <dt>ASITN-SIR分</dt>
+                    <dd>{{treatment.AsitnScore}}<em>分</em></dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatIsMc == '1'">
+                    <dt>ASITN-SIR级</dt>
+                    <dd>{{treatment.AsitnLevel}}<em>级</em></dd>
+                </dl>
+
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>治疗方式</dt>
+                    <dd>{{treatment.IatTreatmentStr}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>启动导管室时间</dt>
+                    <dd>{{treatment.PatientTreatment.IatStartCrTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>导管室激活时间</dt>
+                    <dd>{{treatment.PatientTreatment.IatActivationCrTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>到达导管室时间</dt>
+                    <dd>{{treatment.PatientTreatment.IatReachCrTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>开始穿刺时间</dt>
+                    <dd>{{treatment.PatientTreatment.IatStartPunctureTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>穿刺成功时间</dt>
+                    <dd>{{treatment.PatientTreatment.IatSuccessPunctureTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>股动脉置鞘完成时间</dt>
+                    <dd>{{treatment.PatientTreatment.IatFasEndTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>弓上造影时间</dt>
+                    <dd>{{treatment.PatientTreatment.IatArchtographicTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>弓上造影结束时间</dt>
+                    <dd>{{treatment.PatientTreatment.IatEndArchtographicTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>血管内治疗再通时间</dt>
+                    <dd>{{treatment.PatientTreatment.IatItrTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>手术结束时间</dt>
+                    <dd>{{treatment.PatientTreatment.IatThromEndTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[0]==true">
+                    <dt>取栓器械类型</dt>
+                    <dd>{{treatment.IatEmbolectomyDeviceStr}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[0]==true && treatment.PatientTreatment.IatEmbolectomyDevice=='99'">
+                    <dt>其他取栓器械类型</dt>
+                    <dd>{{treatment.PatientTreatment.OtherIatEmbolectomyDevice}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[0]==true">
+                    <dt>是否行支架置入术</dt>
+                    <dd>{{treatment.PatientTreatment.IatIsStenting == "1"?"是":"否"}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[0]==true && treatment.PatientTreatment.IatIsStenting == '1'">
+                    <dt>行支架置入术时间</dt>
+                    <dd>{{treatment.PatientTreatment.IatStentingTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[0]==true">
+                    <dt>是否有取栓失败</dt>
+                    <dd>{{treatment.PatientTreatment.IatFailureThrombectomy==true?"是":"否"}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[0]==true && treatment.PatientTreatment.IatFailureThrombectomy==true">
+                    <dt>取栓次数</dt>
+                    <dd>{{treatment.PatientTreatment.IatFailureThrombectomyCount}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[0]==true && treatment.PatientTreatment.IatFailureThrombectomy==true">
+                    <dt>尝试取栓第一次时间</dt>
+                    <dd>{{treatment.PatientTreatment.TryEmbolectomy1Time | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[0]==true && treatment.PatientTreatment.IatFailureThrombectomy==true">
+                    <dt>尝试取栓第二次时间</dt>
+                    <dd>{{treatment.PatientTreatment.TryEmbolectomy2Time | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[0]==true && treatment.PatientTreatment.IatFailureThrombectomy==true">
+                    <dt>尝试取栓第三次时间</dt>
+                    <dd>{{treatment.PatientTreatment.TryEmbolectomy3Time | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[0]==true && treatment.PatientTreatment.IatFailureThrombectomy==true">
+                    <dt>尝试取栓第四次时间</dt>
+                    <dd>{{treatment.PatientTreatment.TryEmbolectomy4Time | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[0]==true && treatment.PatientTreatment.IatFailureThrombectomy==true">
+                    <dt>尝试取栓第五次时间</dt>
+                    <dd>{{treatment.PatientTreatment.TryEmbolectomy5Time | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[0]==true && treatment.PatientTreatment.IatFailureThrombectomy==true">
+                    <dt>尝试取栓第六次时间</dt>
+                    <dd>{{treatment.PatientTreatment.TryEmbolectomy6Time | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[1]==true">
+                    <dt>动脉溶栓时间</dt>
+                    <dd>{{treatment.PatientTreatment.ArteryThromTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[1]==true">
+                    <dt>是否rt-PA剂量</dt>
+                    <dd>{{treatment.PatientTreatment.IsRtPa == "1"? "是" : "否"}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[1]==true && treatment.PatientTreatment.IsRtPa == '1'">
+                    <dt>rt-PA剂量</dt>
+                    <dd>{{treatment.PatientTreatment.ArteryRtPaDose}}<em>mg</em></dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[1]==true">
+                    <dt>动脉溶栓药物</dt>
+                    <dd>{{treatment.ArteryIsUrokinaseStr}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[1]==true && treatment.PatientTreatment.ArteryIsUrokinase=='99'">
+                    <dt>其他动脉溶栓药物</dt>
+                    <dd>{{treatment.PatientTreatment.OtherArteryUrokinase}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IatTreatment[1]==true">
+                    <dt>用药是否过敏</dt>
+                    <dd>{{treatment.PatientTreatment.ArteryIsAllergy=="1" ? "是" : "否" }}</dd>
+                </dl>
+
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>是否出现出血转化</dt>
+                    <dd>{{treatment.PatientTreatment.IsHemorrhageicTransformation == "1"?"是" :"否" }}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>是否合用其他抗栓药物</dt>
+                    <dd>{{treatment.PatientTreatment.IsOtherDrug == "1" ? "是" :"否"}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1' && treatment.PatientTreatment.IsOtherDrug == '1' ">
+                    <dt>其他抗栓药物</dt>
+                    <dd>{{treatment.ArteryOtherDrugStr}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom=='1'">
+                    <dt>患者介入术后去向</dt>
+                    <dd>{{treatment.PatientTreatment.IatDestinationAfterPci}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom!='1'">
+                    <dt>未进行溶栓治疗原因</dt>
+                    <dd>{{treatment.NoThromReasonsStr}}</dd>
+                </dl>
+                <dl ng-show="treatment.PatientTreatment.IsThrom!='1' && treatment.PatientTreatment.NoThromReasons[6]==true">
+                    <dt>其他未进行溶栓治疗原因</dt>
+                    <dd>{{treatment.PatientTreatment.NoThromOtherReasons}}</dd>
+                </dl>
+            </div>
+        </div>
+        @*住院诊疗*@
+        <div class="column" ng-show="inhospitalTreatment != null && !emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+            <div class="tit subNav">
+                <h3>住院诊疗</h3>
+            </div>
+            <div class="content navContent">
+                <div class="level-one">
+                    <dl>
+                        <dt>OCSP分型:</dt>
+                        <dd>{{inhospitalTreatment.OcspType }}</dd>
+                    </dl>
+                    <dl>
+                        <dt>TOAST分型:</dt>
+                        <dd>{{inhospitalTreatment.ToastType }}</dd>
+                    </dl>
+                    <dl style="width:30%">
+                        <dt>CISS分型:</dt>
+                        <dd>{{inhospitalTreatment.CissType }}</dd>
+                    </dl>
+                    <dl>
+                        <dt>是否使用抗血小板药物</dt>
+                        <dd>{{inhospitalTreatment.IsUseAd?'是':'否'}}</dd>
+                    </dl>
+                    <dl ng-show="inhospitalTreatment.IsUseAd" style="width:75%">
+                        <dt>抗血小板药物</dt>
+                        <dd>{{inhospitalTreatment.Antiplatelet}}</dd>
+                    </dl>
+                    <dl ng-show="!inhospitalTreatment.IsUseAd" style="width:75%">
+                        <dt>未用药原因</dt>
+                        <dd>{{inhospitalTreatment.NotUseAdReason}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>是否使用抗凝药物</dt>
+                        <dd>{{inhospitalTreatment.IsUseAfd?'是':'否'}}</dd>
+                    </dl>
+                    <dl ng-show="inhospitalTreatment.IsUseAfd" style="width:75%">
+                        <dt>抗凝药物</dt>
+                        <dd>{{inhospitalTreatment.Anticoagulant}}</dd>
+                    </dl>
+                    <dl ng-show="!inhospitalTreatment.IsUseAfd" style="width:75%">
+                        <dt>未用药原因</dt>
+                        <dd>{{inhospitalTreatment.NotUseAfdReason}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>是否使用调脂他汀类物</dt>
+                        <dd>{{inhospitalTreatment.IsUseSd?'是':'否'}}</dd>
+                    </dl>
+                    <dl ng-show="inhospitalTreatment.IsUseSd" style="width:75%">
+                        <dt>调脂他汀类物</dt>
+                        <dd>{{inhospitalTreatment.LipidModulationStatins}}</dd>
+                    </dl>
+                    <dl ng-show="!inhospitalTreatment.IsUseSd" style="width:75%">
+                        <dt>未用药原因</dt>
+                        <dd>{{inhospitalTreatment.NotUseSdReason}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>是否使用调脂非他汀类药物</dt>
+                        <dd>{{inhospitalTreatment.IsUseLrd?'是':'否'}}</dd>
+                    </dl>
+                    <dl ng-show="inhospitalTreatment.IsUseLrd" style="width:75%">
+                        <dt>调脂非他汀类药物</dt>
+                        <dd>{{inhospitalTreatment.LipidModulationNonStatins}}</dd>
+                    </dl>
+                    <dl ng-show="!inhospitalTreatment.IsUseLrd" style="width:75%">
+                        <dt>未用药原因</dt>
+                        <dd>{{inhospitalTreatment.NotUseLrdReason}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>是否使用改善侧枝循环类药物</dt>
+                        <dd>{{inhospitalTreatment.IsUseIccd?'是':'否'}}</dd>
+                    </dl>
+                    <dl ng-show="inhospitalTreatment.IsUseIccd" style="width:75%">
+                        <dt>改善侧枝循环类药物</dt>
+                        <dd>{{inhospitalTreatment.CollatCcirc}}</dd>
+                    </dl>
+                    <dl ng-show="!inhospitalTreatment.IsUseIccd" style="width:75%">
+                        <dt>未用药原因</dt>
+                        <dd>{{inhospitalTreatment.NotUseIccdReason}}</dd>
+                    </dl>
+
+                    <dl>
+                        <dt>患者其他症状</dt>
+                        <dd>{{inhospitalTreatment.StrokeOtherSymptomDesc}}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        @*院者转归*@
+        <div class="column" ng-show="Outcome != null && !emergency.EmergencyTreatment.TriageResultsList[2] && !emergency.EmergencyTreatment.TriageResultsList[3]">
+            <div class="tit subNav">
+                <h3>患者转归</h3>
+            </div>
+            <div class="content navContent">
+                <div class="level-one">
+                    <dl>
+                        <dt>入院情况:</dt>
+                        <dd>{{Outcome.PatientOutcome.InhosState}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>入院时间:</dt>
+                        <dd>{{Outcome.PatientOutcome.InhosDate | date:'yyyy-MM-dd HH:mm'}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>出院时间:</dt>
+                        <dd>{{Outcome.PatientOutcome.OutHospitalTime | date:'yyyy-MM-dd HH:mm'}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>住院天数（天）:</dt>
+                        <dd>{{Outcome.PatientOutcome.Hod}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>出院诊断:</dt>
+                        <dd>{{Outcome.PatientOutcome.OutHospitalDiagnosis}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>患者去向:</dt>
+                        <dd>{{Outcome.PatientOutcome.OuthosMethod }}</dd>
+                    </dl>
+                    <dl>
+                        <dt>住院总费用:</dt>
+                        <dd>{{Outcome.PatientOutcome.AdmissionTotalAmount}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>药物费用:</dt>
+                        <dd>{{Outcome.PatientOutcome.DrugExpense}}</dd>
+                    </dl>
+                    <dl style="width:100%">
+                        <dt>检查费用:</dt>
+                        <dd>{{Outcome.PatientOutcome.ExamineExpense}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>是否使用抗血小板药物</dt>
+                        <dd>{{Outcome.PatientOutcome.IsAntiplatelet?'是':'否'}}</dd>
+                    </dl>
+                    <dl ng-show="Outcome.PatientOutcome.IsAntiplatelet" style="width:75%">
+                        <dt>抗血小板药物</dt>
+                        <dd>{{Outcome.Antiplatelet}}</dd>
+                    </dl>
+                    <dl ng-show="!Outcome.PatientOutcome.IsAntiplatelet" style="width:75%">
+                        <dt>未用药原因</dt>
+                        <dd>{{Outcome.PatientOutcome.NotUseReasonAntiplatelet}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>是否使用抗凝药物</dt>
+                        <dd>{{Outcome.PatientOutcome.IsAnticoagulation?'是':'否'}}</dd>
+                    </dl>
+                    <dl ng-show="Outcome.PatientOutcome.IsAnticoagulation" style="width:75%">
+                        <dt>抗凝药物</dt>
+                        <dd>{{Outcome.Anticoagulant}}</dd>
+                    </dl>
+                    <dl ng-show="!Outcome.PatientOutcome.IsAnticoagulation" style="width:75%">
+                        <dt>未用药原因</dt>
+                        <dd>{{Outcome.PatientOutcome.NotUseReasonAnticoagulation}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>是否使用降压药物</dt>
+                        <dd>{{Outcome.PatientOutcome.IsAntihypertensive?'是':'否'}}</dd>
+                    </dl>
+                    <dl ng-show="Outcome.PatientOutcome.IsAntihypertensive" style="width:75%">
+                        <dt>降压药物</dt>
+                        <dd>{{Outcome.Hypotensive}}</dd>
+                    </dl>
+                    <dl ng-show="!Outcome.PatientOutcome.IsAntihypertensive" style="width:75%">
+                        <dt>未用药原因</dt>
+                        <dd>{{Outcome.PatientOutcome.NotUseReasonAntihyperten}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>是否使用降糖药物</dt>
+                        <dd>{{Outcome.PatientOutcome.IsHypoglycemic?'是':'否'}}</dd>
+                    </dl>
+                    <dl ng-show="Outcome.PatientOutcome.IsHypoglycemic" style="width:75%">
+                        <dt>降糖药物</dt>
+                        <dd>{{Outcome.Hypoglycemic}}</dd>
+                    </dl>
+                    <dl ng-show="!Outcome.PatientOutcome.IsHypoglycemic" style="width:75%">
+                        <dt>未用药原因</dt>
+                        <dd>{{Outcome.PatientOutcome.NotUseReasonHypoglycemic}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>是否使用调脂药物</dt>
+                        <dd>{{Outcome.PatientOutcome.IsLipidmodulation?'是':'否'}}</dd>
+                    </dl>
+                    <dl ng-show="Outcome.PatientOutcome.IsLipidmodulation" style="width:75%">
+                        <dt>调脂药物</dt>
+                        <dd>{{Outcome.LipidRegulating}}</dd>
+                    </dl>
+                    <dl ng-show="!Outcome.PatientOutcome.IsLipidmodulation" style="width:75%">
+                        <dt>未用药原因</dt>
+                        <dd>{{Outcome.PatientOutcome.NotUseReasonLipidmodulation}}</dd>
+                    </dl>
+                    <dl>
+                        <dt>是否使用其他药</dt>
+                        <dd>{{Outcome.PatientOutcome.IsOtherDrugs?'是':'否'}}</dd>
+                    </dl>
+                    <dl ng-show="Outcome.PatientOutcome.IsOtherDrugs" style="width:75%">
+                        <dt>其他:</dt>
+                        <dd>{{Outcome.Other}}</dd>
+                    </dl>
+                </div>
+                @*手术*@
+                <div class="column" ng-if="operations != null && operations.length > 0">
+                    <div class="tit subNav">
+                        <h3>手术</h3>
+                    </div>
+                    <div class="content navContent">
+                        <div class="once" ng-repeat="oper in operations">
+                            <dl>
+                                <dt>手术单号</dt>
+                                <dd>{{oper.Code}}</dd>
+                            </dl>
+                            <dl>
+                                <dt>手术类型</dt>
+                                <dd>{{oper.Type}}</dd>
+                            </dl>
+                            <dl>
+                                <dt>手术医生</dt>
+                                <dd>{{oper.Doctor}}</dd>
+                            </dl>
+                            <dl>
+                                <dt>手术时间</dt>
+                                <dd>{{oper.Time | date:'yyyy-MM-dd HH:mm'}}</dd>
+                            </dl>
+                            <dl>
+                                <dt>手术名</dt>
+                                <dd>{{oper.Name}}</dd>
+                            </dl>
+                            <dl>
+                                <dt>手术级别</dt>
+                                <dd>{{oper.OperationLevel}}</dd>
+                            </dl>
+                            <dl>
+                                <dt>手术描述</dt>
+                                <dd>{{oper.Description}}</dd>
+                            </dl>
+                            <dl>
+                                <dt>麻醉方式</dt>
+                                <dd>{{oper.AnesthesiaName}}</dd>
+                            </dl>
+                            <dl>
+                                <dt>麻醉医生</dt>
+                                <dd>{{oper.AnesthesiaDoctor}}</dd>
+                            </dl>
+                            <dl>
+                                <dt>切口愈合等级</dt>
+                                <dd>{{oper.WoundhealingLevelDesc}}</dd>
+                            </dl>
+                            <dl>
+                                <dt>手术部位</dt>
+                                <dd>{{oper.BodyPartName}}</dd>
+                            </dl>
+                            <dl>
+                                <dt>助理医生</dt>
+                                <dd>{{oper.AssistantDoctor}}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    $(function () {
+        $(".subNav").click(function () {
+            $(this).toggleClass("currentDd").siblings(".subNav").removeClass("currentDd");
+            // 修改数字控制速度， slideUp(0)控制卷起速度
+            $(this).next(".navContent").slideToggle(100).siblings(".navContent").slideUp(100);
+        })
+    })
+
+    function printView()
+    {
+        $(".toolbar").hide();
+        print("#case");
+        $(".toolbar").show();
+    }
+</script>

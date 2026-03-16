@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="Admission" ViewName="接诊信息">
+    <Member MemberId="OutpatientNo" MemberName="门诊号" >
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="InpatientNo" MemberName="住院号" >
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="Insurance" MemberName="医保类型" >
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="InsuranceNo" MemberName="医保编号" >
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="IsStrickenInsurance" MemberName="大病医保" >
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="AttackTime" MemberName="发病时间" >
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsAttackUncertain" MemberName="发病时间无法精确到分钟" >
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="AttackZone" MemberName="发病区间" >
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="AttackProvince" MemberName="发病省" >
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="AttackCity" MemberName="发病市" >
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="AttackArea" MemberName="发病区" >
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="AttackAddress" MemberName="发病地址">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="DistressCase" MemberName="病情评估">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="DistressCaseDetail" MemberName="病情评估">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ComingType" MemberName="来院方式">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="AmbulanceDepartment" MemberName="出车单位">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="HelpTime" MemberName="呼救时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ArrivedHospitalTime" MemberName="到达本院大门时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsTransHospital" MemberName="直接转送其他医院">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsDirectConduitRoom" MemberName="直达导管室">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="FmcTime" MemberName="首次医疗接触时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="AdmissionTime" MemberName="院内接诊时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="AdmissionDoctor" MemberName="医护人员">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="ZcyyType" MemberName="转院类型">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ZcyyHospitalName" MemberName="医院名称">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="ZcyyVisitTime" MemberName="转出医院入门时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ZcyyDecisionTime" MemberName="决定转院时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ZcyyLeaveTime" MemberName="离开转出医院时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="AttackDept" MemberName="发病科室">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <!--<Member MemberId="CwysContactTime" MemberName="床位医生时间">
+      <Required Required="true" Enabled="1" />
+    </Member>-->
+    <Member MemberId="LeaveDeptTime" MemberName="离开科室时间">
+      <Required Required="true" Enabled="0" />
+    </Member>    
+    <Member MemberId="ConsciousnessType" MemberName="意识">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RespirationRate" MemberName="呼吸">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="PulseRate" MemberName="脉搏">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="HeartRate" MemberName="心率">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="BloodPressure" MemberName="血压">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Temperature" MemberName="体温">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="RsScreen" MemberName="是否溶栓筛查">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsRs" MemberName="是否溶栓治疗">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsRsTaboo" MemberName="存在禁忌症">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsRsDirect" MemberName="是否直达溶栓场所">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsPlace" MemberName="溶栓场所">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsStartAgreeTime" MemberName="开始知情同意">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsSignAgreeTime" MemberName="签署知情同意书">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsStartTime" MemberName="开始溶栓时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsEndTime" MemberName="溶栓结束时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsDrugType" MemberName="溶栓药物">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsDrugCode" MemberName="溶栓药物剂量">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RsRadiographyTime" MemberName="溶栓后造影时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsRsRecanalization" MemberName="是否溶栓再通">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsRemedyPci" MemberName="补救PCI">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ActualPciTime" MemberName="实际手术时间">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="PciPlace" MemberName="手术场所">
+      <Required Required="true" Enabled="0" />
+    </Member>
+    <Member MemberId="PatientRemarks" MemberName="患者情况备注">
+      <Required Required="true" Enabled="0" />
+    </Member>
+  </View>
+</Config>

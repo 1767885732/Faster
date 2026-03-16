@@ -1,0 +1,472 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Dictionary Code="CVA.0001" Name="性别" Desc="Gender">
+    <Item Code="1" Name="男"/>
+    <Item Code="2" Name="女"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0003" Name="来院方式" Desc="Coming">
+    <Item Code="1" Name="呼救（120或其他）出车"/>
+    <Item Code="2" Name="转院（包含任何医疗机构）"/>
+    <Item Code="3" Name="自行来院"/>
+    <Item Code="4" Name="院内发病"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0004" Name="呼救来原" Desc="CVA.0004">
+    <Item Code="1" Name="本区域120"/>
+    <Item Code="2" Name="区域外120"/>
+    <Item Code="3" Name="当地医疗机构"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0008" Name="审核状态" Desc="Audit">
+    <Item Code="1" Name="未完成"/>
+    <Item Code="2" Name="等待审核"/>
+    <Item Code="3" Name="审核拒绝"/>
+    <Item Code="4" Name="审核同意"/>
+    <Item Code="5" Name="作废"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0017" Name="呼救来原" Desc="Call">
+    <Item Code="1" Name="本区域120"/>
+    <Item Code="2" Name="区域外120"/>
+    <Item Code="3" Name="当地医疗机构"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0021" Name="吸烟史" Desc="SmokingStatus">
+    <Item Code="1" Name="不吸"/>
+    <Item Code="2" Name="吸烟"/>
+    <Item Code="3" Name="戒烟"/>
+    <Item Code="9" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0022" Name="饮酒史" Desc="DrinkingStatus">
+    <Item Code="1" Name="不饮酒"/>
+    <Item Code="2" Name="轻度（＜20ml）"/>
+    <Item Code="3" Name="中度（20ml~50ml）"/>
+    <Item Code="4" Name="重度（＞50ml）"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0023" Name="FAST评分" Desc="Fast">
+    <Item Code="1" Name="面瘫/口角歪斜"/>
+    <Item Code="2" Name="肢体无力"/>
+    <Item Code="3" Name="言语不清"/>
+    <Item Code="4" Name="迅速求救"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0024" Name="既往病史" Desc="PastMedicalHistory">
+    <Item Code="1" Name="高血压"/>
+    <Item Code="2" Name="糖尿病"/>
+    <Item Code="3" Name="冠心病"/>
+    <Item Code="4" Name="房颤"/>
+    <Item Code="5" Name="脑梗死"/>
+    <Item Code="6" Name="脑出血"/>
+    <Item Code="7" Name="消化道出血"/>
+    <Item Code="8" Name="大手术"/>
+    <Item Code="9" Name="头颅外伤"/>
+    <Item Code="10" Name="肿瘤病史/既往心梗"/>
+    <Item Code="99" Name="其他病史"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0025" Name="个人史" Desc="PersonalHistory">
+    <Item Code="1" Name="吸烟"/>
+    <Item Code="2" Name="饮酒"/>
+    <Item Code="3" Name="卒中家族史"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0026" Name="初步诊断" Desc="TD">
+    <Item Code="1" Name="脑梗死"/>
+    <Item Code="2" Name="脑出血"/>
+    <Item Code="3" Name="性质未定"/>
+    <Item Code="4" Name="未行检查"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0030" Name="脑出血类型" Desc="HemorrhageType">
+    <Item Code="1" Name="HI1"/>
+    <Item Code="2" Name="HI2"/>
+    <Item Code="3" Name="PH1"/>
+    <Item Code="4" Name="PH2"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0031" Name="入院类型" Desc="AD">
+    <Item Code="1" Name="脑梗死"/>
+    <Item Code="2" Name="短暂性脑缺血发作" />
+    <Item Code="3" Name="脑栓塞"/>
+    <Item Code="5" Name="脑出血"/>
+    <Item Code="6" Name="蛛网膜下腔出血"/>    
+    <Item Code="9" Name="假性卒中"/>    
+  </Dictionary>
+  <Dictionary Code="CVA.0032" Name="患者去向" Desc="InhosMethod">
+    <Item Code="1" Name="神内"/>
+    <Item Code="2" Name="神外"/>
+    <Item Code="3" Name="急诊外科"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0033" Name="治疗决策" Desc="TreatmentDecision">
+    <Item Code="1" Name="静脉溶栓"/>
+    <Item Code="2" Name="桥接"/>
+    <Item Code="3" Name="动脉溶栓/取栓"/>
+    <Item Code="4" Name="内科保守治疗"/>
+    <Item Code="5" Name="复合手术"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0034" Name="保守治疗方式" Desc="ConservativeTreatment">
+    <Item Code="1" Name="单抗血小板"/>
+    <Item Code="2" Name="双抗血小板"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0035" Name="动脉治疗方式" Desc="IatTreatment">
+    <Item Code="1" Name="支架取栓"/>
+    <Item Code="2" Name="动脉溶栓"/>
+    <Item Code="3" Name="动脉碎栓"/>
+    <Item Code="4" Name="抽吸导管"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0036" Name="取栓器械类型" Desc="IatEmbolectomyDevice">
+    <Item Code="0" Name="S-AB"/>
+    <Item Code="1" Name="S-FR"/>
+    <Item Code="2" Name="TREVO"/>
+    <Item Code="3" Name="抽吸导管"/>
+    <Item Code="99" Name="其它"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0037" Name="血管病变部位" Desc="IatIsMcVep">
+    <Item Code="0" Name="颈内动脉"/>
+    <Item Code="1" Name="M1"/>
+    <Item Code="2" Name="M2"/>
+    <Item Code="3" Name="M3"/>
+    <Item Code="4" Name="椎动脉"/>
+    <Item Code="5" Name="基底动脉"/>
+    <Item Code="6" Name="大脑前"/>
+    <Item Code="7" Name="大脑后"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0040" Name="患者介入术后去向" Desc="IatDestinationAfterPci">
+    <Item Code="1" Name="神经内科普通病房"/>
+    <Item Code="2" Name="卒中病房"/>
+    <Item Code="3" Name="综合ICU"/>
+    <Item Code="4" Name="NICU"/>
+    <Item Code="5" Name="EICU"/>
+    <Item Code="6" Name="离院"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0500" Name="抗血小板类" Desc="Antiplatelet">
+    <Item Code="1" Name="阿司匹林"/>
+    <Item Code="2" Name="氯吡格雷"/>
+    <Item Code="3" Name="奥扎格雷"/>
+    <Item Code="4" Name="双嘧达莫"/>
+    <Item Code="5" Name="噻氯吡啶"/>
+    <Item Code="6" Name="西洛他唑"/>
+    <Item Code="7" Name="替罗非班"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0501" Name="抗凝类" Desc="Anticoagulant">
+    <Item Code="1" Name="华法林"/>
+    <Item Code="2" Name="达比加群"/>
+    <Item Code="3" Name="利伐沙班"/>
+    <Item Code="4" Name="阿加曲班"/>
+    <Item Code="5" Name="低分子肝素"/>
+    <Item Code="6" Name="肝素"/>
+    <Item Code="7" Name="正比"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0502" Name="降压类" Desc="Antihypertensive">
+    <Item Code="1" Name="ACEI"/>
+    <Item Code="2" Name="利尿剂"/>
+    <Item Code="3" Name="ARB"/>
+    <Item Code="4" Name="贝塔受体阻滞剂"/>
+    <Item Code="5" Name="钙通道阻滞剂"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0503" Name="降糖类" Desc="Hypoglycemic">
+    <Item Code="1" Name="胰岛素"/>
+    <Item Code="2" Name="磺酰脲类"/>
+    <Item Code="3" Name="双胍类"/>
+    <Item Code="4" Name="阿尔法糖苷酶抑制剂"/>
+    <Item Code="5" Name="胰岛素增敏剂"/>
+    <Item Code="6" Name="非磺酰脲类促胰岛素分泌剂"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0504" Name="调脂类" Desc="LipidRegulation">
+    <Item Code="1" Name="他汀类"/>
+    <Item Code="2" Name="贝特类"/>
+    <Item Code="3" Name="烟酸及衍生物"/>
+    <Item Code="4" Name="吸收型抑制剂"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0505" Name="调脂类(非他汀)" Desc="LipidRegulation">
+    <Item Code="1" Name="依折麦布"/>
+    <Item Code="2" Name="非诺贝特"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0506" Name="调脂类(他汀)" Desc="LipidRegulation">
+    <Item Code="1" Name="阿托伐他汀"/>
+    <Item Code="2" Name="瑞舒伐他汀"/>
+    <Item Code="3" Name="辛伐他汀"/>
+    <Item Code="4" Name="普伐他汀"/>
+    <Item Code="5" Name="氟伐他汀"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0507" Name="其他抗栓药物" Desc="OtherDrug">
+    <Item Code="1" Name="替罗非班"/>
+    <Item Code="2" Name="抗血小板药物"/>
+    <Item Code="3" Name="抗凝药"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0508" Name="改善侧枝循环" Desc="CollatCcirc">
+    <Item Code="1" Name="尤瑞克林"/>
+    <Item Code="2" Name="丁苯酞胶囊"/>
+    <Item Code="3" Name="丁苯酞注射液"/>
+    <Item Code="4" Name="前列地尔"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0509" Name="溶栓用药" Desc="ThrombolyticDrugs">
+    <Item Code="1" Name="阿替普酶"/>
+    <Item Code="2" Name="尿激酶"/>
+    <Item Code="3" Name="替奈普酶"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0530" Name="溶栓入选标准" Desc="ThromInclusionCriteria">
+    <Item Code="1" Name="年龄＞18岁"/>
+    <Item Code="2" Name="有缺血性卒中导致的神经功能缺损症状"/>
+    <Item Code="3" Name="症状出现小于4.5h"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0531" Name="溶栓排除标准" Desc="ThromExclusionCriteria">
+    <Item Code="1" Name="近3个月内重大头颅外伤或卒中史"/>
+    <Item Code="2" Name="可疑蛛网膜下腔出血"/>
+    <Item Code="3" Name="近7天内有在不易压迫止血部位的动脉穿刺"/>
+    <Item Code="4" Name="既往史有颅内出血史"/>
+    <Item Code="5" Name="有颅内肿瘤、动静脉畸形，动脉瘤"/>
+    <Item Code="6" Name="近期颅内或椎管手术"/>
+    <Item Code="7" Name="血压升高（收缩压≥180mmHg或舒张压≥100mmHg）"/>
+    <Item Code="8" Name="活动性内出血"/>
+    <Item Code="9" Name="急性出血倾向，包括血小板计数低于100*109/L或其他情况" />
+    <Item Code="10" Name="48小时内接受过肝素治疗（APTT超出正常范围上限）" />
+    <Item Code="11" Name="已口服抗凝剂者，INR＞1.7或PT＞15s"/>
+    <Item Code="12" Name="目前正常使用凝血酶抑制剂或Xa因子抑制剂，各种敏感的实验室检查异常（APTT、INR、血小板数、ECT、TT、或恰当的Xa活性测定等）"/>
+    <Item Code="13" Name="血糖＜2.7mmol/L"/>
+    <Item Code="14" Name="CT提示多脑叶梗死（低密度＞1/3大脑半球）"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0532" Name="溶栓发病3小时相对排除标准" Desc="ThromRelativeExclusionCriteria3H">
+    <Item Code="1" Name="轻型卒中或症状快速改善的卒中"/>
+    <Item Code="2" Name="妊娠"/>
+    <Item Code="3" Name="癫性发作后出现的神经功能损害症状"/>
+    <Item Code="4" Name="近2周内进行过大的外科手术或有严重外伤"/>
+    <Item Code="5" Name="近3周内有肠胃或泌尿系统出血"/>
+    <Item Code="6" Name="近3个月有心肌梗死病史"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0533" Name="溶栓发病4.5小时相对排除标准" Desc="ThromRelativeExclusionCriteria4_5H">
+    <Item Code="1" Name="轻型卒中或症状快速改善的卒中"/>
+    <Item Code="2" Name="年龄＞80岁"/>
+    <Item Code="3" Name="重脑梗死，NIHSS＞25"/>
+    <Item Code="4" Name="口服抗凝剂，不考虑INR值"/>
+    <Item Code="5" Name="近2周内进行过大的外科手术或有严重外伤" />
+    <Item Code="6" Name="糖尿病和缺血性卒中史" />
+    <Item Code="7" Name="妊娠" />
+    <Item Code="8" Name="癫性发作后出现的神经功能损害症状" />
+    <Item Code="9" Name="近3周内有肠胃或泌尿系统出血" />
+    <Item Code="10" Name="近3个月有心肌梗死病史" />
+  </Dictionary>
+  <Dictionary Code="CVA.0534" Name="未进行溶栓治疗原因" Desc="NoThromReasons">
+    <Item Code="1" Name="无适应症"/>
+    <Item Code="2" Name="有禁忌症"/>
+    <Item Code="3" Name="有相对禁忌症"/>
+    <Item Code="4" Name="家属或患者拒绝"/>
+    <Item Code="5" Name="医生担心出血风险"/>
+    <Item Code="6" Name="医生担心预后不良"/>
+    <Item Code="9" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0540" Name="患者其他症状" Desc="OtherSymptom">
+    <Item Code="1" Name="糖尿病"/>
+    <Item Code="2" Name="高血压"/>
+    <Item Code="3" Name="高血脂"/>
+    <Item Code="4" Name="房颤"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0541" Name="住院期间并发症" Desc="Complication">
+    <Item Code="1" Name="吞咽困难筛查"/>
+    <Item Code="2" Name="入院48小时内患者能行走"/>
+    <Item Code="3" Name="行下肢静脉超声检查"/>
+    <Item Code="4" Name="合并深静脉血栓"/>
+    <Item Code="5" Name="合并肺栓塞"/>
+    <Item Code="6" Name="再发脑梗死"/>
+    <Item Code="7" Name="发生或再发脑出血"/>
+    <Item Code="8" Name="短暂性脑缺血发作"/>
+    <Item Code="9" Name="癫痫发作"/>
+    <Item Code="10" Name="脑积水"/>
+    <Item Code="11" Name="房颤"/>
+    <Item Code="12" Name="泌尿系统感染"/>
+    <Item Code="13" Name="心跳或呼吸停止"/>
+    <Item Code="14" Name="压疮"/>
+    <Item Code="15" Name="抑郁"/>
+    <Item Code="16" Name="心肌梗死"/>
+    <Item Code="17" Name="消化道出血"/>
+    <Item Code="18" Name="48小时内给予抗栓药物治疗"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0550" Name="蛛网膜下腔出血致病原因" Desc="SahEtiology">
+    <Item Code="1" Name="动脉瘤"/>
+    <Item Code="2" Name="脑血管畸形"/>
+    <Item Code="3" Name="高血压"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0551" Name="动脉瘤治疗方式" Desc="AneurysmCureType">
+    <Item Code="1" Name="血管内栓塞术"/>
+    <Item Code="2" Name="动脉瘤夹闭术"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0552" Name="脑脊液分流治疗方式" Desc="CsfShuntType">
+    <Item Code="1" Name="脑室外分流术"/>
+    <Item Code="2" Name="腹腔分流术"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0560" Name="OCSP分型" Desc="OcspType">
+    <Item Code="1" Name="TACI"/>
+    <Item Code="2" Name="PACI"/>
+    <Item Code="3" Name="POCI"/>
+    <Item Code="4" Name="LACI"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0561" Name="TOAST分型" Desc="ToastType">
+    <Item Code="1" Name="大动脉粥样硬化(AS)"/>
+    <Item Code="2" Name="心源性栓塞(CE)"/>
+    <Item Code="3" Name="小动脉病变"/>
+    <Item Code="4" Name="其他明确原因型"/>
+    <Item Code="5" Name="不明原因型"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0562" Name="CISS分型" Desc="CissType">
+    <Item Code="1" Name="大动脉粥样硬化"/>
+    <Item Code="2" Name="载体动脉堵塞穿支闭塞"/>
+    <Item Code="3" Name="动脉-动脉栓塞"/>
+    <Item Code="4" Name="低灌注/栓子清除下降"/>
+    <Item Code="5" Name="混合型"/>
+    <Item Code="6" Name="心源性"/>
+    <Item Code="7" Name="穿支动脉病"/>
+    <Item Code="8" Name="其他原因"/>
+    <Item Code="9" Name="病因不明"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0570" Name="尼莫地平预防血管痉挛治疗方式" Desc="NimodipineCureType">
+    <Item Code="1" Name="静脉泵入"/>
+    <Item Code="2" Name="口服"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0571" Name="患者24小时病情变化" Desc="IllnessStateIn24h">
+    <Item Code="1" Name="无变化"/>
+    <Item Code="2" Name="病情变化"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0572" Name="溶栓剂量" Desc="RtPaDosageUnit">
+    <Item Code="1" Name="低剂量（0.6mg/kg）"/>
+    <Item Code="2" Name="标准剂量（0.9mg/kg）"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0573" Name="尼莫地平预防血管痉挛治疗方式" Desc="NimodipineCureType">
+    <Item Code="1" Name="静脉泵入"/>
+    <Item Code="2" Name="口服"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0610" Name="卒中患者去向" Desc="OuthosMethod">
+    <Item Code="1" Name="回家"/>
+    <Item Code="2" Name="转向三级医院"/>
+    <Item Code="3" Name="转入二级医院"/>
+    <Item Code="4" Name="转入社区医院"/>
+    <Item Code="5" Name="转入康复中心"/>
+    <Item Code="6" Name="死亡"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0611" Name="出院诊断" Desc="DD">
+    <Item Code="1" Name="脑梗死/短暂性脑缺血发作"/>
+    <Item Code="2" Name="脑出血"/>
+    <Item Code="3" Name="蛛网膜下腔出血"/>
+    <Item Code="4" Name="假性卒中"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>  
+  <Dictionary Code="CVA.0700" Name="失访原因" Desc="LossToVisitCause">
+    <Item Code="1" Name="失去联系"/>
+    <Item Code="2" Name="拒绝参加调查"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0701" Name="死亡原因" Desc="DieCause">
+    <Item Code="1" Name="脑卒中"/>
+    <Item Code="2" Name="冠心病"/>
+    <Item Code="3" Name="恶性肿瘤"/>
+    <Item Code="4" Name="呼吸系统疾病"/>
+    <Item Code="5" Name="损伤和中毒"/>
+    <Item Code="6" Name="拒绝参加调查"/>
+    <Item Code="7" Name="不详"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0702" Name="结束原因" Desc="EndCause">
+    <Item Code="1" Name="正常流程结束"/>
+    <Item Code="2" Name="死亡"/>
+    <Item Code="3" Name="再次入院"/>
+  </Dictionary>  
+  <Dictionary Code="CVA.0703" Name="饮水" Desc="Dringking">
+    <Item Code="1" Name="Ⅰa"/>
+    <Item Code="2" Name="Ⅰb"/>
+    <Item Code="3" Name="Ⅱ"/>
+    <Item Code="4" Name="Ⅲ"/>
+    <Item Code="5" Name="Ⅳ"/>
+    <Item Code="6" Name="Ⅴ"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0704" Name="饮水指导" Desc="DietaryGuidance">
+    <Item Code="1" Name="经口进食"/>
+    <Item Code="2" Name="胃管置入"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0705" Name="稠度" Desc="Consistency">
+    <Item Code="1" Name="糖浆"/>
+    <Item Code="2" Name="水"/>
+    <Item Code="3" Name="布丁"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0706" Name="一口量" Desc="BiteSize">
+    <Item Code="1" Name="5ml"/>
+    <Item Code="2" Name="10ml"/>
+    <Item Code="3" Name="20ml"/>
+  </Dictionary>  
+  <Dictionary Code="CVA.0707" Name="文化程度" Desc="EducationDegree">
+    <Item Code="1" Name="文盲"/>
+    <Item Code="2" Name="小学"/>
+    <Item Code="3" Name="初中及以上"/>
+  </Dictionary>  
+  <Dictionary Code="CVA.0708" Name="无法评估项" Desc="NoEvaluate">
+    <Item Code="1" Name="意识障碍"/>
+    <Item Code="2" Name="失语"/>
+    <Item Code="3" Name="无法交流"/>
+  </Dictionary>  
+  <Dictionary Code="CVA.0709" Name="未评原因" Desc="NoEvaluateReason">
+    <Item Code="1" Name="意识障碍"/>
+    <Item Code="2" Name="文盲"/>
+    <Item Code="3" Name="不配合"/>
+    <Item Code="4" Name="严重认知障碍"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0710" Name="干预方法" Desc="InterveneWay">
+    <Item Code="1" Name="语音康复训练"/>
+    <Item Code="2" Name="非侵入性刺激疗法（经颅磁）"/>
+    <Item Code="3" Name="药物疗法"/>
+    <Item Code="4" Name="计算机语言疗法（VR）"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0711" Name="是否" Desc="YesOrNo">
+    <Item Code="1" Name="是"/>
+    <Item Code="0" Name="否"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0712" Name="意识" Desc="Consciousness">
+    <Item Code="1" Name="清醒"/>
+    <Item Code="2" Name="模糊"/>
+    <Item Code="3" Name="谵妄"/>
+    <Item Code="4" Name="嗜睡"/>
+    <Item Code="5" Name="昏睡"/>
+    <Item Code="6" Name="浅昏迷"/>
+    <Item Code="7" Name="中昏迷"/>
+    <Item Code="8" Name="深昏迷"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0713" Name="症状" Desc="Symptom">
+    <Item Code="1" Name="一侧肢体无力、麻木、笨拙"/>
+    <Item Code="2" Name="一侧面部麻木或口角歪斜"/>
+    <Item Code="3" Name="说话不清或理解语言困难"/>
+    <Item Code="4" Name="双眼向一侧凝视"/>
+    <Item Code="5" Name="一侧或双眼视力丧失或迷糊"/>
+    <Item Code="6" Name="视物旋转或平衡障碍，眩晕伴呕吐"/>
+    <Item Code="7" Name="既往少见的严重头痛、呕吐"/>
+    <Item Code="8" Name="意识障碍或抽搐"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0714" Name="分检诊结果" Desc="TriageResults">
+    <Item Code="1" Name="溶栓"/>
+    <Item Code="2" Name="介入"/>
+    <Item Code="3" Name="手术"/>
+    <Item Code="4" Name="常规"/>
+  </Dictionary>
+  <Dictionary Code="CVA.0715" Name="治疗过程中出现的并发症" Desc="ComplicationsDuringTreatment">
+    <Item Code="1" Name="无"/>
+    <Item Code="2" Name="颅内出血"/>
+    <Item Code="3" Name="消化道出血"/>
+    <Item Code="4" Name="牙龈出血"/>
+    <Item Code="5" Name="鼻腔出血"/>
+    <Item Code="6" Name="皮肤黏膜出血"/>
+    <Item Code="7" Name="再灌注损伤"/>
+    <Item Code="8" Name="过敏"/>
+    <Item Code="9" Name="口舌、喉头水肿"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>  
+  <Dictionary Code="CPC.0200" Name="是否" Desc="YesOrNo">
+    <Item Code="1" Name="是"/>
+    <Item Code="0" Name="否"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0201" Name="有无" Desc="HaveOrNot">
+    <Item Code="1" Name="有"/>
+    <Item Code="0" Name="无"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0202" Name="异常" Desc="AbnormalOrNot">
+    <Item Code="0" Name="未见异常"/>
+    <Item Code="1" Name="异常"/>
+  </Dictionary>
+</Config>

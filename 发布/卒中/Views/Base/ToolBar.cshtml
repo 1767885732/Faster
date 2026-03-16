@@ -1,0 +1,76 @@
+﻿<script type="text/javascript">
+    $(function () {
+        loadToolbar();
+
+        $(".kfleft").click(function () {
+            var i = $("#haiiskefu").css("right");
+            if (i == '0px') {
+                $('#haiiskefu').animate({
+                    right: -111
+                }, 100);
+            } else {
+                $('#haiiskefu').animate({
+                    right: 0
+                }, 100);
+            }
+        });
+
+    });
+
+    function loadToolbar() {
+        if (!registId) {
+            $("#haiiskefu").hide();
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/Base/ToolButtons",
+            data: { 'registId': registId },
+            cache: false,
+            async: true,
+            dataType: 'json',
+            success: function (data) {
+                $("#haiiskefu ul").empty();
+                if (data.Data && data.Data.length > 0) {
+                    for (var i = 0; i < data.Data.length; i++) {
+                        var node = data.Data[i];
+                        var btn = "<li>" +
+                                    "<a onclick=\"return OpenUrl('" + node.Url + "', '" + node.Name + "'," + node.ShowType + ")\"><b class=\"" + node.Class + "\"></b>" + node.Name + "</a>" +
+                                  "</li>";
+                        $("#haiiskefu ul").append(btn);
+                    }
+                    $("#haiiskefu").show();
+                }
+            }
+        })
+    }
+
+    function OpenUrl(url, title, showType) {
+        if (!!showType && showType == 1) {
+            layer.open({
+                type: 2,
+                shade: false,
+                area: ['800px', '550px'],
+                title: title,
+                maxmin: true,
+                content: url,
+                zIndex: layer.zIndex, //重点1
+                success: function (layero) {
+                    layer.setTop(layero); //重点2
+                }
+            });
+        }
+        else {
+            window.open(url, '_blank')
+        }
+    }
+
+</script>
+<link href="~/App_Themes/Default/control.toolbar.css" rel="stylesheet" />
+<div id="haiiskefu" style="display:none;">
+    <div class="kfleft" title="">隐藏</div>
+    <ul>
+       
+    </ul>
+</div>

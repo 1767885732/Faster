@@ -1,0 +1,193 @@
+CREATE OR REPLACE VIEW VIEW_CPC_EMERGENCY_INFO AS
+SELECT
+M.REG_ID,
+'' AS TAG_ID,
+'71402985x' || '_' || M.REG_ID AS EHRId
+,CASE A.XMLDOC1.EXTRACT('//root/Line/@ARRIVE_TYPE').getStringVal()
+ WHEN '04' THEN '1'             -- 本院1
+SELECT * FROM VIEW_CPC_EMERGENCY_INFO20
+ WHEN '08' THEN '2'             -- 外院120
+ ELSE '3' END AS ComingType     --自行来院
+,CASE A.XMLDOC1.EXTRACT('//root/Line/@ARRIVE_TYPE').getStringVal()
+ WHEN '04' THEN '2'             -- 本院120
+ WHEN '08' THEN '3'             -- 外院120
+ ELSE '' END AS DispatchType
+,NVL (CASE M.DIAGNOSE_ICD
+                  WHEN 'R07.401'
+                     THEN '1'
+                  WHEN 'I21.001'
+                     THEN '2'
+                  WHEN 'I21.002'
+                     THEN '2'
+                  WHEN 'I21.004'
+                     THEN '2'
+                  WHEN 'I21.101'
+                     THEN '2'
+                  WHEN 'I21.103'
+                     THEN '2'
+                  WHEN 'I21.104'
+                     THEN '2'
+                  WHEN 'I21.105'
+                     THEN '2'
+                  WHEN 'I21.201'
+                     THEN '2'
+                  WHEN 'I21.202'
+                     THEN '2'
+                  WHEN 'I21.203'
+                     THEN '2'
+                  WHEN 'I21.204'
+                     THEN '2'
+                  WHEN 'I21.205'
+                     THEN '2'
+                  WHEN 'I21.206'
+                     THEN '2'
+                  WHEN 'I21.207'
+                     THEN '2'
+                  WHEN 'I21.208'
+                     THEN '2'
+                  WHEN 'I21.209'
+                     THEN '2'
+                  WHEN 'I21.210'
+                     THEN '2'
+                  WHEN 'I21.211'
+                     THEN '2'
+                  WHEN 'I21.212'
+                     THEN '2'
+                  WHEN 'I21.213'
+                     THEN '2'
+                  WHEN 'I21.214'
+                     THEN '2'
+                  WHEN 'I21.215'
+                     THEN '2'
+                  WHEN 'I21.301'
+                     THEN '2'
+                  WHEN 'I21.302'
+                     THEN '2'
+                  WHEN 'I21.304'
+                     THEN '2'
+                  WHEN 'I21.401'
+                     THEN '2'
+                  WHEN 'I21.402'
+                     THEN '2'
+                  WHEN 'I21.907'
+                     THEN '2'
+                  WHEN 'I21.902'
+                     THEN '2'
+                  WHEN 'I21.403'
+                     THEN '3'
+                  WHEN 'I20.001'
+                     THEN '4'
+                  WHEN 'I71.001'
+                     THEN '5'
+                  WHEN 'I71.0011'
+                     THEN '5'
+                  WHEN 'I71.0012'
+                     THEN '5'
+                  WHEN 'I71.0013'
+                     THEN '5'
+                  WHEN 'I71.0014'
+                     THEN '5'
+                  WHEN 'I71.0015'
+                     THEN '5'
+                  WHEN 'I71.0016'
+                     THEN '5'
+                  WHEN 'I71.0017'
+                     THEN '5'
+                  WHEN 'I71.002'
+                     THEN '5'
+                  WHEN 'I71.0021'
+                     THEN '5'
+                  WHEN 'I71.0022'
+                     THEN '5'
+                  WHEN 'I71.0023'
+                     THEN '5'
+                  WHEN 'I71.0024'
+                     THEN '5'
+                  WHEN 'I71.0025'
+                     THEN '5'
+                  WHEN 'I71.0026'
+                     THEN '5'
+                  WHEN 'I71.0027'
+                     THEN '5'
+                  WHEN 'I26.901'
+                     THEN '6'
+                  WHEN 'I26.902'
+                     THEN '6'
+                  WHEN 'I24.803'
+                     THEN '8'
+               END,
+               '10'
+              ) AS DiagnosisType
+,M.DIAGNOSE_ICD_NAME AS DiagnosisDesc              --诊断中文名称
+, '' AS  TransDispatchTime
+,'' AS ArrivedSceneTime
+,
+TO_CHAR(M.REG_TIME,'YYYY-MM-DD HH24:MI:SS')
+ AS ArrivedHospitalTimeForTrans
+, TO_CHAR(M.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS')
+ AS AdmissionTimeForSelf
+,CASE NVL(M.PHEP_PID,' ' )
+      WHEN ' ' THEN '0'
+      ELSE '1' END AS  IsByPassEmergency
+,'3' AS ByPassEmergencyType
+,'1' AS IsByPassCCU
+,'' AS ArrivedEmergencyTime
+, '' AS ArrivedCCUTime
+,'' AS Doctor
+,'' AS PhepECGTime
+,
+TO_CHAR(M.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') AS Time
+,A.XMLDOC3.EXTRACT('//root/Line/@ECG_TIME').getStringVal() AS InhospitalECGTime        --首份心电图时间
+,CASE NVL(A.XMLDOC3.EXTRACT('//root/Line/@ECG_TIME').getStringVal(),' ')
+      WHEN ' ' THEN ' '
+      ELSE TO_CHAR(TO_DATE(A.XMLDOC3.EXTRACT('//root/Line/@ECG_TIME').getStringVal(),'YYYY-MM-DD HH24:MI:SS') + 5/(24*60),'YYYY-MM-DD HH24:MI:SS')
+      END
+ AS ECGDiagnosisTime                                                                    --首份心电图时间+5
+,CASE NVL(A.XMLDOC3.EXTRACT('//root/Line/@ECG_TIME').getStringVal(),' ')
+      WHEN ' ' THEN '0'
+      ELSE '1'
+      END
+  AS IsRemoteECGTran
+,CASE NVL(A.XMLDOC3.EXTRACT('//root/Line/@ECG_TIME').getStringVal(),' ')
+      WHEN ' ' THEN ' '
+      ELSE TO_CHAR(TO_DATE(A.XMLDOC3.EXTRACT('//root/Line/@ECG_TIME').getStringVal(),'YYYY-MM-DD HH24:MI:SS') + 5/(24*60),'YYYY-MM-DD HH24:MI:SS')
+      END
+ AS TranDate                                                                            --首份心电图时间+5
+,C.EXTXML.EXTRACT('//root/Line/@PHY_0004').getStringVal() AS PulseRate                         --脉搏
+,C.EXTXML.EXTRACT('//root/Line/@PHY_0005').getStringVal() AS HeartRate                         --心率
+,C.EXTXML.EXTRACT('//root/Line/@PHY_0006').getStringVal() AS RespirationRate                   --呼吸
+,C.EXTXML.EXTRACT('//root/Line/@PHY_0001').getStringVal()
+||  '/' || C.EXTXML.EXTRACT('//root/Line/@PHY_0002').getStringVal() AS BloodPressure           --血压
+,'' AS  KillipLevel
+,'' AS SamplingTime
+,'' AS ReportTime
+,'' AS CTnIValue
+,'' AS CRValue
+,CASE NVL(A.XMLDOC3.EXTRACT('//root/Line/@ECG_TIME').getStringVal(),' ')
+      WHEN ' ' THEN ' '
+      ELSE TO_CHAR(TO_DATE(A.XMLDOC3.EXTRACT('//root/Line/@ECG_TIME').getStringVal(),'YYYY-MM-DD HH24:MI:SS') + 5/(24*60),'YYYY-MM-DD HH24:MI:SS')
+      END
+ AS DoctorForCP                                                                          --首份心电图时间+5
+,''  AS TimeForOther
+,'' AS AcsDeliveryTime
+,'' AS AspirinDose
+,'' AS AcsDrugType
+,'' AS AcsDrugDose
+,'' AS SYSTOLIC_PRESSURE
+,'' AS BREATHING_RATE
+,'' AS OPEN_EYE
+,'' AS TALK
+,'' AS SPORTS
+,'' AS RESET_LEVEL
+,'' AS TEMPERATURE
+,'' AS BLOOD_OXYGEN
+, M.PATIENT_SAYID AS PATIENT_SAY
+,'' AS ARRIVE_TYPE
+,'71402985x' AS OrgId
+,'苏州大学附属第二医院' AS OrgName
+,'急诊工作站' AS CreateName
+,TO_CHAR(SYSDATE,'YYYY-MM-DD HH24:MI:SS') AS CreateDate
+FROM MED_CLINIC_CHECK_MASTER M
+INNER JOIN MED_CLINIC_CHECK_EXPAND A ON M.REG_ID=A.REG_ID
+LEFT JOIN MED_CLINIC_CURE_LIST C ON C.SOURCE='10' AND M.REG_ID=C.REG_ID
+;

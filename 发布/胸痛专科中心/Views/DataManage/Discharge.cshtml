@@ -1,0 +1,1138 @@
+﻿<div id="Discharge">
+    <el-form v-bind:model="patient" v-bind:rules="rules" label-width="100px" size="small" label-position="top">
+        <el-row v-bind:gutter="gutter">
+            <el-col v-bind:span="space_three_quater">
+                <el-form-item label="出院诊断" prop="Discharge.Diagnosis" class="input_required">
+                    <el-radio-group v-model="patient.Discharge.Diagnosis" size="mini">
+                        <el-radio-button v-for="item in DischargeDiagnosisDict"
+                                         v-bind:label="item.Key" v-bind:key="'Diagnosis-'+item.Key">
+                            {{item.Value}}
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="确诊时间" prop="Discharge.DiagnosisTime" class="input_required">
+                    <el-date-picker v-model="patient.Discharge.DiagnosisTime"
+                                    type="datetime" v-on:blur="onDateSelected"
+                                    format="yyyy-MM-dd HH:mm"
+                                    placeholder="请选择确诊时间"
+                                    size="mini">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col v-bind:span="space_three_quater">
+                <el-form-item label="COVID-19" prop="Discharge.COVID19" class="input_required">
+                    <el-radio-group v-model="patient.Discharge.COVID19" size="mini">
+                        <el-radio-button v-for="item in COVID19Dict"
+                                         v-bind:label="item.Key" v-bind:key="'COVID19-'+item.Key">
+                            {{item.Value}}
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <!-- 非心源性胸痛 -->
+        <el-row v-bind:gutter="gutter" v-if="IsNacs()">
+            <el-col v-bind:span="space_full">
+                <el-form-item label="非ACS心源性胸痛类型" prop="Discharge.NacsType" class="input_required">
+                    <el-checkbox-group v-model="patient.Discharge.NacsType" size="mini">
+                        <el-checkbox v-for="item in NacsTypeDict"
+                                     v-bind:label="item.Key" v-bind:key="'NacsType-'+item.Key">
+                            {{item.Value}}
+                        </el-checkbox>
+                    </el-checkbox-group>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <el-row v-bind:gutter="gutter" v-if="IsNccp()">
+            <el-col v-bind:span="space_full">
+                <el-form-item label="其它非心源性胸痛类型" prop="Discharge.NccpType" class="input_required">
+                    <el-checkbox-group v-model="patient.Discharge.NccpType" size="mini">
+                        <el-checkbox v-for="item in NccpTypeDict"
+                                     v-bind:label="item.Key" v-bind:key="'NccpType-'+item.Key">
+                            {{item.Value}}
+                        </el-checkbox>
+                    </el-checkbox-group>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <div v-if="IsCpc()">
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="院内新发心力衰竭" prop="Discharge.IsHeartFailure" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsHeartFailure" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'IsHeartFailure-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-show="patient.Discharge.IsHeartFailure == '1'">
+                    <el-form-item label="NYHA分级" prop="Discharge.ChfNyha" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.ChfNyha" size="mini">
+                            <el-radio-button v-for="item in ChfNyhaDict"
+                                             v-bind:label="item.Key" v-bind:key="'ChfNyha-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="ARNI" prop="Discharge.IsARNI" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsARNI" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'IsHeartFailure-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-show="patient.Discharge.IsARNI == '1'">
+                    <el-form-item label="服用频次" prop="Discharge.ARNIFrequency" class="input_required">
+                        <el-select v-model="patient.Discharge.ARNIFrequency" placeholder="请选择时间" size="mini" style="width:48%;">
+                            <el-option v-for="(item,index) in RateTimeDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'RateTime-' + index">
+                            </el-option>
+                        </el-select>
+                        <el-select v-model="patient.Discharge.ARNIFrequencyRange" placeholder="请选择频次" size="mini" style="width:48%;">
+                            <el-option v-for="(item,index) in RateCountDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'RateCount-' + index">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-show="patient.Discharge.IsARNI == '1'">
+                    <el-form-item label="单次剂量" prop="Discharge.ARNIDose" class="input_required">
+                        <el-input v-model="patient.Discharge.ARNIDose" size="mini">
+                            <template slot="append">
+                                mg
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_full">
+                    <el-form-item label="住院期间并发症" prop="Discharge.Complication" class="input_required">
+                        <el-checkbox-group v-model="patient.Discharge.Complication" size="mini" v-on:change="ComplicationChange">
+                            <el-checkbox v-for="item in DischargeComplicationDict"
+                                         v-bind:label="item.Key" v-bind:key="'DischargeComplication-'+item.Key">
+                                {{item.Value}}
+                            </el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+        </div>
+        <el-tag style="width:100%;">住院期间用药</el-tag>
+        <el-row>
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="降糖药物" prop="Discharge.IsJTYW" class="input_required">
+                    <el-radio-group v-model="patient.Discharge.IsJTYW" size="mini">
+                        <el-radio-button v-for="item in YesOrNoDict"
+                                         v-bind:label="item.Key" v-bind:key="'IsJTYW-'+item.Key">
+                            {{item.Value}}
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsJTYW == '1'">
+                <el-form-item label="药物名称" prop="Discharge.JTYWName" class="input_required">
+                    <el-select v-model="patient.Discharge.JTYWName" placeholder="请选择" size="mini" style="width:33%">
+                        <el-option v-for="(item,index) in OHANameDict"
+                                   v-bind:label="item.Value"
+                                   v-bind:value="item.Key"
+                                   v-bind:key="'JTYWName-'+ index">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="口服抗凝药物" prop="Discharge.IsKNYW" class="input_required">
+                    <el-radio-group v-model="patient.Discharge.IsKNYW" size="mini">
+                        <el-radio-button v-for="item in YesOrNoDict"
+                                         v-bind:label="item.Key" v-bind:key="'IsKNYW-'+item.Key">
+                            {{item.Value}}
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsKNYW == '1'">
+                <el-form-item label="药物名称" prop="Discharge.KNYWName" class="input_required">
+                    <el-select v-model="patient.Discharge.KNYWName" placeholder="请选择" size="mini" style="width:33%">
+                        <el-option v-for="(item,index) in NOACNameDict"
+                                   v-bind:label="item.Value"
+                                   v-bind:value="item.Key"
+                                   v-bind:key="'JTYWName-'+ index">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="PCSK9" prop="Discharge.IsPCSK9" class="input_required">
+                    <el-radio-group v-model="patient.Discharge.IsPCSK9" size="mini">
+                        <el-radio-button v-for="item in YesOrNoDict"
+                                         v-bind:label="item.Key" v-bind:key="'IsPCSK9-'+item.Key">
+                            {{item.Value}}
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsPCSK9 == '1'">
+                <el-form-item label="药物名称" prop="Discharge.PCSK9Name" class="input_required">
+                    <el-select v-model="patient.Discharge.PCSK9Name" placeholder="请选择" size="mini" style="width:33%">
+                        <el-option v-for="(item,index) in PCSK9NameDict"
+                                   v-bind:label="item.Value"
+                                   v-bind:value="item.Key"
+                                   v-bind:key="'JTYWName-'+ index">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsPCSK9 == '1'">
+                <el-form-item label="单次剂量" prop="Discharge.PCSK9Dose" class="input_required">
+                    <el-input v-model="patient.Discharge.PCSK9Dose" size="mini">
+                        <template slot="append">
+                            mg
+                        </template>
+                    </el-input>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <div v-if="IsCpc()">
+            <el-tag style="width:100%;">危险因素</el-tag>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="高血压" prop="Discharge.IsHypertension" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsHypertension" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Hypertension-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="高脂血症" prop="Discharge.IsHyperlipidemia" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsHyperlipidemia" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Hyperlipidemia-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="糖尿病" prop="Discharge.IsDiabetes" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsDiabetes" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Diabetes-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="肥胖" prop="Discharge.IsObesity" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsObesity" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Obesity-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="早发CVD家族史(男<55岁，女<60岁)" prop="Discharge.IsCvdHr" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsCvdHr" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'CvdHr-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="吸烟" prop="Discharge.IsSmoking" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsSmoking" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Smoking-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-show="patient.Discharge.IsSmoking == '1'">
+                    <el-form-item label="吸烟" prop="Discharge.SmokingSituation" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.SmokingSituation" size="mini">
+                            <el-radio-button v-for="item in SmokingSituationDict"
+                                             v-bind:label="item.Key" v-bind:key="'SmokingSituation-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+
+            <el-tag style="width:100%;">合并疾病</el-tag>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="冠心病" prop="Discharge.IsChd" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsChd" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Chd-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-show="patient.Discharge.IsChd == '1'">
+                    <el-form-item label="血运重建史" prop="Discharge.IsChdHor" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsChdHor" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'ChdHor-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="心房颤动" prop="Discharge.IsAf" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsAf" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Af-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-show="patient.Discharge.IsAf == '1'">
+                    <el-form-item label="分型" prop="Discharge.AfType" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.AfType" size="mini">
+                            <el-radio-button v-for="item in AfTypeDict"
+                                             v-bind:label="item.Key" v-bind:key="'AfType-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="慢性心力衰竭" prop="Discharge.IsChf" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsChf" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Chf-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-show="patient.Discharge.IsChf == '1'">
+                    <el-form-item label="NYHA分级" prop="Discharge.ChfNyha" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.ChfNyha" size="mini">
+                            <el-radio-button v-for="item in ChfNyhaDict"
+                                             v-bind:label="item.Key" v-bind:key="'ChfNyha-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="脑血管疾病" prop="Discharge.IsCvd" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsCvd" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Cvd-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-show="patient.Discharge.IsCvd == '1'">
+                    <el-form-item label="脑血管疾病类型" prop="Discharge.CvdType" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.CvdType" size="mini">
+                            <el-radio-button v-for="item in CvdTypeDict"
+                                             v-bind:label="item.Key" v-bind:key="'CvdType-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="心脏瓣膜病" prop="Discharge.IsVhd" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsVhd" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Vhd-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="外周动脉疾病" prop="Discharge.IsPad" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsPad" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Pad-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="主动脉瘤" prop="Discharge.IsAneurysm" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsAneurysm" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Aneurysm-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="COPD" prop="Discharge.IsCopd" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsCopd" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Copd-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="慢性肾病" prop="Discharge.IsCkd" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsCkd" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Ckd-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="贫血" prop="Discharge.IsAnemia" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsAnemia" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Anemia-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="消化性溃疡" prop="Discharge.IsPepticUlcer" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsPepticUlcer" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'PepticUlcer-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="甲状腺功能异常" prop="Discharge.IsThyroidDysfunction" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsThyroidDysfunction" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'ThyroidDysfunction-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="恶性肿瘤" prop="Discharge.IsMalignantTumor" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsMalignantTumor" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'IsMalignantTumor-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-tag style="width:100%;">检查结果</el-tag>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="72h内肌钙蛋白" prop="Discharge.IsTroponin" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsTroponin" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Troponin-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsTroponin == '1'">
+                    <el-form-item label="类别" prop="DischargeTest.Troponin.Result" class="input_required">
+                        <el-radio-group v-model="patient.DischargeTest.Troponin.Category" size="mini" style="width:48%">
+                            <el-radio-button v-for="item in TroponinDict"
+                                             v-bind:label="item.Key" v-bind:key="'TroponinCategory-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsTroponin == '1'">
+                    <el-form-item label="72h内肌钙蛋白最高值" prop="DischargeTest.Troponin.Result" class="input_required">
+                        <el-input v-model="patient.DischargeTest.Troponin.Result" style="width:50%" size="mini"  maxlength="20" v-labtest>
+                        </el-input>
+                        <el-select v-model="patient.DischargeTest.Troponin.Unit" placeholder="请选择" size="mini" style="width:33%">
+                            <el-option v-for="(item,index) in CtnUnitDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Value"
+                                       v-bind:key="'troponin-'+ index">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="脑钠肽" prop="Discharge.IsBnp" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsBnp" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Bnp-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsBnp == '1'">
+                    <el-form-item label="类别" prop="DischargeTest.Bnp.Result">
+                        <el-radio-group v-model="patient.DischargeTest.Bnp.Category" size="mini">
+                            <el-radio-button v-for="item in BnpTypeDict"
+                                             v-bind:label="item.Key" v-bind:key="'BnpCategory-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsBnp == '1'">
+                    <el-form-item label="最高值" prop="DischargeTest.Bnp.Result">
+                        <el-input v-model="patient.DischargeTest.Bnp.Result" size="mini">
+                            <template slot="append">
+                                pg/mL
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="总胆固醇(TC)" prop="Discharge.IsTc" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsTc" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Tc-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsTc == '1'">
+                    <el-form-item label="数值" prop="DischargeTest.Tc.Result" class="input_required">
+                        <el-input v-model="patient.DischargeTest.Tc.Result" size="mini">
+                            <template slot="append">
+                                mmol/L
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="甘油三酯(TG)" prop="Discharge.IsTg" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsTg" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Tg-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsTg == '1'">
+                    <el-form-item label="数值" prop="DischargeTest.Tg.Result" class="input_required">
+                        <el-input v-model="patient.DischargeTest.Tg.Result" size="mini">
+                            <template slot="append">
+                                mmol/L
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="高密度脂蛋白(HDL-C)" prop="Discharge.IsHdlC" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsHdlC" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'HdlC-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsHdlC == '1'">
+                    <el-form-item label="数值" prop="DischargeTest.HdlC.Result" class="input_required">
+                        <el-input v-model="patient.DischargeTest.HdlC.Result" size="mini">
+                            <template slot="append">
+                                mmol/L
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="低密度脂蛋白(LDL-C)" prop="Discharge.IsLdlC" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsLdlC" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'LdlC-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsLdlC == '1'">
+                    <el-form-item label="数值" prop="DischargeTest.LdlC.Result" class="input_required">
+                        <el-input v-model="patient.DischargeTest.LdlC.Result" size="mini">
+                            <template slot="append">
+                                mmol/L
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="超声心动图" prop="Discharge.IsUcc" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsUcc" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Ucc-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsUcc == '1'">
+                    <el-form-item label="LVEF(诊疗过程中最低值)" prop="Discharge.Lvef">
+                        <el-input v-model="patient.Discharge.Lvef" size="mini" maxlength="8" v-int="{ max:100 }">
+                            <template slot="append">
+                                %
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsUcc == '1'">
+                    <el-form-item label="室壁瘤" prop="Discharge.IsVentricularAneurysm">
+                        <el-radio-group v-model="patient.Discharge.IsVentricularAneurysm" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'VentricularAneurysm-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_quarter" v-if="patient.Discharge.IsUcc == '1'">
+                    <el-form-item label="局部室壁活动异常" prop="Discharge.IsRwma">
+                        <el-radio-group v-model="patient.Discharge.IsRwma" size="mini">
+                            <el-radio-button v-for="item in YesOrNoDict"
+                                             v-bind:label="item.Key" v-bind:key="'Rwma-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+        </div>
+
+        <!--出院信息-->
+        <el-tag style="width:100%;">出院信息</el-tag>
+        <el-row v-bind:gutter="gutter">
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="住院天数" prop="Discharge.Hod" class="input_required">
+                    <el-input v-model="patient.Discharge.Hod" size="mini" maxlength="6" v-int="{ max:3650 }">
+                        <template slot="append">
+                            天
+                        </template>
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="总费用" prop="Discharge.TotalCost" class="input_required">
+                    <el-input v-model="patient.Discharge.TotalCost" size="mini" maxlength="12" v-float="{ max:10000000 }">
+                        <template slot="append">
+                            元
+                        </template>
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_full">
+                <el-form-item label="患者转归" prop="Discharge.OutcomeCode" size="mini" class="input_required">
+                    <el-radio-group v-model="patient.Discharge.OutcomeCode">
+                        <el-radio-button v-for="item in PatientOutcomeDict"
+                                         v-bind:label="item.Key"
+                                         v-bind:key="'OutcomeCode-'+item.Key">
+                            {{item.Value}}
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+        </el-row>
+
+        <!-- 出院 -->
+        <div v-if="IsLeave()">
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="space_quarter">
+                    <el-form-item label="出院时间" prop="Discharge.LeaveTime" class="input_required">
+                        <el-date-picker v-model="patient.Discharge.LeaveTime"
+                                        type="datetime" v-on:blur="onDateSelected"
+                                        format="yyyy-MM-dd HH:mm"
+                                        placeholder="请选择出院时间"
+                                        size="mini">
+                        </el-date-picker>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_half">
+                    <el-form-item label="治疗结果" prop="Discharge.TreatmentResult" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.TreatmentResult" size="mini">
+                            <el-radio-button v-for="item in TreatmentResultDict"
+                                             v-bind:label="item.Key"
+                                             v-bind:key="'TreatmentResult-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+
+            <el-tag style="width:100%;" v-if="IsCpc() && IsLeave()">出院药物方案</el-tag>
+            <el-row v-bind:gutter="20" v-if="IsCpc() && IsLeave()">
+                <el-col v-bind:span="6">
+                    <el-form-item label="抗血小板药物" prop="Discharge.IsAntiplatelet" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsAntiplatelet" size="mini">
+                            <el-radio-button v-for="(item,index) in YesOrNoDict"
+                                             v-bind:label="item.Key"
+                                             v-bind:key="'Dapt-' + index">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="20" v-for="(dapt,index) in patient.DischargeDrugs.Dapt" v-bind:key="'DaptItem-' + index" v-if="IsCpc() && IsLeave() && patient.Discharge.IsAntiplatelet == '1'">
+                <el-col v-bind:span="6">
+                    <el-form-item label="药物名称" prop="Name" class="input_required">
+                        <el-select v-model="dapt.Code" placeholder="请选择" size="mini">
+                            <el-option v-for="(item,index) in DaptDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'DaptDrug-' + index">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="6">
+                    <el-form-item label="服用频次" prop="Dose" class="input_required">
+                        <el-select v-model="dapt.RateTime" placeholder="请选择时间" size="mini" style="width:48%;">
+                            <el-option v-for="(item,index) in RateTimeDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'RateTime-' + index">
+                            </el-option>
+                        </el-select>
+                        <el-select v-model="dapt.RateCount" placeholder="请选择频次" size="mini" style="width:48%;">
+                            <el-option v-for="(item,index) in RateCountDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'RateCount-' + index">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="6">
+                    <el-form-item label="剂量" prop="Dose" class="input_required">
+                        <el-input v-model="dapt.Dose" size="mini" maxlength="12" style="width:calc(100% - 48px);" v-float>
+                            <template slot="append">
+                                mg
+                            </template>
+                        </el-input>
+                        <el-button type="primary" icon="el-icon-plus" v-if="index==0" v-on:click="addDrug('Dapt')" size="mini"></el-button>
+                        <el-button type="primary" icon="el-icon-delete" v-if="index>0" v-on:click="removeDrug(index, 'Dapt')" size="mini"></el-button>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+
+            <el-row v-bind:gutter="20" v-if="IsCpc() && IsLeave()">
+                <el-col v-bind:span="6">
+                    <el-form-item label="ACEI/ARB" prop="Discharge.IsAceiOrArb" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsAceiOrArb" size="mini">
+                            <el-radio-button v-for="(item,index) in YesOrNoDict"
+                                             v-bind:label="item.Key"
+                                             v-bind:key="'Aceiorarb-' + index">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="20" v-for="(aceiorarb,index) in patient.DischargeDrugs.Aceiorarb" v-bind:key="'AceiorarbItem-' + index" v-if="IsCpc() && IsLeave() && patient.Discharge.IsAceiOrArb == '1'">
+                <el-col v-bind:span="6">
+                    <el-form-item label="药物名称" prop="Name" class="input_required">
+                        <el-select v-model="aceiorarb.Code" placeholder="请选择" size="mini">
+                            <el-option v-for="(item,index) in AceiorarbDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'AceiorarbDrug-' + index">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="6">
+                    <el-form-item label="服用频次" prop="Dose" class="input_required">
+                        <el-select v-model="aceiorarb.RateTime" placeholder="请选择时间" size="mini" style="width:48%;">
+                            <el-option v-for="(item,index) in RateTimeDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'aceiorarb-RateTime-' + index">
+                            </el-option>
+                        </el-select>
+                        <el-select v-model="aceiorarb.RateCount" placeholder="请选择频次" size="mini" style="width:48%;">
+                            <el-option v-for="(item,index) in RateCountDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'aceiorarb-RateCount-' + index">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="6">
+                    <el-form-item label="剂量" prop="Dose" class="input_required">
+                        <el-input v-model="aceiorarb.Dose" size="mini" maxlength="12" style="width:calc(100% - 48px);" v-float>
+                            <template slot="append">
+                                mg
+                            </template>
+                        </el-input>
+                        <el-button type="primary" icon="el-icon-plus" v-if="index==0" v-on:click="addDrug('Aceiorarb')" size="mini"></el-button>
+                        <el-button type="primary" icon="el-icon-delete" v-if="index>0" v-on:click="removeDrug(index, 'Aceiorarb')" size="mini"></el-button>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+
+            <el-row v-bind:gutter="20" v-if="IsCpc() && IsLeave()">
+                <el-col v-bind:span="6">
+                    <el-form-item label="调脂药物" prop="Discharge.IsLipidRegulation" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsLipidRegulation" size="mini">
+                            <el-radio-button v-for="(item,index) in YesOrNoDict"
+                                             v-bind:label="item.Key"
+                                             v-bind:key="'Statins-' + index">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="20" v-for="(statins,index) in patient.DischargeDrugs.Statins" v-bind:key="'StatinsItem-' + index" v-if="IsCpc() && IsLeave() && patient.Discharge.IsLipidRegulation == '1'">
+                <el-col v-bind:span="6">
+                    <el-form-item label="药物名称" prop="Name" class="input_required">
+                        <el-select v-model="statins.Code" placeholder="请选择" size="mini">
+                            <el-option v-for="(item,index) in StatinsDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'StatinsDrug-' + index">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="6">
+                    <el-form-item label="服用频次" prop="Dose" class="input_required">
+                        <el-select v-model="statins.RateTime" placeholder="请选择时间" size="mini" style="width:48%;">
+                            <el-option v-for="(item,index) in RateTimeDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'statins-RateTime-' + index">
+                            </el-option>
+                        </el-select>
+                        <el-select v-model="statins.RateCount" placeholder="请选择频次" size="mini" style="width:48%;">
+                            <el-option v-for="(item,index) in RateCountDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'statins-RateCount-' + index">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="6">
+                    <el-form-item label="剂量" prop="Dose" class="input_required">
+                        <el-input v-model="statins.Dose" size="mini" maxlength="12" style="width:calc(100% - 48px);" v-float>
+                            <template slot="append">
+                                mg
+                            </template>
+                        </el-input>
+                        <el-button type="primary" icon="el-icon-plus" v-if="index==0" v-on:click="addDrug('Statins')" size="mini"></el-button>
+                        <el-button type="primary" icon="el-icon-delete" v-if="index>0" v-on:click="removeDrug(index, 'Statins')" size="mini"></el-button>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+
+            <el-row v-bind:gutter="20" v-if="IsCpc() && IsLeave()">
+                <el-col v-bind:span="6">
+                    <el-form-item label="β受体阻滞剂" prop="Discharge.IsBetaBlocker" class="input_required">
+                        <el-radio-group v-model="patient.Discharge.IsBetaBlocker" size="mini">
+                            <el-radio-button v-for="(item,index) in YesOrNoDict"
+                                             v-bind:label="item.Key"
+                                             v-bind:key="'Retardant-' + index">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="20" v-for="(retardant,index) in patient.DischargeDrugs.Retardant" v-bind:key="'RetardantItem-' + index" v-if="IsCpc() && IsLeave() && patient.Discharge.IsBetaBlocker == '1'">
+                <el-col v-bind:span="6">
+                    <el-form-item label="药物名称" prop="Name" class="input_required">
+                        <el-select v-model="retardant.Code" placeholder="请选择" size="mini">
+                            <el-option v-for="(item,index) in RetardantDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'RetardantDrug-' + index">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="6">
+                    <el-form-item label="服用频次" prop="Dose" class="input_required">
+                        <el-select v-model="retardant.RateTime" placeholder="请选择时间" size="mini" style="width:48%;">
+                            <el-option v-for="(item,index) in RateTimeDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'retardant-RateTime-' + index">
+                            </el-option>
+                        </el-select>
+                        <el-select v-model="retardant.RateCount" placeholder="请选择频次" size="mini" style="width:48%;">
+                            <el-option v-for="(item,index) in RateCountDict"
+                                       v-bind:label="item.Value"
+                                       v-bind:value="item.Key"
+                                       v-bind:key="'retardant-RateCount-' + index">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="6">
+                    <el-form-item label="剂量" prop="Dose" class="input_required">
+                        <el-input v-model="retardant.Dose" size="mini" maxlength="12" style="width:calc(100% - 48px);" v-float>
+                            <template slot="append">
+                                mg
+                            </template>
+                        </el-input>
+                        <el-button type="primary" icon="el-icon-plus" v-if="index==0" v-on:click="addDrug('Retardant')" size="mini"></el-button>
+                        <el-button type="primary" icon="el-icon-delete" v-if="index>0" v-on:click="removeDrug(index, 'Retardant')" size="mini"></el-button>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+        </div>
+        <!-- 转院 -->
+        <el-row v-bind:gutter="gutter" v-if="IsTransferHospital()">
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="离开本院大门时间" prop="Discharge.LeaveTime" class="input_required">
+                    <el-date-picker v-model="patient.Discharge.LeaveTime"
+                                    type="datetime" v-on:blur="onDateSelected"
+                                    format="yyyy-MM-dd HH:mm"
+                                    placeholder="请选择离开本院大门时间"
+                                    size="mini">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="医院名称" prop="Discharge.HospitalName">
+                    @*<el-input v-model="patient.Discharge.HospitalName" size="mini" maxlength="50">
+                    </el-input>*@
+                    <el-autocomplete v-model="patient.Discharge.HospitalName"
+                                     v-bind:fetch-suggestions="queryHospitalNames"
+                                     placeholder="请输入医院名称" size="mini"
+                                     v-bind:maxlength="30"></el-autocomplete>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="是否是网络医院">
+                    <el-radio-group v-model="patient.Discharge.IsNetHospital" size="mini">
+                        <el-radio-button v-for="item in YesOrNoDict"
+                                         v-bind:label="item.Key" v-bind:key="'IsNetHospital-'+item.Key">
+                            {{item.Value}}
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        @*<el-row v-bind:gutter="gutter" v-if="IsTransferHospital()">
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="转运PCI">
+                    <el-radio-group v-model="patient.Discharge.IsTransPci" size="mini">
+                        <el-radio-button v-for="item in YesOrNoDict"
+                                         v-bind:label="item.Key" v-bind:key="'IsTransPci-'+item.Key">
+                            {{item.Value}}
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_quarter" v-if="IsTransPci()">
+                <el-form-item label="直达导管室">
+                    <el-radio-group v-model="patient.Discharge.IsDirectToCr" size="mini">
+                        <el-radio-button v-for="item in YesOrNoDict"
+                                         v-bind:label="item.Key" v-bind:key="'IsDirectToCr-'+item.Key">
+                            {{item.Value}}
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_quarter" v-if="IsTransPci()">
+                <el-form-item label="实际介入手术开始时间" prop="Discharge.PciActualTime">
+                    <el-date-picker v-model="patient.Discharge.PciActualTime"
+                                    type="datetime" v-on:blur="onDateSelected"
+                                    format="yyyy-MM-dd HH:mm"
+                                    placeholder="请选择实际介入手术开始时间"
+                                    size="mini">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <el-row v-bind:gutter="20" v-if="IsTransPci()">
+            <el-col v-bind:span="6">
+                <el-form-item label="传输心电图至协作单位" prop="Diagnosis.EcgTransmission" class="input_required">
+                    <el-radio-group v-model="patient.Discharge.EcgTransmission" size="mini">
+                        <el-radio-button v-for="(item,index) in YesOrNoDict"
+                                         v-bind:label="item.Key"
+                                         v-bind:key="index">
+                            {{item.Value}}
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="6" v-if="patient.Discharge.EcgTransmission == '1'">
+                <el-form-item label="接收时间" prop="Discharge.EcgTransmissionTime">
+                    <el-date-picker v-model="patient.Discharge.EcgTransmissionTime"
+                                    type="datetime" v-on:blur="onDateSelected"
+                                    format="yyyy-MM-dd HH:mm"
+                                    placeholder="选择日期"
+                                    size="mini">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="6" v-if="patient.Discharge.EcgTransmission == '1'">
+                <el-form-item label="传输方式" prop="Discharge.EcgTransmissionType">
+                    <el-select v-model="patient.Discharge.EcgTransmissionType" placeholder="请选择" size="mini">
+                        <el-option v-for="(item,index) in RemoteEcgtranWayDict"
+                                   v-bind:label="item.Value"
+                                   v-bind:value="item.Key"
+                                   v-bind:key="index">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+        </el-row>*@
+        <!-- 转科 -->
+        <el-row v-bind:gutter="gutter" v-if="IsTransferDept()">
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="转科时间" prop="Discharge.DeptTransferTime">
+                    <el-date-picker v-model="patient.Discharge.DeptTransferTime"
+                                    type="datetime" v-on:blur="onDateSelected"
+                                    format="yyyy-MM-dd HH:mm"
+                                    placeholder="请选择转科时间"
+                                    size="mini">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_quarter" id="jzks">
+                <el-form-item label="接诊科室" prop="Discharge.AdmissionDept">
+                    <el-autocomplete v-model="patient.Discharge.AdmissionDept"
+                                     v-bind:fetch-suggestions="queryAdmissionDepts"
+                                     placeholder="请输入接诊科室"
+                                     size="mini" v-bind:maxlength="36"></el-autocomplete>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_half">
+                <el-form-item label="转科原因描述" prop="Discharge.DeptTransferReason">
+                    <el-input v-model="patient.Discharge.DeptTransferReason" size="mini" maxlength="500">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <!-- 离院宣教 -->
+        <el-row v-bind:gutter="gutter" v-if="IsEducation()">
+            <el-col v-bind:span="space_full">
+                <el-form-item label="离院宣教" prop="Discharge.Education">
+                    <el-checkbox-group v-model="patient.Discharge.Education" size="mini" v-on:change="EducationChange">
+                        <el-checkbox v-for="item in DischargeEducationDict"
+                                     v-bind:label="item.Key" v-bind:key="'Education-'+item.Key">
+                            {{item.Value}}
+                        </el-checkbox>
+                    </el-checkbox-group>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <!-- 死亡 -->
+        <el-row v-bind:gutter="gutter" v-if="IsDeath()">
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="死亡时间" prop="Discharge.DeathTime" class="input_required">
+                    <el-date-picker v-model="patient.Discharge.DeathTime"
+                                    type="datetime" v-on:blur="onDateSelected"
+                                    format="yyyy-MM-dd HH:mm"
+                                    placeholder="请选择死亡时间"
+                                    size="mini">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="死亡原因" class="input_required">
+                    <el-radio-group v-model="patient.Discharge.DeathCause" size="mini">
+                        <el-radio-button v-for="item in DeathCauseDict"
+                                         v-bind:label="item.Key" v-bind:key="'DeathCause-'+item.Key">
+                            {{item.Value}}
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="space_half">
+                <el-form-item label="死亡原因描述" prop="Discharge.DeathCauseDesc">
+                    <el-input v-model="patient.Discharge.DeathCauseDesc" size="mini" maxlength="500">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+        </el-row>
+
+        <!-- 患者情况备注 -->
+        <el-row v-bind:gutter="gutter">
+            <el-col v-bind:span="space_full">
+                <el-form-item label="患者情况备注" prop="Discharge.PatientRemarks">
+                    <el-input v-model="patient.Discharge.PatientRemarks" size="mini" maxlength="500">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+        </el-row>
+    </el-form>
+</div>

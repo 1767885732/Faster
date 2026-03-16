@@ -1,0 +1,82 @@
+﻿@model DoCare.CVA.Data.TimelineModel
+@{
+    Layout = null;
+}
+<script src="~/Scripts/Stroke/DataManage/CreatePatient.js"></script>
+<script>
+    function treatment(stage) {
+        $("#nav").css("display", "none");
+        $("#sNav").css("display", "block");
+    }
+    function Jump(source) {
+        $.post('/DataManage/CreatePatient', { source: source, type: "CreatePatient" }, function (str) {
+            layer.open({
+                type: 1,
+                title: '新增病例',
+                maxmin: false,
+                shadeClose: false, //点击遮罩关闭层
+                area: ['1000px', '480px'],
+                content: str,
+            });
+        });
+        parent.layer.closeAll()
+    }
+</script>
+<link href="~/App_Themes/Default/add-patient.css" rel="stylesheet" />
+<link href="~/App_Themes/Default/style.css" rel="stylesheet" />
+<div style="background: #91949a;">
+    <div class="add-blocks">
+        <a href="/DataManage/AddPatient" target="_blank">
+            <div class="block-item">
+                <div class="block-content">
+                    <span class="block-icon icon-kongbai"></span>
+                    <div class="block-text">空白病例</div>
+                </div>
+            </div>
+        </a>
+        @if (ViewBag.Aid)
+        {
+            <a href="javascript:void(0)" onclick="Jump('1')">
+                <div class="block-item">
+                    <div class="block-content">
+                        <span class="block-icon icon-jijiu"></span>
+                        <div class="block-text">急救</div>
+                    </div>
+                </div>
+            </a>
+        }
+        @if (ViewBag.Emergency)
+        {
+            <a href="javascript:void(0)" onclick="Jump('2')">
+                <div class="block-item">
+                    <div class="block-content">
+                        <span class="block-icon icon-jizhen"></span>
+                        <div class="block-text">急诊</div>
+                    </div>
+                </div>
+            </a>
+        }
+        @if (ViewBag.Outpatient)
+        {
+            <a href="javascript:void(0)" onclick="Jump('3')">
+                <div class="block-item">
+                    <div class="block-content">
+                        <span class="block-icon icon-menzhen"></span>
+                        <div class="block-text">门诊</div>
+                    </div>
+                </div>
+            </a>
+        }
+        @if (ViewBag.Hospitalization)
+        {
+            <a href="javascript:void(0)" onclick="Jump('5')">
+                <div class="block-item">
+                    <div class="block-content">
+                        <span class="block-icon icon-zhuyuan"></span>
+                        <div class="block-text">住院</div>
+                    </div>
+                </div>
+            </a>
+        }
+    </div>
+</div>

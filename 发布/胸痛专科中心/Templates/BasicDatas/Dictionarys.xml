@@ -1,0 +1,740 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Dictionary Code="CPC.0001" Name="性别" Desc="Gender">
+    <Item Code="1" Name="男"/>
+    <Item Code="2" Name="女"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0002" Name="证件类型" Desc="IdCard">
+    <Item Code="0" Name="未知"/>
+    <Item Code="1" Name="身份证"/>
+    <Item Code="2" Name="护照"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0003" Name="民族" Desc="Nationality">
+    <Item Code="01" Name="汉族"/>
+    <Item Code="02" Name="蒙古族"/>
+    <Item Code="03" Name="回族"/>
+    <Item Code="04" Name="藏族"/>
+    <Item Code="05" Name="维吾尔族"/>
+    <Item Code="06" Name="苗族"/>
+    <Item Code="07" Name="彝族"/>
+    <Item Code="08" Name="壮族"/>
+    <Item Code="09" Name="布依族"/>
+    <Item Code="10" Name="朝鲜族"/>
+    <Item Code="11" Name="满族"/>
+    <Item Code="12" Name="侗族"/>
+    <Item Code="13" Name="瑶族"/>
+    <Item Code="14" Name="白族"/>
+    <Item Code="15" Name="土家族"/>
+    <Item Code="16" Name="哈尼族"/>
+    <Item Code="17" Name="哈萨克族"/>
+    <Item Code="18" Name="傣族"/>
+    <Item Code="19" Name="黎族"/>
+    <Item Code="20" Name="傈僳族"/>
+    <Item Code="21" Name="佤族"/>
+    <Item Code="22" Name="拉祜族"/>
+    <Item Code="23" Name="高山族"/>
+    <Item Code="24" Name="白族"/>
+    <Item Code="25" Name="水族"/>
+    <Item Code="26" Name="东乡族"/>
+    <Item Code="27" Name="纳西族"/>
+    <Item Code="28" Name="景颇族"/>
+    <Item Code="29" Name="柯尔克孜族"/>
+    <Item Code="30" Name="土族"/>
+    <Item Code="31" Name="达斡尔族"/>
+    <Item Code="32" Name="仫佬族"/>
+    <Item Code="33" Name="羌族"/>
+    <Item Code="34" Name="布朗族"/>
+    <Item Code="35" Name="撒拉族"/>
+    <Item Code="36" Name="毛难族"/>
+    <Item Code="37" Name="仡佬族"/>
+    <Item Code="38" Name="锡伯族"/>
+    <Item Code="39" Name="阿昌族"/>
+    <Item Code="40" Name="土族普米族"/>
+    <Item Code="41" Name="塔吉克族"/>
+    <Item Code="42" Name="怒族"/>
+    <Item Code="43" Name="乌孜别克族"/>
+    <Item Code="44" Name="俄罗斯族"/>
+    <Item Code="45" Name="鄂温克族"/>
+    <Item Code="46" Name="崩龙族"/>
+    <Item Code="47" Name="保安族"/>
+    <Item Code="48" Name="裕固族"/>
+    <Item Code="49" Name="京族"/>
+    <Item Code="50" Name="塔塔尔族"/>
+    <Item Code="51" Name="独龙族"/>
+    <Item Code="52" Name="鄂伦春族"/>
+    <Item Code="53" Name="赫哲族"/>
+    <Item Code="54" Name="门巴族"/>
+    <Item Code="55" Name="珞巴族"/>
+    <Item Code="56" Name="基诺族"/>
+    <Item Code="97" Name="其他"/>
+    <Item Code="98" Name="外国血统"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0004" Name="职业" Desc="Job">
+    <Item Code="01" Name="国家机关、党群组织、企事业单位负责人"/>
+    <Item Code="02" Name="各类专业技术人员"/>
+    <Item Code="03" Name="办事人员和有关人员"/>
+    <Item Code="04" Name="商业及服务型工作人员"/>
+    <Item Code="05" Name="农、林、牧、渔、水利业生产人员"/>
+    <Item Code="06" Name="生产工人，运输工人和相关人员"/>
+    <Item Code="07" Name="下岗或无业"/>
+    <Item Code="08" Name="离退休"/>
+    <Item Code="09" Name="学生"/>
+    <Item Code="10" Name="军人"/>
+    <Item Code="11" Name="不便分类的其他从业人员"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0005" Name="文化程度" Desc="CultureDegree">
+    <Item Code="01" Name="没上过学"/>
+    <Item Code="02" Name="小学"/>
+    <Item Code="03" Name="初中"/>
+    <Item Code="04" Name="高中或中专（中技）"/>
+    <Item Code="05" Name="大专"/>
+    <Item Code="06" Name="本科及以上"/>
+    <Item Code="09" Name="不详"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0006" Name="婚姻状况" Desc="MaritalStatus">
+    <Item Code="01" Name="未婚"/>
+    <Item Code="02" Name="已婚"/>
+    <Item Code="03" Name="丧偶"/>
+    <Item Code="04" Name="离异"/>
+    <Item Code="09" Name="不详"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0010" Name="发病区间" Desc="AttackZone">
+    <Item Code="1" Name="凌晨(0点到6点)"/>
+    <Item Code="2" Name="清晨(6到8点)"/>
+    <Item Code="3" Name="上午(8到12点)"/>
+    <Item Code="4" Name="中午(12到14点)"/>
+    <Item Code="5" Name="下午(14到17点)"/>
+    <Item Code="6" Name="傍晚(17到19点)"/>
+    <Item Code="7" Name="晚上(19到24点)"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0011" Name="来院方式" Desc="Coming">
+    <Item Code="1" Name="呼救（120或其他）出车"/>
+    <Item Code="2" Name="转院（包含任何医疗机构）"/>
+    <Item Code="3" Name="自行来院"/>
+    <Item Code="4" Name="院内发病"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0012" Name="病情评估" Desc="DistressCase">
+    <Item Code="1" Name="持续性胸闷/胸痛"/>
+    <Item Code="2" Name="间歇性胸闷/胸痛"/>
+    <Item Code="3" Name="症状已缓解"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0013" Name="其他病情评估" Desc="DistressCaseDetail">
+    <Item Code="1" Name="呼吸困难"/>
+    <Item Code="2" Name="腹痛"/>
+    <Item Code="3" Name="齿痛"/>
+    <Item Code="4" Name="肩背痛"/>
+    <Item Code="5" Name="合并出血"/>
+    <Item Code="6" Name="合并心衰"/>
+    <Item Code="7" Name="合并恶性心律失常"/>
+    <Item Code="8" Name="不明原因的昏厥"/>
+    <Item Code="9" Name="自汗、大汗淋漓"/>
+    <Item Code="10" Name="心慌心悸"/>
+    <Item Code="11" Name="烦躁不安"/>
+    <Item Code="12" Name="颈前部束缚感"/>
+    <Item Code="13" Name="乏力"/>
+    <Item Code="14" Name="气喘"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0014" Name="转送科室" Desc="TransferDestination">
+    <Item Code="1" Name="他院急诊科"/>
+    <Item Code="2" Name="他院导管室"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0015" Name="出车单位" Desc="AmbulanceDepartment">
+    <Item Code="1" Name="120救护车"/>
+    <Item Code="2" Name="本院救护车"/>
+    <Item Code="3" Name="外院救护车"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0016" Name="转院类型" Desc="TransferType">
+    <Item Code="1" Name="网络医院"/>
+    <Item Code="2" Name="其他医疗机构"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0017" Name="远程心电图传输" Desc="EcgTransferType">
+    <Item Code="1" Name="接收120/网络医院心电图"/>
+    <Item Code="2" Name="未传输"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0018" Name="绕行急诊并直达科室" Desc="BypassEmergencyCode">
+    <Item Code="1" Name="本院导管室"/>
+    <Item Code="2" Name="本院CCU"/>
+    <Item Code="3" Name="本院心内科病房"/>
+    <Item Code="4" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0019" Name="氯吡格雷/替格瑞洛" Desc="AcsDrugType">
+    <Item Code="1" Name="氯吡格雷"/>
+    <Item Code="2" Name="替格瑞洛"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0020" Name="医保类型" Desc="Insurance">
+    <Item Code="1" Name="城镇职工基本医疗保险"/>
+    <Item Code="2" Name="新型农村合作医疗"/>
+    <Item Code="3" Name="城镇居民基本医疗保险"/>
+    <Item Code="4" Name="自费"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0021" Name="意识" Desc="Sense">
+    <Item Code="1" Name="清醒"/>
+    <Item Code="2" Name="对语言有反应"/>
+    <Item Code="3" Name="对刺痛有反应"/>
+    <Item Code="4" Name="对任何刺激无反应"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0022" Name="传输方式" Desc="RemoteEcgtranWay">
+    <Item Code="1" Name="实时监控"/>
+    <Item Code="2" Name="微信群"/>
+    <Item Code="9" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0023" Name="手术场所" Desc="PciPlace">
+    <Item Code="1" Name="本院"/>
+    <Item Code="2" Name="外院"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0024" Name="会诊类型" Desc="ConsultationType">
+    <Item Code="1" Name="现场会诊"/>
+    <Item Code="2" Name="远程会诊"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0050" Name="胸痛诊断" Desc="Diagnosis">
+    <Item Code="1" Name="STEMI"/>
+    <Item Code="2" Name="NSTEMI"/>
+    <Item Code="3" Name="UA"/>
+    <Item Code="4" Name="主动脉夹层"/>
+    <Item Code="5" Name="肺动脉栓塞"/>
+    <Item Code="6" Name="非ACS胸痛"/>
+    <Item Code="7" Name="其他非心源性胸痛"/>
+    <Item Code="9" Name="待查"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0051" Name="抗凝药物" Desc="AnticoagulationDrug">
+    <Item Code="1" Name="普通肝素"/>
+    <Item Code="2" Name="低分子肝素"/>
+    <Item Code="3" Name="比伐卢定"/>
+    <Item Code="4" Name="磺达肝癸钠"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0052" Name="Killip分级" Desc="KillipLevel">
+    <Item Code="1" Name="I级(no CHF)"/>
+    <Item Code="2" Name="II级(rales and/or JVD)"/>
+    <Item Code="3" Name="III级(pulmonary edema)"/>
+    <Item Code="4" Name="IV级(cardiogenic shock)"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0053" Name="Grace评估" Desc="GraceEstimate">
+    <Item Code="1" Name="发病后曾出现心脏骤停"/>
+    <Item Code="2" Name="心电图ST段改变"/>
+    <Item Code="3" Name="心肌坏死标志物升高"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0054" Name="Grace极高危条件" Desc="GraceHighriskCondition">
+    <!--<Item Code="1" Name="急性心力衰竭伴难治性心绞痛和ST段改变"/>
+    <Item Code="2" Name="危及生命的心律失常或心脏骤停"/>
+    <Item Code="3" Name="心源性休克或血流动力学不稳定"/>
+    <Item Code="4" Name="心肌梗死机械性并发症"/>
+    <Item Code="5" Name="再发ST-T动态演变，尤其是伴有间歇性ST段抬高"/>
+    <Item Code="6" Name="药物治疗无效的反复发作或持续性胸痛"/>-->
+    <Item Code="1" Name="急性心力衰竭"/>
+    <Item Code="2" Name="致命性心律失常或心脏骤停"/>
+    <Item Code="3" Name="血流动力学不稳定或心源性休克"/>
+    <Item Code="4" Name="心肌梗死合并机械并发症"/>
+    <Item Code="5" Name="反复的ST-T动态改变，尤其是伴有间歇性ST段抬高"/>
+    <Item Code="6" Name="药物治疗无效的反复发作或持续性胸痛"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0055" Name="Grace危险分层" Desc="GraceHighriskLamination">
+    <Item Code="1" Name="极高危"/>
+    <Item Code="2" Name="高危"/>
+    <Item Code="3" Name="中危"/>
+    <Item Code="4" Name="低危"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0056" Name="心脏纽约分级(NYHA)" Desc="Nyha">
+    <Item Code="1" Name="I"/>
+    <Item Code="2" Name="II"/>
+    <Item Code="3" Name="III"/>
+    <Item Code="4" Name="IV"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0057" Name="再次危险分层" Desc="GraceRehazardLevel">
+    <Item Code="0" Name="转为STEMI"/>
+    <Item Code="1" Name="极高危"/>
+    <Item Code="2" Name="高危"/>
+    <Item Code="3" Name="中危"/>
+    <Item Code="4" Name="低危"/>
+    <Item Code="99" Name="未做"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0058" Name="治疗策略" Desc="Strategy">
+    <Item Code="1" Name="保守治疗(仅药物治疗)"/>
+    <Item Code="2" Name="侵入性策略"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0061" Name="侵入性策略" Desc="InvasiveStrategy">
+    <Item Code="21" Name="紧急介入治疗"/>
+    <Item Code="22" Name="24H内介入治疗"/>
+    <Item Code="23" Name="72H内介入治疗"/>
+    <Item Code="24" Name="择期介入治疗"/>
+    <Item Code="25" Name="CABG"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0059" Name="溶栓后措施" Desc="ReperfusionMeasureRs">
+    <Item Code="20" Name="无"/>
+    <Item Code="21" Name="补救PCI"/>
+    <Item Code="22" Name="溶栓后介入"/>
+    <Item Code="23" Name="转运PCI"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0060" Name="再灌注策略" Desc="ReperfusionMeasure">
+    <Item Code="1" Name="直接PCI"/>
+    <Item Code="2" Name="溶栓"/>
+    <Item Code="3" Name="择期介入治疗"/>
+    <Item Code="4" Name="CABG"/>
+    <Item Code="5" Name="转运PCI"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0065" Name="无再灌注措施原因" Desc="PerfusionMeasure">
+    <Item Code="1" Name="生命体征平稳，无持续缺血表现"/>
+    <Item Code="2" Name="超过再灌注时间窗"/>
+    <Item Code="3" Name="高出血风险"/>
+    <Item Code="7" Name="出血活动期"/>
+    <Item Code="4" Name="严重肝肾功能不全"/>
+    <Item Code="6" Name="拒绝或放弃"/>
+    <Item Code="5" Name="经济原因限制"/>
+    <Item Code="9" Name="其他原因"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0066" Name="转运PCI" Desc="PciTransferType">
+    <Item Code="1" Name="转出患者"/>
+    <Item Code="2" Name="接收患者"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0067" Name="处理措施" Desc="HandleWay">
+    <Item Code="1" Name="收治入院"/>
+    <Item Code="2" Name="急诊留观"/>
+    <Item Code="3" Name="门诊治疗"/>
+    <Item Code="4" Name="随访"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0070" Name="夹层类型" Desc="InterlayerType">
+    <Item Code="1" Name="A型"/>
+    <Item Code="2" Name="B型"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0071" Name="治疗策略" Desc="TreatmentStrategy">
+    <Item Code="1" Name="紧急介入治疗"/>
+    <Item Code="2" Name="择期介入治疗"/>
+    <Item Code="3" Name="保守治疗"/>
+    <Item Code="4" Name="外科手术"/>
+    <Item Code="5" Name="其他（介入失败转手术）"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0072" Name="危险分层" Desc="HighriskLamination">
+    <Item Code="1" Name="高危"/>
+    <Item Code="2" Name="中危"/>
+    <Item Code="3" Name="低危"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0080" Name="非ACS心源性胸痛类型" Desc="NacsType">
+    <Item Code="01" Name="心律失常"/>
+    <Item Code="02" Name="扩张性心肌病"/>
+    <Item Code="03" Name="缺血性心肌病"/>
+    <Item Code="04" Name="肥厚型心肌病"/>
+    <Item Code="05" Name="心肌炎"/>
+    <Item Code="06" Name="冠心病"/>
+    <Item Code="07" Name="瓣膜性心脏病"/>
+    <Item Code="08" Name="陈旧性心肌梗死"/>
+    <Item Code="09" Name="心绞痛"/>
+    <Item Code="10" Name="心悸"/>
+    <Item Code="11" Name="房颤"/>
+    <Item Code="12" Name="高血压"/>
+    <Item Code="13" Name="心衰"/>
+    <Item Code="14" Name="房扑"/>
+    <Item Code="15" Name="室早"/>
+    <Item Code="16" Name="房早"/>
+    <Item Code="17" Name="室上速"/>
+    <Item Code="18" Name="心包炎"/>
+    <Item Code="19" Name="心肌桥"/>
+    <Item Code="20" Name="心包积液"/>
+    <Item Code="21" Name="主动脉管壁间血肿"/>
+    <Item Code="22" Name="透壁性动脉粥样硬化性溃疡"/>
+    <Item Code="23" Name="主动脉瘤"/>
+    <Item Code="24" Name="张力性气胸"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0081" Name="其它非心源性胸痛类型" Desc="NccpType">
+    <Item Code="01" Name="呼吸系统病"/>
+    <Item Code="02" Name="消化系统病"/>
+    <Item Code="03" Name="神经系统病"/>
+    <Item Code="04" Name="精神系统病"/>
+    <Item Code="05" Name="肌肉骨骼病"/>
+    <Item Code="06" Name="皮肤系统病"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0082" Name="心房颤动-分型" Desc="AfType">
+    <Item Code="1" Name="阵发性"/>
+    <Item Code="2" Name="持续性"/>
+    <Item Code="3" Name="长程持续性"/>
+    <Item Code="4" Name="永久性"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0083" Name="NYHA分级" Desc="ChfNyha">
+    <Item Code="1" Name="I"/>
+    <Item Code="2" Name="II"/>
+    <Item Code="3" Name="III"/>
+    <Item Code="4" Name="IV"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0084" Name="脑血管疾病-描述" Desc="CvdType">
+    <Item Code="1" Name="缺血性"/>
+    <Item Code="2" Name="出血性"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0085" Name="吸烟" Desc="SmokingSituation">
+    <Item Code="1" Name="已戒烟"/>
+    <Item Code="2" Name="当前仍吸烟 "/>
+  </Dictionary>
+  <Dictionary Code="CPC.0100" Name="延误原因" Desc="DelayReason">
+    <Item Code="01" Name="症状不明显延误诊断"/>
+    <Item Code="02" Name="家属未到场"/>
+    <Item Code="03" Name="医生决策延误"/>
+    <Item Code="04" Name="排队挂号、缴费、办住院时间长"/>
+    <Item Code="05" Name="急诊科处理时间长"/>
+    <Item Code="06" Name="手术期间出现并发症"/>
+    <Item Code="07" Name="超过再灌注时间"/>
+    <Item Code="08" Name="未实施绕行急诊方案"/>
+    <Item Code="09" Name="导管室人员未到位"/>
+    <Item Code="10" Name="药物缺乏"/>
+    <Item Code="11" Name="知情同意时间过长"/>
+    <Item Code="12" Name="病情不稳定"/>
+    <Item Code="13" Name="绕行急诊科但未直接入导管室"/>
+    <Item Code="14" Name="导管室占台"/>
+    <Item Code="15" Name="转运时间长"/>
+    <Item Code="16" Name="经费问题"/>
+    <Item Code="17" Name="心内科会诊时间长"/>
+    <Item Code="18" Name="血管通路困难"/>
+    <Item Code="19" Name="难以绕行病变区域"/>
+    <Item Code="20" Name="心脏骤停或需要气管插管再PCI"/>
+    <Item Code="21" Name="急需影像学资料再行PCI"/>
+    <Item Code="99" Name="其他原因"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0101" Name="入路位置" Desc="Route">
+    <Item Code="1" Name="桡动脉(左侧)"/>
+    <Item Code="2" Name="桡动脉(右侧)"/>
+    <Item Code="3" Name="股动脉"/>
+    <Item Code="9" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0102" Name="阻塞性病变" Desc="Block">
+    <Item Code="01" Name="部位-1"/>
+    <Item Code="02" Name="部位-2"/>
+    <Item Code="03" Name="部位-3"/>
+    <Item Code="04" Name="部位-4"/>
+    <Item Code="05" Name="部位-5"/>
+    <Item Code="06" Name="部位-6"/>
+    <Item Code="07" Name="部位-7"/>
+    <Item Code="08" Name="部位-8"/>
+    <Item Code="09" Name="部位-9"/>
+    <Item Code="10" Name="部位-10"/>
+    <Item Code="11" Name="部位-11"/>
+    <Item Code="12" Name="部位-12"/>
+    <Item Code="13" Name="部位-13"/>
+    <Item Code="14" Name="部位-14"/>
+    <Item Code="15" Name="部位-15"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0103" Name="狭窄程度" Desc="NarrowLevel">
+    <Item Code="1" Name="＜50"/>
+    <Item Code="2" Name="50～69%"/>
+    <Item Code="3" Name="70～89%"/>
+    <Item Code="4" Name="90～99%"/>
+    <Item Code="5" Name="100%"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0104" Name="血流TIMI分级" Desc="TimiLevel">
+    <Item Code="0" Name="0级"/>
+    <Item Code="1" Name="1级"/>
+    <Item Code="2" Name="2级"/>
+    <Item Code="3" Name="3级"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0105" Name="腔内影像" Desc="IntracavityImage">
+    <Item Code="0" Name="未做"/>
+    <Item Code="1" Name="IVUS"/>
+    <Item Code="2" Name="OCT"/>
+    <Item Code="9" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0106" Name="功能检测" Desc="FunctionTest">
+    <Item Code="0" Name="未做"/>
+    <Item Code="1" Name="FFR"/>
+    <Item Code="2" Name="iFR"/>
+    <Item Code="3" Name="IMR"/>
+    <Item Code="9" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0107" Name="植入支架个数" Desc="BracketNum">
+    <Item Code="1" Name="0枚"/>
+    <Item Code="2" Name="1枚"/>
+    <Item Code="3" Name="2枚"/>
+    <Item Code="4" Name="≥3枚"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0108" Name="术中并发症" Desc="PciComplication">
+    <Item Code="00" Name="无"/>
+    <Item Code="01" Name="恶性心律失常"/>
+    <Item Code="02" Name="低血压"/>
+    <Item Code="08" Name="心源性休克"/>
+    <Item Code="09" Name="严重缓慢型心律失常"/>
+    <Item Code="10" Name="血栓栓塞"/>
+    <Item Code="03" Name="慢血流/无复流"/>
+    <Item Code="04" Name="血管夹层"/>
+    <Item Code="05" Name="非干预血管急性闭塞"/>
+    <Item Code="06" Name="血管穿孔"/>
+    <Item Code="07" Name="死亡"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0109" Name="冠脉造影" Desc="CagPosition">
+    <Item Code="01" Name="1:右冠近段"/>
+    <Item Code="02" Name="2:右冠中段"/>
+    <Item Code="03" Name="3:右冠远段"/>
+    <Item Code="04" Name="4:后降支(右优势型)"/>
+    <Item Code="05" Name="5:左主干"/>
+    <Item Code="06" Name="6:前降支近段"/>
+    <Item Code="07" Name="7:前降支中段"/>
+    <Item Code="08" Name="8:前降支远段"/>
+    <Item Code="09" Name="9:第一对角支"/>
+    <Item Code="10" Name="10:第二对角支"/>
+    <Item Code="11" Name="11:旋支近段"/>
+    <Item Code="12" Name="12:第一钝缘支"/>
+    <Item Code="13" Name="13:旋支远段"/>
+    <Item Code="14" Name="14:左室后支"/>
+    <Item Code="15" Name="15:后降支(左优势型或均衡型)"/>
+    <Item Code="16" Name="16:中间支"/>
+    <Item Code="17" Name="17:第三对角支"/>
+    <Item Code="18" Name="18:第二钝缘支"/>
+    <Item Code="19" Name="19:第三钝缘支"/>
+    <Item Code="20" Name="20:锐缘支"/>
+    <Item Code="21" Name="21:左圆椎支"/>
+    <Item Code="22" Name="22:右圆椎支"/>
+    <Item Code="23" Name="23:室间隔支"/>
+    <Item Code="24" Name="24:左后外侧支"/>
+    <Item Code="25" Name="25:右后外侧支"/>
+    <Item Code="26" Name="26:房室沟动脉"/>
+    <Item Code="27" Name="27:后降支室间支"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0120" Name="术中处理" Desc="PciHandleWay">
+    <Item Code="01" Name="植入支架"/>
+    <Item Code="02" Name="PTCA"/>
+    <Item Code="03" Name="血栓抽吸"/>
+    <Item Code="04" Name="冠脉内溶栓"/>
+    <Item Code="05" Name="仅使用导丝"/>
+    <Item Code="99" Name="其他"/>
+    <Item Code="00" Name="无"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0121" Name="支架种类" Desc="BracketType">
+    <Item Code="01" Name="BMS"/>
+    <Item Code="02" Name="DES"/>
+    <Item Code="03" Name="可降解支架"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0150" Name="出院诊断" Desc="DischargeDiagnosis">
+    <Item Code="1" Name="STEMI"/>
+    <Item Code="2" Name="NSTEMI"/>
+    <Item Code="3" Name="UA"/>
+    <Item Code="4" Name="主动脉夹层"/>
+    <Item Code="5" Name="肺动脉栓塞"/>
+    <Item Code="6" Name="非ACS心源性胸痛"/>
+    <Item Code="7" Name="其它非心源性胸痛"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0151" Name="BNP类型" Desc="BnpType">
+    <Item Code="Bnp" Name="BNP"/>
+    <Item Code="NtProbnp" Name="NT-proBNP"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0152" Name="合并症" Desc="OutcomeComplication">
+    <Item Code="01" Name="休克"/>
+    <Item Code="02" Name="机械性并发症"/>
+    <Item Code="03" Name="感染"/>
+    <Item Code="04" Name="再发心梗"/>
+    <Item Code="05" Name="血栓"/>
+    <Item Code="06" Name="卒中"/>
+    <Item Code="07" Name="TIA"/>
+    <Item Code="08" Name="出血"/>
+    <Item Code="09" Name="呼吸衰竭"/>
+    <Item Code="10" Name="肾衰竭"/>
+    <Item Code="11" Name="死亡"/>
+    <Item Code="12" Name="恶性心律失常"/>
+    <Item Code="00" Name="无"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0153" Name="心血管疾病危险因素" Desc="CardiovRiskFactors">
+    <Item Code="01" Name="高血压"/>
+    <Item Code="02" Name="高脂血症"/>
+    <Item Code="03" Name="血糖升高"/>
+    <Item Code="04" Name="吸烟"/>
+    <Item Code="05" Name="肥胖"/>
+    <Item Code="06" Name="有家族史"/>
+    <Item Code="07" Name="既往心脏病史"/>
+    <Item Code="08" Name="既往血运重建史"/>
+    <Item Code="99" Name="未知"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0154" Name="患者转归代码" Desc="PatientOutCome">
+    <Item Code="1" Name="出院"/>
+    <Item Code="2" Name="转送其它医院"/>
+    <Item Code="3" Name="转送其它科室"/>
+    <Item Code="4" Name="死亡"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0155" Name="治疗结果" Desc="TreatmentResult">
+    <Item Code="1" Name="治愈"/>
+    <Item Code="2" Name="好转"/>
+    <Item Code="3" Name="自动离院"/>
+    <Item Code="4" Name="其它原因离院"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0156" Name="死亡原因" Desc="DeathCause">
+    <Item Code="1" Name="心源性"/>
+    <Item Code="2" Name="非心源性"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0157" Name="离院宣教" Desc="DischargeEducation">
+    <Item Code="1" Name="戒烟"/>
+    <Item Code="2" Name="规律坚持服药"/>
+    <Item Code="3" Name="遵医嘱随访治疗"/>
+    <Item Code="4" Name="生活起居调护"/>
+    <Item Code="5" Name="心血管危险因素控制（降压、调脂、血糖控制、限酒、控制体重）"/>
+    <Item Code="0" Name="未宣教"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0160" Name="出院带药-DAPT" Desc="Dapt">
+    <Item Code="0" Name="无"/>
+    <Item Code="1" Name="阿司匹林"/>
+    <Item Code="2" Name="氯吡格雷"/>
+    <Item Code="3" Name="替格瑞洛"/>
+    <Item Code="4" Name="普拉格雷"/>
+    <Item Code="5" Name="西洛他唑"/>
+    <Item Code="99" Name="其它"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0161" Name="出院带药-ACEI/ARB" Desc="Aceiorarb">
+    <Item Code="1" Name="贝那普利"/>
+    <Item Code="2" Name="依那普利"/>
+    <Item Code="3" Name="赖诺普利"/>
+    <Item Code="4" Name="卡托普利"/>
+    <Item Code="5" Name="福辛普利"/>
+    <Item Code="6" Name="莫西普利"/>
+    <Item Code="7" Name="培哚普利"/>
+    <Item Code="8" Name="雷米普利"/>
+    <Item Code="9" Name="缬沙坦"/>
+    <Item Code="10" Name="氯沙坦"/>
+    <Item Code="11" Name="厄贝沙坦"/>
+    <Item Code="12" Name="坎地沙坦"/>
+    <Item Code="13" Name="替米沙坦"/>
+    <Item Code="14" Name="奥美沙坦"/>
+    <Item Code="15" Name="沙库巴曲缬沙坦钠"/>
+    <Item Code="16" Name="单片复方制剂"/>
+    <Item Code="99" Name="其他(单药)"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0162" Name="出院带药-他汀类" Desc="Statins">
+    <Item Code="1" Name="阿托伐他汀"/>
+    <Item Code="2" Name="瑞舒伐他汀"/>
+    <Item Code="3" Name="洛伐他汀"/>
+    <Item Code="4" Name="普伐他汀"/>
+    <Item Code="5" Name="辛伐他汀"/>
+    <Item Code="6" Name="氟伐他汀"/>
+    <Item Code="7" Name="匹伐他汀"/>
+    <Item Code="8" Name="依折麦布"/>
+    <Item Code="9" Name="依洛尤单抗"/>
+    <Item Code="10" Name="阿利西尤单抗"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0163" Name="出院带药-β受体阻滞剂" Desc="Retardant">
+    <Item Code="1" Name="酒石酸美托洛尔"/>
+    <Item Code="2" Name="琥珀酸美托洛尔"/>
+    <Item Code="3" Name="比索洛尔"/>
+    <Item Code="4" Name="阿替洛尔"/>
+    <Item Code="5" Name="普萘洛尔"/>
+    <Item Code="6" Name="奈必洛尔"/>
+    <Item Code="7" Name="卡维地洛"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0164" Name="用药时间" Desc="RateTime">
+    <Item Code="1" Name="每日"/>
+    <Item Code="2" Name="每周"/>
+    <Item Code="3" Name="每月"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0165" Name="用药频次" Desc="RateCount">
+    <Item Code="1" Name="1次"/>
+    <Item Code="2" Name="2次"/>
+    <Item Code="3" Name="3次"/>
+    <Item Code="4" Name="4次"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0166" Name="降糖药物" Desc="OHA">
+    <Item Code="1" Name="磺脲类"/>
+    <Item Code="2" Name="双胍类"/>
+    <Item Code="3" Name="α糖苷酶抑制剂"/>
+    <Item Code="4" Name="DPP-4抑制剂"/>
+    <Item Code="5" Name="GLP-1受体激动剂"/>
+    <Item Code="6" Name="SGLT-2抑制剂"/>
+    <Item Code="7" Name="胰岛素及胰岛素类似物"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0167" Name="口服抗凝药物" Desc="NOAC">
+    <Item Code="1" Name="华法林"/>
+    <Item Code="2" Name="达比加群酯"/>
+    <Item Code="3" Name="利伐沙班"/>
+    <Item Code="4" Name="阿哌沙班"/>
+    <Item Code="99" Name="其他"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0168" Name="PCSK9药物名称" Desc="PCSK9">
+    <Item Code="1" Name="阿利西尤单抗"/>
+    <Item Code="2" Name="依洛尤单抗"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0200" Name="溶栓筛查" Desc="ThrombolyticScreening">
+    <Item Code="0" Name="不合适"/>
+    <Item Code="1" Name="合适"/>
+    <Item Code="2" Name="未筛查"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0201" Name="院前溶栓场所" Desc="FaThrombolyticPlace">
+    <Item Code="1" Name="其他医院"/>
+    <Item Code="2" Name="救护车"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0202" Name="院内溶栓场所" Desc="IhThrombolyticPlace">
+    <Item Code="1" Name="本院急诊科"/>
+    <Item Code="2" Name="本院心内科"/>
+    <Item Code="3" Name="其他科室"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0203" Name="溶栓药物" Desc="ThrombolyticDrugType">
+    <Item Code="1" Name="第一代"/>
+    <Item Code="2" Name="第二代"/>
+    <Item Code="3" Name="第三代"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0204" Name="溶栓剂量" Desc="ThrombolyticDrugCode">
+    <Item Code="1" Name="全量"/>
+    <Item Code="2" Name="半量"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0219" Name="肌钙蛋白" Desc="Troponin">
+    <Item Code="TnT" Name="TnT"/>
+    <Item Code="TnI" Name="TnI"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0220" Name="肌钙蛋白单位" Desc="CtnUnit">
+    <Item Code="1" Name="ng/mL"/>
+    <Item Code="2" Name="ug/L"/>
+    <Item Code="3" Name="ng/L"/>
+    <Item Code="5" Name="mg/L"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0221" Name="Myo单位" Desc="MyoUnit">
+    <Item Code="1" Name="ng/mL"/>
+    <Item Code="2" Name="ug/L"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0222" Name="CKMB单位" Desc="CkmbUnit">
+    <Item Code="1" Name="ng/mL"/>
+    <Item Code="2" Name="ug/L"/>
+    <Item Code="6" Name="u/L"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0223" Name="抗凝单位" Desc="AnticoagulationUnit">
+    <Item Code="1" Name="ng/mL"/>
+    <Item Code="2" Name="ug/L"/>
+  </Dictionary>
+  <Dictionary Code="CPC.0224" Name="Ddimer单位" Desc="DdimerUnit">
+    <Item Code="1" Name="ng/mL"/>
+    <Item Code="2" Name="ug/mL"/>
+    <Item Code="3" Name="ug/L"/>
+    <Item Code="4" Name="mg/L"/>
+  </Dictionary>
+  <Dictionary Code="CPC.9000" Name="是否" Desc="YesOrNo">
+    <Item Code="1" Name="是"/>
+    <Item Code="0" Name="否"/>
+  </Dictionary>
+  <Dictionary Code="CPC.9001" Name="有无" Desc="HaveOrNot">
+    <Item Code="1" Name="有"/>
+    <Item Code="0" Name="无"/>
+  </Dictionary>
+  <Dictionary Code="CPC.9002" Name="异常" Desc="AbnormalOrNot">
+    <Item Code="0" Name="未见异常"/>
+    <Item Code="1" Name="异常"/>
+  </Dictionary>
+  <Dictionary Code="CPC.9003" Name="检验结果" Desc="TestResult">
+    <Item Code="1" Name="阳性"/>
+    <Item Code="2" Name="阴性"/>
+  </Dictionary>
+  <Dictionary Code="CPC.9004" Name="检验项目" Desc="TestItems">
+    <Item Code="TnT" Name="肌钙蛋白T"/>
+    <Item Code="TnI" Name="肌钙蛋白I"/>
+    <Item Code="Scr" Name="血清肌酐"/>
+    <Item Code="Ddimer" Name="D-二聚体"/>
+    <Item Code="Bnp" Name="BNP"/>
+    <Item Code="NtProbnp" Name="NT-proBNP"/>
+    <Item Code="Myo" Name="Myo"/>
+    <Item Code="Ckmb" Name="CKMB"/>
+    <Item Code="Tc" Name="总胆固醇(TC)"/>
+    <Item Code="Tg" Name="甘油三酯(TG)"/>
+    <Item Code="HdlC" Name="高密度脂蛋白(HDL-C)"/>
+    <Item Code="LdlC" Name="低密度脂蛋白(LDL-C)"/>
+  </Dictionary>
+  <!-- 自动完成字典 -->
+  <Dictionary Code="CPC.5002" Name="医院名称" Desc="HospitalNames">
+    <Item Code="无" Name="无"/>
+  </Dictionary>
+  <Dictionary Code="CPC.5003" Name="COVID-19" Desc="COVID-19">
+    <Item Code="1" Name="经筛查后排除"/>
+    <Item Code="2" Name="经筛查后确诊"/>
+    <Item Code="3" Name="未经筛查"/>
+  </Dictionary>
+</Config>

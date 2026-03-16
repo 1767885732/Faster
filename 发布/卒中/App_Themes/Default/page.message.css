@@ -1,0 +1,39 @@
+﻿.popup{
+    width: 100%;
+    height:100%;
+    position: absolute;
+}
+.popup .message-tit{
+    width:30%;
+    height:100%;
+    background:#f7f7f7;
+}
+.popup .message-tit li{
+    padding:10px 5px 10px 30px;
+    background: url(img/icon/message.png) 10px 8px no-repeat;
+    color:#3266cd;
+    cursor: pointer;
+    font-size: 13px;
+}
+.popup .message-tit li:hover, .popup .message-tit .selected{
+    background-color: #eee;
+}
+.popup .message-tit .selected{
+    border-left:2px solid #3266cd;
+    background-position:8px 8px;
+}
+.popup .message-tit .read{
+    background-image: url(img/icon/message-read.png);
+    color:#666;
+}
+.popup .message-con{
+    width:70%;
+    height:100%;
+}
+.popup .message-con p{
+    padding:10px;
+    line-height:18px;
+}
+.popup .message-con p strong{
+    padding:0 3px;
+}

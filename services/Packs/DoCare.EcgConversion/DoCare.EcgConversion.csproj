@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="IEcgMonitor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="GeMac800\hl7ecgtemplate.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="GeMac800\hl7ecgtemplate.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FreeSpire.PDF" Version="6.2.0" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.18.6" />
+    <PackageReference Include="System.Drawing.Common" Version="4.6.0-preview4.19212.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DoCare.Core\DoCare.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ECGConversion">
+      <HintPath>..\..\..\src\ECGConversion.dll</HintPath>
+    </Reference>
+    <Reference Include="FastFrame">
+      <HintPath>..\..\..\src\FastFrame.dll</HintPath>
+    </Reference>
+    <Reference Include="FastFrame.EFCore">
+      <HintPath>..\..\..\src\FastFrame.EFCore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

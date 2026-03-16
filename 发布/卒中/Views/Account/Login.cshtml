@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "DoCare脑卒中数据管理云平台V2.0";
+    Layout = null;
+    var returnurl = ViewBag.ReturnUrl as string;
+}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        @*<title>@ViewBag.Title</title>*@
+        <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <meta name="viewport" content="width=device-width" />
+        <link href="~/App_Themes/Default/global.css" rel="stylesheet" type="text/css" />
+        <link href="~/App_Themes/Default/frame.css" rel="stylesheet" type="text/css" />
+        <link href="~/App_Themes/Default/control.css" rel="stylesheet" type="text/css" />
+        <link href="~/App_Themes/Default/page.login.css" rel="stylesheet" type="text/css" />
+        <script src="~/Scripts/jquery-1.10.2.js"></script>
+        <script src="~/Scripts/jquery-ajaxSetup.js"></script>
+        <script src="~/Scripts/jquery.validate.js"></script>
+        <script src="~/Scripts/md5.js"></script>
+        <script src="~/Scripts/layer/layer.js"></script>
+        <script src="~/Scripts/moment.js"></script>
+        <script type="text/javascript">
+            //window.onload = function () {
+            //    if (top.location.href != location.href) { top.location.href = location.href; }
+            //    if (window.parent.window != window) {
+            //        window.top.location.href = "/Account/Login";
+            //    }
+            //}
+            $(document).ready(function () {
+                var validate = $("#loginValidateForm").validate({
+                    rules: {
+                        UserName: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 16,
+                        },
+                        Password: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 16,
+                        },
+                    },
+                    messages: {
+                        UserName: {
+                            required: "请输入用户名",
+                            minlength: "用户名长度不能小于 3 个字母",
+                            maxlength: "用户名长度不能大于 16 个字母"
+                        },
+                        Password: {
+                            required: "请输入密码",
+                            minlength: "密码长度不能小于 3 个字母",
+                            maxlength: "密码长度不能大于 16 个字母"
+                        },
+                    },
+                    errorPlacement: function (error, element) {
+                        $(error).addClass('err-msg').insertAfter(element);
+                    },
+                    errorElement: "div",
+                });
+
+                $("#Btn_Login").mouseover(function () {
+                    $("#btnBox").attr("class", "btnBoxHover");
+                });
+                $("#Btn_Login").mouseleave(function () {
+                    $("#btnBox").attr("class", "btnBox");
+                });
+
+                $("#Btn_Login").click(function () {
+                    login();
+                });
+
+                $("body").keydown(function () {
+                    if (event.keyCode == "13") {//keyCode=13是回车键
+                        login();
+                    }
+                });
+
+                function login() {
+                    var layerIndex = layer.load(2, { shade: [0.5, '#f5f5f5'] });  //遮罩层
+                    if (!validate.form()) {
+                        layer.close(layerIndex);
+                        return;
+                    }
+                    var name = $.trim($("#UserID").val());
+                    var pwd = $.trim($("#UserPwd").val());
+                    pwd = hex_md5(pwd);
+                    $.ajax({
+                        type: 'post',
+                        async: true, //同步执行
+                        datatype: "json",
+                        data: { loginName: name, password: pwd },
+                        url: "/Account/LoginValidate",
+                        success: function (result) {
+                            if (result.IsSuccess) {
+                                window.location.href = result.Data.RedirectUrl;
+                            } else {
+                                $("#err-msg-panel").html(result.Message);
+                                layer.close(layerIndex);
+                            }
+                        },
+                        error: function () {
+                            $("#err-msg-panel").html("连接服务器出错");
+                            layer.close(layerIndex);
+                        }
+                    });
+                }
+            })
+        </script>
+    </head>
+    <body>
+            <div id="container">
+                <div id="loginForm">
+                    <div class="sys-name">
+                        @*<h2>@Resources.AppName</h2>*@
+                        @*<span>版本号:<i>@(Resources.AppVersion)</i></span>*@
+                        <img src="~/App_Themes/Default/imgt/卒中.png" />
+                    </div>
+                    @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "loginValidateForm" }))
+                    {
+                        <label><h1>欢迎登录</h1></label>
+                        <label>用户名</label>
+                        <input type="text" name="UserName" id="UserID">
+                        <label>密&nbsp;码</label>
+                        <input type="password" name="Password" id="UserPwd">
+                        <button class="btn-primary" type="button" id="Btn_Login">登 录</button>
+                        <div id="err-msg-panel">
+                        </div>                      
+                    }
+                    <p id="copyright">@Resources.CopyRight</p>
+                </div>
+            </div>
+    </body>
+</html>

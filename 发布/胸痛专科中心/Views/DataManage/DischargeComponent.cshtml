@@ -1,0 +1,251 @@
+﻿@{
+    Layout = null;
+}
+<script>
+    @{
+        string template = Html.Partial("~/Views/DataManage/Discharge.cshtml").ToString().Replace("\r\n","").Replace("\n","").Replace("'","\\'");
+    }
+    var discharge = {
+        template: '@Html.Raw( template )',
+        props: {
+            patient:
+            {
+                Discharge: { Complication: [], Hod: null, TotalCost: null },
+            },
+        },
+        data: function () {
+            return {
+                space_quarter: 6,
+                space_half: 12,
+                space_three_quater: 18,
+                space_full: 24,
+                gutter: 20,
+                span: 6,
+                YesOrNoDict: model.YesOrNoDict,
+                HaveOrNotDict: model.HaveOrNotDict,
+                DischargeDiagnosisDict: model.DischargeDiagnosisDict,
+                BnpTypeDict: model.BnpTypeDict,
+                DischargeComplicationDict: model.DischargeComplicationDict,
+                CardiovRiskFactorsDict: model.CardiovRiskFactorsDict,
+                PatientOutcomeDict: model.PatientOutcomeDict,
+                TreatmentResultDict: model.TreatmentResultDict,
+                DaptDict: model.DaptDict,
+                AceiorarbDict: model.AceiorarbDict,
+                StatinsDict: model.StatinsDict,
+                RetardantDict: model.RetardantDict,
+                DeathCauseDict: model.DeathCauseDict,
+                NacsTypeDict: model.NacsTypeDict,
+                NccpTypeDict: model.NccpTypeDict,
+                TroponinDict: model.TroponinDict,
+                AfTypeDict: model.AfTypeDict,
+                ChfNyhaDict: model.ChfNyhaDict,
+                CvdTypeDict: model.CvdTypeDict,
+                SmokingSituationDict: model.SmokingSituationDict,
+                DeptNamesDict: model.DeptNamesDict,
+                HospitalNamesDict: model.HospitalNamesDict,
+                RemoteEcgtranWayDict: model.RemoteEcgtranWayDict,
+                DischargeEducationDict: model.DischargeEducationDict,
+                RateCountDict: model.RateCountDict,
+                RateTimeDict: model.RateTimeDict,
+                COVID19Dict: model.COVID19Dict,
+                CtnUnitDict: model.CtnUnitDict,
+                OHANameDict: model.OHANameDict,
+                NOACNameDict: model.NOACNameDict,
+                PCSK9NameDict: model.PCSK9NameDict,
+                rules: {
+                    //'Discharge.Hod': [
+                    //    { pattern: /^[1-9]\d*$/, message: '请输入正确的住院天数' }
+                    //],
+                    //'Discharge.TotalCost': [
+                    //    { pattern: /^([1-9]\d*|0)(\.\d{1,2})?$/, message: '请输入正确的费用' }
+                    //],
+                    //'Discharge.CtniMaxValue': [
+                    //    { pattern: /^([1-9]\d*|0)(\.\d{1,2})?$/, message: '请输入正确的72h内肌钙蛋白最高值' }
+                    //],
+                    //'Discharge.BnpValue': [
+                    //    { pattern: /^([1-9]\d*|0)(\.\d{1,2})?$/, message: '请输入正确的心肌标志物最高值' }
+                    //],
+                    //'Discharge.Lvef': [
+                    //    { pattern: /^([1-9]\d*|0)(\.\d{1,2})?$/, message: '请输入正确的超声心动图(最低值) LVEF' }
+                    //],
+                }
+            };
+        },
+        methods: {
+            //--------------------转归模块-------------------
+            IsNacs: function () {
+                if (this.patient.Discharge == null
+                    || !this.patient.Discharge.Diagnosis) return false;
+                return this.patient.Discharge.Diagnosis == '6';
+            },
+            IsNccp: function () {
+                if (this.patient.Discharge == null
+                    || !this.patient.Discharge.Diagnosis) return false;
+                return this.patient.Discharge.Diagnosis == '7';
+            },
+            IsCpc: function () {
+                if (this.patient.Discharge == null
+                    || !this.patient.Discharge.Diagnosis) return false;
+                return this.patient.Discharge.Diagnosis == '1'
+                    || this.patient.Discharge.Diagnosis == '2'
+                    || this.patient.Discharge.Diagnosis == '3';
+            },
+            IsAcs: function () {
+                if (this.patient.Discharge == null
+                    || !this.patient.Discharge.Diagnosis) return false;
+                return this.patient.Discharge.Diagnosis == '1'
+                    || this.patient.Discharge.Diagnosis == '2'
+                    || this.patient.Discharge.Diagnosis == '3'
+                    || this.patient.Discharge.Diagnosis == '4'
+                    || this.patient.Discharge.Diagnosis == '5';
+            },
+            IsLeave: function () {
+                if (this.patient.Discharge == null
+                    || !this.patient.Discharge.OutcomeCode) return false;
+                return this.patient.Discharge.OutcomeCode == '1';
+            },
+            IsTransferHospital: function () {
+                if (this.patient.Discharge == null
+                    || !this.patient.Discharge.OutcomeCode) return false;
+                return this.patient.Discharge.OutcomeCode == '2';
+            },
+            IsTransPci: function () {
+                if (!this.IsTransferHospital()) return false;
+                return this.patient.Discharge.IsTransPci == '1';
+            },
+            IsTransferDept: function () {
+                if (this.patient.Discharge == null
+                    || !this.patient.Discharge.OutcomeCode) return false;
+                return this.patient.Discharge.OutcomeCode == '3';
+            },
+            IsDeath: function () {
+                if (this.patient.Discharge == null
+                    || !this.patient.Discharge.OutcomeCode) return false;
+                return this.patient.Discharge.OutcomeCode == '4';
+            },
+            IsEducation: function () {
+                if (this.patient.Discharge == null || !this.patient.Discharge.OutcomeCode) return false;
+                return (this.patient.Discharge.OutcomeCode == '1' || this.patient.Discharge.OutcomeCode == '2' || this.patient.Discharge.OutcomeCode == '3');
+            },
+            addDrug: function (type) {
+                var drugs = null;
+                switch (type) {
+                    case "Dapt":
+                        drugs = this.patient.DischargeDrugs.Dapt;
+                        break;
+                    case "Aceiorarb":
+                        drugs = this.patient.DischargeDrugs.Aceiorarb;
+                        break;
+                    case "Statins":
+                        drugs = this.patient.DischargeDrugs.Statins;
+                        break;
+                    case "Retardant":
+                        drugs = this.patient.DischargeDrugs.Retardant;
+                        break;
+                }
+                drugs.push({});
+            },
+            removeDrug: function (index, type) {
+                var drugs = null;
+                switch (type) {
+                    case "Dapt":
+                        drugs = this.patient.DischargeDrugs.Dapt;
+                        break;
+                    case "Aceiorarb":
+                        drugs = this.patient.DischargeDrugs.Aceiorarb;
+                        break;
+                    case "Statins":
+                        drugs = this.patient.DischargeDrugs.Statins;
+                        break;
+                    case "Retardant":
+                        drugs = this.patient.DischargeDrugs.Retardant;
+                        break;
+                }
+
+                var _this = this;
+                this.$confirm('确定删除（保存后生效）?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    center: true
+                }).then(function () {
+                    drugs.splice(index, 1);
+                    _this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                }).catch(function () {
+                    _this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            queryAdmissionDepts: function (queryString, cb) {
+                var admissionDepts = this.AdmissionDepts;
+                var results = queryString ? admissionDepts.filter(function (admissionDept) {
+                    return (admissionDept.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                }) : admissionDepts;
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            },
+            queryHospitalNames: function (queryString, cb) {
+                var hospitalNames = this.HospitalNames;
+                var results = queryString ? hospitalNames.filter(function (hospitalName) {
+                    return (hospitalName.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                }) : hospitalNames;
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            },
+            ComplicationChange: function (val) {
+                var _this = this;
+                var noneCode = "00";
+                var index = _this.NoneIndex(val, noneCode);
+                if (index >= 0 && _this.patient.Discharge.Complication[_this.patient.Discharge.Complication.length - 1] == noneCode) {
+                    _this.patient.Discharge.Complication = [noneCode];
+                }
+                else if (index >= 0) {
+                    _this.patient.Discharge.Complication.splice(index, 1);
+                }
+            },
+            EducationChange: function (val) {
+                var _this = this;
+                var noneCode = "0";
+                var index = _this.NoneIndex(val, noneCode);
+                if (index >= 0 && _this.patient.Discharge.Education[_this.patient.Discharge.Education.length - 1] == noneCode) {
+                    _this.patient.Discharge.Education = [noneCode];
+                }
+                else if (index >= 0) {
+                    _this.patient.Discharge.Education.splice(index, 1);
+                }
+            },
+            NoneIndex: function (val,noneCode) {
+                for (var i = 0; i < val.length; i++) {
+                    if (val[i] == noneCode) return i;
+                }
+                return -1;
+            },
+            onDateSelected: function (val) {
+                formatDateTime(val);
+            }
+        },
+        computed: {
+            AdmissionDepts: function () {
+                var admissionDepts = [];
+                if (this.DeptNamesDict == null) return admissionDepts;
+                this.DeptNamesDict.forEach(function (n) {
+                    admissionDepts.push({ "value": n.Name });
+                });
+                return admissionDepts;
+            },
+            HospitalNames: function () {
+                var hospitalNames = [];
+                if (this.HospitalNamesDict == null) return hospitalNames;
+                this.HospitalNamesDict.forEach(function (n) {
+                    hospitalNames.push({ "value": n.Name });
+                });
+                return hospitalNames;
+            }
+        }
+    };
+</script>

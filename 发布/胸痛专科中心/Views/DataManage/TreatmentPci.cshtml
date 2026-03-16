@@ -1,0 +1,374 @@
+﻿<div id="TreatmentPci">
+    <el-row class="title">
+        <el-tag effect="dark">导管室</el-tag>
+    </el-row>
+    <div v-if="showJRSS">
+        <el-tag style="width:100%;">介入手术</el-tag>
+        <el-row v-bind:gutter="gutter">
+            <el-col v-bind:span="span">
+                <el-form-item label="导管室激活时间" prop="TreatmentPci.ActivateConduitTime" class="input_required">
+                    <el-date-picker v-model="patient.TreatmentPci.ActivateConduitTime"
+                                    type="datetime" v-on:blur="onDateSelected" format="yyyy-MM-dd HH:mm"
+                                    placeholder="选择时间"
+                                    size="mini">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="span">
+                <el-form-item label="患者到达导管室" prop="TreatmentPci.PatientArrivalTime">
+                    <el-date-picker v-model="patient.TreatmentPci.PatientArrivalTime"
+                                    type="datetime" v-on:blur="onDateSelected" format="yyyy-MM-dd HH:mm"
+                                    placeholder="选择时间"
+                                    size="mini">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="span">
+                <el-form-item label="介入医师" prop="TreatmentPci.InterventionPerson">
+                    <el-input v-model="patient.TreatmentPci.InterventionPerson" size="mini"
+                              autocomplete="off" maxlength="50"></el-input>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="span">
+                <el-form-item label="开始穿刺时间" prop="TreatmentPci.StartPunctureTime">
+                    <el-date-picker v-model="patient.TreatmentPci.StartPunctureTime"
+                                    type="datetime" v-on:blur="onDateSelected" format="yyyy-MM-dd HH:mm"
+                                    placeholder="选择时间"
+                                    size="mini">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <el-row v-bind:gutter="gutter">
+            <el-col v-bind:span="span">
+                <el-form-item label="造影开始时间" prop="TreatmentPci.StartRadiographyTime">
+                    <el-date-picker v-model="patient.TreatmentPci.StartRadiographyTime"
+                                    type="datetime" v-on:blur="onDateSelected" format="yyyy-MM-dd HH:mm"
+                                    placeholder="选择时间"
+                                    size="mini">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="6">
+                <el-form-item label="TIMI血流等级(仅造影时)" prop="TreatmentPci.PreoperativeTIMILevel">
+                    <el-radio-group v-model="patient.TreatmentPci.PreoperativeTIMILevel" size="mini">
+                        <el-radio-button v-for="(item,index) in TimiLevelDict"
+                                         v-bind:key="'PreoperativeTIMILevel-'+item.Key"
+                                         v-bind:label="item.Key">
+                            {{item.Value}}
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="span">
+                <el-form-item label="术中抗凝给药时间" prop="TreatmentPci.AnticoagulationTime">
+                    <el-date-picker v-model="patient.TreatmentPci.AnticoagulationTime"
+                                    type="datetime" v-on:blur="onDateSelected" format="yyyy-MM-dd HH:mm"
+                                    placeholder="选择时间"
+                                    size="mini">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="span">
+                <el-form-item label="抗凝药物" prop="TreatmentPci.AnticoagulationDrug">
+                    <el-select v-model="patient.TreatmentPci.AnticoagulationDrug" placeholder="请选择" size="mini">
+                        <el-option v-for="item in AnticoagulationDrugDict"
+                                   v-bind:key="'AnticoagulationDrug-'+item.Key"
+                                   v-bind:label="item.Value"
+                                   v-bind:value="item.Key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="6">
+                <el-form-item label="抗凝药物剂量" prop="TreatmentPci.AnticoagulationDose">
+                    <el-input v-model="patient.TreatmentPci.AnticoagulationDose" size="mini" style="width:60%" maxlength="20" v-float="{max:100000}">
+                    </el-input>
+                    <el-autocomplete v-model="patient.TreatmentPci.AnticoagulationUnit"
+                                     v-bind:fetch-suggestions="queryAnticoagulationUnit"
+                                     placeholder="请输入单位"
+                                     size="mini" v-bind:maxlength="10" style="width:30%"></el-autocomplete>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <el-row v-bind:gutter="gutter">
+            <el-col v-bind:span="span">
+                <el-form-item label="手术结束时间" prop="TreatmentPci.EndOperationTime" class="input_required">
+                    <el-date-picker v-model="patient.TreatmentPci.EndOperationTime"
+                                    type="datetime" v-on:blur="onDateSelected" format="yyyy-MM-dd HH:mm"
+                                    placeholder="选择时间"
+                                    size="mini">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+            <el-col v-bind:span="span">
+                <el-form-item label="D2W时间" class="input_required">
+                    <el-input v-model="D2W" autocomplete="off" maxlength="50" disabled size="mini"></el-input>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <el-row v-bind:gutter="gutter">
+            <el-col v-bind:span="space_quarter">
+                <el-form-item label="是否延误" prop="TreatmentPci.IsDelay" class="input_required">
+                    <el-radio-group v-model="patient.TreatmentPci.IsDelay" size="mini">
+                        <el-radio-button v-bind:label="item.Key" v-for="item in YesOrNoDict" v-bind:key="'IsDelay-'+item.Key">{{item.Value}}</el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <el-row v-bind:gutter="gutter" v-if="patient.TreatmentPci.IsDelay=='1'">
+            <el-col v-bind:span="space_full">
+                <el-form-item label="延误原因" prop="TreatmentPci.DelayReason">
+                    <el-checkbox-group v-model="patient.TreatmentPci.DelayReason" size="small" class="delayreason">
+                        <el-checkbox v-bind:label="item.Key" v-for="item in DelayReasonDict" v-bind:key="'DelayReason-'+item.Key">{{item.Value}}</el-checkbox>
+                    </el-checkbox-group>
+                </el-form-item>
+            </el-col>
+        </el-row>
+    </div>
+    <el-tag style="width:100%;">入路</el-tag>
+    <el-row v-bind:gutter="gutter">
+        <el-col v-bind:span="space_half">
+            <el-form-item label="入路" prop="TreatmentPci.Approach" class="input_required">
+                <el-radio-group v-model="patient.TreatmentPci.Approach" size="mini">
+                    <el-radio-button v-bind:label="item.Key"
+                                     v-for="item in RouteDict" v-bind:key="'Route-'+item.Key">
+                        {{item.Value}}
+                    </el-radio-button>
+                </el-radio-group>
+            </el-form-item>
+        </el-col>
+    </el-row>
+    <el-tag style="width:100%;">冠脉造影</el-tag>
+    <el-row v-bind:gutter="gutter">
+        <el-col v-bind:span="6">
+            <el-image src="~/App_Themes/Default/img/pci.png"></el-image>
+        </el-col>
+        <el-col v-bind:span="18">
+            <el-form-item label="" prop="TreatmentPci.CagPosition">
+                <el-checkbox-group v-model="patient.TreatmentPci.CagPosition" size="mini" class="delayreason">
+                    <el-checkbox v-bind:label="item.Key" v-for="(item,index) in CagPositionDict" v-bind:key="'CagPosition-'+item.Key">{{item.Value}}</el-checkbox>
+                </el-checkbox-group>
+            </el-form-item>
+        </el-col>
+    </el-row>
+    <div v-for="(part,index) in patient.TreatmentPciPart">
+        <div v-if="showPosition(part.PartId)">
+            <el-tag style="width:100%;">{{part.PartName}}</el-tag>
+            <el-row v-bind:gutter="gutter">
+                <el-col v-bind:span="span">
+                    <el-form-item label="狭窄程度" prop="TreatmentPciPart.NarrowLevel" class="input_required">
+                        <el-radio-group v-model="patient.TreatmentPciPart[index].NarrowLevel" size="mini">
+                            <el-radio-button v-bind:label="item.Key"
+                                             v-for="item in NarrowLevelDict" v-bind:key="'NarrowLevel-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="span">
+                    <el-form-item label="造影时TIMI血流" prop="TreatmentPciPart.TimiLevel" class="input_required">
+                        <el-radio-group v-model="patient.TreatmentPciPart[index].TimiLevel" size="mini">
+                            <el-radio-button v-bind:label="item.Key"
+                                             v-for="item in TimiLevelDict" v-bind:key="'TimiLevel-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="span">
+                    <el-form-item label="支架内血栓" prop="TreatmentPciPart.BracketThrombus" class="input_required">
+                        <el-radio-group v-model="patient.TreatmentPciPart[index].BracketThrombus" size="mini">
+                            <el-radio-button v-bind:label="item.Key"
+                                             v-for="item in YesOrNoDict" v-bind:key="'BracketThrombus-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="span">
+                    <el-form-item label="是否分叉病变" prop="TreatmentPciPart.BranchingSick" class="input_required">
+                        <el-radio-group v-model="patient.TreatmentPciPart[index].BranchingSick" size="mini">
+                            <el-radio-button v-bind:label="item.Key"
+                                             v-for="item in YesOrNoDict" v-bind:key="'BranchingSick-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="span">
+                    <el-form-item label="是否CTO" prop="TreatmentPciPart.IsCto" class="input_required">
+                        <el-radio-group v-model="patient.TreatmentPciPart[index].IsCto" size="mini">
+                            <el-radio-button v-bind:label="item.Key"
+                                             v-for="item in YesOrNoDict" v-bind:key="'IsCto-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="span">
+                    <el-form-item label="钙化病变" prop="TreatmentPciPart.IsCalcifiedLesions" class="input_required">
+                        <el-radio-group v-model="patient.TreatmentPciPart[index].IsCalcifiedLesions" size="mini">
+                            <el-radio-button v-bind:label="item.Key"
+                                             v-for="item in YesOrNoDict" v-bind:key="'IsCalcifiedLesions-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="span">
+                    <el-form-item label="罪犯病变" prop="TreatmentPciPart.IsCulpritLesion" class="input_required">
+                        <el-radio-group v-model="patient.TreatmentPciPart[index].IsCulpritLesion" size="mini">
+                            <el-radio-button v-bind:label="item.Key"
+                                             v-for="item in YesOrNoDict" v-bind:key="'IsCulpritLesion-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="span">
+                    <el-form-item label="PCI" prop="TreatmentPciPart.IsPci" class="input_required">
+                        <el-radio-group v-model="patient.TreatmentPciPart[index].IsPci" size="mini">
+                            <el-radio-button v-bind:label="item.Key"
+                                             v-for="item in YesOrNoDict" v-bind:key="'IsPci-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="space_full" v-if="patient.TreatmentPciPart[index].IsPci=='1'">
+                    <el-form-item label="术中处理" prop="TreatmentPciPart.HandleWay" class="input_required">
+                        <el-checkbox-group v-model="patient.TreatmentPciPart[index].HandleWay" size="mini" class="delayreason" v-on:change="function(val){HandleWayChange(val,index)}">
+                            <el-checkbox v-bind:label="item.Key" v-for="item in PciHandleWayDict" v-bind:key="'HandleWay-'+item.Key">{{item.Value}}</el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="span" v-if="patient.TreatmentPciPart[index].IsPci=='1'">
+                    <el-form-item label="导丝通过时间" prop="TreatmentPciPart.GwPassageTime">
+                        <el-date-picker v-model="patient.TreatmentPciPart[index].GwPassageTime"
+                                        type="datetime" v-on:blur="onDateSelected" format="yyyy-MM-dd HH:mm"
+                                        placeholder="选择时间"
+                                        size="mini">
+                        </el-date-picker>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="span" v-if="patient.TreatmentPciPart[index].IsPci=='1'">
+                    <el-form-item label="术后TIMI血流" prop="TreatmentPciPart.TimiLevelPost" size="mini" class="input_required">
+                        <el-radio-group v-model="patient.TreatmentPciPart[index].TimiLevelPost">
+                            <el-radio-button v-bind:label="item.Key"
+                                             v-for="item in TimiLevelDict" v-bind:key="'TimiLevelPost-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="span" v-if="patient.TreatmentPciPart[index].IsPci=='1'">
+                    <el-form-item label="植入支架个数" prop="TreatmentPciPart.BracketCount" class="input_required">
+                        <el-radio-group v-model="patient.TreatmentPciPart[index].BracketCount" size="mini">
+                            <el-radio-button v-bind:label="item.Key"
+                                             v-for="item in BracketNumDict" v-bind:key="'BracketCount-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="span" v-if="patient.TreatmentPciPart[index].IsPci=='1'&&(patient.TreatmentPciPart[index].BracketCount=='2'||patient.TreatmentPciPart[index].BracketCount=='3'||patient.TreatmentPciPart[index].BracketCount=='4')">
+                    <el-form-item label="支架种类" prop="TreatmentPciPart.BracketType" class="input_required">
+                        <el-radio-group v-model="patient.TreatmentPciPart[index].BracketType" size="mini">
+                            <el-radio-button v-bind:label="item.Key"
+                                             v-for="item in BracketTypeDict" v-bind:key="'BracketType-'+item.Key">
+                                {{item.Value}}
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+        </div>
+    </div>
+    <el-tag style="width:100%;">器械</el-tag>
+    <el-row v-bind:gutter="gutter">
+        <el-col v-bind:span="span">
+            <el-form-item label="腔内影像" prop="TreatmentPci.IntracavityImage" class="input_required">
+                <el-radio-group v-model="patient.TreatmentPci.IntracavityImage" size="mini">
+                    <el-radio-button v-bind:label="item.Key"
+                                     v-for="item in IntracavityImageDict" v-bind:key="'IntracavityImage-'+item.Key">
+                        {{item.Value}}
+                    </el-radio-button>
+                </el-radio-group>
+            </el-form-item>
+        </el-col>
+        <el-col v-bind:span="span">
+            <el-form-item label="功能检测" prop="TreatmentPci.FunctionTest" class="input_required">
+                <el-radio-group v-model="patient.TreatmentPci.FunctionTest" size="mini">
+                    <el-radio-button v-bind:label="item.Key"
+                                     v-for="item in FunctionTestDict" v-bind:key="'FunctionTest-'+item.Key">
+                        {{item.Value}}
+                    </el-radio-button>
+                </el-radio-group>
+            </el-form-item>
+        </el-col>
+        <el-col v-bind:span="span" v-if="patient.TreatmentPci.FunctionTest=='1'||patient.TreatmentPci.FunctionTest=='2'||patient.TreatmentPci.FunctionTest=='3'">
+            <el-form-item label="数值" property="TreatmentPci.FunctionTestValue" class="input_required">
+                <el-input v-model="patient.TreatmentPci.FunctionTestValue"
+                          v-float="{min:0, max:1}"
+                          autocomplete="off" maxlength="10"
+                          size="mini"></el-input>
+            </el-form-item>
+        </el-col>
+    </el-row>
+    <el-row v-bind:gutter="gutter">
+        <el-col v-bind:span="span">
+            <el-form-item label="IABP" prop="TreatmentPci.IsIabp" class="input_required">
+                <el-radio-group v-model="patient.TreatmentPci.IsIabp" size="mini">
+                    <el-radio-button v-bind:label="item.Key"
+                                     v-for="item in YesOrNoDict" v-bind:key="'Iabp-'+item.Key">
+                        {{item.Value}}
+                    </el-radio-button>
+                </el-radio-group>
+            </el-form-item>
+        </el-col>
+        <el-col v-bind:span="span">
+            <el-form-item label="临时起搏器" prop="TreatmentPci.IsPacemaker" class="input_required">
+                <el-radio-group v-model="patient.TreatmentPci.IsPacemaker" size="mini">
+                    <el-radio-button v-bind:label="item.Key"
+                                     v-for="item in YesOrNoDict" v-bind:key="'Pacemaker-'+item.Key">
+                        {{item.Value}}
+                    </el-radio-button>
+                </el-radio-group>
+            </el-form-item>
+        </el-col>
+        <el-col v-bind:span="span">
+            <el-form-item label="ECMO" prop="TreatmentPci.IsEcmo" class="input_required">
+                <el-radio-group v-model="patient.TreatmentPci.IsEcmo" size="mini">
+                    <el-radio-button v-bind:label="item.Key"
+                                     v-for="item in YesOrNoDict" v-bind:key="'Ecmo-'+item.Key">
+                        {{item.Value}}
+                    </el-radio-button>
+                </el-radio-group>
+            </el-form-item>
+        </el-col>
+        <el-col v-bind:span="span">
+            <el-form-item label="左心室辅助装置" prop="TreatmentPci.IsAuxiliaryDevice" class="input_required">
+                <el-radio-group v-model="patient.TreatmentPci.IsAuxiliaryDevice" size="mini">
+                    <el-radio-button v-bind:label="item.Key"
+                                     v-for="item in YesOrNoDict" v-bind:key="'AuxiliaryDevice-'+item.Key">
+                        {{item.Value}}
+                    </el-radio-button>
+                </el-radio-group>
+            </el-form-item>
+        </el-col>
+    </el-row>
+    <el-row v-bind:gutter="gutter">
+        <el-col v-bind:span="space_full">
+            <el-form-item label="术中并发症" prop="TreatmentPci.Complication" class="input_required">
+                <el-checkbox-group v-model="patient.TreatmentPci.Complication" size="mini" v-on:change="ComplicationChange">
+                    <el-checkbox v-for="(item, index) in TreatmentPciComplicationDict"
+                                 v-bind:key="'Complication-'+item.Key"
+                                 v-bind:label="item.Key">
+                        {{item.Value}}
+                    </el-checkbox>
+                </el-checkbox-group>
+            </el-form-item>
+        </el-col>
+    </el-row>
+</div>

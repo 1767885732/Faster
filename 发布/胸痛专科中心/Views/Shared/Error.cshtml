@@ -1,0 +1,9 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    ViewBag.Title = "错误";
+}
+
+<h2 class="error">当处理请求时发生如下错误。</h2>
+<br />
+<h3>错误信息：@Model.Exception.Message</h3>

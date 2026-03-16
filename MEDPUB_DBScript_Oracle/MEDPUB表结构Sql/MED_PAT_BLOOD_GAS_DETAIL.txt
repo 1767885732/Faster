@@ -1,0 +1,25 @@
+-- Create table
+create table MED_PAT_BLOOD_GAS_DETAIL
+(
+  id          VARCHAR2(40) not null,
+  patient_no  VARCHAR2(60),
+  blood_time  DATE,
+  report_time DATE,
+  test_id     VARCHAR2(100),
+  test_name   VARCHAR2(100),
+  test_value  VARCHAR2(100),
+  unit        VARCHAR2(100),
+  conclusion  VARCHAR2(100)
+)
+tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 1
+  maxtrans 255;
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table MED_PAT_BLOOD_GAS_DETAIL
+  add constraint PK_MED_PAT_BLOOD_GAS_DETAIL primary key (ID)
+  using index 
+  tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 2
+  maxtrans 255;

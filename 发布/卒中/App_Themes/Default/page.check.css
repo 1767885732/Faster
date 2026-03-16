@@ -1,0 +1,152 @@
+﻿/*--------  检验报告单  --------*/
+html{
+    background: #eff0f4;
+    min-width: 1024px;
+}
+/*--------  一次（检查/检验）事件  --------*/
+.event{
+    width: 80%;
+    background-color: #fff;
+    box-shadow: 0 0 10px #d7d7d7;
+    -moz-box-shadow: 0 0 10px #d7d7d7;
+    -webkit-box-shadow: 0 0 10px #d7d7d7;
+    padding: 10px;
+    margin:20px auto;
+}
+.event:hover{
+    box-shadow: 0 0 16px #85c3e6;
+    -moz-box-shadow: 0 0 16px #85c3e6;
+    -webkit-box-shadow: 0 0 16px #85c3e6;
+}
+.event .tit{
+    text-align: center;
+    position: relative;
+    margin-bottom: 20px;
+    color: #333;
+}
+.event .tit span{
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+/*  分辨率适配  */
+@media (max-width: 1440px) {
+    .event{
+        width: 85%;
+    }
+}
+@media (max-width: 1280px) {
+    .event{
+        width: 90%;
+    }
+}
+/*--------  表单内容上下排列  --------*/
+.event-info{
+    overflow: hidden;
+}
+.event-info dl{
+    width: 25%;
+    float: left;
+}
+.event-info dl dt{
+    min-height: 24px;
+    line-height: 24px;
+    color: #999;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+}
+.event-info dl dd{
+    min-height: 18px;
+    line-height: 18px;
+    margin-bottom: 10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding-right: 10px;
+}
+.event-info dl dd a{
+    cursor: default;
+    color: #000;
+}
+.event-info .full{
+    width: 100%;
+}
+.event-info .full dd{
+    padding: 4px 0;
+    background: #f1f1f1;
+}
+/*--------  表单底部左右排列  --------*/
+.event-foot{
+    overflow: hidden;
+    text-align: center;
+    background-color: #f1f1f1;
+    line-height: 30px;
+}
+.event-foot dl, .event-head dl{
+    display: inline;
+}
+.event-foot dl dt, .event-head dl dt{
+    display: inline;
+    color: #999;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+}
+.event-foot dl dd{
+    display: inline;
+    padding:0 40px 0 5px;
+}
+/*--------  表单顶部左右排列  --------*/
+.event-head{
+    border-bottom: 2px solid #999;
+    height: 30px;
+    line-height: 30px;
+    margin-bottom: 10px;
+}
+.event-head dl dd{
+    display: inline;
+}
+/*--------  中间区域内容  --------*/
+.event .event-con{
+    width: 100%;
+    padding: 10px 0;
+    margin: 10px auto;
+    overflow: auto;
+    border-top: 2px solid #999;
+    border-bottom: 2px solid #999;
+}
+/*--------  表格  --------*/
+.event .event-con table tr th, .event .event-con table tr td{
+    max-width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 2px 10px;
+    border: none;
+    background: none;
+}
+.event .event-con table tr th{
+    border-bottom: 1px solid #999;
+}
+/*--------  检查图片  --------*/
+.event .check-img{
+    text-align: center;
+}
+.event .check-img img{
+    width: 200px;
+    height: 200px;
+    border: 1px solid #ddd;
+    margin: 10px;
+}
+/*--------  检查描述文字  --------*/
+.event .check-words{
+    margin: 10px auto;
+}
+.event .check-words h3{
+    line-height: 30px;
+    color: #009be7;
+}
+.event .check-words p{
+    padding: 0 20px;
+    line-height: 20px;
+    text-indent: 2em;
+}
+.event .check-words p span{
+    margin-right: 10px;
+    display: inline;
+}

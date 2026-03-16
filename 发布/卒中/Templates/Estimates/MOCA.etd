@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="MOCA" Title="MOCA" >
+    <Group>
+      <CheckBox Code="MOCA001" Title="视空间/执行功能" Desc="视空间/执行功能">
+        <Option Id="01" Text="连线测试" Score="1"/>
+        <Option Id="02" Text="临摹立方体" Score="1"/>
+        <Option Id="03" Text="手表轮廓" Score="1"/>
+        <Option Id="04" Text="手表数字" Score="1"/>
+        <Option Id="05" Text="手表指针" Score="1"/>
+      </CheckBox>
+      <CheckBox Code="MOCA002" Title="命名" Desc="命名">
+        <Option Id="01" Text="狮子" Score="1"/>
+        <Option Id="02" Text="老虎" Score="1"/>
+        <Option Id="03" Text="骆驼" Score="1"/>
+      </CheckBox>
+      <CheckBox Code="MOCA003" Title="注意" Desc="注意">
+        <Option Id="01" Text="顺着跟读" Score="1"/>
+        <Option Id="02" Text="倒序跟读" Score="1"/>
+        <Option Id="03" Text="听到数字1敲击" Score="1"/>
+        <Option Id="03" Text="100-7连减正确1个" Score="1"/>
+        <Option Id="03" Text="100-7连减正确2-3个" Score="1"/>
+        <Option Id="03" Text="100-7连减正确4-5个" Score="1"/>
+      </CheckBox>
+      <CheckBox Code="MOCA004" Title="语言" Desc="语言">
+        <Option Id="01" Text="1分钟内说出11种动物名称" Score="1"/>
+        <Option Id="02" Text="复述“我只知道今天张亮是来帮过忙的人”" Score="1"/>
+        <Option Id="03" Text="复述“狗在房间的时候，猫总是躲在沙发下面”" Score="1"/>
+      </CheckBox>
+      <CheckBox Code="MOCA005" Title="抽象思维" Desc="抽象思维">
+        <Option Id="01" Text="交通工具" Score="1"/>
+        <Option Id="02" Text="测量工具" Score="1"/>
+      </CheckBox>
+      <CheckBox Code="MOCA006" Title="延迟记忆" Desc="延迟记忆">
+        <Option Id="01" Text="面孔" Score="1"/>
+        <Option Id="02" Text="天鹅绒" Score="1"/>
+        <Option Id="03" Text="教堂" Score="1"/>
+        <Option Id="04" Text="菊花" Score="1"/>
+        <Option Id="05" Text="红色" Score="1"/>
+      </CheckBox>
+      <CheckBox Code="MOCA007" Title="定向" Desc="定向">
+        <Option Id="01" Text="日期" Score="1"/>
+        <Option Id="02" Text="年份" Score="1"/>
+        <Option Id="03" Text="月份" Score="1"/>
+        <Option Id="04" Text="星期几" Score="1"/>
+        <Option Id="05" Text="地点" Score="1"/>
+        <Option Id="06" Text="城市" Score="1"/>
+      </CheckBox>
+     </Group>
+  </Template>
+</Config>

@@ -1,0 +1,73 @@
+﻿@using DoCare.Framework.Extension
+<!DOCTYPE html>
+@{
+    ViewBag.Title = Resources.AppName;
+    ViewBag.CopyRight = Resources.CopyRight;
+    var url = "/" + ViewContext.RouteData.Values["controller"] + "/" + ViewContext.RouteData.Values["action"];
+}
+
+<html>
+<head>
+    @*<title>@ViewBag.Title</title>*@
+    @*<link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />*@
+    <meta name="viewport" content="width=device-width" />
+
+    <link href=@Url.GetCssJsUrl("~/App_Themes/Default/global.css") rel="stylesheet" />
+    <link href=@Url.GetCssJsUrl("~/App_Themes/Default/frame.css") rel="stylesheet" />
+    <link href=@Url.GetCssJsUrl("~/App_Themes/Default/control.css") rel="stylesheet" />
+    <link href="~/Scripts/jquery-easyui/themes/icon.css" rel="stylesheet" />
+    <link href="~/Scripts/jquery-easyui/themes/default/easyui.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    <script src="~/Scripts/jquery-easyui/jquery.easyui.min.js"></script>
+    <script src="~/Scripts/jquery-easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/DoCareMVCComm.js"></script>
+    <script src="~/Scripts/validatemethod.js"></script>
+    <script src="~/Scripts/jquery-ajaxSetup.js"></script>
+    <script src="~/Scripts/moment.js"></script>
+    <script src="~/Scripts/layer/layer.js"></script>
+    <script src="~/Scripts/cookieKit.js"></script>
+    <script src="~/Scripts/angular/angular.min.js"></script>
+    <script src="~/Scripts/filterModule.js"></script>
+    <script src="~/Scripts/directiveModule.js"></script>
+    <script src="~/Scripts/main.js"></script>
+
+    @RenderSection("Head", false)
+    <script>
+        var AppUrlPrefix = "@Request.ApplicationPath";
+        function AddUrlPrefix(url){
+            if(AppUrlPrefix == "/" || url == "" || url == null || typeof url == "undefined"){
+                return url;
+            }else{
+                if(url.substring(0, 1) != "/"){
+                    url = "/" + url;
+                }
+                return AppUrlPrefix + url;
+            }
+        }        
+    </script>
+</head>
+<body>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" id="main-layout">
+        <tr class="header">
+            <td height="60" colspan="2" align="center" valign="middle">
+                @{Html.RenderPartial("_LayoutTop", DoCare.CVA.Web.Common.MenuHelper.GetMainMenu(url));}
+            </td>
+        </tr>
+        <tr>
+            <td class="main">
+                @RenderBody()
+            </td>
+        </tr>
+        <tr class="footer">
+            <td height="30" colspan="2" align="center" valign="middle">
+                @ViewBag.CopyRight
+            </td>
+        </tr>
+    </table>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

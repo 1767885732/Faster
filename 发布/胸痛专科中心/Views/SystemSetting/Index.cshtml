@@ -1,0 +1,398 @@
+﻿@using DoCare.ToolKit;
+@using DoCare.Framework.Extension;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href=@Url.Random("~/App_Themes/Default/page.setting.css") rel="stylesheet" />
+<script type="text/javascript" src="~/Scripts/extension/element-china-area-data/app.js"></script>
+<div id="setting" v-cloak>
+    <el-container style="height:calc(100vh - 90px);">
+        <el-aside width="240px">
+            <el-menu default-active="1" style="height:100% ;background-color:azure"
+                     class="el-menu-vertical-demo" 
+                     v-on:select="onMenuSelected">
+                <el-menu-item index="1">
+                    <i class="specialty docare_general_configuration"></i>
+                    <span slot="title">常规配置</span>
+                </el-menu-item>
+                <el-menu-item index="2">
+                    <i class="specialty docare_browse_configuration"></i>
+                    <span slot="title">调阅配置</span>
+                </el-menu-item>
+                <el-menu-item index="3">
+                    <i class="specialty docare_workstation_configuration"></i>
+                    <span slot="title">工作站配置</span>
+                </el-menu-item>
+                <el-menu-item index="4">
+                    <i class="specialty docare_default_configuration"></i>
+                    <span slot="title">默认值配置</span>
+                </el-menu-item>
+            </el-menu>
+        </el-aside>
+        <el-main>
+            <div v-if="currentMenuIndex == '1'">
+                <el-form v-bind:model="generalSetting" label-width="150px">
+                    <el-card class="setting-card">
+                        <div slot="header" class="clearfix">
+                            <span>数据采集配置</span>
+                        </div>
+                        <div class="text item">
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="6">
+                                    <el-form-item label="匹配来院方式" size="small">
+                                        <el-checkbox v-model="generalSetting.MatchComingTypeEnabled">启用</el-checkbox>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="6">
+                                    <el-form-item label="推送用户" size="small">
+                                        <el-autocomplete v-model="generalSetting.PushUserName" v-bind:fetch-suggestions="queryUserNames" placeholder="请选择输入推送用户" v-bind:maxlength="36"></el-autocomplete>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </el-card>
+                    <el-card class="setting-card">
+                        <div slot="header" class="clearfix">
+                            <span>患者筛查</span>
+                        </div>
+                        <div class="text item">
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="6">
+                                    <el-form-item label="门诊" size="small">
+                                        <el-checkbox v-model="generalSetting.OutpatientFilterEnabled">启用</el-checkbox>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="6" v-if="generalSetting.OutpatientFilterEnabled">
+                                    <el-form-item label="科室" size="small">
+                                        <el-autocomplete v-model="generalSetting.OutpatientFilterDept"
+                                                         v-bind:fetch-suggestions="queryDeptNames"
+                                                         placeholder="请输入科室" size="small"
+                                                         v-bind:maxlength="36">
+                                        </el-autocomplete>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="6">
+                                    <el-form-item label="住院" size="small">
+                                        <el-checkbox v-model="generalSetting.InpatientFilterEnabled">启用</el-checkbox>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="6" v-if="generalSetting.InpatientFilterEnabled">
+                                    <el-form-item label="科室" size="small">
+                                        <el-autocomplete v-model="generalSetting.InpatientFilterDept"
+                                                         v-bind:fetch-suggestions="queryDeptNames"
+                                                         placeholder="请输入科室" size="small"
+                                                         v-bind:maxlength="36">
+                                        </el-autocomplete>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </el-card>
+                    <el-card class="setting-card">
+                        <div slot="header" class="clearfix">
+                            <span>胸痛联盟接口配置</span>
+                        </div>
+                        <div class="text item">
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="12">
+                                    <el-form-item label="上报方式" size="small">
+                                        <el-radio-group v-model="generalSetting.UploadType" size="small">
+                                            <el-radio label="0">定时上报</el-radio>
+                                            <el-radio label="1">直接上报</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="12">
+                                    <el-form-item label="上报地址" size="small">
+                                        <el-input v-model="generalSetting.BaseUrl" size="small"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="12">
+                                    <el-form-item label="医院编号" size="small">
+                                        <el-input v-model="generalSetting.HospitalId" size="small"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="12">
+                                    <el-form-item label="AppId" size="small">
+                                        <el-input v-model="generalSetting.ClientId" size="small"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="12">
+                                    <el-form-item label="SecretKey" size="small">
+                                        <el-input v-model="generalSetting.ClientSecurity" size="small"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="12">
+                                    <el-form-item label="上报状态" size="small">
+                                        <el-select v-model="generalSetting.CommitStatus"
+                                                   placeholder="请选择上报状态"
+                                                   size="small" style="width:100%;">
+                                            <el-option v-for="item in CommitStatusDict"
+                                                       v-bind:key="item.Key"
+                                                       v-bind:label="item.Value"
+                                                       v-bind:value="item.Key">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="24">
+                                    <el-form-item label="注意：" size="mini">
+                                        <span style="color:red;font-size:18px;">填报人、提交人、审批人和归档人请配置成不同的用户，否则会影响上报联盟数据的三级审核角色执行率指标。</span>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="12">
+                                    <el-form-item label="填报人" size="small">
+                                        <el-autocomplete v-model="generalSetting.Collector"
+                                                         v-bind:fetch-suggestions="queryUserNames"
+                                                         placeholder="请输入填报人" size="small"
+                                                         v-bind:maxlength="36">
+                                        </el-autocomplete>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="12">
+                                    <el-form-item label="提交人" size="small">
+                                        <el-autocomplete v-model="generalSetting.Submitter"
+                                                         v-bind:fetch-suggestions="queryUserNames"
+                                                         placeholder="请输入提交人" size="small"
+                                                         v-bind:maxlength="36">
+                                        </el-autocomplete>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row v-bind:gutter="24">
+                                <el-col v-bind:span="12">
+                                    <el-form-item label="审批人" size="small">
+                                        <el-autocomplete v-model="generalSetting.Approver"
+                                                         v-bind:fetch-suggestions="queryUserNames"
+                                                         placeholder="请输入审批人" size="small"
+                                                         v-bind:maxlength="36">
+                                        </el-autocomplete>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col v-bind:span="12">
+                                    <el-form-item label="归档人" size="small">
+                                        <el-autocomplete v-model="generalSetting.Filer"
+                                                         v-bind:fetch-suggestions="queryUserNames"
+                                                         placeholder="请输入归档人" size="small"
+                                                         v-bind:maxlength="36">
+                                        </el-autocomplete>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </el-card>
+                    <el-card class="setting-card">
+                        <div slot="header" class="clearfix">
+                            <span>内部接口配置</span>
+                        </div>
+                        <div class="text item" v-for="api in generalSetting.InternalApi">
+                            <el-form-item v-bind:label="api.OrgName" size="small">
+                                <el-input v-model="api.BaseUrl" size="small"></el-input>
+                            </el-form-item>
+                        </div>
+                    </el-card>
+                    <el-form-item>
+                        <el-button type="primary" icon="fa fa-fw fa-save" v-on:click="setGeneralSetting">保存</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div v-if="currentMenuIndex == '2'">
+                <el-form v-bind:model="accessSetting" label-width="150px">
+                   
+                            <el-card class="setting-card" style="height:300px;">
+                                <div slot="header" class="clearfix">
+                                    <span>调阅地址配置</span>
+                                    <el-tooltip placement="top">
+                                        <div slot="content" class="view-page">
+                                            <span>配置参数一览：</span>
+                                            <ul>
+                                                <li><b>PatientNo：</b>接口患者唯一号</li>
+                                                <li><b>PhepId：</b>急救患者号</li>
+                                                <li><b>MissionId：</b>急救任务号</li>
+                                                <li><b>EmergencyId：</b>急诊挂号编号</li>
+                                                <li><b>OutpatientNo：</b>门诊号</li>
+                                                <li><b>OutpatientSN：</b>门诊挂号编号</li>
+                                                <li><b>InpatientNo：</b>住院号</li>
+                                                <li><b>InpatientSN：</b>住院登记号</li>
+                                                <li><b>IdNo：</b>身份证</li>
+                                                <li><b>CitizenCard：</b>市民卡号</li>
+                                            </ul>
+                                        </div>
+                                        <i class="el-icon-info" style="font-size:16px; color:#E6A23C;"></i>
+                                    </el-tooltip>
+                                    <el-button type="text" icon="el-icon-plus"
+                                               v-on:click="addAccessUrl()">添加</el-button>
+                                </div>
+                                <div style="overflow-y:auto;overflow-x:hidden;height:400px;">
+                                    <div v-for="(o,index) in accessSetting.AccessUrl" v-bind:key="index" style="margin-top:3px;margin-bottom:3px;">
+                                        <el-row v-bind:gutter="24">
+                                            <el-col v-bind:span="6">
+                                                <el-input v-model="o.Name" size="small" placeholder="请输入调阅名称" class="event-input el-input-group" >
+                                                </el-input>
+                                            </el-col>
+                                            <el-col v-bind:span="18">
+                                                <el-input v-model="o.Url" size="small" placeholder="请输入调阅地址" class="event-input" >
+                                                    <el-button slot="append" type="primary" icon="el-icon-minus" v-on:click="removeAccessUrl(index)" size="small"></el-button>
+                                                </el-input>
+                                            </el-col>
+                                        </el-row>
+                                    </div>
+                                </div>
+                            </el-card>
+
+                    <el-form-item>
+                        <el-button type="primary" v-on:click="setAccessSetting">保存</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div v-if="currentMenuIndex == '3'">
+                <el-form v-bind:model="workstationSetting" label-width="150px">
+                    <el-card class="setting-card">
+                        <div slot="header" class="clearfix">
+                            <span>工作站配置</span>
+                        </div>
+
+                        <div class="text item">
+                            <el-form-item label="院区推送用户" size="small">
+                                <div slot="label">
+                                    <label>院区推送用户</label>
+                                    <el-tooltip placement="top">
+                                        <div slot="content">将急诊工作站地址中的院区编码映射到专科中的用户</div>
+                                        <i class="el-icon-info" style="font-size:16px; color:#E6A23C;"></i>
+                                    </el-tooltip>
+                                </div>
+                                <el-checkbox v-model="workstationSetting.Enabled">启用</el-checkbox>
+                                <el-button type="primary" v-on:click="addAreaMapping" v-if="workstationSetting.Enabled">添加院区</el-button>
+                            </el-form-item>
+                        </div>
+                        <div class="text item">
+                            <el-row v-bind:gutter="24" v-if="workstationSetting.Enabled">
+                                <el-col v-bind:span="8" v-for="(item,index) in workstationSetting.AreaMapping" v-bind:key="index">
+                                    <el-button type="primary" icon="el-icon-close" v-on:click="removeAreaMapping(index)" size="small" class="hospital-mapping-button"></el-button>
+                                    <el-card class="hospital-mapping" shadow="hover">
+                                        <el-form-item label="院区名称" size="small">
+                                            <el-input v-model="item.AreaName" size="small" placeholder="请输入院区名称"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="院区编号" size="small">
+                                            <el-input v-model="item.AreaCode" size="small" placeholder="请输入院区编号"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="推送用户" size="small">
+                                            <el-autocomplete v-model="item.User"
+                                                             v-bind:fetch-suggestions="queryUserNames"
+                                                             placeholder="请选择输入推送用户"
+                                                             size="small" v-bind:maxlength="36"></el-autocomplete>
+                                        </el-form-item>
+                                    </el-card>
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </el-card>
+
+                    <el-form-item>
+                        <el-button type="primary" v-on:click="setWorkStationSetting">保存</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div v-if="currentMenuIndex == '4'">
+                <el-form v-bind:model="otherSetting" label-width="150px">
+                    <el-row v-bind:gutter="24">
+                        <el-col v-bind:span="8">
+                            <el-card class="setting-card" style="height:300px;">
+                                <div slot="header" class="clearfix">
+                                    <span>网络医院</span>
+                                    <el-button type="text" icon="el-icon-plus"
+                                               v-on:click="addNetHospital()">添加</el-button>
+                                </div>
+                                <div style="overflow-y:auto;overflow-x:hidden;height:240px;">
+                                    <div v-for="(o,index) in otherSetting.NetHospital" v-bind:key="index" style="margin-top:3px;margin-bottom:3px;">
+                                        <el-input v-model="o.Name" size="small" class="event-input">
+                                            <el-button slot="append" type="primary" icon="el-icon-minus" v-on:click="removeNetHospital(index)" size="small"></el-button>
+                                        </el-input>
+                                    </div>
+                                </div>
+                            </el-card>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-card class="setting-card" style="height:300px;">
+                                <div slot="header" class="clearfix">
+                                    <span>抗凝药物单位</span>
+                                    <el-button type="text" icon="el-icon-plus"
+                                               v-on:click="addAnticoagulation()">添加</el-button>
+                                </div>
+                                <div style="overflow-y:auto;overflow-x:hidden;height:240px;">
+                                    <div v-for="(o,index) in otherSetting.Anticoagulation" v-bind:key="index" style="margin-top:3px;margin-bottom:3px;">
+                                        <el-input v-model="o.Unit" size="small" class="event-input">
+                                            <el-button slot="append" type="primary" icon="el-icon-minus" v-on:click="removeAnticoagulation(index)" size="small"></el-button>
+                                        </el-input>
+                                    </div>
+                                </div>
+                            </el-card>
+                        </el-col>
+                        <el-col v-bind:span="8">
+                            <el-card class="setting-card" style="height:300px;">
+                                <div slot="header" class="clearfix">
+                                    <span>默认值</span>
+                                </div>
+
+                                <el-form-item label="阿司匹林" prop="AspirinDose" size="small">
+                                    <el-input v-model="otherSetting.AspirinDose" autocomplete="off" size="small" maxlength="20">
+                                        <template slot="append">
+                                            mg
+                                        </template>
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="氯吡格雷" prop="ClopidogrelDose" size="small">
+                                    <el-input v-model="otherSetting.ClopidogrelDose" autocomplete="off" size="small" maxlength="20">
+                                        <template slot="append">
+                                            mg
+                                        </template>
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="替格瑞洛" prop="TigrilloDose" size="small">
+                                    <el-input v-model="otherSetting.TigrilloDose" autocomplete="off" size="small" maxlength="20">
+                                        <template slot="append">
+                                            mg
+                                        </template>
+                                    </el-input>
+                                </el-form-item>
+
+                                <el-form-item label="发病地址">
+                                    <el-cascader class="long"
+                                                 size="small"
+                                                 v-bind:options="regionData"
+                                                 v-model="selectedOptions"
+                                                 v-on:change="selectedAttackAddress"
+                                                 placeholder="请选择发病地址">
+                                    </el-cascader>
+                                </el-form-item>
+                            </el-card>
+                        </el-col>
+
+                    </el-row>
+                    <el-form-item>
+                        <el-button type="primary" v-on:click="setOtherSetting">保存</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </el-main>
+    </el-container>
+</div>
+<script src="~/Views/SystemSetting/Index.js"></script>
+

@@ -1,0 +1,159 @@
+﻿@{
+    Layout = null;
+}
+<script>
+    @{
+        string template = Html.Partial("~/Views/DataManage/Admission.cshtml").ToString().Replace("\r\n","").Replace("\n","").Replace("'","\\'");
+    }
+    var admission = {
+        template: '@Html.Raw( template )',
+        props: {
+            patient:
+            {
+                Admission: { DistressCaseDetail: [] },
+            },
+        },
+        data: function () {
+            return {
+                space_quarter: 6,
+                space_half: 12,
+                space_three_quater: 18,
+                space_full: 24,
+                gutter: 20,
+                span: 6,
+                YesOrNoDict: model.YesOrNoDict,
+                HaveOrNotDict: model.HaveOrNotDict,
+                DiagnosisDict: model.DiagnosisDict,
+                AttackZoneDict: model.AttackZoneDict,
+                InsuranceDict: model.InsuranceDict,
+                SenseDict: model.SenseDict,
+                DistressCaseDict: model.DistressCaseDict,
+                DistressCaseDetailDict: model.DistressCaseDetailDict,
+                DiagnosisDict: model.DiagnosisDict,
+                TransDiagnosisDict: model.TransDiagnosisDict,
+                TransferTypeDict: model.TransferTypeDict,
+                RemoteEcgtranWayDict: model.RemoteEcgtranWayDict,
+                ComingDict: model.ComingDict,
+                AmbulanceDepartmentDict: model.AmbulanceDepartmentDict,
+                BypassEmergencyDict: model.BypassEmergencyDict,
+                ThrombolyticScreeningDict: model.ThrombolyticScreeningDict,
+                FaThrombolyticPlacegDict: model.FaThrombolyticPlacegDict,
+                AcsDrugTypeDict: model.AcsDrugTypeDict,
+                TransferDestinationDict: model.TransferDestinationDict,
+                ThrombolyticDrugTypeDict: model.ThrombolyticDrugTypeDict,
+                ThrombolyticDrugCodeDict: model.ThrombolyticDrugCodeDict,
+                HospitalNamesDict: model.HospitalNamesDict,
+                DeptNamesDict: model.DeptNamesDict,
+                PciPlaceDict: model.PciPlaceDict,
+                regionData: regionData,
+
+                rules: {
+                    //'Admission.RespirationRate': [
+                    //    { pattern: /^([1-9]\d*|0)(\.\d{1,2})?$/, message: '请输入正确的呼吸' }
+                    //],
+                    //'Admission.PulseRate': [
+                    //    { pattern: /^([1-9]\d*|0)(\.\d{1,2})?$/, message: '请输入正确的脉搏' }
+                    //],
+                    //'Admission.HeartRate': [
+                    //    { pattern: /^([1-9]\d*|0)(\.\d{1,2})?$/, message: '请输入正确的心率' }
+                    //],
+                    'Admission.BloodPressure': [
+                        { pattern: /^[0-9]\d*\/[0-9]\d*$/, message: '请输入正确的血压' }
+                    ],
+                    //'Admission.Temperature': [
+                    //    { pattern: /^([1-9]\d*|0)(\.\d{1,2})?$/, message: '请输入正确的体温' }
+                    //],
+                    //'Admission.AspirinDose': [
+                    //    { pattern: /^([1-9]\d*|0)(\.\d{1,2})?$/, message: '请输入正确的给药量' }
+                    //],
+                    //'Admission.AcsDrugDose': [
+                    //    { pattern: /^([1-9]\d*|0)(\.\d{1,2})?$/, message: '请输入正确的给药量' }
+                    //],
+                },
+            };
+        },
+        methods: {
+            //关联患者
+            onRelation: function (type) {
+                var _this = this;
+                var regist = _this.patient.Regist;
+                if (!regist.PatientNo) {
+                    _this.$message.error('您还未绑定患者，请先进行绑定操作！');
+                    return;
+                }
+                this.$emit('bind', type);
+            },
+            selectedAttackAddress: function (value) {
+                var _this = this;
+                if (value && value[0]) {
+                    _this.patient.Admission.AttackProvinceCode = value[0];
+                    _this.patient.Admission.AttackProvince = CodeToText[value[0]]
+                }
+                if (value && value[1]) {
+                    _this.patient.Admission.AttackCityCode = value[1];
+                    _this.patient.Admission.AttackCity = CodeToText[value[1]]
+                }
+                if (value && value[2]) {
+                    _this.patient.Admission.AttackAreaCode = value[2];
+                    _this.patient.Admission.AttackArea = CodeToText[value[2]];
+                }else{
+		            _this.patient.Admission.AttackAreaCode = null;
+                    _this.patient.Admission.AttackArea = null;
+		        }
+            },
+            queryAttackDepts: function (queryString, cb) {
+                var attackDepts = this.AttackDepts;
+                var results = queryString ? attackDepts.filter(function (attackDept) {
+                    return (attackDept.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                }) : attackDepts;
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            },
+            queryHospitalNames: function (queryString, cb) {
+                var hospitalNames = this.HospitalNames;
+                var results = queryString ? hospitalNames.filter(function (hospitalName) {
+                    return (hospitalName.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                }) : hospitalNames;
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            }, 
+            onDateSelected: function (val) {
+                formatDateTime(val);
+            },
+            onDistressCaseClick: function (val) {
+                if (this.patient.Admission.DistressCase == val) {
+                    this.patient.Admission.DistressCase = "";
+                } else {
+                    this.patient.Admission.DistressCase = val;
+                }
+            }
+        },
+        mounted: function () {
+        },
+        computed: {
+            selectedOptions: function () {
+            if(this.patient.Admission.AttackAreaCode) return [this.patient.Admission.AttackProvinceCode, this.patient.Admission.AttackCityCode, this.patient.Admission.AttackAreaCode];
+            else return [this.patient.Admission.AttackProvinceCode, this.patient.Admission.AttackCityCode];
+            },
+            zcyyTypeClass: function () {
+                return this.patient.Admission.ZcyyType == '1' ? 'input_required' : '';
+            },
+            AttackDepts: function () {
+                var attackDept = [];
+                if (this.DeptNamesDict == null) return attackDept;
+                this.DeptNamesDict.forEach(function (n) {
+                    attackDept.push({ "value": n.Name });
+                });
+                return attackDept;
+            },
+            HospitalNames: function () {
+                var hospitalNames = [];
+                if (this.HospitalNamesDict == null) return hospitalNames;
+                this.HospitalNamesDict.forEach(function (n) {
+                    hospitalNames.push({ "value": n.Name });
+                });
+                return hospitalNames;
+            }
+        }
+    };
+</script>

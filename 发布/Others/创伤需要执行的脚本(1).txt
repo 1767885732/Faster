@@ -1,0 +1,3 @@
+update CM_MENUS set name='数据检查' where name='数据核查';
+update CM_MENUS set name='创伤数据' where name='数据管理';
+update CM_MENUS set name='数据质控' where name='数据统计';

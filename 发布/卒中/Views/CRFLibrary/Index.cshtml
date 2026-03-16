@@ -1,0 +1,61 @@
+﻿@using DoCare.Framework.Extension;
+@using DoCare.CRF.Form.Data.Item
+@{
+    var ItemTypeList = ViewBag.ItemTypeList as List<MDFormItemType>;
+    var ItemCategoryList = ViewBag.ItemCategoryList as List<MDFormItemCategory>;
+}
+
+<link href=@Url.GetCssJsUrl("~/Content/xxg_cz.css") rel="stylesheet" />
+<script src=@Url.GetCssJsUrl("~/Scripts/Stroke/crfLib.js")></script>
+<script>
+    var CanAddLib = @(ViewBag.CanAddLib.ToString().ToLower());
+    var CanDeleteLib = @(ViewBag.CanDeleteLib.ToString().ToLower());
+    var CanDownLoadLib = @(ViewBag.CanDownLoadLib.ToString().ToLower());
+    var CanEditLib = @(ViewBag.CanEditLib.ToString().ToLower());
+    var CanExportLib = @(ViewBag.CanExportLib.ToString().ToLower());
+    var CanViewLib = @(ViewBag.CanViewLib.ToString().ToLower());
+
+</script>
+
+<div id="container">
+    <div class="form_content">
+        <div id="search_block" class="btn_block">
+            <label>题目：</label>
+            <input id="itemTitle" type="text" style="width:350px;height:28px;" class="mg_r_10">
+            <label>题型：</label>
+            <select id="itemType" style="width:100px;" class="mg_r_10">
+                <option value="">-请选择-</option>
+                @foreach (var type in ItemTypeList)
+                {
+                    <option value="@type.Code">@type.Name</option>
+                }
+            </select>
+            <label>所属类别：</label>
+            <select id="itemCategory" style="width:150px;" class="mg_r_10">
+                <option value="">-请选择-</option>
+                @foreach (var category in ItemCategoryList)
+                {
+                    <option value="@category.Code">@category.Name</option>
+                }
+            </select>
+            <a id="query" href="javascript:void(0)" class="btn blue fl">搜索</a>
+            @if (ViewBag.CanExportLib)
+            {
+                <a id="export" href="javascript:void(0)" class="btn white fr">导出</a>
+            }
+            @if (ViewBag.CanDeleteLib)
+            {
+                <a id="delete" href="javascript:void(0)" class="btn white fr">删除</a>
+            }
+            @if (ViewBag.CanAddLib)
+            {
+                <a id="add" href="javascript:void(0)" class="btn orange fr">＋ 新增</a>
+            }
+        </div>
+
+        <div>
+            <table id="grdDataList" cellspacing="0" cellpadding="0" class="table" style="width:99%; min-width:1100px !important;"></table>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>

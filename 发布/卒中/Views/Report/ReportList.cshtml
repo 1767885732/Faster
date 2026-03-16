@@ -1,0 +1,588 @@
+﻿@{
+    Layout = null;
+}
+<script src="~/Scripts/echarts/echarts.min.js"></script>
+<script src="~/Scripts/echarts/macarons.js"></script>
+<div class="content">
+    <!--搜索条件-->
+    <div class="form-common qc-search">
+        <fieldset>
+            <div class="row-box">
+                <label>医院名称</label>
+                @Html.DropDownList("hospital", ViewBag.HospitalList as List<SelectListItem>, new { onchange = "loadChart('slide1')" })
+            </div>
+            <div class="row-box">
+                <label>卒中统计</label>
+                @Html.TextBox("sTime", "", new { @class = "Wdate", @onfocus = @"WdatePicker({skin:'whyGreen',dateFmt:'yyyy年M月', maxDate: '#F{$dp.$D(\'eTime\')}'})", @onchange = "loadChart('slide1');", @style = "width:40%; float:left" }) ~
+                @Html.TextBox("eTime", "", new { @class = "Wdate", @onfocus = @"WdatePicker({skin:'whyGreen',dateFmt:'yyyy年M月', minDate: '#F{$dp.$D(\'sTime\')}'})", @onchange = "loadChart('slide1');", @style = "width:40%; float:right" })
+
+                <span id="month1" class="left" onclick="setTime(6); setSelected('month', 1, 3);">最近六月</span>
+                <span id="month2" class="selected" onclick="setTime(3); setSelected('month', 2, 3);">最近三月</span>
+                <span id="month3" class="right" onclick="setTime(1); setSelected('month', 3, 3);">最近一月</span>
+            </div>
+            <div class="row-box">
+                <label>报表类型</label>
+                <select id="reportType">
+                    <option value="1">月报表</option>
+                    <option value="2">周报表</option>
+                </select>
+            </div>
+        </fieldset>
+    </div>
+    <!--图表-列表切换-->
+    <div class="change">
+        <a onclick="setTab('change',1,2)" id="change1" class="hover"><img src="~/App_Themes/Default/img/qc/chart.png" width="80" height="80"></a>
+        <a onclick="setTab('change',2,2)" id="change2"><img src="~/App_Themes/Default/img/qc/list.png" width="80" height="80"></a>
+    </div>
+    <div class="report" id="con-change-1">
+        <a class="a-left prev"><img src="~/App_Themes/Default/img/qc/a-left.png" width="70" height="120"></a>
+        <div class="slide1">
+            <ul class="myTb" style="width:11.2%">
+                <li onclick="RedirectToReportView('Report6-1')" style="width:95%">
+                    <span class="mark mark-red">6.1</span>
+                    <p>单位时间内<span class="red">静脉溶栓、血管内治疗、联合溶栓</span>大于4.5缺血卒中时间窗、小于4.5h缺血卒中时间窗、小于3h缺血卒中时间窗<span class="red">人数统计</span></p>
+                    <h6>缺血卒中时间窗内人数</h6>
+                    <div class="report-chart" data-suffix="例" data-reportname="Report6-1">
+
+                    </div>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    @*onclick="RedirectToReportView('Report6-2')"*@
+                    <span class="mark mark-red">6.2</span>
+                    <p>单位时间内所有缺血性卒中患者中<span class="red">静脉溶栓患者例数</span></p>
+                    <h6>静脉溶栓例数</h6>
+                    <div class="report-chart" data-suffix="例" data-reportname="Report6-2"></div>
+                </li>
+                <li>
+                    @*onclick="RedirectToReportView('Report6-3')"*@
+                    <span class="mark mark-red">6.3</span>
+                    <p>单位时间内所有缺血性卒中患者中<span class="red">血管内治疗患者例数</span></p>
+                    <h6>血管内治疗例数</h6>
+                    <div class="report-chart" data-suffix="例" data-reportname="Report6-3"></div>
+                </li>
+                <li onclick="RedirectToReportView('Report6-4')">
+                    <span class="mark mark-red">6.4</span>
+                    <p>单位时间内所有缺血性卒中患者中<span class="red">桥接治疗患者例数</span></p>
+                    <h6>桥接治疗例数</h6>
+                    <div class="report-chart" data-suffix="%" data-reportname="Report6-4"></div>
+                </li>
+            </ul>
+            <ul>
+
+                <li onclick="RedirectToReportView('Report6-5')">
+                        <span class="mark mark-grey">6.5</span>
+                        <p>DNT</p>
+                        <h6>DNT</h6>
+                        <div class="report-chart" data-suffix="min" data-reportname="Report6-5"></div>
+                    </li>
+                <li onclick="RedirectToReportView('Report6-6')">
+                        <span class="mark mark-grey">6.6</span>
+                        <p>DPT</p>
+                        <h6>DPT</h6>
+                        <div class="report-chart" data-suffix="min" data-reportname="Report6-6"></div>
+                    </li>
+                @*</ul>
+                    <ul>*@
+                @*<li onclick="RedirectToReportView('Report6-7')">
+                        <span class="mark mark-grey">6.7</span>
+                        <p>脑梗死患者住院1周内完善颈部和颅内等血管评价（比如颈部或颅内血管超声、 CT 或 MR 血管成像、或DSA）的例数占住院治疗的脑梗死患者的比率</p>
+                        <h6>住院1周内接受血管评价的比率</h6>
+                        <div class="report-chart" data-suffix="%" data-reportname="Report6-7"></div>
+                    </li>*@
+                @*<li>
+                <span class="mark mark-red">6.8</span>
+                <p>发病6小时内脑梗死患者血管内机械取栓率</p>
+                <h6>发病6小时内脑梗死患者血管内机械取栓率</h6>
+                <div class="report-chart" data-suffix="%" data-reportname="Report6-8"></div>
+            </li>*@
+            @*<li onclick="RedirectToReportView('Report6-9')">
+                    <span class="mark mark-red">6.9</span>
+                    <p>脑梗死患者出院时给予抗栓（比如阿司匹林或其他抗血小板药物，或肝素类或华法林或新型口服抗凝药物等抗凝药物）药物治疗的例数占住院治疗的脑梗死患者总例数的比率</p>
+                    <h6>出院时给予抗栓治疗的比率</h6>
+                    <div class="report-chart" data-suffix="%" data-reportname="Report6-9"></div>
+                </li>
+                <li onclick="RedirectToReportView('Report6-10')">
+                    <span class="mark mark-red">6.10</span>
+                    <p>脑梗死合并高血压患者出院时给予降压药物的例数占住院治疗的脑梗死合并高血压患者总例数的比率</p>
+                    <h6>出院时合并高血压的脑梗死患者降压治疗比率</h6>
+                    <div class="report-chart" data-suffix="%" data-reportname="Report6-10"></div>
+                </li>*@
+        </ul>
+
+        <ul>
+            @*<li onclick="RedirectToReportView('Report6-11')">
+                    <span class="mark mark-red">6.11</span>
+                    <p>脑梗死患者出院时给予他汀类药物的例数占住院治疗的非心源性脑梗死患者总例数的比率</p>
+                    <h6>出院时给予他汀类药物治疗比率</h6>
+                    <div class="report-chart" data-suffix="%" data-reportname="Report6-11"></div>
+                </li>
+                <li onclick="RedirectToReportView('Report6-12')">
+                    <span class="mark mark-red">6.12</span>
+                    <p>脑梗死合并糖尿病患者出院时给予降糖药物的例数占住院治疗的脑梗死合并糖尿病患者总例数的比率</p>
+                    <h6>出院时合并糖尿病患者使用降糖药物比率</h6>
+                    <div class="report-chart" data-suffix="%" data-reportname="Report6-12"></div>
+                </li>
+                <li onclick="RedirectToReportView('Report6-13')">
+                    <span class="mark mark-red">6.13</span>
+                    <p>脑梗死合并房颤患者出院时使用抗凝药物（例如：普通肝素、低分子肝素、华法林、新型口服抗凝剂） 的例数占住院治疗的脑梗死合并房颤患者总例数的比率</p>
+                    <h6>出院时房颤患者给予抗凝治疗比率</h6>
+                    <div class="report-chart" data-suffix="%" data-reportname="Report6-13"></div>
+                </li>*@
+        </ul>
+        <ul>
+            @*<li onclick="RedirectToReportView('Report6-14')">
+                    <span class="mark mark-red">6.14</span>
+                    <p>单位时间内所有因脑梗死住院治疗的患者住院总天数与脑梗死患者总例数的比值</p>
+                    <h6>平均住院日</h6>
+                    <div class="report-chart" data-suffix="day" data-reportname="Report6-14"></div>
+                </li>
+                <li onclick="RedirectToReportView('Report6-15')">
+                    <span class="mark mark-red">6.15</span>
+                    <p>单位时间内所有因脑梗死住院治疗的患者总住院费用与脑梗死患者总例数的比值</p>
+                    <h6>平均住院费用</h6>
+                    <div class="report-chart" data-suffix="yuan" data-reportname="Report6-15"></div>
+                </li>
+                <li onclick="RedirectToReportView('Report6-16')">
+                    <span class="mark mark-red">6.16</span>
+                    <p>单位时间内所有因脑梗死住院治疗的患者住院总药物费用与脑梗死患者总例数的比值</p>
+                    <h6>平均住院药物费用</h6>
+                    <div class="report-chart" data-suffix="yuan" data-reportname="Report6-16"></div>
+                </li>*@
+        </ul>
+        <ul>
+            @*<li onclick="RedirectToReportView('Report6-17')">
+                    <span class="mark mark-red">6.17</span>
+                    <p>某一时间内所有因脑梗死住院治疗的患者在住院期间死亡占脑梗死住院总人数的比例</p>
+                    <h6>住院病死率</h6>
+                    <div class="report-chart" data-suffix="%" data-reportname="Report6-17"></div>
+                </li>
+                <li onclick="RedirectToReportView('Report6-18')">
+                    <span class="mark mark-grey">6.18</span>
+                    <p>溶栓DNT</p>
+                    <h6>溶栓DNT</h6>
+                    <div class="report-chart" data-suffix="min" data-reportname="Report6-18"></div>
+                </li>*@
+        </ul>
+        <ul>
+            @*<li onclick="RedirectToReportView('Report6-19')">
+                    <span class="mark mark-grey">6.19</span>
+                    <p>溶栓OTT</p>
+                    <h6>溶栓OTT</h6>
+                    <div class="report-chart" data-suffix="min" data-reportname="Report6-19"></div>
+                </li>
+                <li onclick="RedirectToReportView('Report6-20')">
+                    <span class="mark mark-grey">6.20</span>
+                    <p>对系统中出现终止溶栓的情况进行统计</p>
+                    <h6>对系统中出现终止溶栓的情况进行统计</h6>
+                    <div class="report-chart" data-suffix="%" data-reportname="Report6-20"></div>
+                </li>
+                <li onclick="RedirectToReportView('Report6-21')">
+                    <span class="mark mark-red">6.21</span>
+                    <p>急性脑梗死患者发病2小时内到院，发病4.5小时内静脉给予重组组织型纤溶酶原激活剂（ rt-PA）溶栓治疗的例数占发病2小时内到院的脑梗死患者的比率</p>
+                    <h6>发病4.5小时以内rt-PA静脉溶栓治疗比率</h6>
+                    <div class="report-chart" data-suffix="%" data-reportname="Report6-21"></div>
+                </li>*@
+        </ul>
+        <ul>
+            @*<li onclick="RedirectToReportView('Report6-22')">
+                    <span class="mark mark-red">6.22</span>
+                    <p>单位时间内，从到院到给予rt-PA静脉溶栓药物（door to needle, DTN）的时间小于60分钟的脑梗死患者例数，占同期给与静脉溶栓治疗的脑梗死患者例数的比例。（反映医院对急性脑梗死患者救治的及时性）</p>
+                    <h6>静脉溶栓的急性脑梗死患者到院到给药时间小于60分钟的比率</h6>
+                    <div class="report-chart" data-suffix="%" data-reportname="Report6-22"></div>
+                </li>
+                <li onclick="RedirectToReportView('Report6-23')">
+                    <span class="mark mark-red">6.23</span>
+                    <p>单位时间内，急性前循环大血管闭塞性脑梗死患者在发病6小时内行血管内机械取栓的例数，占同期发病6小时内到院的合并大血管闭塞的脑梗死患者例数的比例。（反映医院开展急性脑梗死血管内治疗的能力）</p>
+                    <h6>发病6小时内脑梗死患者血管内机械取栓率</h6>
+                    <div class="report-chart" data-suffix="%" data-reportname="Report6-23"></div>
+                </li>
+                <li onclick="RedirectToReportView('Report6-26')">
+                    <span class="mark mark-red">6.26</span>
+                    <p>单位时间内，脑梗死患者合并房颤患者住院期间启动抗凝类药物（例如：普通肝素、低分子肝素、华法林、新型口服抗凝剂）治疗的例数占同期住院治疗的脑梗死合并房颤患者例数的比例。（反映脑梗死急性期规范化诊疗情况）</p>
+                    <h6>住院期间合并房颤的脑梗死患者抗凝治疗率</h6>
+                    <div class="report-chart" data-suffix="%" data-reportname="Report6-26"></div>
+                </li>*@
+        </ul>
+    </div>
+    <a class="a-right next"><img src="~/App_Themes/Default/img/qc/a-right.png" width="70" height="120"></a>
+</div>
+<div class="report" id="con-change-2" style="display:none; overflow: auto;">
+    <p class="report-list">
+        <span class="mark mark-red">6.1</span>
+        <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-1')">单位时间内，静脉溶栓、血管内治疗、联合溶栓，大于4.5缺血卒中时间窗、小于4.5h缺血卒中时间窗、小于3h缺血卒中时间窗人数统计</a>
+    </p>
+    <p class="report-list">
+        <span class="mark mark-red">6.2</span>
+        <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-2')">急诊就诊的急性脑梗死患者，从急诊分诊到获得头颅CT影像学诊断信息的时间在20分钟内的例数占单位时间内急诊就诊行头颅CT影像学检查的急性脑梗死患者总例数的比率</a>
+    </p>
+    <p class="report-list">
+        <span class="mark mark-red">6.3</span>
+        <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-3')">单位时间内急诊就诊的脑梗死患者，在30分钟内获得临床实验室诊断信息的例数占急诊就诊行实验室检查（比如血常规、凝血、肝肾功能）的住院脑梗死患者比率</a>
+    </p>
+    <p class="report-list">
+        <span class="mark mark-red">6.4</span>
+        <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-4')">急性脑梗死患者发病2小时内到院，发病3小时内静脉给予重组组织型纤溶酶原激活剂（ rt-PA）溶栓治疗的例数占发病2小时内到院的脑梗死患者的比率</a>
+    </p>
+    <p class="report-list">
+        <span class="mark mark-red">6.8</span>
+        <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-4')">小时内脑梗死患者血管内机械取栓率</a>
+    </p>
+    @*<p class="report-list">
+            <span class="mark mark-red">6.5</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-5')">脑梗死患者入院48小时内给予阿司匹林或其他抗血小板药物治疗的例数占住院治疗的脑梗死患者总例数的比率</a>
+        </p>*@
+    @*<p class="report-list">
+            <span class="mark mark-red">6.6</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-6')">入院48小时内不能下床活动脑梗死患者给予包括肝素类药物和/或血栓泵等深静脉血栓（Deep vein thrombosis， DVT）预防措施的例数占不能下床活动脑梗死患者的比率</a>
+        </p>*@
+    @*<p class="report-list">
+            <span class="mark mark-red">6.7</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-7')">脑梗死患者住院1周内完善颈部和颅内等血管评价（比如颈部或颅内血管超声、 CT 或 MR 血管成像、或DSA）的例数占住院治疗的脑梗死患者的比率</a>
+        </p>*@
+    @*<p class="report-list">
+            <span class="mark mark-red">6.8</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-8')">脑梗死患者住院期间使用他汀类药物治疗的例数占住院治疗的脑梗死患者的比率</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.9</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-9')">脑梗死患者出院时给予抗栓（比如阿司匹林或其他抗血小板药物，或肝素类或华法林或新型口服抗凝药物等抗凝药物）药物治疗的例数占住院治疗的脑梗死患者总例数的比率</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.10</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-10')">脑梗死合并高血压患者出院时给予降压药物的例数占住院治疗的脑梗死合并高血压患者总例数的比率</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.11</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-11')">脑梗死患者出院时给予他汀类药物的例数占住院治疗的非心源性脑梗死患者总例数的比率</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.12</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-12')">脑梗死合并糖尿病患者出院时给予降糖药物的例数占住院治疗的脑梗死合并糖尿病患者总例数的比率</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.13</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-13')">脑梗死合并房颤患者出院时使用抗凝药物（例如：普通肝素、低分子肝素、华法林、新型口服抗凝剂） 的例数占住院治疗的脑梗死合并房颤患者总例数的比率</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.14</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-14')">单位时间内所有因脑梗死住院治疗的患者住院总天数与脑梗死患者总例数的比值</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.15</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-15')">单位时间内所有因脑梗死住院治疗的患者总住院费用与脑梗死患者总例数的比值</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.16</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-16')">单位时间内所有因脑梗死住院治疗的患者住院总药物费用与脑梗死患者总例数的比值</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.17</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-17')">某一时间内所有因脑梗死住院治疗的患者在住院期间死亡占脑梗死住院总人数的比例</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.18</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-18')">溶栓DNT</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.19</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-19')">溶栓OTT</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.20</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-20')">对系统中出现终止溶栓的情况进行统计</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.21</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-21')">急性脑梗死患者发病2小时内到院，发病4.5小时内静脉给予重组组织型纤溶酶原激活剂（ rt-PA）溶栓治疗的例数占发病2小时内到院的脑梗死患者的比率</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.22</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-22')">单位时间内，从到院到给予rt-PA静脉溶栓药物（door to needle, DTN）的时间小于60分钟的脑梗死患者例数，占同期给与静脉溶栓治疗的脑梗死患者例数的比例。（反映医院对急性脑梗死患者救治的及时性）</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.23</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-23')">单位时间内，急性前循环大血管闭塞性脑梗死患者在发病6小时内行血管内机械取栓的例数，占同期发病6小时内到院的合并大血管闭塞的脑梗死患者例数的比例。（反映医院开展急性脑梗死血管内治疗的能力）</a>
+        </p>
+        <p class="report-list">
+            <span class="mark mark-red">6.26</span>
+            <a href="javascript:void(0);" onclick="RedirectToReportView('Report6-26')">单位时间内，脑梗死患者合并房颤患者住院期间启动抗凝类药物（例如：普通肝素、低分子肝素、华法林、新型口服抗凝剂）治疗的例数占同期住院治疗的脑梗死合并房颤患者例数的比例。（反映脑梗死急性期规范化诊疗情况）</a>
+        </p>*@
+</div>
+</div>
+
+<script src="~/Scripts/hover.js"></script>
+<script type="text/javascript">
+    var count = 1; // 区分ID后缀
+    $(function () {
+        function slideshow(className, prev, next) {
+            $("." + className + " ul").css('width', 'calc(100vw - 503px)');
+
+            var w = $("div." + className + " ul").width();
+            var l = 0;
+            var len = $("div." + className + " ul").length * 2; //复制了一份图片，长度变了。
+
+            // 复制一份图片，是为了解决第一张图片切换到最后一张或 最后一张切换到第一张时，图片区域会出现空白，用户体验不友好。
+            // 页面一加载，就把ul定位到追加图片的第一张（本身图片在前，追加图片在后。）
+            // 当图片位置到第一份图片第二张时，马上把图片定位到第二份的第一张,图片位置到最后一张时（第二份最后一张）时，就把图片定位到第一份最后一张,
+            // 这样图片后面或前面还有一张图片，切换时不会留下空白。（关键之处）
+            // 加载后图片排列像这样：1  2  3  4  5  1  2  3  4  5
+            $("div." + className).append($("div." + className).html()).css({ 'width': len * w, 'left': -len * w / 2 });
+
+            $("." + prev).click(function () {
+                l = parseInt($("div." + className).css("left")) + w;  // 这里要转成整数，因为后面带了px单位
+                showCurrent(l);
+            });
+
+            $("." + next).click(function () {
+                l = parseInt($("div." + className).css("left")) - w;  // 这里要转成整数，因为后面带了px单位
+                showCurrent(l);
+            });
+
+            // 显示当前画布
+            function showCurrent(l) { // 把图片的左右切换封装成一个函数
+                if ($("div." + className).is(':animated')) { // 当ul正在执行动画的过程中，阻止执行其它动作。关键之处，不然图片切换显示不完全，到最后图片空白不显示。
+                    return;
+                }
+
+                $("div." + className).animate({ "left": l }, 500, function () {
+                    len = $("div." + className + " ul").length;
+                    if (l == 0) { // 当图片位置到第一份图片第二张时，马上把图片定位到第二份的第一张。注意这里的设置的css一定到写在animate动画完成时的执行  //函数里。否则图片只是一瞬间回到第一张，但是没有向右的动画效果。 我在做的时候，用的不是css,而是用animate()定位到第二个第一张，结果切换时，是反方向的运动，一直觉得无论怎样，图片方向都会发生变化 ，弄得花了一天时间才找到原因，所以一定 要用css。
+                        $("div." + className).css("left", -len * w / 2);
+                    } else if (l == (1 - len) * w) { // 图片位置到最后一张时（第二份最后一张）时，就把图片定位到第一份最后一张。从而显示的是第一份最后一张。
+                        $("div." + className).css('left', (1 - len / 2) * w);
+                    }
+
+                    loadChart(className);
+                });
+            }
+            //$("#repartTab").css('width', '70%');
+        }
+
+        slideshow("slide1", "prev", "next");
+
+        setTime(3); // 默认设置成跨度为6个月的报表日期
+    });
+
+    function setSelected(name, cursel, n) {
+        for (i = 1; i <= n; i++) {
+            var $span = $("#" + name + i);
+            if (i == cursel) {
+                $span.addClass("selected");
+            } else {
+                if ($span.hasClass("selected")) {
+                    $span.removeClass("selected");
+                }
+            }
+        }
+    }
+
+    // 日期快捷选择 start
+    function getPerYearMonth(currentYear, currentMonth, span) {
+        var y = currentYear;
+        var m = 0;
+        m = currentMonth - span;
+        if (m <= 0) {
+            m = m + 12;
+            y = y - 1;
+        }
+
+        return {
+            year: y,
+            month: m
+        };
+    }
+
+    function setTime(span) {
+        var date = new Date();
+        var currentYear = date.getFullYear();
+        var currentMonth = date.getMonth() + 1;
+        var perYearMonth = getPerYearMonth(currentYear, currentMonth, span - 1);
+        var perYear = perYearMonth.year;
+        var perMonth = perYearMonth.month;
+        $("#sTime").val(perYear + "年" + perMonth + "月");
+        $("#eTime").val(currentYear + "年" + currentMonth + "月");
+
+        // 时间变动，缩略图重新加载
+        loadChart("slide1");
+        //loadChart("slide2");
+    }
+    // 日期快捷选择 end
+
+    function loadChart(className) {
+        var index = Math.abs(parseInt($("div." + className).css('left'))) / $("div." + className + " ul").width();
+        var $ul = $("div." + className).find("ul").eq(Math.round(index));
+        var $left1 = $ul.children().eq(0).find("div").eq(0); // 第一块画布中左侧内容
+        var $right1 = $ul.children().eq(1).find("div").eq(0); // 第一块画布中右侧上方内容
+        var $right2 = $ul.children().eq(2).find("div").eq(0); // 第一块画布中右侧下方内容
+
+        // 请求真实数据
+        runAsync([$left1, $right1, $right2], [true, false, false]);
+    }
+
+    function runAsync($objs, showTable) {
+        var reportNames = []
+        for (var i in $objs) {
+            reportNames.push($objs[i].data("reportname"));
+        }
+        $.ajax({
+            type: "POST",
+            url: "/Report/GetReports",
+            dataType: "json",
+            data: { sTime: $("#sTime").val(), eTime: $("#eTime").val(), reportType: 'M', reportNames: reportNames, chartType: 'bar', reportTitle: '', hospitalID: $('#hospital').find(":selected").val() },
+            success: function (data) {
+                console.log(data);
+                debugger;
+                var rateValue = 0;
+                if (data[0][2].Value == "Report6-8") {
+                    if (data[0][0].Key == "ReportView") {
+                        rateValue = data[0][0].Value.RateValue;
+                    }
+                }
+                if (data != null) {
+                    for (var index = 0; index < $objs.length; index++) {
+                        if (data[index] != null) {
+                            if (data[index][2].Value == "Report6-1") {
+                                var table = "<table class='basic-table' style='width: 98%; height:80px;text-align:center'>";
+                                table += "<tr>";
+                                table += "<td style='padding:0px;'>例</td> ";
+                                table += "<td style='padding:0px;'>总人数</td> ";
+                                table += "<td style='padding:0px;'>&gt;4.5缺血卒中时间窗内</td> ";
+                                table += "<td style='padding:0px;'>&lt;4.5h缺血卒中时间窗内</td> ";
+                                table += "<td style='padding:0px;'>&lt;3h缺血卒中时间窗内</td> ";
+                                table += "</tr>";
+                                table += "<tr>";
+                                table += "<td style='padding:0px;'>静脉溶栓例数</td> ";
+                                table += "<td style='padding:0px;'>" + data[index][1].Value.DmThromTimeNode.TotalCount + "</td> ";
+                                table += "<td style='padding:0px;'>" + data[index][1].Value.DmThromTimeNode.Greater45HCount + "</td> ";
+                                table += "<td style='padding:0px;'>" + data[index][1].Value.DmThromTimeNode.Less3HCount + "</td> ";
+                                table += "<td style='padding:0px;'>" + data[index][1].Value.DmThromTimeNode.Less45HCount + "</td> ";
+                                table += "</tr>";
+                                table += "<tr>";
+                                table += "<td style='padding:0px;'>血管内治疗例数</td> ";
+                                table += "<td style='padding:0px;'>" + data[index][1].Value.JmThromTimeNode.TotalCount + "</td> ";
+                                table += "<td style='padding:0px;'>" + data[index][1].Value.JmThromTimeNode.Greater45HCount + "</td> ";
+                                table += "<td style='padding:0px;'>" + data[index][1].Value.JmThromTimeNode.Less3HCount + "</td> ";
+                                table += "<td style='padding:0px;'>" + data[index][1].Value.JmThromTimeNode.Less45HCount + "</td> ";
+                                table += "</tr>";
+                                table += "<tr>";
+                                table += "<td style='padding:0px;'>桥接治疗例数</td> ";
+                                table += "<td style='padding:0px;'>" + data[index][1].Value.QjThromTimeNode.TotalCount + "</td> ";
+                                table += "<td style='padding:0px;'>" + data[index][1].Value.QjThromTimeNode.Greater45HCount + "</td> ";
+                                table += "<td style='padding:0px;'>" + data[index][1].Value.QjThromTimeNode.Less3HCount + "</td> ";
+                                table += "<td style='padding:0px;'>" + data[index][1].Value.QjThromTimeNode.Less45HCount + "</td> ";
+                                table += "</tr>";
+                                table += "<tr>";
+                                table += "<td style='padding:0px;'>治疗总数</td> ";
+                                table += "<td style='padding:0px;'>" + data[index][1].Value.TotalCount + "</td> ";
+                                table += "<td style='padding:0px;'></td> ";
+                                table += "<td style='padding:0px;'></td> ";
+                                table += "<td style='padding:0px;'></td> ";
+                                table += "</tr>";
+                                $objs[index].html(table);
+                            }
+                            else {
+                                $objs[index].html(createChart(rateValue, data[index][2].Value, data[index][0].Value.categories, data[index][0].Value.series, showTable[index], $objs[index].data("suffix")));
+                            }
+                        } else {
+                            $objs[index].html("");
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function getSeries(seriesData) {
+        return "[{data:[" + seriesData.toString() + "]}]";
+    }
+
+    function getSerieArr(num) {
+        var data = [];
+        for (var i = 0; i < num; i++) {
+            data.push((Math.random() * 50).toFixed(2));
+        }
+        return "[{data:[" + data.toString() + "]}]";
+    }
+
+    function createChart(rateValue, reportName, categories, series, isLeft, suffix) {
+        var seriesArr = [];
+        for (var s in series) {
+            seriesArr.push({
+                name: series[s].name, type: "bar", data: series[s].data, label: {
+                    normal: {
+                        show: true,
+                    }
+                }
+            });
+        }
+        //console.log(seriesArr);
+        var chartStr = "<div id='chart" + count + "' style='overflow-x: auto; height:" + (isLeft ? "300px" : "200px") + "'></div>";
+        chartStr += "<div style='margin: 0px; text-align: center; '><div id='report_table" + count + "' style='overflow-x: auto; '></div></div>";
+        if (reportName == "Report6-2")
+            chartStr += "<script>echarts.init(document.getElementById('chart" + count + "'), 'macarons').setOption({legend: {data:['总人数','静脉溶栓人数'],left:'center',},tooltip: {},xAxis:{type:'category',data:[" + categories + "]},yAxis:{name:'" + suffix + "',type:'value'},series: " + JSON.stringify(seriesArr) + "})<\/script>";
+        else if (reportName == "Report6-3")
+            chartStr += "<script>echarts.init(document.getElementById('chart" + count + "'), 'macarons').setOption({legend: {data:['总人数','血管内治疗人数'],left:'center',},tooltip: {},xAxis:{type:'category',data:[" + categories + "]},yAxis:{name:'" + suffix + "',type:'value'},series: " + JSON.stringify(seriesArr) + "})<\/script>";
+        else if (reportName == "Report6-5" || reportName == "Report6-6")
+            chartStr += "<script>echarts.init(document.getElementById('chart" + count + "'), 'macarons').setOption({legend: {data:['平均数','中位数'],left:'center',},tooltip: {},xAxis:{type:'category',data:[" + categories + "]},yAxis:{name:'" + suffix + "',type:'value'},series: " + JSON.stringify(seriesArr) + "})<\/script>";
+        else if (reportName == "Report6-8") {
+            debugger;
+            chartStr += "<script>echarts.init(document.getElementById('chart" + count + "'), 'macarons').setOption({tooltip: {formatter: '{a} <br/>{b} : {c}%'},toolbox: {feature: {}},series: [{name: '机械取栓率',type: 'gauge',detail: { formatter: '{value}%' },data: [{ value: " + rateValue + ", name: '完成率' }]}]})<\/script>";
+        } else {
+            chartStr += "<script>echarts.init(document.getElementById('chart" + count + "'), 'macarons').setOption({legend: {data:['总人数','血管内治疗人数'],left:'center',},tooltip: {},xAxis:{type:'category',data:[" + categories + "]},yAxis:{name:'" + suffix + "',type:'value'},series: " + JSON.stringify(seriesArr) + "})<\/script>";
+        }
+        if (isLeft) {
+            debugger;
+            var arr = eval(seriesArr);
+            var table = "<table class='basic-table' style='width: 98%; height:80px'>";
+            table += "<tr >";
+            table += "<td style='padding:0px;'>月份</td> ";
+            table += "<td style='padding:0px;'>总人数(例)</td>";
+            if (reportName == "Report6-2")
+                table += "<td style='padding:0px;'>静脉溶栓人数(例)</td>";
+            else if (reportName == "Report6-3")
+                table += "<td style='padding:0px;'>血管内治疗人数(例)</td>";
+            else if (reportName == "Report6-4")
+                table += "<td style='padding:0px;'>桥接治疗人数(例)</td>";
+            else if (reportName == "Report6-8")
+                table += "<td style='padding:0px;'>机械取栓人数(例)</td>";
+            else
+                table += "<td style='padding:0px;'>桥接治疗人数(例)</td>";
+            table += "</tr>";
+            if (reportName == "Report6-5" || reportName == "Report6-6") {
+                table = "<table class='basic-table' style='width: 98%; height:80px'><tr><td style='padding:0px;'>月份</td><td style='padding:0px;'>平均数</td><td style='padding:0px;'>中位数</td></tr>"
+            }
+            for (var o in categories) {
+                table += "<tr>";
+                table += "<td style='padding:0px;'>" + categories[o] + "</td>";
+                table += "<td style='padding:0px;'>" + arr[0].data[o] + "</td>";
+                table += "<td style='padding:0px;'>" + arr[1].data[o] + "</td>";
+                table += "</tr>";
+            }
+            //for (var o in categories) {
+            //    table += "<td style='padding:0px;'>" + categories[o] + "</td>";
+            //}
+
+            //table += "</tr>";
+            //table += "<tr>";
+            //table += "<td style='padding:0px;'>平均值</td> ";
+            //for (var o in arr[0].data) {
+            //    table += "<td style='padding:0px;'>" + arr[0].data[o] + "</td>";
+            //}
+            table += "</table>";
+
+            chartStr += "<script>$('#report_table" + count + "').html(\"" + table + "\");<\/script>";
+        }
+        count++;
+        return chartStr;
+    }
+
+    function RedirectToReportView(reportName) {
+        reportType = $("#reportType").val();
+        reportType = reportType == 1 ? 'M' : 'W';
+        var hospitalCode = $('#hospital').find(":selected").val();
+        var hre = '/Report/ReportView?sTime=' + encodeURI($("#sTime").val()) + '&eTime=' + encodeURI($("#eTime").val()) + '&reportType=' + reportType + '&reportName=' + encodeURI(reportName) + '&hospitalCode=' + hospitalCode + '&hospitalName=' + (hospitalCode != '-1' ? $('#hospital').find(":selected").text() : '');
+        window.open(hre);
+    }
+</script>

@@ -1,0 +1,44 @@
+﻿<div class="score-detail">
+    <div class="horizontal score-tit m-b-10">
+        <label>评分医生:</label>
+        <input type="text" ng-model="record.Doctor" ng-blur="saveRecord()" maxlength="25">
+        &nbsp;
+        <label>评分时间:</label>
+        <input type="datetime" ng-model="record.ScoringTime" wdate-picker ng-blur="saveRecord()">
+        <a ng-click="getCurrentTime()">获取当前时间</a>
+        &nbsp;&nbsp;
+        <span class="right">
+            <label>总分:</label>
+            <label ng-show="ShowScoreValue==0" style="padding:3px 3px;"><input type="text" maxlength="4" name="ManualTotalScore" style="width:42px;text-align:center;font-weight: bold;" class="score-value orange" id="ManualTotalScore" ng-model="ManualTotalScore" ng-blur="SaveScore(ManualTotalScore)" />  分</label>
+            <label ng-show="ShowScoreValue==1" style="padding:3px 3px;"><input type="text" maxlength="4" name="ScoreValue" style="width:42px;text-align:center;font-weight: bold;" class="score-value orange" id="ScoreValue" ng-model="record.ScoreValue" ng-blur="SaveScore(record.ScoreValue)" />  分</label>
+            @*<b class="score-value orange">
+            </b>*@
+        </span>
+    </div>
+    <div class="subNav" ng-repeat-start="item in record.ItemCategories[0].Items" id="subNav{{item.ID}}" onclick="subNav(this)">
+        <strong><label>{{item.Title}}<a class="info" ng-if="item.Description!=null && item.Description!='null' && item.Description!=''" title="{{item.Description | NoShowNull}}"></a></label></strong>
+        <span class="text-span">
+            <!--非文本框 ASPECT:ScoreType==6 多选只读-->
+            <input ng-if="item.Type!='01'" ng-readonly="template.ScoreType==6||item.Type=='03'" type="text" ng-model="item.Score" ng-blur="changeScore($event,item.Score,item.ID,item.Value,item.Title,item.Property.EnumItems)" />
+            <!--文本框-->
+            <input ng-if="item.Type=='01'" type="text" value="{{item.Value}}" ng-model="item.Value" ng-blur="textChanged(item.ID,item.Value)" maxlength="3" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^0-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^0-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" />
+            <em>分</em>
+        </span>
+    </div>
+    <div class="navContent" ng-repeat-end id="navContent{{item.ID}}">
+        <label ng-repeat="enumItem in item.Property.EnumItems">
+            <label ng-if="item.Type=='04'">
+                <input type="radio" required name="rdo-{{item.ID}}" id="rdo-{{item.ID}}-{{enumItem.Value}}" ng-checked="enumItem.Value==item.Value" ng-click="updateSelection(item.ID,enumItem.Value,enumItem.ScoreValue,item.Value,item.Title)"><span>{{enumItem.Text}}</span>
+            </label>
+            <label ng-if="item.Type=='03' && template.Math=='sub'">
+                <input type="checkbox" name="cbx-{{item.ID}}" ng-checked="isSelected(item.ID,enumItem.Value,item.Value)" ng-click="multiSelect($event,item.ID,enumItem.Value,enumItem.ScoreValue,item.Value)"><span>{{enumItem.Text}}</span>
+            </label>
+            <label ng-if="item.Type=='03' && template.Math=='add'">
+                <input type="checkbox" name="cbx-{{item.ID}}" ng-checked="isSelected(item.ID,enumItem.Value,item.Value)" ng-click="multiSelectAdd($event,item.ID,enumItem.Value,enumItem.ScoreValue,item.Value)"><span>{{enumItem.Text}}</span>
+            </label>
+        </label>
+        <!--SPAN-100-->
+        <input ng-if="template.ScoreType==12" class="input-box" type="text" value="{{item.Value}}" ng-model="item.Value" ng-blur="textChanged(item.ID,item.Value)" maxlength="3" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^0-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^0-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" />
+        <br />
+    </div>
+</div>

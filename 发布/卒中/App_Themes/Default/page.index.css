@@ -1,0 +1,130 @@
+﻿html{
+    height:100%;
+}
+body{
+    height:100%;
+    background:#eff0f4;
+}
+#main-layout .main-index{
+    width: calc(100% - 10px);
+    width: -moz-calc(100% - 10px);
+    width: -webkit-calc(100% - 10px);
+    height: calc(100% - 10px);
+    height: -moz-calc(100% - 10px);
+    height: -webkit-calc(100% - 10px);
+    padding:10px 0 0 10px;
+}
+/*    宽度   */
+.wd-one-fourth{
+    width:calc(25% - 10px);
+    width:-moz-calc(25% - 10px);
+    width:-webkit-calc(25% - 10px);
+}
+.wd-one-half{
+    width:calc(50% - 10px);
+    width:-moz-calc(50% - 10px);
+    width:-webkit-calc(50% - 10px);
+}
+.wd-three-fourth{
+    width:calc(75% - 10px);
+    width:-moz-calc(75% - 10px);
+    width:-webkit-calc(75% - 10px);
+}
+.column{
+    margin:0 10px 10px 0;
+    float:left;
+    display:inline;
+    background:#fff;
+    overflow:auto;
+}
+.column-tit{
+    margin:0 10px;
+    height:30px;
+    line-height:30px;
+    border-bottom:1px solid #e3e4e8;
+    position:relative;
+}
+.column-tit h3{
+    color:#007ebc;
+}
+.column-tit select{
+    position:absolute;
+    top:4px;
+    right:0;
+}
+/*    高度   */
+.ht-80{
+    height:80px;
+}
+.ht-one-half{
+    height:calc(50% - 10px);
+    height:-moz-calc(50% - 10px);
+    height:-webkit-calc(50% - 10px);
+}
+.ht-else{
+    height:calc(50% - 90px);
+}
+/* 百分比  */
+.percent{
+    width:68px;
+    height:68px;
+    float:left;
+    padding:6px;
+}
+/* 图表  */
+.column .chart{
+    width:100%;
+    height: calc(100% - 31px);
+    height: -moz-calc(100% - 31px);
+    height: -webkit-calc(100% - 31px);
+    margin:0 auto;
+    overflow:auto;
+}
+.chart-half{
+    width:50%;
+    height:100%;
+    float:left;
+}
+/* 顶部四项  */
+.column .description{
+    float:left;
+    font-weight: normal;
+    padding:18px 0 0 20px;
+}
+.column h4{
+    color:#999;
+}
+.column h1{
+    line-height:40px;
+    font-weight: normal;
+    color:#666;
+}
+.column h1 b{
+    font-size:14px;
+    padding-left:5px;
+}
+.column .wd-one-third{
+    width:33.333%;
+    padding-top:18px;
+    float:left;
+    display:inline;
+    text-align:center;
+}
+.column .score{
+    width:50%;
+}
+.column .filling-situation{
+    padding:10px;
+    height: calc(100% - 51px);
+    height: -moz-calc(100% - 51px);
+    height: -webkit-calc(100% - 51px);
+    overflow: auto;
+}
+.column .filling-situation li{
+    line-height:28px;
+    color:#666;
+}
+.column .filling-situation li strong{
+    padding:0 5px;
+    color:#666;
+}

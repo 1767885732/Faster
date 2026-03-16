@@ -1,0 +1,70 @@
+﻿@model DoCare.CVA.Business.Model.TemplateQueryModel
+<script src=@Url.GetCssJsUrl("~/Scripts/Stroke/templateList.js")></script>
+<script src="~/Scripts/jquery-easyui/datagrid-detailview.js"></script>
+<script>
+    var CanAddTemplate = @(ViewBag.CanAddTemplate.ToString().ToLower());
+    var CanViewTemplate = @(ViewBag.CanViewTemplate.ToString().ToLower());
+    var CanEditTemplate = @(ViewBag.CanEditTemplate.ToString().ToLower());
+    var CanDeleteTemplate = @(ViewBag.CanDeleteTemplate.ToString().ToLower());
+    var CanExportTemplate = @(ViewBag.CanExportTemplate.ToString().ToLower());
+</script>
+
+<div id="container">
+    <div class="form_content">
+        <div id="search_block">
+            <form class="form_block">
+                <fieldset style="padding:10px 0 10px 10px;">
+                    <p class="wp_25">
+                        @Html.Label("模板名称：", new { @class = "wd_100" })
+                        @Html.TextBoxFor(m => m.Name, new { @style = "width:60%;", maxlength = "32" })
+                    </p>
+                    <p class="wp_25">
+                        @Html.Label("标题：", new { @class = "wd_100" })
+                        @Html.TextBoxFor(m => m.Title, new { @style = "width:60%;", maxlength = "32" })
+                    </p>
+                    <p class="wp_25">
+                        @Html.Label("审核状态：", new { @class = "wd_100" })
+                        @Html.DropDownListFor(m => m.Status, ViewBag.StatusList as List<SelectListItem>, new { @style = "width:60%;" })
+                    </p>
+                    <p class="wp_25">
+                        @Html.Label("创建人：", new { @class = "wd_100" })
+                        @Html.TextBoxFor(m => m.CreateName, new { @style = "width:60%;", maxlength = "32" })
+                    </p>
+
+                    <p class="wp_50">
+                        @Html.Label("创建时间：", new { @class = "wd_100" })
+                        @Html.TextBoxFor(m => m.CreateDateForm, "", new { @class = "Wdate", @style = "width:30%;", @onfocus = @"WdatePicker({skin:'whyGreen',dateFmt:'yyyy年M月d日',maxDate:'#F{$dp.$D(\'CreateDateTo\')}'})" })
+                        @Html.Label("至", new { @style = "margin:0 31px 0 63px;" })
+                        @Html.TextBoxFor(m => m.CreateDateTo, "", new { @class = "Wdate", @style = "width:30%;", @onfocus = @"WdatePicker({skin:'whyGreen',dateFmt:'yyyy年M月d日',minDate:'#F{$dp.$D(\'CreateDateForm\')}'})" })
+                    </p>
+                    <p class="wp_50">
+
+                        <a id="search" href="javaScript:;" class="btn blue fr" style="margin-right:17px;">搜索</a>
+                    </p>
+                </fieldset>
+                
+                @if (ViewBag.CanExportTemplate)
+                {
+                    <a id="export" href="javaScript:;" class="btn white fr">导出</a>
+                }
+                @if (ViewBag.CanDeleteTemplate)
+                {
+                    <a id="batchDelete" href="javaScript:;" class="btn white fr">删除</a>
+                }
+                @if (ViewBag.CanAddTemplate)
+                {
+                    <a id="create" href="javaScript:;" class="btn orange fr">＋ 新增</a>
+                }
+            </form>
+        </div>
+
+        <div>
+            <table id="grdDataList" cellspacing="0" cellpadding="0" class="table" style="width:99%; min-width:1100px !important;"></table>
+        </div>
+
+    </div>
+</div>
+
+<div id="divPanel1">
+</div>
+

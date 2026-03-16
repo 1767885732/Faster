@@ -1,0 +1,39 @@
+-- Create table
+create table MED_PAT_SCORE
+(
+  patient_no   VARCHAR2(40) not null,
+  score_type   VARCHAR2(40) not null,
+  score_souce  VARCHAR2(40) not null,
+  score_item   VARCHAR2(40) not null,
+  score_result VARCHAR2(40),
+  score_date   DATE,
+  id           VARCHAR2(40)
+)
+tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table MED_PAT_SCORE
+  add constraint PK_MED_PAT_SCORE primary key (PATIENT_NO, SCORE_TYPE, SCORE_SOUCE, SCORE_ITEM)
+  using index 
+  tablespace TSP_MEDPUB
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Grant/Revoke object privileges 
+grant select, insert, update, delete on MED_PAT_SCORE to ROLE_DOCARE;

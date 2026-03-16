@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <View ViewId="Treatment" ViewName="住院诊疗">
+    <Member MemberId="DiagnosisType" MemberName="卒中诊断">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Consciousness" MemberName="意识">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Sbp" MemberName="血压（收缩压/舒张压）">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Hr" MemberName="心率">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="R" MemberName="呼吸">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Spo" MemberName="血氧">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="Weight" MemberName="体重">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="NihssScoreValue" MemberName="NIHSS评分">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="RtPaDose" MemberName="rt-PA">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ArteryUrokinaseDose" MemberName="总剂量">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="NjmDose" MemberName="尿激酶">
+      <Required Required="false" Enabled="0" />
+    </Member>
+    <Member MemberId="TotalNjmDose" MemberName="总剂量">
+      <Required Required="false" Enabled="0" />
+    </Member>
+    <Member MemberId="ThromDocVisitTime" MemberName="溶栓医生接诊患者时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ThromConversationTime" MemberName="（溶栓医生）静脉溶栓开始谈话时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ThromAgreeSignTime" MemberName="溶栓知情同意谈话并签字" MemberCode="D020302">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="0" />
+    </Member>
+    <Member MemberId="ThromVeinTime" MemberName="静脉溶栓时间" MemberCode="D020304">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="0" />
+    </Member>
+    <Member MemberId="FirstAdministrationTime" MemberName="首次给药时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IsEmbolectomy" MemberName="溶栓后介入">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="JrNihssScoreValue" MemberName="NIHSS评分">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="JrConversationTime" MemberName="介入治疗开始谈话时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="JrAgreeSignTime" MemberName="介入治疗家属签字时间">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="IatReachCrTime" MemberName="到达导管室时间" MemberCode="D020327">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="0" />
+    </Member>
+    <Member MemberId="IatSuccessPunctureTime" MemberName="完成动脉穿刺时间" MemberCode="D020331">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="0" />
+    </Member>
+    <Member MemberId="IatArchtographicTime" MemberName="完成照影评估时间" MemberCode="D020310">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="0" />
+    </Member>
+    <Member MemberId="IatItrTime" MemberName="首次血管再通时间" MemberCode="D020311">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="0" />
+    </Member>
+    <Member MemberId="IatThromEndTime" MemberName="患者离开导管室时间" MemberCode="D020333">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="0" />
+    </Member>
+    <Member MemberId="CompletionTime" MemberName="完成造影时间" MemberCode="D020312">
+      <Required Required="true" Enabled="1" />
+      <PreTimeNodes Enabled="0" />
+    </Member>
+    <Member MemberId="IatDestinationAfterPci" MemberName="患者溶栓/介入后去向">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    
+    <Member MemberId="Height" MemberName="身高">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="ThromDoc" MemberName="溶栓医生">
+      <Required Required="true" Enabled="1" />
+    </Member>
+    <Member MemberId="InterventionDoc" MemberName="介入医生">
+      <Required Required="true" Enabled="1" />
+    </Member>
+  </View>
+</Config>

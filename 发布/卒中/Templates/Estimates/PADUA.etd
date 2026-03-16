@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template Name="PADUA" Title="PADUA" >
+    <Group>
+      <CheckBox Code="PADUA001" Title="危险因素" Desc="危险因素">
+        <Option Id="01" Text="年龄≥70(岁)" Score="1"/>
+        <Option Id="02" Text="心力衰竭" Score="1"/>
+        <Option Id="03" Text="急性心肌梗死" Score="1"/>
+        <Option Id="04" Text="呼吸衰竭" Score="1"/>
+        <Option Id="05" Text="缺血性脑卒中" Score="1"/>
+        <Option Id="06" Text="急性感染和（或）风湿性疾病" Score="1"/>
+        <Option Id="07" Text="肥胖（体重指数）≥30kg/m2" Score="1"/>
+        <Option Id="08" Text="正在进行激素替代治疗" Score="1"/>、
+        <Option Id="09" Text="肾病综合征" Score="1"/>
+        <Option Id="10" Text="下肢静脉曲张" Score="1"/>
+        <Option Id="11" Text="妊娠或产褥期" Score="1"/>
+        <Option Id="12" Text="血小板增多症" Score="1"/>
+        <Option Id="13" Text="炎性肠病" Score="1"/>
+        <Option Id="14" Text="近期（≤1个月）创伤或外科手术" Score="1"/>
+        <Option Id="15" Text="恶性肿瘤活动期：有局部或远处转移和（或）6个月内接受过化疗或放疗" Score="1"/>
+        <Option Id="16" Text="既往VTE病史（浅静脉血栓除外）" Score="1"/>
+        <Option Id="17" Text="既往VTE病史（浅静脉血栓除外）" Score="1"/>
+        <Option Id="18" Text="有血栓形成倾向，抗凝血酶原缺陷症，蛋白C或S缺乏，LeidenＶ因子、凝血酶原G20210A突变，抗凝脂抗体综合征" Score="1"/>
+      </CheckBox>
+     </Group>
+  </Template>
+</Config>

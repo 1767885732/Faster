@@ -1,0 +1,147 @@
+﻿body{
+    background: #eff0f4;
+
+}
+.case{
+    padding: 10px;
+    position: relative;
+}
+/*--------  顶部工具条  -----begin---*/
+.toolbar{
+    top: 10px;
+    right: 10px;
+    position: fixed;
+}
+.toolbar a{
+    width: 60px;
+    height: 60px;
+    margin-left: 10px;
+    display: inline-block;
+    border-radius: 4px;
+    background: #000;
+    filter:Alpha(opacity=20);
+    background-color: rgba(0,0,0,0.2);
+    background-position: center;
+    background-repeat: no-repeat;
+    text-align: center;
+}
+.toolbar a:hover{
+    filter:Alpha(opacity=40);
+    background-color: rgba(0,0,0,0.4);
+}
+.toolbar .print{
+    background-image: url('img/icon/print.png');
+}
+.toolbar .update{
+    background-image: url('img/icon/update.png');
+}
+.toolbar .examine{
+    background-image: url('img/icon/examine.png');
+}
+/*--------  顶部工具条  -----end---*/
+.column{
+    border-radius: 2px;
+    margin-bottom: 10px;
+    box-shadow: 0 0 16px #d7d7d7;
+    background-color: #0093dc;
+    background: -webkit-linear-gradient(left,  #0093dc , #56cafb);
+    background: -o-linear-gradient(right,  #0093dc, #56cafb);
+    background: -moz-linear-gradient(right,  #0093dc, #56cafb);
+    background: linear-gradient(to right,rgba(0,147,220, 1) , #56cafb);
+}
+.column .tit{
+    height: 30px;
+    line-height: 30px;
+}
+.column .tit h3{
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: #fff;
+    padding-left: 18px;
+    background: url('img/icon/basic.png') left no-repeat;
+}
+.column .content dl{
+    width: 25%;
+    float: left;
+}
+.column .content dl dt{
+    min-height: 24px;
+    line-height: 24px;
+    color: #999;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+}
+.column .content dl dd{
+    min-height: 18px;
+    line-height: 18px;
+    margin-bottom: 10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding-right: 10px;
+}
+.column .content dl dd a{
+    cursor: default;
+    color: #000;
+}
+.column .content .full{
+    width: 100%;
+}
+.column .content .full dd{
+    padding: 4px 0;
+    background: #f1f1f1;
+}
+/*--------  多次检查、检验等  --------*/
+.column .content .event{
+    background-color: #fff;
+    box-shadow: 0 0 10px #d7d7d7;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+.column .content .event .event-head{
+    padding: 0 10px;
+    display:block;
+    overflow: auto;
+}
+.column .content .event .event-con{
+    width: 100%;
+    padding-top: 10px;
+    overflow: auto;
+}
+.column .content .event .event-con table tr th, .column .content .event .event-con table tr td{
+    max-width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 2px 10px;
+    border: none;
+    background: none;
+}
+.column .content .event .event-con table tr th{
+    height: 40px;
+    line-height: 40px;
+    border-top: 2px solid #999;
+    border-bottom: 1px solid #999;
+}
+/*--------  链接  --------*/
+.column .content .link{
+    cursor: pointer;
+    color: #36c;
+}
+.column .content .link:hover{
+    color:#F60;
+}
+/*--------  简略 手风琴效果  --------*/
+.subNav {
+    border-bottom: solid 1px #e5e3da;
+    cursor: pointer;
+    padding-left: 10px;
+    background: url('img/icon/up.png') 99% 50% no-repeat;
+    box-shadow: 0 3px 3px #eee;
+}
+.subNav:hover{
+    background-color:#0089cc;
+}
+.currentDd {
+    background-image:url('img/icon/down.png');
+}
+.navContent {
+    background-color:#f5f5f5;
+}

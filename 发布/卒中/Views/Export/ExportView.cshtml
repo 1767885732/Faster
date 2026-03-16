@@ -1,0 +1,68 @@
+﻿@using DoCare.ToolKit
+@using DoCare.Framework.Extension
+@{
+    Layout = null;
+}
+<link rel="stylesheet" type="text/css" href=@Url.GetCssJsUrl("~/App_Themes/Default/global.css")>
+<link rel="stylesheet" type="text/css" href=@Url.GetCssJsUrl("~/App_Themes/Default/control.css")>
+<link rel="stylesheet" type="text/css" href=@Url.GetCssJsUrl("~/App_Themes/Default/page.export.css")>
+<input type="hidden" id="hdnSetTab" value="0"/>
+<div class="popup">
+    <ul>
+        <li id="export1" class="hover">
+            <em>1</em>
+            筛选条件
+            <span class="step-right"></span>
+        </li>
+        <li id="export2">
+            <span class="step-left"></span>
+            <em>2</em>
+            选择导出字段
+            <span class="step-right"></span>
+        </li>
+        <li id="export3">
+            <span class="step-left"></span>
+            <em>3</em>
+            预览结果
+        </li>
+    </ul>
+    <div class="data" id="con-export-1">
+        <form>
+            <fieldset id="fs_SearchMembers">
+                <legend>请选择导出条件</legend>
+                <!-- 全部检索字段 -->
+            </fieldset>
+            <button type="button" class="btn-export"></button>
+            <fieldset id="fs_SelectedConditions">
+                <legend>已选条件</legend>
+                <!-- 检索条件 -->
+            </fieldset>
+        </form>
+    </div>
+    <div class="data" id="con-export-2" style="display: none;">
+        <div class="top-area">
+            <label class="check-all"><input type="checkbox" id="chkselectall"><span>全选</span></label>
+        </div>
+        <form class="field">
+            <!-- 检索字段 -->
+        </form>
+    </div>
+    <div class="data" id="con-export-3" style="display: none;">
+        <div class="result">
+            <table class="basic-table">
+                <!-- data -->
+            </table>
+        </div>
+        <div class="page text-center">
+            <button type="button" id="btn_pre" class="btn-disabled">&#60;&nbsp;上一页</button>
+            <button type="button" id="btn_next">下一页&nbsp;&#62;</button>
+            <button type="button" id="btn_export" style="display:none;"></button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="~/Scripts/DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="~/Scripts/Export/hover.js"></script>
+<script type="text/javascript" src="~/Scripts/Export/Export.js"></script>
+<script src="~/Scripts/layer/layer.js"></script>

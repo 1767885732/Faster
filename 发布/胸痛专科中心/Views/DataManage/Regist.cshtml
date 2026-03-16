@@ -1,0 +1,178 @@
+﻿@using DoCare.ToolKit;
+@using DoCare.Framework.Extension;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href=@Url.Random("~/App_Themes/Default/page.dm.mr.css") rel="stylesheet" />
+<script src="~/Views/DataManage/AsideTimeline.js"></script>
+<script type="text/javascript" src="~/Scripts/extension/element-china-area-data/app.js"></script>
+<script type="text/javascript" src="~/Scripts/extension/html2canvas.js"></script>
+<script type="text/javascript" src="~/Scripts/extension/jspdf.debug.js"></script>
+<script type="text/javascript" src="@Url.Random("~/Scripts/docare/vue.directives.js")"></script>
+<script>
+    var model = @Html.Raw(JsonKit.Serialize(ViewBag.Model));
+    console.log("model",model);
+</script>
+@Html.Partial("~/Views/DataManage/PatientComponent.cshtml")
+@Html.Partial("~/Views/DataManage/AdmissionComponent.cshtml")
+@Html.Partial("~/Views/DataManage/DiagnosisComponent.cshtml")
+@Html.Partial("~/Views/DataManage/DischargeComponent.cshtml")
+<style>
+    [v-cloak] {
+        display: none;
+    }
+    /*提交错误提醒空白换行*/
+    .el-message {
+        white-space: pre !important;
+    }
+
+    #mr-container .el-row {
+        max-width: calc(100vw - 300px);
+	    max-width: -moz-calc(100vw - 300px);	
+	    max-width: -webkit-calc(100vw - 300px);
+    }
+    #mr-container .el-image .el-image__inner--center {
+        transform:none;
+        left:0px;
+    }
+</style>
+<div id="Regist" v-cloak>
+    <el-container>
+        <!-- 时间轴 -->
+        <el-aside width="240px">
+            <aside-timeline v-bind:id="registId" ref="timeline"></aside-timeline>
+        </el-aside>
+        <el-container id="mr-container">
+            <el-header height="150px">
+                <regist v-bind:patient.sync="editForm" ref="regist" id="registPrint"></regist>
+            </el-header>
+            <el-main>
+                <div class="operate-bar">
+                    <el-button-group>
+                        <el-button v-for="(o,index) in accessSetting.AccessUrl" v-if="!!o.Name&!!o.Url" v-bind:key="index" icon="el-icon-document" size="small" v-on:click="formatAccessUrl(o.Name,o.Url)">{{o.Name}}</el-button>
+                        <el-button icon="specialty docare_electrocardiogram" style="background-color:beige" size="small" v-on:click="showEcg">心电图</el-button>
+                        <el-button icon="specialty docare_examine" size="small" style="background-color:beige" v-on:click="showExamination">检查</el-button>
+                        <el-button icon="specialty docare_testing" size="small" style="background-color:beige" v-on:click="showInspection">检验</el-button>
+                        <el-button icon="specialty docare_drugs" size="small" style="background-color:beige" v-on:click="showMedication">用药</el-button>
+                    </el-button-group>
+                    <el-button-group>
+                        <el-button type="warning" v-if="showBind" icon="specialty docare_interlinkage" v-on:click="onBind()" size="small">绑定</el-button>
+                        <el-button type="primary" v-if="showSync" icon="specialty docare_synchronization" v-on:click="onExtract()" size="small">同步</el-button>
+                        <el-button type="primary" v-if="showSave" icon="specialty docare_baocun" v-on:click="onSave()" size="small">保存</el-button>
+                        <el-button type="success" v-if="showCommit" icon="el-icon-finished" v-on:click="onSave('1')" size="small">提交</el-button>
+                        <el-button type="success" v-if="showPrint" icon="el-icon-printer" v-on:click="onPrint()" size="small">打印预览</el-button>
+                    </el-button-group>
+                </div>
+                <el-tabs v-model="activeName">
+                    <el-tab-pane label="急救信息" name="first">
+                        <el-scrollbar style='height:100%;'>
+                            <div class="mr-panel" id="firstPrint">
+                                <admission v-bind:patient.sync="editForm" v-on:bind="onBind"></admission>
+                            </div>
+                        </el-scrollbar>
+                    </el-tab-pane>
+                    <el-tab-pane label="胸痛诊疗" name="second">
+                        <el-scrollbar style='height:100%;'>
+                            <div class="mr-panel" id="secondPrint">
+                                <diagnosis v-bind:patient.sync="editForm"></diagnosis>
+                            </div>
+                        </el-scrollbar>
+                    </el-tab-pane>
+                    <el-tab-pane label="患者转归" name="last" v-bind:disabled="disabledDischarge">
+                        <el-scrollbar style='height:100%;'>
+                            <div class="mr-panel" id="lastPrint">
+                                <discharge v-bind:patient.sync="editForm"></discharge>
+                            </div>
+                        </el-scrollbar>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-main>
+            <el-dialog title="绑定病历" v-bind:visible.sync="dialogVisible" width="80%">
+                <div class="dlg-add-container">
+                    <el-row>
+                        <el-radio-group v-model="options.From" v-on:change="sourceFromChange">
+                            <el-radio-button v-if="bindSource == 0 || bindSource == null" label="0">住院</el-radio-button>
+                            <el-radio-button v-if="bindSource == 1 || bindSource == null" label="1">急救</el-radio-button>
+                            <el-radio-button v-if="bindSource == 2 || bindSource == null" label="2">急诊</el-radio-button>
+                            <el-radio-button v-if="bindSource == 3 || bindSource == null" label="3">门诊</el-radio-button>
+                        </el-radio-group>
+                    </el-row>
+                    <el-row>
+                        <div style="width:100%;padding:5px 0;display:flex;">
+                            <div style="flex-grow:1">
+                                <el-select v-model="options.OrgCode"
+                                           placeholder="请选择医院"
+                                           size="mini" style="width:100%;">
+                                    <el-option v-for="item in HospitalDict"
+                                               v-bind:key="item.Key"
+                                               v-bind:label="item.Value"
+                                               v-bind:value="item.Key">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                            <div style="flex-grow:2;margin-left:10px;">
+                                <el-date-picker v-model="options.DateRange"
+                                                type="daterange"
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期"
+                                                size="mini" style="width:100%">
+                                </el-date-picker>
+                            </div>
+                            <div style="flex-grow:1;margin-left:10px;">
+                                <el-input v-model="options.Name"
+                                          placeholder="请输入姓名"
+                                          size="mini"></el-input>
+                            </div>
+                            <div style="flex-grow:1;margin-left:10px;" v-if="options.From != '1'&&options.From != '2'&&false">
+                                <el-input v-model="options.No"
+                                          v-bind:placeholder="showData.noInput"
+                                          size="mini"></el-input>
+                            </div>
+                            <div style="width:200px;flex-grow:0;margin-left:30px;">
+                                <el-button size="mini" icon="el-icon-search" circle v-on:click="QueryIF"></el-button>
+                                <el-button size="mini" type="success" icon="el-icon-check" circle v-on:click="doBind"></el-button>
+                            </div>
+                        </div>
+                    </el-row>
+                    <div style="margin-top:10px">
+                        <el-table v-bind:data="gridData" ref="gridTable" height="300" size="mini" border highlight-current-row v-on:current-change="handleSelectionChange">
+                            <el-table-column type="index"
+                                             width="50"
+                                             align="center">
+                            </el-table-column>
+                            <el-table-column v-if="options.From != '1'" property="DisplayNo" v-bind:label="showData.noCol"></el-table-column>
+                            <el-table-column property="Name" label="患者姓名"></el-table-column>
+                            <el-table-column property="BirthDate" label="出生日期"></el-table-column>
+                            <el-table-column property="Gender" label="性别"></el-table-column>
+                            <el-table-column property="Time" v-bind:label="showData.timeCol"></el-table-column>
+                            <el-table-column property="Complaint" label="主诉（或诊断）"></el-table-column>
+                        </el-table>
+                    </div>
+                </div>
+            </el-dialog>
+            <el-dialog title="提示"
+                       v-bind:visible.sync="tipVisible"
+                       width="50%">
+                <div class="dlg-tips">
+                    <el-table v-bind:data="CommitTips" height="360" style="width: 100%" border>
+                        <el-table-column type="index" width="50" align="center"></el-table-column>
+                        <el-table-column property="MemberId" label="模块" width="150"></el-table-column>
+                        <el-table-column property="MemberName" label="项目" width="260"></el-table-column>
+                        <el-table-column property="Message" label="提示"></el-table-column>
+                    </el-table>
+                </div>
+                @*<div><span style="white-space: pre !important;color:red;">{{tip}}</span></div>*@
+                <div slot="footer" class="dialog-footer">
+                    <el-button type="primary" v-on:click="tipVisible = false">确 定</el-button>
+                </div>
+            </el-dialog>
+        </el-container>
+    </el-container>
+</div>
+
+
+<script src="@Url.Random("~/Views/DataManage/ApiService.js")"></script>
+<script src="@Url.Random("~/Views/DataManage/Common.js")"></script>
+<script src="@Url.Random("~/Views/DataManage/Regist.js")"></script>

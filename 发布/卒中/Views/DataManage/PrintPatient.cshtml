@@ -1,0 +1,488 @@
+﻿<div id="divPatientDetail" class="content" style="display:none;">
+    <div title="标题" class="form_tit_top">卒中患者登记表</div>
+    <form class="form_read_only">
+        <fieldset style="background-color:#eef3e7;">
+            <p class="tit_block">患者登记</p>
+            <div class="clear_group" title="患者登记">
+                <div>
+                    <label for="">患者姓名：</label>
+                    <span>
+                        {{patient.Name}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">身份证：</label>
+                    <span>
+                        {{patient.IdcardNo}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">性别：</label>
+                    <span>
+                        {{patient.GenderDesc}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">年龄：</label>
+                    <span>
+                        {{patient.Age}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">门诊ID：</label>
+                    <span>
+                        {{patient.ClinicNo}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">住院ID：</label>
+                    <span>
+                        {{patient.MrNo}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">来院方式：</label>
+                    <span>
+                        {{patient.ComingType}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">联系电话：</label>
+                    <span>
+                        {{patient.PhoneNo1||patient.PhoneNo2||patient.TelNo}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">登记时间：</label>
+                    <span>
+                        {{patient.RegistDate | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">发病时间：</label>
+                    <span>
+                        {{patient.DiseaseTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+            </div>
+
+            <p class="tit_block">院前急救</p>
+            <div class="clear_group" title="院前急救">
+
+                <div>
+                    <label for="">吸烟史：</label>
+                    <span>
+                        {{preHos.Smoking }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">饮酒史：</label>
+                    <span>
+                        {{preHos.Drinking }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">既往史：</label>
+                    <span>
+                        {{preHos.DiseaseHistoriesDesc }}
+                    </span>
+                </div>
+                <div class="wp_100">
+                    <label for="">用药史：</label>
+                    <span>
+                        {{preHos.DrugHistoriesDesc }}
+                    </span>
+                </div>
+
+                <div>
+                    <label for="">发病前mRS评分：</label>
+                    <span>
+                        {{preHos.mRS }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">通知神经内科：</label>
+                    <span>
+                        {{preHos.NoticeNeurology }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">通知CT室：</label>
+                    <span>
+                        {{preHos.NoticeCT }}
+                    </span>
+                </div>
+            </div>
+
+            <p class="tit_block">绿通评估</p>
+            <div class="clear_group" title="绿通评估">
+
+                <div>
+                    <label for="">到院时间：</label>
+                    <span>
+                        {{emerTreatment.ArrivedHospitalTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">就诊(挂号)时间：</label>
+                    <span>
+                        {{emerTreatment.RegistrationTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">卒中团队接诊时间：</label>
+                    <span>
+                        {{emerTreatment.StrokeTeamAdmissionTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">进入抢救室时间：</label>
+                    <span>
+                        {{emerTreatment.SalvageTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">心电图检查时间：</label>
+                    <span>
+                        {{emerTreatment.EcgTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">影像学开单时间：</label>
+                    <span>
+                        {{emerTreatment.CtOpenTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">影像学开始检查时间：</label>
+                    <span>
+                        {{emerTreatment.CtStartTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">影像学完成时间：</label>
+                    <span>
+                        {{emerTreatment.CtEndTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">影像学完成结果报告时间：</label>
+                    <span>
+                        {{emerTreatment.CtResultTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">检验开单时间：</label>
+                    <span>
+                        {{emerTreatment.ExamineOpenTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">血常规结果报告时间：</label>
+                    <span>
+                        {{emerTreatment.ExamineResultTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">血凝结果报告时间：</label>
+                    <span>
+                        {{emerTreatment.BloodClottingResultTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div class="wp_100">
+                    <label for="">影像学结果描述：</label>
+                    <span>
+                        {{emerTreatment.CtResult }}
+                    </span>
+                </div>
+                <div class="wp_100">
+                    <label for="">心电图诊断描述：</label>
+                    <span>
+                        {{emerTreatment.EcgResult }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">是否脑出血：</label>
+                    <span>
+                        {{emerTreatment.CtIsHemorrhage=='1'?'是':'否' }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">指尖血糖：</label>
+                    <span>
+                        {{emerTreatment.FingertipBloodSugar }}
+                    </span>
+                    <em>mmol/L</em>
+                </div>
+                <div>
+                    <label for="">血小板计数：</label>
+                    <span>
+                        {{emerTreatment.PlateletCount }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">PT：</label>
+                    <span>
+                        {{emerTreatment.PtResult }}
+                    </span>
+                    <em>s</em>
+                </div>
+                <div>
+                    <label for="">APTT：</label>
+                    <span>
+                        {{emerTreatment.ApttResult }}
+                    </span>
+                    <em>s</em>
+                </div>
+                <div>
+                    <label for="">INR：</label>
+                    <span>
+                        {{emerTreatment.InrResult }}
+                    </span>
+                </div>
+            </div>
+
+            <p class="tit_block">绿通救治</p>
+            <div class="clear_group" title="绿通救治">
+                <div>
+                    <label for="">初步诊断医生：</label>
+                    <span>
+                        {{treatment.DiagnosisDoctor }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">初步诊断时间：</label>
+                    <span>
+                        {{treatment.DiagnosisTime | date:"yyyy-MM-dd HH:mm" }}
+                    </span>
+                </div>
+                <div>
+                    <label for="">患者初步诊断：</label>
+                    <span>
+                        {{treatment.DiagnosisTypeName }}
+                    </span>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='1'">
+                    <label for="">治疗决策：</label>
+                    <span>
+                        {{treatment.TreatmentDecisionName }}
+                    </span>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='1' && treatment.TreatmentDecision=='1'">
+                    <label for="">是否溶栓：</label>
+                    <span>
+                        {{treatment.IsThrom=='1'?'是':'否' }}
+                    </span>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='1'&&treatment.TreatmentDecision=='1'&&treatment.IsThrom=='1'">
+                    <label for="">24小时内患者病情：</label>
+                    <span>
+                        {{treatment.IllnessStateIn24h }}
+                    </span>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='1'&&treatment.TreatmentDecision=='4'">
+                    <label for="">治疗方式：</label>
+                    <span>
+                        {{treatment.ConservativeTreatment }}
+                    </span>
+                </div>
+                <div class="wp_66" ng-if="treatment.DiagnosisType=='1'&&treatment.TreatmentDecision=='1'&&treatment.IsThrom=='0'">
+                    <label for="">未进行溶栓原因：</label>
+                    <span>
+                        {{treatment.NoThromReasons }}
+                    </span>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='1'&&treatment.TreatmentDecision=='1'&&treatment.IsThrom=='1'">
+                    <label for="">溶栓知情同意谈话并签字：</label>
+                    <span>
+                        {{treatment.ThromAgreeSignTime | date:"yyyy-MM-dd HH:mm"}}
+                    </span>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='1'&&treatment.TreatmentDecision=='1'&&treatment.IsThrom=='1'">
+                    <label for="">开立rt-PA：</label>
+                    <span>
+                        {{treatment.RtPaOpenTime | date:"yyyy-MM-dd HH:mm"}}
+                    </span>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='1'&&treatment.TreatmentDecision=='1'&&treatment.IsThrom=='1'">
+                    <label for="">静脉溶栓时间：</label>
+                    <span>
+                        {{treatment.ThromVeinTime | date:"yyyy-MM-dd HH:mm"}}
+                    </span>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='1'&&treatment.TreatmentDecision=='1'&&treatment.IsThrom=='1'">
+                    <label for="">体重：</label>
+                    <span>
+                        {{treatment.Weight }}
+                    </span>
+                    <em>kg</em>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='1'&&treatment.TreatmentDecision=='1'&&treatment.IsThrom=='1'">
+                    <label for="">溶栓剂量：</label>
+                    <span>
+                        {{treatment.RtPaDosageUnit }}
+                    </span>
+                    <em>mg/kg</em>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='1'&&treatment.TreatmentDecision=='1'&&treatment.IsThrom=='1'">
+                    <label for="">总量：</label>
+                    <span>
+                        {{treatment.RtPaDose }}
+                    </span>
+                    <em>mg</em>
+                </div>
+                <div class="wp_100" ng-if="treatment.DiagnosisType=='2'||treatment.DiagnosisType=='3'||treatment.DiagnosisType=='4'">
+                    <label for="">患者去向：</label>
+                    <span>
+                        {{treatment.OuthosMethod }}
+                    </span>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='3'">
+                    <label for="">进入手术室时间：</label>
+                    <span>
+                        {{treatment.EnterOperatingRoomTime | date:"yyyy-MM-dd HH:mm"}}
+                    </span>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='3'">
+                    <label for="">离开手术室时间：</label>
+                    <span>
+                        {{treatment.LeaveOperatingRoomTime | date:"yyyy-MM-dd HH:mm"}}
+                    </span>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='3'">
+                    <label for="">脑血管造影术：</label>
+                    <span>
+                        {{treatment.CerebralAngiographyTime | date:"yyyy-MM-dd HH:mm"}}
+                    </span>
+                </div>
+                <div class="wp_100" ng-if="treatment.DiagnosisType=='3'">
+                    <label for="">尼莫地平预防血管痉挛治疗：</label>
+                    <span>
+                        {{treatment.NimodipineCureTypeDesc }}
+                    </span>
+                    <span>
+                        每小时{{treatment.NimodipineDose}}mg
+                    </span>
+                    <span ng-if="treatment.NimodipineCureType=='2'">频次{{treatment.NimodipineFrequency}}</span>
+                    <span>使用{{treatment.NimodipineUsageDays}}天</span>
+                </div>
+                <div class="wp_100" ng-if="treatment.DiagnosisType=='3'">
+                    <label for="">蛛网膜下腔出血致病原因：</label>
+                    <span>
+                        {{treatment.SahEtiology}}
+                    </span>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='3'">
+                    <label for="">动脉瘤治疗方式：</label>
+                    <span>
+                        {{treatment.AneurysmCureType}}
+                        {{treatment.AneurysmCureTime | date:"yyyy-MM-dd HH:mm"}}
+                    </span>
+                </div>
+                <div ng-if="treatment.DiagnosisType=='3'">
+                    <label for="">脑脊液分流：</label>
+                    <span>
+                        {{treatment.CsfShuntType}}
+                        {{treatment.CsfShuntTime | date:"yyyy-MM-dd HH:mm"}}
+                    </span>
+                </div>
+            </div>
+            <p class="tit_block">住院诊疗</p>
+            <div class="clear_group" title="住院诊疗">
+                <div>
+                    <label for="">患者其他症状：</label>
+                    <span>
+                        {{inHos.OtherSymptoms}}
+                    </span>
+                </div>
+                <div class="wp_100">
+                    <label for="">住院期间并发症：</label>
+                    <span>
+                        {{inHos.Complication}}
+                    </span>
+                </div>
+                <div class="wp_100">
+                    <label for="">住院治疗药物：</label>
+                    <span>
+                        {{inHos.DrugUses}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">出院时间：</label>
+                    <span>
+                        {{inHos.OutHospitalTime | date:"yyyy-MM-dd HH:mm"}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">出院诊断：</label>
+                    <span>
+                        {{inHos.OutHospitalDiagnosis}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">住院天数(天)：</label>
+                    <span>
+                        {{inHos.Hod}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">是否是心源性脑梗死：</label>
+                    <span>
+                        {{inHos.IsCe?'是':'否'}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">OCSP分型：</label>
+                    <span>
+                        {{inHos.OcspType}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">TOAST分型：</label>
+                    <span>
+                        {{inHos.ToastType}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">CISS分型：</label>
+                    <span>
+                        {{inHos.CissType}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">患者去向：</label>
+                    <span>
+                        {{inHos.OuthosMethod}}
+                    </span>
+                </div>
+                <div class="wp_100">
+                    <label for="">出院治疗药物：</label>
+                    <span>
+                        {{inHos.DrugTake}}
+                    </span>
+                </div>
+                <div>
+                    <label for="">住院总费用：</label>
+                    <span>
+                        {{inHos.AdmissionTotalAmount}}
+                    </span>
+                    <em>元</em>
+                </div>
+                <div>
+                    <label for="">药物费用：</label>
+                    <span>
+                        {{inHos.DrugExpense}}
+                    </span>
+                    <em>元</em>
+                </div>
+                <div>
+                    <label for="">检查费用：</label>
+                    <span>
+                        {{inHos.ExamineExpense}}
+                    </span>
+                    <em>元</em>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

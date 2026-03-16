@@ -1,0 +1,99 @@
+﻿/*--------卒中后抑郁--------*/
+.medical-record .depressed{
+    clear: both;
+    overflow: hidden;
+    position: relative;
+}
+.medical-record .depressed .left-area{
+    width: 50%;
+    float: left;
+}
+.medical-record .score-table tr{
+    background: none;
+}
+.medical-record .score-table tr td:last-child:hover{
+    background-color:#dbf0ff;
+}
+.medical-record .score-table tr td:first-child{
+    width:60%;
+    background: #f1f1f1;
+    position: static;
+    color: #666;
+    font-weight: bold;
+}
+.medical-record .score-table input{
+    width: 100%;
+    color: #000;
+    border: none;
+    background: none;
+    text-align: center;
+}
+.medical-record .score-table tr td em{
+    position: absolute;
+    top: 0;
+    right: 10px;
+}
+.medical-record .depressed .conclusion{
+    width: calc(50% - 32px);
+    width: -moz-calc(50% - 32px);
+    width: -webkit-calc(50% - 32px);
+    height: 86px;
+    display: inline-block;
+    margin-left: 10px;
+    float: left;
+    border: 1px solid #ddd;
+    padding: 0 10px;
+}
+.medical-record .reuslt{
+    background: url('img/icon/gone.png') left no-repeat;
+    padding-left: 20px;
+    font-size: 14px;
+    font-family: 'Microsoft Yahei', Arial, Helvetica, sans-serif, Tahoma, Geneva;
+}
+.medical-record .depressed .conclusion .level, .medical-record .aphasia table tr td .level{
+    background: #009be7;
+    border-radius: 10px;
+    color: #fff;
+    padding: 1px 8px 2px;
+}
+.medical-record .depressed .conclusion .side-pop label:first-child{
+    padding-right: 10px;
+}
+.medical-record .depressed .conclusion .side-pop .more-option label{
+    min-width: 50%;
+    padding-right: 0;
+}
+/*--------卒中后认知障碍--------*/
+.medical-record .depressed .recognition{
+    height: 91px;
+}
+/*--------卒中后失语--------*/
+.medical-record .aphasia table tr td:first-child, .medical-record .aphasia table tr .withbg{
+    width: calc(30% - 20px);
+    width: -moz-calc(30% - 20px);
+    width: -webkit-calc(30% - 20px);
+    background: #f1f1f1;
+    color: #666;
+    font-weight: bold;
+    position: static;
+}
+.medical-record .aphasia table tr td:last-child{
+    font-weight: normal;
+}
+.medical-record .aphasia table tr td span{
+    display: block;
+    font-weight: normal;
+    color: #999;
+}
+.medical-record .aphasia table tr td b{
+    font-weight: normal;
+    color: #999;
+}
+.medical-record .aphasia table tr td .level{
+    display: inline;
+    margin-left: 10px;
+}
+.medical-record .aphasia .conclusion{
+    height: 289px;
+}
+

@@ -1,0 +1,144 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutIframe.cshtml";
+}
+@using DoCare.ToolKit;
+<link href="~/App_Themes/Default/page.check.css" rel="stylesheet" />
+<script src="~/Scripts/DoCareMVCComm.js"></script>
+<script>
+    var dictionaryArr = [];
+    var org = @Html.Raw(JsonKit.Serialize(ViewBag.Org));
+    var patientNo = @Html.Raw(JsonKit.Serialize(ViewBag.PatientNo));
+                    
+    var app = angular.module('ngInspection', ['mdsdFilter']);
+
+    app.controller('InspectionController', function ($scope, $filter, $http) {
+        $scope.Inspections = null;
+        $scope.HasData = false;
+        $scope.IsLoaded = false;
+
+        $scope.GetFlagClass = function (flag) {
+            if (flag == "H") {
+                return "red";
+            }
+            else if (flag == "L") {
+                return "dark-blue";
+            }
+            else {
+                return "";
+            }
+        }
+
+        $scope.GetItemClass = function (type) {
+            if(!!type){
+                if($.inArray(type,dictionaryArr))
+                {
+                    return "bx";
+                }
+            }
+            return "";
+        }
+
+        $scope.Refresh = function () {
+            var index = layer.load(2);
+
+            $.ajax({
+                url: '/ExtendView/RefreshInspection?patientNo='+patientNo+'&org='+org,
+                type: "get",
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        $scope.$apply(function () {
+                            layer.close(index);
+                            //layer.msg("刷新成功！");
+                            $scope.Inspections = result.Data.Inspections;
+                            $scope.HasData = result.Data.Inspections && result.Data.Inspections.length > 0;
+                            $scope.IsLoaded = true;
+                        });
+                    }
+                }
+            });
+        }
+
+        $scope.Refresh();
+    });
+</script>
+
+<div ng-app="ngInspection" ng-controller="InspectionController" style="margin-bottom: 50px;">
+    <div ng-if="HasData&&IsLoaded" class="event" ng-repeat="isp in Inspections">
+        <div class="tit">
+            <h1>{{isp.Name}}检验单</h1>
+            <span class="right">
+                申请单号:{{isp.ApplyId|emptyReplace}}
+                <img src="~/App_Themes/Default/img/icon/refresh.png" style="width:29px;cursor:pointer;" ng-click="Refresh()" />
+            </span>
+        </div>
+        <div class="event-info">
+            <dl>
+                <dt>姓名</dt>
+                <dd>{{isp.PatientName|emptyReplace}}</dd>
+            </dl>
+            @*<dl>
+                    <dt>标本类型</dt>
+                    <dd>{{isp.SampleSource|emptyReplace}}</dd>
+                </dl>*@
+            <dl>
+                <dt>性别</dt>
+                <dd>{{isp.PatientGender|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>年龄</dt>
+                <dd>{{isp.PatientAge|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>住院号</dt>
+                <dd>{{isp.VisitId|emptyReplace}}</dd>
+            </dl>
+            @*<dl>
+                    <dt>采样时间</dt>
+                    <dd>{{isp.SampleaCquisitionTime| dateFmt | emptyReplace}}</dd>
+                </dl>*@
+        </div>
+        <div class="event-con">
+            <table class="basic-table">
+                <tr>
+                    <th>序号</th>
+                    <th>项目代号</th>
+                    <th>项目名称</th>
+                    <th>结果</th>
+                    <th>标志</th>
+                    <th>单位</th>
+                    <th>参考值</th>
+                </tr>
+                <tr ng-repeat="item in isp.Items">
+                    <td>{{$index}}</td>
+                    <td><b class="{{GetItemClass(item.ItemType)}}"></b>{{item.ItemType|emptyReplace}}</td>
+                    <td>{{item.ItemName|emptyReplace}}</td>
+                    <td>{{item.Result|emptyReplace}}</td>
+                    <td class="{{GetFlagClass(item.Flag)}}"><span ng-if="item.Flag=='L'">&#8595;</span><span ng-if="item.Flag=='H'">&#8593;</span></td>
+                    <td>{{item.ItemUnit|emptyReplace}}</td>
+                    <td>{{item.ConsultRange|emptyReplace}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="event-foot">
+            <dl>
+                <dt>送检医生:</dt>
+                <dd>{{isp.Applicant|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>检验日期:</dt>
+                <dd>{{isp.Time|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>检验员:</dt>
+                <dd>{{isp.Technician|emptyReplace}}</dd>
+            </dl>
+            <dl>
+                <dt>复核员:</dt>
+                <dd>{{isp.AuditDoctor|emptyReplace}}</dd>
+            </dl>
+        </div>
+    </div>
+    <div ng-if="!HasData&&IsLoaded">
+        @{ Html.RenderPartial("NoCollect");}
+    </div>
+</div>

@@ -1,0 +1,60 @@
+﻿@using DoCare.ToolKit;
+@using DoCare.Framework.Extension;
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html style="background:#ccc;">
+<head>
+    <title>质控报表</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=divice-width, initial-scale=1">
+    <link href=@Url.Random("~/App_Themes/Default/global.css") rel="stylesheet" />
+    <link href=@Url.Random("~/App_Themes/Default/frame.css") rel="stylesheet" />
+    <link href=@Url.Random("~/App_Themes/Default/control.css") rel="stylesheet" />
+    <link href="~/App_Themes/Default/fonts/iconfont.css" rel="stylesheet" />
+    <script src="~/Scripts/docare/moment.js"></script>
+    <script src="~/Scripts/extension/vue.js"></script>
+    <link href="~/Scripts/extension/el/index.css" rel="stylesheet" />
+    <script src="~/Scripts/extension/el/index.js"></script>
+    <script src="~/Scripts/extension/axios.min.js"></script>
+    <script src="~/Scripts/extension/polyfill.min.js"></script>
+    <script src="~/Scripts/extension/qs.js"></script>
+    <script src=@Url.GetCssJsUrl("~/Scripts/extension/echarts/echarts.min.js")></script>
+    <script src=@Url.GetCssJsUrl("~/Scripts/extension/echarts/macarons.js")></script>
+    <script src="~/Views/DataStatistics/ReportDataTable.js"></script>
+    <script src="~/Views/DataStatistics/ReportPercentDataTable.js"></script>
+    <script type="text/javascript">
+        var Model =  @Html.Raw(JsonKit.Serialize(ViewBag.Model));
+    </script>
+</head>
+<body style="background:#ccc;overflow-y:auto;">
+    <!--质控报表模态框--begin-->
+    <div style="display: block; width:80%; min-width:1000px; margin:0 auto; background:#fff;">
+        <h2 style="line-height: 40px; padding-left:10px; color: #007ebc;">质控报表</h2>
+        <div id="report" style="padding:5px 15px;">
+            <div id="chart_main" style="z-index: 0; overflow-x: inherit; width:100%; height:500px;"></div>
+            <div>
+                <div id="introduce" style="color:red;width:500px;margin:0 auto 5px;text-align:center;">点击表格上的日期可查看数据明细</div>
+                <div id="report_table" style="z-index: -1; overflow-x: auto; ">
+                    @*<span v-html="reportTable"></span>*@
+                    <reprot-datatable v-bind:report-data="reportData" v-bind:report-type="detailModel.ReportType" v-on:get="getDetailReport" v-if="detailModel.Unit != '%'"></reprot-datatable>
+                    <reprot-percent-datatable v-bind:report-data="reportPercentData" v-bind:report-type="detailModel.ReportType" v-on:get="getDetailReport" v-if="detailModel.Unit == '%'"></reprot-percent-datatable>
+                </div>
+            </div>
+            <div style="margin-top:10px;">
+                <div id="detail_table" style="z-index: -1; overflow-x: auto; ">
+                    <span v-html="detailTable"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--质控报表模态框--end-->
+
+    <script src="@Url.Random("~/Views/DataStatistics/ApiService.js")"></script>
+    <script src="@Url.Random("~/Views/DataStatistics/ReportList.js")"></script>
+    <script src="@Url.Random("~/Views/DataStatistics/Detail.js")"></script>
+</body>
+</html>

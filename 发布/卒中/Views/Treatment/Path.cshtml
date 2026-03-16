@@ -1,0 +1,157 @@
+﻿<ul class="path" ng-if="Treatment.TreatmentDecision==1&&Treatment.IsThrom=='1'">
+    <li>
+        <span ng-class="emergency.RegistrationTime!=null ? 'done' : ''"></span>
+        <h5>分诊挂号<i>{{emergency.RegistrationTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.OpenVeinTime!=null ? 'done' : ''"></span>
+        <h5>开通静脉<i>{{emergency.OpenVeinTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="inspectionItems.BloodCollectionTime!=null ? 'done' : ''"></span>
+        <h5>采血<i>{{inspectionItems.BloodCollectionTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="vitalSign.CollectionTime!=null ? 'done' : ''"></span>
+        <h5>生命体征采集<i>{{vitalSign.CollectionTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.EcgTime!=null ? 'done' : ''"></span>
+        <h5>心电图检查<i>{{emergency.EcgTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.CtOpenTime!=null ? 'done' : ''"></span>
+        <h5>CT开单时间<i>{{emergency.CtOpenTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.ExamineOpenTime!=null ? 'done' : ''"></span>
+        <h5>检验开单时间<i>{{emergency.ExamineOpenTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="Ass.ScoringTime!=null ? 'done' : ''"></span>
+        <h5>NIHSS评分{{Ass.ScoreValue}}<i>{{Ass.ScoringTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.CtStartTime!=null ? 'done' : ''"></span>
+        <h5>CT扫描时间<i>{{emergency.CtStartTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.CtEndTime!=null ? 'done' : ''"></span>
+        <h5>出CT室时间<i>{{emergency.CtEndTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.ExamineResultTime!=null ? 'done' : ''"></span>
+        <h5>检验结果<i>{{emergency.ExamineResultTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+</ul>
+
+<ul class="path" ng-if="Treatment.TreatmentDecision==3">
+    <li>
+        <span ng-class="emergency.RegistrationTime!=null ? 'done' : ''"></span>
+        <h5>分诊挂号<i>{{emergency.RegistrationTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.OpenVeinTime!=null ? 'done' : ''"></span>
+        <h5>开通静脉<i>{{emergency.OpenVeinTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="inspectionItems.BloodCollectionTime!=null ? 'done' : ''"></span>
+        <h5>采血<i>{{inspectionItems.BloodCollectionTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="vitalSign.CollectionTime!=null ? 'done' : ''"></span>
+        <h5>生命体征采集<i>{{vitalSign.CollectionTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.EcgTime!=null ? 'done' : ''"></span>
+        <h5>心电图检查<i>{{emergency.EcgTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="Treatment.IatReachCrTime!=null ? 'done' : ''"></span>
+        <h5>到达导管室<i>{{Treatment.IatReachCrTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="Treatment.IatFasEndTime!=null ? 'done' : ''"></span>
+        <h5>股动脉成功置鞘完成<i>{{Treatment.IatFasEndTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="Treatment.IatArchtographicTime!=null ? 'done' : ''"></span>
+        <h5>弓上造影<i>{{Treatment.IatArchtographicTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="Treatment.IatItrTime!=null ? 'done' : ''"></span>
+        <h5>血管内治疗首次再通<i>{{Treatment.IatItrTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="Treatment.IatThromEndTime!=null ? 'done' : ''"></span>
+        <h5>取栓完成<i>{{Treatment.IatThromEndTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+</ul>
+
+<ul class="path" ng-if="Treatment.TreatmentDecision==2">
+    <li>
+        <span ng-class="emergency.RegistrationTime!=null ? 'done' : ''"></span>
+        <h5>分诊挂号<i>{{emergency.RegistrationTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.OpenVeinTime!=null ? 'done' : ''"></span>
+        <h5>开通静脉<i>{{emergency.OpenVeinTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="inspectionItems.BloodCollectionTime!=null ? 'done' : ''"></span>
+        <h5>采血<i>{{inspectionItems.BloodCollectionTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="vitalSign.CollectionTime!=null ? 'done' : ''"></span>
+        <h5>生命体征采集<i>{{vitalSign.CollectionTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.EcgTime!=null ? 'done' : ''"></span>
+        <h5>心电图检查<i>{{emergency.EcgTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.CtOpenTime!=null ? 'done' : ''"></span>
+        <h5>CT开单时间<i>{{emergency.CtOpenTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.ExamineOpenTime!=null ? 'done' : ''"></span>
+        <h5>检验开单时间<i>{{emergency.ExamineOpenTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="Ass.ScoringTime!=null ? 'done' : ''"></span>
+        <h5>NIHSS评分{{Ass.ScoreValue}}<i>{{Ass.ScoringTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.CtStartTime!=null ? 'done' : ''"></span>
+        <h5>CT扫描时间<i>{{emergency.CtStartTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.CtEndTime!=null ? 'done' : ''"></span>
+        <h5>出CT室时间<i>{{emergency.CtEndTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="emergency.ExamineResultTime!=null ? 'done' : ''"></span>
+        <h5>检验结果<i>{{emergency.ExamineResultTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="Treatment.IatReachCrTime!=null ? 'done' : ''"></span>
+        <h5>到达导管室<i>{{Treatment.IatReachCrTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="Treatment.IatFasEndTime!=null ? 'done' : ''"></span>
+        <h5>股动脉成功置鞘完成<i>{{Treatment.IatFasEndTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="Treatment.IatArchtographicTime!=null ? 'done' : ''"></span>
+        <h5>弓上造影<i>{{Treatment.IatArchtographicTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="Treatment.IatItrTime!=null ? 'done' : ''"></span>
+        <h5>血管内治疗首次再通<i>{{Treatment.IatItrTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+    <li>
+        <span ng-class="Treatment.IatThromEndTime!=null ? 'done' : ''"></span>
+        <h5>取栓完成<i>{{Treatment.IatThromEndTime | date:"yyyy-MM-dd HH:mm"}}</i></h5>
+    </li>
+</ul>
+

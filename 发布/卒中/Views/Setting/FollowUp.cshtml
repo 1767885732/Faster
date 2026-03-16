@@ -1,0 +1,131 @@
+﻿@using DoCare.ToolKit
+@{
+    ViewBag.Title = "随访设置";
+    Layout = null;
+}
+<script src="~/Scripts/JSLINQ.js"></script>
+<script>
+    var setting =  @Html.Raw((JsonKit.Serialize(ViewBag.Setting)));
+    var PermissionSave = @Html.Raw((JsonKit.Serialize(ViewBag.PermissionSave)));
+    $(function () {
+        // 初始化校验器
+        var validator = new MDEValidator("", "FollowUp", $("#_follow_up_setting"));
+
+        var app = angular.module('ngAppFollowUp', []);
+
+        app.controller('ngCtrlFollowUp', function ($scope,$http) {
+            $scope.setting = setting;
+            console.log( $scope.setting);
+            $scope.save = function()
+            {
+                // 验证后保存
+                if (!validator.DoValidate()){
+                    return false;
+                }
+
+                $http({
+                    method: 'POST',
+                    url: '/Setting/SaveFollowUp',
+                    data: {model:$scope.setting}
+                }).then(function successCallback(response) {
+                    if(response.data.IsSuccess){
+                        layer.alert("保存成功", { icon: 1 });
+                    }
+                    else
+                    {
+                        layer.alert(response.data.Message, { icon: 2 });
+                    }
+                }, function errorCallback(response) {
+                    // 请求失败执行代码
+                    layer.alert("请求失败！", { icon: 2 });
+                });
+            }
+            $scope.add = function(index){
+                debugger;
+                if($scope.setting.FollowUpSetting[index].SettingDetail==null){
+                    $scope.setting.FollowUpSetting[index].SettingDetail = new Array();
+                }
+
+                $scope.setting.FollowUpSetting[index].SettingDetail.push(
+                    {Days:1,Unit:"1"}
+                );
+            }
+            $scope.del = function(outerIndex,index)
+            {
+                debugger;
+                $scope.setting.FollowUpSetting[outerIndex].SettingDetail.splice(index,1);
+            }
+        });
+
+        angular.bootstrap($(".content")[0], ['ngAppFollowUp']);
+    });
+</script>
+<div class="content" ng-app="ngAppFollowUp" ng-controller="ngCtrlFollowUp">
+    <form id="_follow_up_setting">
+        <fieldset class="medical-record">
+            <button class="operating-btn medical-save-btn" ng-click="save()" id="btnSave"><img src="~/App_Themes/Default/img/icon/save.png"></button>
+            <div class="score-box" ng-repeat="item in setting.FollowUpSetting" ng-init="outerIndex = $index">
+                <div class="score-detail">
+                    <table class="check-up">
+                        <tr>
+                            <td style="width:30%">
+                                <label>随访模板</label>
+                            </td>
+                            <td style="width:70%">
+                                <label>
+                                    {{item.FollowupType=='1'?'医疗':(item.FollowupType=='2'?'护理A':'护理B')}}
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:30%">
+                                <label>随访日期</label>
+                            </td>
+                            <td style="width:70%">
+                                <label>
+                                    {{item.DateType=='1'?'入院后':'出院后'}}
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:30%">
+                                <label>
+                                    随访计划
+                                </label>
+                            </td>
+                            <td style="width:70%">
+                                <button ng-click="add(outerIndex)">新增</button>
+                                <table class="check-up">
+                                    <tr ng-repeat="x in item.SettingDetail">
+                                        <td style="width:30%">
+                                            <label>
+                                                <input type="text" ng-model="x.Value" />
+                                            </label>
+                                        </td>
+                                        <td style="width:40%">
+                                            <label>
+                                                <select ng-model="x.Unit" ng-selected="x.Unit">
+                                                    <option value="1">天</option>
+                                                    <option value="2">周</option>
+                                                    <option value="3">月</option>
+                                                    <option value="4">季</option>
+                                                    <option value="5">年</option>
+                                                </select>
+                                            </label>
+                                        </td>
+                                        <td style="width:30%">
+                                            <label>
+                                                <button ng-click="del(outerIndex,$index)">删除</button>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br />
+            </div>
+        </fieldset>
+    </form>
+</div>

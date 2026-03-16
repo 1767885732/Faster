@@ -1,0 +1,199 @@
+/*-------- 不可以写CSS3，需要兼容低版本浏览器 --------*/
+.popup{
+    width: 900px;
+    height: 540px;
+    background-color: #bdd0e8;
+    padding: 6px;
+}
+.emergency{
+    height: 480px;
+    padding: 6px;
+    background-color: #cfddee;
+    border: 1px solid #728ead;
+}
+.emergency form{
+    width: 706px;
+    height: 100%;
+    float: left;
+    overflow: auto;
+}
+.emergency form fieldset{
+    border: 1px solid #fff;
+    padding: 10px;
+    margin-bottom:4px;
+    overflow: hidden;
+}
+.emergency form fieldset legend{
+    color: #000;
+    padding:0 6px;
+    height: 14px;
+    font-weight: bold;
+    font-family: "Microsoft Yahei", Arial, Helvetica, sans-serif, Tahoma, Geneva;
+}
+.emergency form fieldset p{
+    margin:3px auto;
+}
+.emergency form fieldset p label{
+    width:130px;
+    height:24px;
+    line-height: 24px;
+    text-align: right;
+    margin-right: 5px;
+    display:inline-block;
+    color: #1e395b;
+}
+.emergency form fieldset p  .more-option .select-option{
+    display:inline;
+}
+.emergency form fieldset p .more-option .select-option input, .emergency form fieldset p .medical input{
+    width: 13px;
+    height: 13px;
+    margin:5px 4px 5px 0;
+    display: inline;
+    border: none;
+    padding: 0;
+}
+.emergency form fieldset p input, .emergency form fieldset p .datetime{
+    width:170px;
+    height:22px;
+    line-height: 24px;
+    border:1px solid #8ba0bc;
+    padding:0 5px;
+}
+.emergency form fieldset p input.have-value{
+    border:none;
+    color:#1e395b;
+    background: none;
+}
+.emergency form fieldset p input.long-text{
+    width:480px;
+}
+.emergency form fieldset p select{
+    width:182px;
+    height:24px;
+    line-height: 24px;
+    border:1px solid #8ba0bc;
+}
+.emergency form fieldset p .medical{
+    width: auto;
+}
+.emergency form fieldset p .dose{
+    width:66px;
+}
+/*-------- 操作按钮 --------*/
+.opt-area{
+    text-align: center;
+    border: 1px solid #728ead;
+    border-top: none;
+    background-color: #cfddee;
+    padding: 10px;
+    clear: both;
+}
+.opt-area a{
+    height:25px;
+    line-height: 25px;
+    padding:0 5px;
+    display: inline-block;
+    border: 1px solid #abbad0;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #1e395b;
+    background: -moz-linear-gradient(top,  #e3ecf7 0%, #d3e3f2 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e3ecf7), color-stop(100%,#d3e3f2));
+    background: -webkit-linear-gradient(top,  #e3ecf7 0%,#d3e3f2 100%);
+    background: -o-linear-gradient(top,  #e3ecf7 0%,#d3e3f2 100%);
+    background: -ms-linear-gradient(top,  #e3ecf7 0%,#d3e3f2 100%);
+    background: linear-gradient(to bottom,  #e3ecf7 0%,#d3e3f2 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e3ecf7', endColorstr='#d3e3f2',GradientType=0 );
+}
+.opt-area a:hover{
+    background-color:#b2e0f9;
+    background: -moz-linear-gradient(top,  #e6f5fd 0%, #b2e0f9 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e6f5fd), color-stop(100%,#b2e0f9));
+    background: -webkit-linear-gradient(top,  #e6f5fd 0%,#b2e0f9 100%);
+    background: -o-linear-gradient(top,  #e6f5fd 0%,#b2e0f9 100%);
+    background: -ms-linear-gradient(top,  #e6f5fd 0%,#b2e0f9 100%);
+    background: linear-gradient(to bottom,  #e6f5fd 0%,#b2e0f9 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e6f5fd', endColorstr='#b2e0f9',GradientType=0 );
+}
+.opt-area a img{
+    margin: 5px 4px 5px 0;
+    display: inline;
+}
+/*-------- 时间轴 --------*/
+.path{
+    width: 180px;
+    height: 100%;
+    float: right;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.path li{
+    width:100%;
+    padding-bottom: 10px;
+    background: url(img/icon/line.png) 18px 0 repeat-y;
+}
+.path li span{
+    width:20px;
+    height:20px;
+    float:left;
+    margin:10px;
+    display: inline;
+    padding:0;
+    border-radius: 20px;
+    background:#fff;
+}
+    .path li span:hover {
+        border: 2px solid #007ebc;
+        cursor: pointer;
+    }
+    .path li .done {
+        border: 2px solid #007ebc;
+        background: #007ebc url(img/icon/time_line_has_time.png) center no-repeat;
+        background-size: cover;
+        /*background: #0a97e6 url(img/icon/time_line_has_time.png) center no-repeat;*/
+    }
+    .path li .done_no_time {
+        background: #e7e7e7 url(img/icon/time_line_no_time.png) center no-repeat;
+        background-size: cover;
+    }
+.path li .done:hover{
+    cursor: default;
+}
+.path li h5{
+    color: #1e395b;
+    font-size: 13px;
+    padding: 10px 16px 0 40px;
+    word-wrap: break-word;
+}
+.path li h5 i{
+    color: #1e395b;
+    font-size: 12px;
+    display: block;
+    margin-top: 5px;
+    font-weight: normal;
+}
+/*--------选项过多--------*/
+.more-option{
+    width: 550px;
+    float:right;
+    display: inline;
+}
+.more-option label{
+    height:20px;
+    line-height:20px;
+}
+.emergency form fieldset p .more-option .select-option{
+    width: auto;
+    display:inline-block;
+    text-align: left;
+    color:#333;
+    margin-right: 10px;
+}
+
+.tips-error{
+    text-align: center;
+    color: #a4000f;
+    letter-spacing: 1px;
+}

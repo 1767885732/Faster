@@ -1,0 +1,492 @@
+{
+  "id": "1265934",
+  "name": "专科字体图标",
+  "font_family": "specialty",
+  "css_prefix_text": "docare_",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "643277",
+      "name": "体温",
+      "font_class": "temperature",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "720973",
+      "name": "搜索",
+      "font_class": "searchbar",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "2959092",
+      "name": "统计分析",
+      "font_class": "statistical_analysis",
+      "unicode": "e654",
+      "unicode_decimal": 58964
+    },
+    {
+      "icon_id": "3978107",
+      "name": "时间策略维护",
+      "font_class": "time_maintenance",
+      "unicode": "e64d",
+      "unicode_decimal": 58957
+    },
+    {
+      "icon_id": "9245420",
+      "name": "男性",
+      "font_class": "sex_male",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "9245421",
+      "name": "女性",
+      "font_class": "sex_female",
+      "unicode": "e625",
+      "unicode_decimal": 58917
+    },
+    {
+      "icon_id": "9245736",
+      "name": "编辑",
+      "font_class": "edit",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "9245737",
+      "name": "可见",
+      "font_class": "visible",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "9245738",
+      "name": "返回",
+      "font_class": "return",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "9245739",
+      "name": "其他-1",
+      "font_class": "others",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "9245740",
+      "name": "解释",
+      "font_class": "explain",
+      "unicode": "e62a",
+      "unicode_decimal": 58922
+    },
+    {
+      "icon_id": "9245741",
+      "name": "定位",
+      "font_class": "location",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "9245743",
+      "name": "其他-2",
+      "font_class": "cp_others",
+      "unicode": "e62d",
+      "unicode_decimal": 58925
+    },
+    {
+      "icon_id": "9246195",
+      "name": "筛选",
+      "font_class": "filter",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
+      "icon_id": "9246295",
+      "name": "清除",
+      "font_class": "clean-up",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "9246369",
+      "name": "密码锁",
+      "font_class": "lock",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "9246370",
+      "name": "退出",
+      "font_class": "signout",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
+      "icon_id": "9246371",
+      "name": "添加",
+      "font_class": "addition",
+      "unicode": "e631",
+      "unicode_decimal": 58929
+    },
+    {
+      "icon_id": "9246372",
+      "name": "用户",
+      "font_class": "user",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "9246373",
+      "name": "设置",
+      "font_class": "setting",
+      "unicode": "e633",
+      "unicode_decimal": 58931
+    },
+    {
+      "icon_id": "9246457",
+      "name": "删除",
+      "font_class": "remove",
+      "unicode": "e634",
+      "unicode_decimal": 58932
+    },
+    {
+      "icon_id": "9246458",
+      "name": "群聊",
+      "font_class": "groupchat",
+      "unicode": "e635",
+      "unicode_decimal": 58933
+    },
+    {
+      "icon_id": "9246459",
+      "name": "时钟",
+      "font_class": "clock",
+      "unicode": "e636",
+      "unicode_decimal": 58934
+    },
+    {
+      "icon_id": "9246460",
+      "name": "视频",
+      "font_class": "video",
+      "unicode": "e637",
+      "unicode_decimal": 58935
+    },
+    {
+      "icon_id": "9246461",
+      "name": "相册",
+      "font_class": "album",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
+      "icon_id": "9246462",
+      "name": "语音",
+      "font_class": "voice",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "9246463",
+      "name": "信息",
+      "font_class": "message",
+      "unicode": "e63a",
+      "unicode_decimal": 58938
+    },
+    {
+      "icon_id": "9246533",
+      "name": "扫描-1",
+      "font_class": "scan_2",
+      "unicode": "e63b",
+      "unicode_decimal": 58939
+    },
+    {
+      "icon_id": "9246534",
+      "name": "扫描-2",
+      "font_class": "scan_1",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "9246643",
+      "name": "给药",
+      "font_class": "dose",
+      "unicode": "e63d",
+      "unicode_decimal": 58941
+    },
+    {
+      "icon_id": "9246644",
+      "name": "接诊",
+      "font_class": "addmission",
+      "unicode": "e63e",
+      "unicode_decimal": 58942
+    },
+    {
+      "icon_id": "9246645",
+      "name": "患者交接",
+      "font_class": "handover",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
+      "icon_id": "9246646",
+      "name": "检验检查",
+      "font_class": "inspect",
+      "unicode": "e640",
+      "unicode_decimal": 58944
+    },
+    {
+      "icon_id": "9246647",
+      "name": "生命体征",
+      "font_class": "vitalsigns",
+      "unicode": "e641",
+      "unicode_decimal": 58945
+    },
+    {
+      "icon_id": "9246648",
+      "name": "药品",
+      "font_class": "drugs",
+      "unicode": "e642",
+      "unicode_decimal": 58946
+    },
+    {
+      "icon_id": "9246649",
+      "name": "心梗治疗",
+      "font_class": "myocardial_infarction",
+      "unicode": "e643",
+      "unicode_decimal": 58947
+    },
+    {
+      "icon_id": "9246650",
+      "name": "心电图",
+      "font_class": "electrocardiogram",
+      "unicode": "e644",
+      "unicode_decimal": 58948
+    },
+    {
+      "icon_id": "9246651",
+      "name": "治疗",
+      "font_class": "treatment",
+      "unicode": "e645",
+      "unicode_decimal": 58949
+    },
+    {
+      "icon_id": "9246723",
+      "name": "动脉",
+      "font_class": "cp_ad",
+      "unicode": "e646",
+      "unicode_decimal": 58950
+    },
+    {
+      "icon_id": "9246725",
+      "name": "气胸",
+      "font_class": "cp_aerothorax",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
+      "icon_id": "9246726",
+      "name": "肺栓塞",
+      "font_class": "cp_pe",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
+      "icon_id": "9247283",
+      "name": "评分",
+      "font_class": "score",
+      "unicode": "e64a",
+      "unicode_decimal": 58954
+    },
+    {
+      "icon_id": "9247878",
+      "name": "大脑",
+      "font_class": "brain",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
+    },
+    {
+      "icon_id": "9252884",
+      "name": "心梗",
+      "font_class": "cp_acs",
+      "unicode": "e647",
+      "unicode_decimal": 58951
+    },
+    {
+      "icon_id": "9484625",
+      "name": "车牌号",
+      "font_class": "plate",
+      "unicode": "e64c",
+      "unicode_decimal": 58956
+    },
+    {
+      "icon_id": "9597531",
+      "name": "打钩",
+      "font_class": "hook",
+      "unicode": "e64e",
+      "unicode_decimal": 58958
+    },
+    {
+      "icon_id": "9625545",
+      "name": "呼吸",
+      "font_class": "breathing",
+      "unicode": "e64f",
+      "unicode_decimal": 58959
+    },
+    {
+      "icon_id": "9625546",
+      "name": "脉搏",
+      "font_class": "pulse",
+      "unicode": "e650",
+      "unicode_decimal": 58960
+    },
+    {
+      "icon_id": "9625547",
+      "name": "血压",
+      "font_class": "blood_pressure",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
+      "icon_id": "9625548",
+      "name": "血氧",
+      "font_class": "blood_oxygen",
+      "unicode": "e652",
+      "unicode_decimal": 58962
+    },
+    {
+      "icon_id": "9625551",
+      "name": "心率",
+      "font_class": "heart_rate",
+      "unicode": "e653",
+      "unicode_decimal": 58963
+    },
+    {
+      "icon_id": "10056710",
+      "name": "保存",
+      "font_class": "baocun",
+      "unicode": "e65a",
+      "unicode_decimal": 58970
+    },
+    {
+      "icon_id": "10056711",
+      "name": "打印",
+      "font_class": "print",
+      "unicode": "e65b",
+      "unicode_decimal": 58971
+    },
+    {
+      "icon_id": "10056712",
+      "name": "检验",
+      "font_class": "testing",
+      "unicode": "e65c",
+      "unicode_decimal": 58972
+    },
+    {
+      "icon_id": "10056713",
+      "name": "电子病历",
+      "font_class": "elec-medical_record",
+      "unicode": "e65d",
+      "unicode_decimal": 58973
+    },
+    {
+      "icon_id": "10056714",
+      "name": "数据管理",
+      "font_class": "data-management",
+      "unicode": "e65e",
+      "unicode_decimal": 58974
+    },
+    {
+      "icon_id": "10056715",
+      "name": "检查",
+      "font_class": "examine",
+      "unicode": "e65f",
+      "unicode_decimal": 58975
+    },
+    {
+      "icon_id": "10057931",
+      "name": "系统设置",
+      "font_class": "system_setting",
+      "unicode": "e655",
+      "unicode_decimal": 58965
+    },
+    {
+      "icon_id": "10600812",
+      "name": "下拉箭头",
+      "font_class": "dropdown_arrow",
+      "unicode": "e656",
+      "unicode_decimal": 58966
+    },
+    {
+      "icon_id": "10600813",
+      "name": "新增+",
+      "font_class": "newly_added",
+      "unicode": "e657",
+      "unicode_decimal": 58967
+    },
+    {
+      "icon_id": "10600814",
+      "name": "按钮-日历",
+      "font_class": "button_calendar",
+      "unicode": "e658",
+      "unicode_decimal": 58968
+    },
+    {
+      "icon_id": "10612034",
+      "name": "当前时间",
+      "font_class": "dangqianshijian",
+      "unicode": "e659",
+      "unicode_decimal": 58969
+    },
+    {
+      "icon_id": "11178767",
+      "name": "绑定",
+      "font_class": "interlinkage",
+      "unicode": "e660",
+      "unicode_decimal": 58976
+    },
+    {
+      "icon_id": "11178768",
+      "name": "同步",
+      "font_class": "synchronization",
+      "unicode": "e661",
+      "unicode_decimal": 58977
+    },
+    {
+      "icon_id": "11972828",
+      "name": "工作站配置",
+      "font_class": "workstation_configuration",
+      "unicode": "e662",
+      "unicode_decimal": 58978
+    },
+    {
+      "icon_id": "11972829",
+      "name": "默认值配置",
+      "font_class": "default_configuration",
+      "unicode": "e663",
+      "unicode_decimal": 58979
+    },
+    {
+      "icon_id": "11972830",
+      "name": "调阅配置",
+      "font_class": "browse_configuration",
+      "unicode": "e664",
+      "unicode_decimal": 58980
+    },
+    {
+      "icon_id": "11972831",
+      "name": "接口配置",
+      "font_class": "interface_configuration",
+      "unicode": "e665",
+      "unicode_decimal": 58981
+    },
+    {
+      "icon_id": "11972832",
+      "name": "通用配置",
+      "font_class": "general_configuration",
+      "unicode": "e666",
+      "unicode_decimal": 58982
+    }
+  ]
+}
