@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -513,6 +514,43 @@ namespace DoCare.Core.Patient
                 }
             }
             return deptDict;
+        }
+
+        public async Task<GetPatientInfoOutputDto> GetPatientInfo(GetPatientInfoInputDto dto)
+        {
+            GetPatientInfoOutputDto result = null;
+            try
+            {
+                logger.LogDebug($"获取患者基本信息，PatientId:{dto.PatientId}, VisitId:{dto.VisitId}");
+
+                var relation = medPatRelation.Query().Where(x => x.OtherNo == dto.PatientId && x.VisitId == dto.VisitId).FirstOrDefault();
+                if (relation == null)
+                {
+                    relation = medPatRelation.Query().Where(x => x.OtherNo == dto.PatientId).FirstOrDefault();
+                    if (relation != null)
+                    {
+                        relation.VisitId = dto.VisitId;
+                        await medPatRelation.UpdateAsync(relation);
+                    }
+                }
+
+                var connectionString = "Data Source=132.147.2.99/YDHL;User ID=xtzx;Password=xtzx_5905;PERSIST SECURITY INFO=true;";
+                using (var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+                    var sql = @"SELECT PATIENT_ID, VISIT_ID, 姓名, 性别, 患者年龄, 体重, 身高 
+                                FROM KYEECISMNS.HL_TO_XT_PATIENTINFO 
+                                WHERE PATIENT_ID = :PatientId AND VISIT_ID = :VisitId";
+
+                    result = await connection.QuerySingleOrDefaultAsync<GetPatientInfoOutputDto>(sql, new { PatientId = dto.PatientId, VisitId = dto.VisitId });
+                    logger.LogDebug($"获取患者基本信息成功：{result?.ToJson()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"GetPatientInfo-获取患者基本信息异常：{ex.Message}");
+            }
+            return result;
         }
 
         #region private

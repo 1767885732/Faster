@@ -94,5 +94,11 @@ namespace DoCare.Core.Patient.Entities
         /// 患者ID
         /// </summary>
         public string OtherNo { get; set; }
+
+        /// <summary>
+        /// HIS就诊ID
+        /// </summary>
+        [MaxLength(60)]
+        public string VisitId { get; set; }
     }
 }

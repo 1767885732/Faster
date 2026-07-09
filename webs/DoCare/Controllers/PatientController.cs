@@ -179,5 +179,27 @@ namespace DoCare.Controllers
             }
             return result;
         }
+
+        /// <summary>
+        /// 获取患者基本信息
+        /// </summary>
+        /// <param name="dto">患者ID和就诊ID</param>
+        /// <returns>患者基本信息</returns>
+        [HttpPost]
+        public async Task<DoCareResponse<GetPatientInfoOutputDto>> GetPatientInfo(GetPatientInfoInputDto dto)
+        {
+            DoCareResponse<GetPatientInfoOutputDto> result = null;
+            try
+            {
+                var patientInfo = await patientService.GetPatientInfo(dto);
+                result = Success(patientInfo);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, e.Message);
+                result = Error<GetPatientInfoOutputDto>();
+            }
+            return result;
+        }
     }
 }

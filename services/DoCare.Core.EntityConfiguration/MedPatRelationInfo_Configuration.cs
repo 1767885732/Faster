@@ -46,6 +46,7 @@ namespace DoCare.Core.EntityConfiguration
             builder.Property(t => t.InpRegistId).HasColumnType("VARCHAR2(60)").HasColumnName("INP_REGIST_ID");
             builder.Property(t => t.MrNo).HasColumnType("VARCHAR2(60)").HasColumnName("MR_NO");
             builder.Property(t => t.OtherNo).HasColumnType("VARCHAR2(60)").HasColumnName("OTHER_NO");
+            builder.Property(t => t.VisitId).HasColumnType("VARCHAR2(60)").HasColumnName("VISIT_ID");
         }
     }
 }
